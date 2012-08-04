@@ -4,8 +4,8 @@
 	<groupId>org.openforis.collect.android</groupId>
 	<version>3.0-SNAPSHOT</version>
 	<artifactId>collect-android</artifactId>
-	<packaging>jar</packaging>
-
+	<packaging>apk</packaging>
+	
 	<dependencies>
 		<dependency>
 			<groupId>com.google.android</groupId>
@@ -19,11 +19,18 @@
 			<version>2.2.1</version>
 			<scope>provided</scope>
 		</dependency>
-<!-- 		<dependency> -->
-<!-- 			<groupId>org.openforis.collect</groupId> -->
-<!-- 			<artifactId>collect-core</artifactId> -->
-<!-- 			<artifactId>3.0-SNAPSHOT</artifactId> -->
-<!-- 		</dependency> -->
+ 		<dependency> 
+ 			<groupId>org.openforis.collect</groupId>
+			<artifactId>collect-core</artifactId>
+ 			<version>3.0-SNAPSHOT</version>
+ 			<scope>provided</scope>
+ 		</dependency>
+ 		<dependency> 
+ 			<groupId>org.openforis.idm</groupId>
+			<artifactId>idm-api</artifactId>
+ 			<version>3.0-SNAPSHOT</version>
+ 			<scope>provided</scope>
+ 		</dependency>
 		<dependency>
 			<groupId>junit</groupId>
 			<artifactId>junit</artifactId>
@@ -36,19 +43,57 @@
 			<version>1.8.5</version>
 			<scope>test</scope>
 		</dependency>
+	<!--	<dependency>
+  <groupId>javax.xml.bind</groupId>
+  <artifactId>jaxb-api</artifactId>
+  <version>2.2.6</version>
+  <scope>compile</scope>
+</dependency>
+<dependency>
+  <groupId>commons-jxpath</groupId>
+  <artifactId>commons-jxpath</artifactId>
+  <version>1.3</version>
+</dependency>-->
+		<dependency>
+		    <groupId>org.simpleframework</groupId>
+		    <artifactId>simple-xml</artifactId>
+		    <version>2.6.2</version>
+		    <exclusions>
+		        <exclusion>
+		            <artifactId>stax</artifactId>
+		            <groupId>stax</groupId>
+		        </exclusion>
+		        <exclusion>
+		            <artifactId>stax-api</artifactId>
+		            <groupId>stax</groupId>
+		        </exclusion>
+		        <exclusion>
+		            <artifactId>xpp3</artifactId>
+		            <groupId>xpp3</groupId>
+		        </exclusion>
+		    </exclusions>
+		</dependency>
+		<!--<dependency>
+			<groupId>com.sun.xml.bind</groupId>
+			<artifactId>jaxb-impl</artifactId>
+			<version>2.2.2</version>
+		</dependency>-->
 	</dependencies>
 	<build>
 		<plugins>
 			<plugin>
 				<groupId>com.jayway.maven.plugins.android.generation2</groupId>
-				<artifactId>maven-android-plugin</artifactId>
-				<version>2.6.0</version>
+				<artifactId>android-maven-plugin</artifactId>
+				<version>3.1.1</version>			
 				<configuration>
+				    <dex>
+						<coreLibrary>true</coreLibrary>
+					</dex>
 					<sdk>
-						<platform>8</platform>
+						<platform>2.1</platform>
 					</sdk>
 					<emulator>
-						<avd>em22</avd>
+						<avd>cccc</avd>
 					</emulator>
 					<deleteConflictingFiles>true</deleteConflictingFiles>
 					<undeployBeforeDeploy>true</undeployBeforeDeploy>
