@@ -24,13 +24,18 @@
 			<artifactId>collect-core</artifactId>
  			<version>3.0-SNAPSHOT</version>
  			<scope>provided</scope>
- 		</dependency>
+ 		</dependency>	
  		<dependency> 
  			<groupId>org.openforis.idm</groupId>
 			<artifactId>idm-api</artifactId>
  			<version>3.0-SNAPSHOT</version>
  			<scope>provided</scope>
  		</dependency>
+ 		<!--<dependency>
+			<groupId>com.sun.xml.bind</groupId>
+			<artifactId>jaxb-impl</artifactId>
+			<version>2.2.2</version>
+		</dependency>-->  
 		<dependency>
 			<groupId>junit</groupId>
 			<artifactId>junit</artifactId>
@@ -104,6 +109,20 @@
 				<artifactId>maven-compiler-plugin</artifactId>
 				<version>2.3.2</version>
 			</plugin>
+			<!--<plugin>
+		        <groupId>org.apache.maven.plugins</groupId>
+		        <artifactId>maven-shade-plugin</artifactId>
+		        <version>1.6</version>
+		        <executions>
+		          <execution>
+		            <phase>package</phase>
+		            <goals>
+		              <goal>shade</goal>
+		            </goals>
+		          </execution>
+		        </executions>
+		      </plugin>-->
+					
 		</plugins>
 	</build>
 </project>

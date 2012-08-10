@@ -22,16 +22,16 @@ public class SandboxActivity extends Activity {
 		try{
 			requestWindowFeature(Window.FEATURE_NO_TITLE);
 	        getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);	             
-	        setContentView(R.layout.maintabwindow);
+	        setContentView(R.layout.applicationwindow);
 	        TextView tempTextView = (TextView)findViewById(R.id.btnFooterSave);
 	        
 	        InputStream is = this.getClass().getClassLoader().getResourceAsStream("test.idm.xml");
 	        byte[] buffer = new byte[1000];
 	        is.read(buffer);
 	        
-	        CollectIdmlBindingContext idmlBindingContext = new CollectIdmlBindingContext((SurveyContext) new CollectContext());
-			SurveyUnmarshaller su = idmlBindingContext.createSurveyUnmarshaller();
-			Survey survey = su.unmarshal(is);
+	        //CollectIdmlBindingContext idmlBindingContext = new CollectIdmlBindingContext((SurveyContext) new CollectContext());
+			SurveyUnmarshaller su = null;// idmlBindingContext.createSurveyUnmarshaller();
+			Survey survey =null;// = su.unmarshal(is);
 			Log.e("survey","PARSED");
 			Log.e("surveyID","=="+survey.getId());
 			Log.e("surveyName","=="+survey.getName());
