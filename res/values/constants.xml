@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<resources>
+    <integer name="tab_width">100</integer>
+    <integer name="tab_height">40</integer>
+    <string name="application_folder">/mofc</string>
+    <string name="data_folder">/mofc/data</string>
+    <string name="logs_folder">/mofc/logs</string>
+    <string name="backup_folder">/mofc/backups</string>
+</resources>

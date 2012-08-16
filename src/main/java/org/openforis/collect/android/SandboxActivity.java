@@ -2,15 +2,10 @@ package org.openforis.collect.android;
 
 import java.io.InputStream;
 
-import org.openforis.collect.context.CollectContext;
-import org.openforis.collect.persistence.xml.CollectIdmlBindingContext;
 import org.openforis.idm.metamodel.Survey;
-import org.openforis.idm.metamodel.SurveyContext;
-import org.openforis.idm.metamodel.xml.SurveyUnmarshaller;
 
 import android.app.Activity;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.TextView;
@@ -28,13 +23,17 @@ public class SandboxActivity extends Activity {
 	        InputStream is = this.getClass().getClassLoader().getResourceAsStream("test.idm.xml");
 	        byte[] buffer = new byte[1000];
 	        is.read(buffer);
-	        
-	        //CollectIdmlBindingContext idmlBindingContext = new CollectIdmlBindingContext((SurveyContext) new CollectContext());
-			SurveyUnmarshaller su = null;// idmlBindingContext.createSurveyUnmarshaller();
-			Survey survey =null;// = su.unmarshal(is);
-			Log.e("survey","PARSED");
+	        tempTextView.setText("HKHJKGJHGJKHGKJH");
+	        //CollectSurvey csur = new CollectSurvey();
+	        /*CollectIdmlBindingContext idmlBindingContext = new CollectIdmlBindingContext((SurveyContext) new CollectContext());
+			SurveyUnmarshaller su = idmlBindingContext.createSurveyUnmarshaller();*/
+			Survey survey = new Survey();//su.unmarshal(is);*/
+			survey.setName("Test");
+			/*Log.e("survey","PARSED");
 			Log.e("surveyID","=="+survey.getId());
-			Log.e("surveyName","=="+survey.getName());
+			Log.e("surveyName","=="+survey.getName());*/
+			tempTextView.setText(survey.getName());
+			
 		} catch (Exception e){
 			e.printStackTrace();
 		}

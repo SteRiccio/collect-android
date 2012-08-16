@@ -1,4 +1,23 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">OFCMobile</string>
+    <string name="app_name">mOFC</string>
+
+    <!-- about tab -->
+    <string name="aboutTabTitle">About</string>
+    <string name="lblApplicationName">Application name:</string>
+    <string name="lblProgramVersionName">Application version:</string>
+    <string name="lblFormVersionName">Form version:</string>
+    <string name="lblLoadedDataFileName">Loaded data file:</string>
+    <string name="lblGpsTimeout">GPS timeout</string>
+    <string name="txtGpsTimeout">set GPS timeout</string>
+    
+    <!-- dialogs -->
+    <string name="exitAppMessage">Do you want to exit?</string>    
+    
+    <!-- buttons -->
+    <string name="footerSave">Save</string>
+    <string name="footerClusterList">Back to list</string>
+    <string name="yes">Yes</string>
+    <string name="no">No</string>
+    <string name="okay">OK</string>
 </resources>
