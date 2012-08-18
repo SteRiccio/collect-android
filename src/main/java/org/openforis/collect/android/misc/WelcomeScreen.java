@@ -4,6 +4,7 @@ import org.openforis.collect.android.R;
 
 import android.app.Activity;
 import android.os.Bundle;
+import android.os.Environment;
 import android.util.Log;
 
 public class WelcomeScreen extends Activity {
@@ -24,6 +25,12 @@ public class WelcomeScreen extends Activity {
 					Log.i(getResources().getString(R.string.app_name),TAG+":run");
 					Thread.sleep(getIntent().getIntExtra("sleepTime", 5000));
 				} catch (Exception e) {
+					RunnableHandler.reportException(e,TAG,"run",
+		    				Environment.getExternalStorageDirectory().toString()
+		    				+getResources().getString(R.string.logs_folder)
+		    				+getResources().getString(R.string.logs_file_name)
+		    				+System.currentTimeMillis()
+		    				+getResources().getString(R.string.log_file_extension));
 				} 	 finally {
 					finish();
 				}

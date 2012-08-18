@@ -12,6 +12,7 @@
     <string name="txtGpsTimeout">set GPS timeout</string>
     
     <!-- dialogs -->
+    <string name="exitAppTitle">Exiting...</string>    
     <string name="exitAppMessage">Do you want to exit?</string>    
     
     <!-- buttons -->

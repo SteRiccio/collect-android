@@ -5,5 +5,7 @@
     <string name="application_folder">/mofc</string>
     <string name="data_folder">/mofc/data</string>
     <string name="logs_folder">/mofc/logs</string>
+    <string name="logs_file_name">/log_</string>
+    <string name="log_file_extension">.txt</string>
     <string name="backup_folder">/mofc/backups</string>
 </resources>
