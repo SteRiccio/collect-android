@@ -5,12 +5,13 @@ import org.openforis.collect.android.messages.ToastMessage;
 import android.content.Context;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
-public class TextField extends InputField {
+public class RangeField extends InputField {
 	
-	public TextField(Context context, String labelText, String initialText) {
+	public RangeField(Context context, String labelText, String initialText) {
 		super(context);
 		
 		this.label = new TextView(context);
@@ -20,10 +21,11 @@ public class TextField extends InputField {
 		this.label.setOnLongClickListener(new OnLongClickListener() {
 	        @Override
 	        public boolean onLongClick(View v) {
-	        	ToastMessage.displayToastMessage(TextField.this.getContext(), TextField.this.getLabelText(), Toast.LENGTH_LONG);
+	        	ToastMessage.displayToastMessage(RangeField.this.getContext(), RangeField.this.getLabelText(), Toast.LENGTH_LONG);
 	            return true;
 	        }
 	    });
+		this.txtBox = new EditText(context);
 		this.setValue(initialText);
 		this.txtBox.setLayoutParams(new LayoutParams(0,ViewGroup.LayoutParams.WRAP_CONTENT,(float) 2));
 		this.addView(this.label);

@@ -26,13 +26,13 @@ public class SandboxActivity extends Activity {
 	        tempTextView.setText("HKHJKGJHGJKHGKJH");
 	        //CollectSurvey csur = new CollectSurvey();
 	        /*CollectIdmlBindingContext idmlBindingContext = new CollectIdmlBindingContext((SurveyContext) new CollectContext());
-			SurveyUnmarshaller su = idmlBindingContext.createSurveyUnmarshaller();*/
-			Survey survey = new Survey();//su.unmarshal(is);*/
+			SurveyUnmarshaller su = idmlBindingContext.createSurveyUnmarshaller();
+			Survey survey = new Survey();//su.unmarshal(is);
 			survey.setName("Test");
-			/*Log.e("survey","PARSED");
+			Log.e("survey","PARSED");
 			Log.e("surveyID","=="+survey.getId());
-			Log.e("surveyName","=="+survey.getName());*/
-			tempTextView.setText(survey.getName());
+			Log.e("surveyName","=="+survey.getName());
+			tempTextView.setText(survey.getName());*/
 			
 		} catch (Exception e){
 			e.printStackTrace();

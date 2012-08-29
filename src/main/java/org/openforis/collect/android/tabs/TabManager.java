@@ -1,19 +1,12 @@
 package org.openforis.collect.android.tabs;
 
 import java.io.File;
-import java.io.IOException;
 import java.io.InputStream;
 
 import org.openforis.collect.android.R;
 import org.openforis.collect.android.messages.AlertMessage;
 import org.openforis.collect.android.misc.RunnableHandler;
 import org.openforis.collect.android.misc.WelcomeScreen;
-import org.openforis.collect.context.CollectContext;
-import org.openforis.collect.persistence.xml.CollectIdmlBindingContext;
-import org.openforis.idm.metamodel.Survey;
-import org.openforis.idm.metamodel.SurveyContext;
-import org.openforis.idm.metamodel.xml.InvalidIdmlException;
-import org.openforis.idm.metamodel.xml.SurveyUnmarshaller;
 
 import android.app.TabActivity;
 import android.content.DialogInterface;
@@ -38,12 +31,13 @@ public class TabManager extends TabActivity {
 	
     @Override
     public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        requestWindowFeature(Window.FEATURE_NO_TITLE);
-        getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
-        setContentView(R.layout.applicationwindow);
-        Log.i(getResources().getString(R.string.app_name),TAG+":onCreate"); 
+        super.onCreate(savedInstanceState); 
         try{
+        	requestWindowFeature(Window.FEATURE_NO_TITLE);
+            getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
+            setContentView(R.layout.applicationwindow);
+            Log.i(getResources().getString(R.string.app_name),TAG+":onCreate");
+            
         	showWelcomeScreen(0);
         	
         	//creating file structure used by application
@@ -59,24 +53,47 @@ public class TabManager extends TabActivity {
 		    
         	tabHost = getTabHost();
         	tabWidget = tabHost.getTabWidget();
+
+        	//startActivity(new Intent(TabManager.this, GpsReader.class));
         	
         	//reading form definition
-        	try {
-            	InputStream is = this.getClass().getClassLoader().getResourceAsStream("test.idm.xml");
-                byte[] buffer = new byte[1000];
-    			is.read(buffer);
-    			CollectIdmlBindingContext idmlBindingContext = new CollectIdmlBindingContext((SurveyContext) new CollectContext());
-    			SurveyUnmarshaller su = idmlBindingContext.createSurveyUnmarshaller();
-    			Survey survey = su.unmarshal(is);
-    			survey.setName("Test");
-    		} catch (IOException e) {
-    			// TODO Auto-generated catch block
-    			e.printStackTrace();
-    		} catch (InvalidIdmlException e) {
-    			// TODO Auto-generated catch block
-    			e.printStackTrace();
-    		}
+        	InputStream is = this.getClass().getClassLoader().getResourceAsStream(getResources().getString(R.string.formDefinitionFile));
+			/*SurveyUnmarshaller su = idmlBindingContext.createSurveyUnmarshaller();
+			Survey survey = su.unmarshal(is);
+        	//InputStream is = new FileInputStream(sdcardPath+getResources().getString(R.string.application_folder)+getResources().getString(R.string.formDefinitionFile));
+            /*byte[] buffer = new byte[1000];
+			is.read(buffer);
+			String str = new String(buffer,"UTF8"); 
+			Log.e("FILE","=="+str);
+			CollectIdmlBindingContext idmlBindingContext = new CollectIdmlBindingContext((SurveyContext) new CollectContext());
+			SurveyUnmarshaller su = idmlBindingContext.createSurveyUnmarshaller();
+			CollectSurvey survey = (CollectSurvey) su.unmarshal(is);
+			Log.e("surveyName","=="+survey.getName());
         	
+			//adding all tabs from form definition
+        	List<Configuration> configList = survey.getConfiguration();
+        	Log.e("configList.size","=="+configList.size());
+        	UIConfiguration uiConfig = (UIConfiguration)configList.get(0);
+        	List<UITabDefinition> uiTabDefList = uiConfig.getTabDefinitions();
+        	UITabDefinition uiTabDef = uiTabDefList.get(0);
+        	List<UITab> uiTabsList = uiTabDef.getTabs();
+        	Intent tabIntent;
+        	for (UITab uiTab : uiTabsList){
+        		Log.e("tabName","=="+uiTab.getName());
+        		Log.e("tabLabel","=="+uiTab.getLabel());
+        		Log.e("subtabsNo","=="+uiTab.getTabs().size());
+        		tabIntent = new Intent(TabManager.this,Tab.class);
+        		tabIntent.putExtra("tabName", uiTab.getName());
+        		tabIntent.putExtra("tabLabel", uiTab.getLabel());
+        		//tabIntent.putExtra(name, value);
+        		this.addTab(uiTab.getLabel(), 
+        				uiTab.getName(), 
+            			this.tabWidget.getChildCount(),
+            			tabIntent,
+            			this.calcTabWidth(1),
+            			getResources().getInteger(R.integer.tab_height));
+        		Log.e("==========","==========");
+        	}*/
         	//adding About tab
         	this.addTab(getResources().getString(R.string.aboutTabTitle), 
         			getResources().getString(R.string.aboutTabTitle), 
@@ -84,10 +101,14 @@ public class TabManager extends TabActivity {
         			new Intent(TabManager.this,AboutTab.class),
         			this.calcTabWidth(1),
         			getResources().getInteger(R.integer.tab_height));
-        	
-        } catch (Exception e){
-        	
-        }
+		} catch (Exception e){
+    		RunnableHandler.reportException(e,getResources().getString(R.string.app_name),TAG+":onCreate",
+    				Environment.getExternalStorageDirectory().toString()
+    				+getResources().getString(R.string.logs_folder)
+    				+getResources().getString(R.string.logs_file_name)
+    				+System.currentTimeMillis()
+    				+getResources().getString(R.string.log_file_extension));
+		}
     }//onCreate
     
    
@@ -121,7 +142,7 @@ public class TabManager extends TabActivity {
     					}
     				}).show();
     	}catch (Exception e){
-    		RunnableHandler.reportException(e,TAG,"onBackPressed",
+    		RunnableHandler.reportException(e,getResources().getString(R.string.app_name),TAG+":onBackPressed",
     				Environment.getExternalStorageDirectory().toString()
     				+getResources().getString(R.string.logs_folder)
     				+getResources().getString(R.string.logs_file_name)
@@ -134,10 +155,10 @@ public class TabManager extends TabActivity {
     	try{
     		this.tabHost.addTab(tabHost.newTabSpec(getResources().getString(R.string.aboutTabTitle))
                     .setIndicator(getResources().getString(R.string.aboutTabTitle))
-                    .setContent(new Intent(TabManager.this,AboutTab.class)));
+                    .setContent(content));
 			this.tabWidget.getChildAt(index).setLayoutParams(new LinearLayout.LayoutParams(width, height));
     	} catch (Exception e){
-    		RunnableHandler.reportException(e,TAG,"addTab",
+    		RunnableHandler.reportException(e,getResources().getString(R.string.app_name),TAG+":addTab",
     				Environment.getExternalStorageDirectory().toString()
     				+getResources().getString(R.string.logs_folder)
     				+getResources().getString(R.string.logs_file_name)
@@ -148,7 +169,7 @@ public class TabManager extends TabActivity {
     
     private void showWelcomeScreen(int durationInSec){
     	Intent welcomeIntent = new Intent(TabManager.this,WelcomeScreen.class);
-    	welcomeIntent.putExtra("sleepTime", durationInSec);
+    	welcomeIntent.putExtra(getResources().getString(R.string.sleepTime), durationInSec);
 		startActivity(welcomeIntent);
     }
     

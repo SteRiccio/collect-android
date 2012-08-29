@@ -112,6 +112,11 @@ public class CodeField extends Field {
 		}			
 	}
 	
+	public void setValue(int position)
+	{
+		this.spinner.setSelection(position);
+	}
+	
 	public void setEmptyValue()
 	{
 		this.spinner.setSelection(0);

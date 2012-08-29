@@ -4,8 +4,6 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 
-import android.util.Log;
-
 public class LogCatHandler {	
 	
 	public StringBuilder getLogcat(){
@@ -14,7 +12,6 @@ public class LogCatHandler {
 		StringBuilder log = new StringBuilder();
 		try
 		{
-			Log.e("JKHJK", "NJMJJ");
 			mLogcatProc = Runtime.getRuntime().exec(new String[]{"logcat", "-d", " *:D" });
 			reader = new BufferedReader(new InputStreamReader(mLogcatProc.getInputStream()));
 	        String line;

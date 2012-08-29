@@ -23,9 +23,9 @@ public class WelcomeScreen extends Activity {
 				try {
 					super.run();
 					Log.i(getResources().getString(R.string.app_name),TAG+":run");
-					Thread.sleep(getIntent().getIntExtra("sleepTime", 5000));
+					Thread.sleep(getIntent().getIntExtra(getResources().getString(R.string.sleepTime), 5000));
 				} catch (Exception e) {
-					RunnableHandler.reportException(e,TAG,"run",
+					RunnableHandler.reportException(e,getResources().getString(R.string.app_name),TAG+":run",
 		    				Environment.getExternalStorageDirectory().toString()
 		    				+getResources().getString(R.string.logs_folder)
 		    				+getResources().getString(R.string.logs_file_name)
@@ -37,11 +37,5 @@ public class WelcomeScreen extends Activity {
 			}
 		};
 		welcomeThread.start();		
-	}
-	
-	@Override
-	public void onDestroy(){
-		super.onDestroy();
-		Log.i(getResources().getString(R.string.app_name),TAG+":onDestroy");
 	}
 }

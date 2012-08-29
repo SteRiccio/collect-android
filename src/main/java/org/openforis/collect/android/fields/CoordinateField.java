@@ -10,7 +10,7 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
-public class CoordinateField extends Field {
+public class CoordinateField extends InputField {
 	private EditText txtLatitude;
 	private EditText txtLongitude;
 	

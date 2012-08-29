@@ -8,12 +8,14 @@
     <string name="lblProgramVersionName">Application version:</string>
     <string name="lblFormVersionName">Form version:</string>
     <string name="lblLoadedDataFileName">Loaded data file:</string>
-    <string name="lblGpsTimeout">GPS timeout</string>
+    <string name="lblGpsTimeout">GPS timeout:</string>
     <string name="txtGpsTimeout">set GPS timeout</string>
     
     <!-- dialogs -->
-    <string name="exitAppTitle">Exiting...</string>    
-    <string name="exitAppMessage">Do you want to exit?</string>    
+    <string name="exitAppTitle">Exiting&#8230;</string>    
+    <string name="exitAppMessage">Do you want to exit?</string>
+    <string name="startGpsTitle">Starting GPS&#8230;</string>
+    <string name="startGpsMessage">GPS on your device is disabled. Do you want to enable it in operating system Settings?</string>
     
     <!-- buttons -->
     <string name="footerSave">Save</string>
@@ -21,4 +23,8 @@
     <string name="yes">Yes</string>
     <string name="no">No</string>
     <string name="okay">OK</string>
+    
+    <!-- images -->
+    <string name="faologo">FAO logo</string>
+    <string name="ofclogo">OpenForisCollect logo</string>
 </resources>

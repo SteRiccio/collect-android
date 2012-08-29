@@ -2,10 +2,20 @@
 <resources>
     <integer name="tab_width">100</integer>
     <integer name="tab_height">40</integer>
+    
     <string name="application_folder">/mofc</string>
     <string name="data_folder">/mofc/data</string>
     <string name="logs_folder">/mofc/logs</string>
     <string name="logs_file_name">/log_</string>
     <string name="log_file_extension">.txt</string>
     <string name="backup_folder">/mofc/backups</string>
+    <string name="formDefinitionFile">/tanzania-naforma.idm.xml</string>
+    
+    <string name="sleepTime">sleepTime</string>
+    
+    <string name="gpsPreferredWaitingTime">gps_timeout</string>
+    <integer name="gpsPreferredWaitingTime">60000</integer>
+    <integer name="gpsMinUpdateTime">60000</integer>
+    <integer name="gpsMinUpdateDistance">10</integer>
+    
 </resources>
