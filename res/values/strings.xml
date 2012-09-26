@@ -8,7 +8,7 @@
     <string name="lblProgramVersionName">Application version:</string>
     <string name="lblFormVersionName">Form version:</string>
     <string name="lblLoadedDataFileName">Loaded data file:</string>
-    <string name="lblGpsTimeout">GPS timeout:</string>
+    <string name="lblGpsTimeout">GPS timeout:\u0020</string>
     <string name="txtGpsTimeout">set GPS timeout</string>
     
     <!-- dialogs -->
@@ -16,12 +16,19 @@
     <string name="exitAppMessage">Do you want to exit?</string>
     <string name="startGpsTitle">Starting GPS&#8230;</string>
     <string name="startGpsMessage">GPS on your device is disabled. Do you want to enable it in operating system Settings?</string>
+    <string name="savingDataTitle">Saving&#8230;</string>    
+    <string name="savingDataMessage">Do you want to save data from form?</string>
+    <string name="savingToDatabase">SQL</string>
+    <string name="savingToFile">XML</string>
+    <string name="openingPlotListTitle">Back to list&#8230;</string>    
+    <string name="openingPlotListMessage">Do you want to open list of forms?</string>
     
     <!-- buttons -->
     <string name="footerSave">Save</string>
     <string name="footerClusterList">Back to list</string>
     <string name="yes">Yes</string>
     <string name="no">No</string>
+    <string name="cancel">Cancel</string>
     <string name="okay">OK</string>
     
     <!-- images -->

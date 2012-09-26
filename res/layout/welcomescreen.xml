@@ -9,6 +9,7 @@ android:background="#000000">
    		android:layout_width="fill_parent"
    		android:layout_height="wrap_content"
    		android:layout_centerInParent="true"
+   		android:contentDescription="@string/faologo"
    		android:src="@drawable/faologo"
    		 />
  	<ImageView 
@@ -16,6 +17,7 @@ android:background="#000000">
    		android:layout_width="fill_parent"
    		android:layout_height="wrap_content"
    		android:layout_below="@id/companylogo"
+   		android:contentDescription="@string/ofclogo"
    		android:src="@drawable/ofclogo"
    		 />
 </RelativeLayout>

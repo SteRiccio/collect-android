@@ -25,7 +25,7 @@ public class GpsReader extends Activity implements LocationListener{
 	    Log.i(getResources().getString(R.string.app_name),TAG+":onCreate");
 	    locManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
 	    if (!locManager.isProviderEnabled( LocationManager.GPS_PROVIDER)) {
-	    	AlertMessage.createYesNoDialog(GpsReader.this, false, getResources().getDrawable(R.drawable.warningsign),
+	    	AlertMessage.createPositiveNegativeDialog(GpsReader.this, false, getResources().getDrawable(R.drawable.warningsign),
 	    			getResources().getString(R.string.startGpsTitle),
 	    			getResources().getString(R.string.startGpsMessage), 
 	    			getResources().getString(R.string.yes), getResources().getString(R.string.no),

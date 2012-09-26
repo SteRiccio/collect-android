@@ -7,8 +7,8 @@ import android.graphics.drawable.Drawable;
 
 public class AlertMessage{
 	
-	public static AlertDialog createYesNoDialog(Context ctx, boolean isCancelable, Drawable icon,
-			String messageTitle,String messageBody, String yes, String no,
+	public static AlertDialog createPositiveNegativeDialog(Context ctx, boolean isCancelable, Drawable icon,
+			String messageTitle,String messageBody, String positive, String negative,
 			DialogInterface.OnClickListener positiveButtonListener,
 			DialogInterface.OnClickListener negativeButtonListener){
 		AlertDialog.Builder builder = new AlertDialog.Builder(ctx);	
@@ -16,8 +16,24 @@ public class AlertMessage{
 	    builder.setMessage(messageBody);
 	    builder.setIcon(icon);
 	    builder.setCancelable(isCancelable);
-	    builder.setPositiveButton(yes, positiveButtonListener);
-	    builder.setNegativeButton(no, negativeButtonListener);
+	    builder.setPositiveButton(positive, positiveButtonListener);
+	    builder.setNegativeButton(negative, negativeButtonListener);
+	    return builder.create();
+	}
+	
+	public static AlertDialog createPositiveNeutralNegativeDialog(Context ctx, boolean isCancelable, Drawable icon,
+			String messageTitle,String messageBody, String positive, String neutral, String negative,
+			DialogInterface.OnClickListener positiveButtonListener,
+			DialogInterface.OnClickListener negativeButtonListener,
+			DialogInterface.OnClickListener cancelButtonListener){
+		AlertDialog.Builder builder = new AlertDialog.Builder(ctx);	
+		builder.setTitle(messageTitle);
+	    builder.setMessage(messageBody);
+	    builder.setIcon(icon);
+	    builder.setCancelable(isCancelable);
+	    builder.setPositiveButton(positive, positiveButtonListener);
+	    builder.setNeutralButton(neutral, cancelButtonListener);
+	    builder.setNegativeButton(negative, negativeButtonListener);
 	    return builder.create();
 	}
 }

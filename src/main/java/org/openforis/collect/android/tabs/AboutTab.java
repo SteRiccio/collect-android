@@ -2,6 +2,7 @@ package org.openforis.collect.android.tabs;
 
 import org.openforis.collect.android.R;
 import org.openforis.collect.android.misc.RunnableHandler;
+import org.openforis.collect.android.misc.SwipeDetector;
 
 import android.app.Activity;
 import android.content.SharedPreferences;
@@ -10,7 +11,10 @@ import android.os.Environment;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
+import android.view.GestureDetector;
 import android.view.KeyEvent;
+import android.view.MotionEvent;
+import android.view.View;
 import android.view.ViewTreeObserver;
 import android.view.ViewTreeObserver.OnGlobalLayoutListener;
 import android.widget.EditText;
@@ -23,6 +27,8 @@ public class AboutTab extends Activity implements TextWatcher{
 	private TextView lblGpsTimeout;
 	private EditText txtGpsTimeout;
 	private SharedPreferences sharedPreferences;
+	
+	private GestureDetector gestureDetector;
 	
 	public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);       
@@ -44,6 +50,18 @@ public class AboutTab extends Activity implements TextWatcher{
 					observer.removeGlobalOnLayoutListener(this);
 				}
 			});
+			
+			gestureDetector = new GestureDetector(new SwipeDetector(this));
+            this.lblGpsTimeout.setOnTouchListener(new View.OnTouchListener()
+            {
+                @Override
+                public boolean onTouch(View v, MotionEvent event)
+                {
+                	gestureDetector.onTouchEvent(event);
+                    return true;
+                }
+            });
+
         } catch (Exception e){
     		RunnableHandler.reportException(e,getResources().getString(R.string.app_name),TAG+":onCreate",
     				Environment.getExternalStorageDirectory().toString()

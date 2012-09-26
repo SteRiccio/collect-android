@@ -1,9 +1,6 @@
 package org.openforis.collect.android.tabs;
 
-import java.util.List;
-
 import org.openforis.collect.android.R;
-import org.openforis.collect.model.UITab;
 
 import android.app.Activity;
 import android.os.Bundle;
@@ -15,7 +12,7 @@ public class Tab extends Activity {
 	private static final String TAG = "Tab";
 	private String name;
 	private String label;
-	private List<UITab> children;
+	//private List<UITab> children;
 	
 	public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);       
