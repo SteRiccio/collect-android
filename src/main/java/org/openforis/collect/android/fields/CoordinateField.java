@@ -14,7 +14,7 @@ public class CoordinateField extends InputField {
 	private EditText txtLatitude;
 	private EditText txtLongitude;
 	
-	public CoordinateField(Context context, String labelText, String initialText) {		
+	public CoordinateField(Context context, String labelText, String initialText, String hintText) {		
 		super(context);
 
 		this.label = new TextView(context);
@@ -45,6 +45,7 @@ public class CoordinateField extends InputField {
 		this.addView(txtLongitude);
 	}
 	
+	@Override
 	public String getValue()
 	{
 		return this.txtLatitude.getText().toString()+","+this.txtLongitude.getText().toString();

@@ -24,6 +24,12 @@ public class AboutTab extends Activity implements TextWatcher{
 
 	private static final String TAG = "AboutTab";
 	
+	private TextView txtApplicationName;
+	
+	private TextView txtProgramVersionName;
+	
+	private TextView txtFormVersionName;
+	
 	private TextView lblGpsTimeout;
 	private EditText txtGpsTimeout;
 	private SharedPreferences sharedPreferences;
@@ -62,6 +68,15 @@ public class AboutTab extends Activity implements TextWatcher{
                 }
             });
 
+            this.txtApplicationName = (TextView)findViewById(R.id.txtApplicationName);
+            this.txtApplicationName.setText(getResources().getString(R.string.app_name));
+            
+            this.txtProgramVersionName = (TextView)findViewById(R.id.txtProgramVersionName);
+            this.txtProgramVersionName.setText(this.getPackageManager().getPackageInfo(this.getPackageName(), 0).versionName);
+            
+            this.txtFormVersionName = (TextView)findViewById(R.id.txtFormVersionName);
+            this.txtFormVersionName.setText(TabManager.survey.getProjectName(null)+" "+TabManager.survey.getVersions().get(TabManager.survey.getVersions().size()-1).getName());
+            
         } catch (Exception e){
     		RunnableHandler.reportException(e,getResources().getString(R.string.app_name),TAG+":onCreate",
     				Environment.getExternalStorageDirectory().toString()

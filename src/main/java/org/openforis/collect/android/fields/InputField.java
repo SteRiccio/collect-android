@@ -15,4 +15,24 @@ public class InputField extends Field {
 	public void setKeyboardType(KeyListener keyListener){
 		this.txtBox.setKeyListener(keyListener);
 	}
+	
+	public String getValue()
+	{
+		return this.txtBox.getText().toString();
+	}
+	
+	public void setValue(String value)
+	{
+		this.txtBox.setText(value);
+	}
+	
+	public String getHint()
+	{
+		return this.txtBox.getHint().toString();
+	}
+	
+	public void setHint(String value)
+	{
+		this.txtBox.setHint(value);
+	}
 }

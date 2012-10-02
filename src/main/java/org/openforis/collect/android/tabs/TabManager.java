@@ -2,16 +2,20 @@ package org.openforis.collect.android.tabs;
 
 import java.io.File;
 import java.io.FileInputStream;
-import java.util.ArrayList;
+import java.util.List;
 
 import org.openforis.collect.android.R;
-import org.openforis.collect.android.lists.ClusterChoiceActivity;
 import org.openforis.collect.android.messages.AlertMessage;
 import org.openforis.collect.android.misc.RunnableHandler;
 import org.openforis.collect.android.misc.WelcomeScreen;
 import org.openforis.collect.model.CollectSurvey;
 import org.openforis.collect.model.CollectSurveyContext;
+import org.openforis.collect.model.ui.UIConfiguration;
+import org.openforis.collect.model.ui.UITab;
+import org.openforis.collect.model.ui.UITabDefinition;
 import org.openforis.collect.persistence.xml.CollectIdmlBindingContext;
+import org.openforis.idm.metamodel.Configuration;
+import org.openforis.idm.metamodel.Schema;
 import org.openforis.idm.metamodel.validation.Validator;
 import org.openforis.idm.metamodel.xml.SurveyUnmarshaller;
 import org.openforis.idm.model.expression.ExpressionFactory;
@@ -19,31 +23,28 @@ import org.openforis.idm.model.expression.ExpressionFactory;
 import android.app.TabActivity;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.gesture.Gesture;
-import android.gesture.GestureLibraries;
-import android.gesture.GestureLibrary;
-import android.gesture.GestureOverlayView;
-import android.gesture.GestureOverlayView.OnGesturePerformedListener;
-import android.gesture.Prediction;
-import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Environment;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.KeyEvent;
-import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.LinearLayout;
 import android.widget.TabHost;
 import android.widget.TabWidget;
 
-public class TabManager extends TabActivity implements OnGesturePerformedListener {
+public class TabManager extends TabActivity /*implements OnGesturePerformedListener*/ {
 
 	private static final String TAG = "TabManager";
-	private GestureLibrary gestureLib;
+	//private GestureLibrary gestureLib;
 	private TabWidget tabWidget;
-	private TabHost tabHost;
+	private TabHost tabHost;	
+	
+	public static CollectSurvey survey;
+	public static List<Configuration> configList;
+	public static List<UITab> uiTabsList;
+	public static Schema schema;
 
     /*private GestureDetector gestureDetector;
     View.OnTouchListener gestureListener;*/
@@ -54,22 +55,23 @@ public class TabManager extends TabActivity implements OnGesturePerformedListene
         try{
         	requestWindowFeature(Window.FEATURE_NO_TITLE);
             getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
-            setContentView(R.layout.applicationwindow);
+            setContentView(R.layout.applicationwindow);            
             Log.i(getResources().getString(R.string.app_name),TAG+":onCreate");
             
-        	showWelcomeScreen(000);
-        	
+        	//showWelcomeScreen(5000);
+            
         	//gestures detection
-        	GestureOverlayView gestureOverlayView = new GestureOverlayView(this);
+        	/*GestureOverlayView gestureOverlayView = new GestureOverlayView(this);
             View inflate = getLayoutInflater().inflate(R.layout.applicationwindow, null);
             gestureOverlayView.addView(inflate);
             gestureOverlayView.addOnGesturePerformedListener(this);            
-            gestureOverlayView.setGestureColor(Color.TRANSPARENT);
-            gestureOverlayView.setUncertainGestureColor(Color.TRANSPARENT);
+            gestureOverlayView.setGestureColor(Color.GREEN);
+            gestureOverlayView.setUncertainGestureColor(Color.RED);
             gestureLib = GestureLibraries.fromRawResource(this, R.raw.gestures);
             if (!gestureLib.load()) {
             	//finish();
             }
+            gestureOverlayView.setPadding(0, 200, 0, 0);
             setContentView(gestureOverlayView);
             //swipe detection
         	/*gestureDetector = new GestureDetector(new SwipeDetector(this));
@@ -80,8 +82,8 @@ public class TabManager extends TabActivity implements OnGesturePerformedListene
             };
             Button btn = (Button)findViewById(R.id.btnFooterSave);
             btn.setOnTouchListener(gestureListener);*/
-        	
-        	//creating file structure used by application
+            
+			//creating file structure used by application
         	String sdcardPath = Environment.getExternalStorageDirectory().toString();
 			File folder = new File(sdcardPath+getResources().getString(R.string.application_folder));
 			folder.mkdirs();
@@ -94,140 +96,59 @@ public class TabManager extends TabActivity implements OnGesturePerformedListene
 		    
         	tabHost = getTabHost();
         	tabWidget = tabHost.getTabWidget();
-
-        	//startActivity(new Intent(TabManager.this, GpsReader.class));
         	
         	//reading form definition
-        	/*FileInputStream fis = new FileInputStream(sdcardPath+getResources().getString(R.string.formDefinitionFile));
-        	IdmlBindingContext idmlBindingContext = new IdmlBindingContext();
-        	UIConfigurationAdapter configurationAdapter = new UIConfigurationAdapter();
-        	idmlBindingContext.setConfigurationAdapter(configurationAdapter);
-        	SurveyUnmarshaller surveyUnmarshaller = idmlBindingContext.createSurveyUnmarshaller();
-			long startTime = System.currentTimeMillis();
-			CollectSurvey survey = (CollectSurvey) surveyUnmarshaller.unmarshal(fis);
-        	//InputStream is = this.getClass().getClassLoader().getResourceAsStream(getResources().getString(R.string.formDefinitionFile));
-        	//Thread.currentThread().setContextClassLoader(getClass().getClassLoader());
-        	*/
-        	/*Survey survey = new Survey();
-        	IdmlBindingContext idmlBindingContext = new IdmlBindingContext(survey.getContext());
-			SurveyUnmarshaller su = idmlBindingContext.createSurveyUnmarshaller();
-			long startTime = System.currentTimeMillis();
-			FileInputStream fis = new FileInputStream(sdcardPath+getResources().getString(R.string.formDefinitionFile));
-			Log.e("preparing form file","=="+((System.currentTimeMillis()-startTime))+"ms");
-			startTime = System.currentTimeMillis();
-			survey = su.unmarshal(fis);
-			Log.e("XML","PARSED in "+((System.currentTimeMillis()-startTime)/1000)+"s");
-        	/*CollectSurvey survey = new CollectSurvey();
-        	ExpressionFactory expressionFactory = new ExpressionFactory();        	
-        	Validator validator = new Validator();
-        	SurveyManager surveyManager = new SurveyManager();
-        	surveyManager.importModel(survey);
-        	
-    		CollectSurveyContext surveyContext = new CollectSurveyContext(expressionFactory, validator, null);
-    		CollectIdmlBindingContext idmlBindingContext = new CollectIdmlBindingContext(surveyContext);
-    		idmlBindingContext.setConfigurationAdapter(new ConfigurationAdapter());
-    		SurveyUnmarshaller surveyUnmarshaller = idmlBindingContext.createSurveyUnmarshaller();*/
         	FileInputStream fis = new FileInputStream(sdcardPath+getResources().getString(R.string.formDefinitionFile));
         	ExpressionFactory expressionFactory = new ExpressionFactory();
-        	Log.e("Expression","FACTORY");
         	Validator validator = new Validator();
-        	Log.e("VALIDATOR","==");
         	CollectSurveyContext surveyContext = new CollectSurveyContext(expressionFactory, validator, null);
-        	Log.e("SURVEY","CONTEXT");
     		CollectIdmlBindingContext idmlBindingContext = new CollectIdmlBindingContext(surveyContext);
-    		Log.e("COLLECTIDMLBINDING","CONTEXT");
     		SurveyUnmarshaller surveyUnmarshaller = idmlBindingContext.createSurveyUnmarshaller();
-    		Log.e("SURVEY","UNMARSHALLER");
-    		CollectSurvey survey = (CollectSurvey) surveyUnmarshaller.unmarshal(fis);
-    		Log.e("KONIEC","====");
-        	/*IdmlBindingContext idmlBindingContext = new IdmlBindingContext();
-        	//UIConfigurationAdapter configurationAdapter = new UIConfigurationAdapter();
-        	//idmlBindingContext.setConfigurationAdapter(configurationAdapter);
-        	SurveyUnmarshaller surveyUnmarshaller = idmlBindingContext.createSurveyUnmarshaller();
-			long startTime = System.currentTimeMillis();
-			Survey survey = (Survey) surveyUnmarshaller.unmarshal(fis);
-    		
-    		//CollectSurvey survey = (CollectSurvey) surveyUnmarshaller.unmarshal(fis);
-    		Log.e("XML","PARSED in "+((System.currentTimeMillis()-startTime)/1000)+"s");
-    		survey.setName("archenland1");
-        	
-			
-			Log.e("surveyNAME","=="+survey.getName());
-			Log.e("surveyURI","=="+survey.getUri());
-			Log.e("surveyDESC","=="+survey.getDescription(null));
-			Log.e("iloscCODELISTS","=="+survey.getCodeLists().size());
-			Log.e("unit","=="+survey.getUnits().get(0).getName());
+    		TabManager.survey = (CollectSurvey) surveyUnmarshaller.unmarshal(fis);
+        	TabManager.schema = TabManager.survey.getSchema();
 			
 			//adding all tabs from form definition
-        	List<Configuration> configList = survey.getConfigurations();
-        	Log.e("configList.size","=="+configList.size());
+			
+        	TabManager.configList = survey.getConfigurations();
+        	int mainTabsNo = configList.size()+1;
         	if (configList.size()>0){
         		UIConfiguration uiConfig = (UIConfiguration)configList.get(0);
             	List<UITabDefinition> uiTabDefList = uiConfig.getTabDefinitions();
-            	Log.e("uiTabDefList.size","=="+uiTabDefList.size());
             	UITabDefinition uiTabDef = uiTabDefList.get(0);
-            	List<UITab> uiTabsList = uiTabDef.getTabs();
-            	Log.e("uiTabsList.size","=="+uiTabsList.size());
+            	TabManager.uiTabsList = uiTabDef.getTabs();
             	Intent tabIntent;
-            	for (UITab uiTab : uiTabsList){
-            		Log.e("tabName","=="+uiTab.getName());
+            	int tabNo = TabManager.uiTabsList.size();
+            	for (int i=0; i<TabManager.uiTabsList.size();i++){
+            		UITab uiTab = TabManager.uiTabsList.get(i);
+            		/*Log.e("tabName","=="+uiTab.getName());
             		Log.e("tabLabel","=="+uiTab.getLabel());
-            		Log.e("subtabsNo","=="+uiTab.getTabs().size());
-            		tabIntent = new Intent(TabManager.this,Tab.class);
+            		Log.e("subtabsNo","=="+uiTab.getTabs().size());*/
+            		if (uiTab.getTabs().size()>0){
+            			tabIntent = new Intent(TabManager.this, TabContainer.class);
+            		}
+            		else{
+            			tabIntent = new Intent(TabManager.this, Tab.class);
+            		}            		
             		tabIntent.putExtra("tabName", uiTab.getName());
             		tabIntent.putExtra("tabLabel", uiTab.getLabel());
-            		//tabIntent.putExtra(name, value);
-            		this.addTab(uiTab.getLabel(), 
-            				uiTab.getName(), 
-                			this.tabWidget.getChildCount(),
+            		tabIntent.putExtra("tabNo", i);
+            		tabIntent.putExtra("tabLevel", 1);
+            		TabManager.this.addTab(uiTab.getName(), 
+            				uiTab.getLabel(),
+                			TabManager.this.tabWidget.getChildCount(),
                 			tabIntent,
-                			this.calcTabWidth(1),
+                			TabManager.this.calcTabWidth(tabNo),
                 			getResources().getInteger(R.integer.tab_height));
-            		Log.e("==========","==========");
             	}	
-        	}
-			
-        	//InputStream is = new FileInputStream(sdcardPath+getResources().getString(R.string.application_folder)+getResources().getString(R.string.formDefinitionFile));
-            /*byte[] buffer = new byte[1000];
-			is.read(buffer);
-			String str = new String(buffer,"UTF8");
-			Log.e("FILE","=="+str);
-			CollectIdmlBindingContext idmlBindingContext = new CollectIdmlBindingContext((SurveyContext) new CollectContext());
-			SurveyUnmarshaller su = idmlBindingContext.createSurveyUnmarshaller();
-			CollectSurvey survey = (CollectSurvey) su.unmarshal(is);
-			Log.e("surveyName","=="+survey.getName());
-        
-			//adding all tabs from form definition
-        	List<Configuration> configList = survey.getConfiguration();
-        	Log.e("configList.size","=="+configList.size());
-        	UIConfiguration uiConfig = (UIConfiguration)configList.get(0);
-        	List<UITabDefinition> uiTabDefList = uiConfig.getTabDefinitions();
-        	UITabDefinition uiTabDef = uiTabDefList.get(0);
-        	List<UITab> uiTabsList = uiTabDef.getTabs();
-        	Intent tabIntent;
-        	for (UITab uiTab : uiTabsList){
-        		Log.e("tabName","=="+uiTab.getName());
-        		Log.e("tabLabel","=="+uiTab.getLabel());
-        		Log.e("subtabsNo","=="+uiTab.getTabs().size());
-        		tabIntent = new Intent(TabManager.this,Tab.class);
-        		tabIntent.putExtra("tabName", uiTab.getName());
-        		tabIntent.putExtra("tabLabel", uiTab.getLabel());
-        		//tabIntent.putExtra(name, value);
-        		this.addTab(uiTab.getLabel(), 
-        				uiTab.getName(), 
-            			this.tabWidget.getChildCount(),
-            			tabIntent,
-            			this.calcTabWidth(1),
-            			getResources().getInteger(R.integer.tab_height));
-        		Log.e("==========","==========");
-        	}*/
+        	}			
         	//adding About tab
-        	this.addTab(getResources().getString(R.string.aboutTabTitle), 
+        	TabManager.this.addTab(getResources().getString(R.string.aboutTabTitle), 
         			getResources().getString(R.string.aboutTabTitle), 
-        			this.tabWidget.getChildCount(),
-        			new Intent(TabManager.this,AboutTab.class),
-        			this.calcTabWidth(1),
-        			getResources().getInteger(R.integer.tab_height));
+        			TabManager.this.tabWidget.getChildCount(),
+        			new Intent(TabManager.this, AboutTab.class),
+        			TabManager.this.calcTabWidth(mainTabsNo),
+        			getResources().getInteger(R.integer.tab_height));   				
+
 		} catch (Exception e){
     		RunnableHandler.reportException(e,getResources().getString(R.string.app_name),TAG+":onCreate",
     				Environment.getExternalStorageDirectory().toString()
@@ -293,7 +214,7 @@ public class TabManager extends TabActivity implements OnGesturePerformedListene
     	}
     }
     
-    @Override
+    /*@Override
     public void onGesturePerformed(GestureOverlayView overlay, Gesture gesture) {
 		ArrayList<Prediction> predictions = gestureLib.recognize(gesture);
 		for (Prediction prediction : predictions) {
@@ -342,12 +263,12 @@ public class TabManager extends TabActivity implements OnGesturePerformedListene
 				}				
 			}
 		}
-    }
+    }*/
     
     private void addTab(String title, String indicator, int index, Intent content, int width, int height){
     	try{
-    		this.tabHost.addTab(tabHost.newTabSpec(getResources().getString(R.string.aboutTabTitle))
-                    .setIndicator(getResources().getString(R.string.aboutTabTitle))
+    		this.tabHost.addTab(tabHost.newTabSpec(title)
+                    .setIndicator(indicator)
                     .setContent(content));
 			this.tabWidget.getChildAt(index).setLayoutParams(new LinearLayout.LayoutParams(width, height));
     	} catch (Exception e){
@@ -376,5 +297,25 @@ public class TabManager extends TabActivity implements OnGesturePerformedListene
     	}
     	return tabWidth;
     }
+    
+    Thread welcomeThread = new Thread() {
+		@Override
+		public void run() {
+			try {
+				super.run();
+				Log.i(getResources().getString(R.string.app_name),TAG+":run");
+				Thread.sleep(getIntent().getIntExtra(getResources().getString(R.string.sleepTime), 5000));
+			} catch (Exception e) {
+				RunnableHandler.reportException(e,getResources().getString(R.string.app_name),TAG+":run",
+	    				Environment.getExternalStorageDirectory().toString()
+	    				+getResources().getString(R.string.logs_folder)
+	    				+getResources().getString(R.string.logs_file_name)
+	    				+System.currentTimeMillis()
+	    				+getResources().getString(R.string.log_file_extension));
+			} 	 finally {
+				finish();
+			}
+		}
+	};
 
 }

@@ -10,6 +10,14 @@
    		android:text="@string/lblApplicationName"
    		 >
    	</TextView>
+   	
+     <TextView 
+   		android:id="@+id/txtApplicationName"
+   		android:layout_width="wrap_content"
+   		android:layout_height="wrap_content"
+   		android:layout_toRightOf="@id/lblApplicationName"
+   		 >
+   	</TextView>
 
     <TextView 
    		android:id="@+id/lblProgramVersionName"
@@ -21,11 +29,29 @@
    	</TextView>
    	
     <TextView 
+   		android:id="@+id/txtProgramVersionName"
+   		android:layout_width="wrap_content"
+   		android:layout_height="wrap_content"
+   		android:layout_below="@id/lblApplicationName"
+   		android:layout_toRightOf="@id/lblProgramVersionName"
+   		 >
+   	</TextView>
+   	
+    <TextView 
    		android:id="@+id/lblFormVersionName"
    		android:layout_width="wrap_content"
    		android:layout_height="wrap_content"
    		android:layout_below="@id/lblProgramVersionName"
    		android:text="@string/lblFormVersionName"
+   		 >
+   	</TextView>
+    
+    <TextView 
+   		android:id="@+id/txtFormVersionName"
+   		android:layout_width="wrap_content"
+   		android:layout_height="wrap_content"
+   		android:layout_below="@id/lblProgramVersionName"
+   		android:layout_toRightOf="@id/lblFormVersionName"
    		 >
    	</TextView>
     

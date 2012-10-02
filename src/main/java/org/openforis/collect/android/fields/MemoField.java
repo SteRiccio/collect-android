@@ -11,7 +11,7 @@ import android.widget.Toast;
 
 public class MemoField extends InputField {
 	
-	public MemoField(Context context, String labelText, String initialText) {
+	public MemoField(Context context, String labelText, String initialText, String hintText) {
 		super(context);
 		
 		this.label = new TextView(context);
@@ -26,19 +26,9 @@ public class MemoField extends InputField {
 	        }
 	    });
 		this.txtBox = new EditText(context);
-		this.setValue(initialText);
+		this.setHint(hintText);
 		this.txtBox.setLayoutParams(new LayoutParams(0,ViewGroup.LayoutParams.WRAP_CONTENT,(float) 2));
 		this.addView(this.label);
 		this.addView(this.txtBox);
-	}
-	
-	public String getValue()
-	{
-		return this.txtBox.getText().toString();
-	}
-	
-	public void setValue(String value)
-	{
-		this.txtBox.setText(value);
 	}
 }

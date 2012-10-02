@@ -46,7 +46,7 @@ public class CodeField extends Field {
 			this.label.setOnClickListener(new OnClickListener() {
 				@Override
 				public void onClick(View v) {
-						
+					
 				}});
 		}
 		
@@ -64,22 +64,26 @@ public class CodeField extends Field {
 		this.spinner.setOnItemSelectedListener(new OnItemSelectedListener() {
 		    @Override
 		    public void onItemSelected(AdapterView<?> parentView, View selectedItemView, int position, long id) {
+		    	
 		    }
 
 		    @Override
 		    public void onNothingSelected(AdapterView<?> parentView) {
+		    	
 		    }
 
 		});
 		
 		boolean isFound = false;
 		int position = 0;
-		while (!isFound&&position<this.codes.size()){
-			if (this.codes.get(position).equals(selectedItem)){
-				isFound = true;
-			}
-			position++;
-		}
+		if (selectedItem!=null){
+			while (!isFound&&position<this.codes.size()){
+				if (this.codes.get(position).equals(selectedItem)){
+					isFound = true;
+				}
+				position++;
+			}	
+		}		
 		if (isFound)
 			this.spinner.setSelection(position-1);
 		else
