@@ -7,8 +7,8 @@ import android.widget.EditText;
 public class InputField extends Field {
 	public EditText txtBox;
 	
-	public InputField(Context context) {
-		super(context);
+	public InputField(Context context, boolean isMultiple) {
+		super(context, isMultiple);
 		this.txtBox = new EditText(context);
 	}
 	

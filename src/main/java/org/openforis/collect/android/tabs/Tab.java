@@ -2,6 +2,8 @@ package org.openforis.collect.android.tabs;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 import org.openforis.collect.android.R;
@@ -9,16 +11,21 @@ import org.openforis.collect.android.fields.BooleanField;
 import org.openforis.collect.android.fields.CodeField;
 import org.openforis.collect.android.fields.Field;
 import org.openforis.collect.android.fields.NumberField;
+import org.openforis.collect.android.fields.Separator;
 import org.openforis.collect.android.fields.TextField;
+import org.openforis.collect.android.fields.UiElement;
 import org.openforis.collect.android.lists.ClusterChoiceActivity;
 import org.openforis.collect.android.messages.AlertMessage;
 import org.openforis.idm.metamodel.BooleanAttributeDefinition;
 import org.openforis.idm.metamodel.CodeAttributeDefinition;
 import org.openforis.idm.metamodel.CodeListItem;
+import org.openforis.idm.metamodel.DateAttributeDefinition;
 import org.openforis.idm.metamodel.EntityDefinition;
 import org.openforis.idm.metamodel.NodeDefinition;
 import org.openforis.idm.metamodel.NumberAttributeDefinition;
+import org.openforis.idm.metamodel.RangeAttributeDefinition;
 import org.openforis.idm.metamodel.TextAttributeDefinition;
+import org.openforis.idm.metamodel.TimeAttributeDefinition;
 
 import android.app.Activity;
 import android.content.DialogInterface;
@@ -33,8 +40,10 @@ import android.graphics.Color;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.KeyEvent;
+import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.ScrollView;
+import android.widget.LinearLayout.LayoutParams;
 
 public class Tab extends Activity implements OnGesturePerformedListener {
 
@@ -45,10 +54,12 @@ public class Tab extends Activity implements OnGesturePerformedListener {
 	private GestureLibrary gestureLib;
 	
 	private List<NodeDefinition> fieldsList;
-	public List<Field> uiFields;
+	public List<UiElement> uiFields;
 	
 	private ScrollView sv;			
     public LinearLayout ll;
+    
+    private List<NodeDefinition> multipleEntitiesStack;
 	
 	public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -59,27 +70,33 @@ public class Tab extends Activity implements OnGesturePerformedListener {
         this.label = (startingIntent.getStringExtra("tabLabel")==null)?null:startingIntent.getStringExtra("tabLabel");
         
         this.fieldsList = new ArrayList<NodeDefinition>();
-        this.uiFields = new ArrayList<Field>();
+        this.uiFields = new ArrayList<UiElement>();
         
         this.sv = new ScrollView(this);
 		this.ll = new LinearLayout(this);
 		this.ll.setOrientation(android.widget.LinearLayout.VERTICAL);
 		this.sv.addView(ll);
 		
-        //Log.e("iloscDEFINITIONS","=="+TabManager.schema.getAllDefinitions().size());
+		this.multipleEntitiesStack = new ArrayList<NodeDefinition>();
+		
         Collection<NodeDefinition> formFields = TabManager.schema.getAllDefinitions();
+        formFields = this.sortById(formFields);
         for (NodeDefinition formField : formFields){
         	if (TabManager.survey.getUIConfiguration().getTab(formField)!=null){
             	if (TabManager.survey.getUIConfiguration().getTab(formField).getName().equals(this.name)){
-            		addField(formField);
+            		addUiElement(formField);
             	}
         	}
-
         }
-        for (Field formField : this.uiFields){
+    	for (int i=0;i<this.multipleEntitiesStack.size();i++){
+    		this.addRuler(ViewGroup.LayoutParams.FILL_PARENT, 5, Color.RED, false, -1);
+    	}
+
+        for (UiElement formField : this.uiFields){
         	this.ll.addView(formField);
         }
         
+		
     	//gestures detection
     	GestureOverlayView gestureOverlayView = new GestureOverlayView(this);
         gestureOverlayView.addView(this.sv/*inflate*/);
@@ -108,17 +125,44 @@ public class Tab extends Activity implements OnGesturePerformedListener {
 		this.getParent().onBackPressed();
 	}
 
-	private void addField(NodeDefinition formField){
+	private void addUiElement(NodeDefinition formField){
 		this.fieldsList.add(formField);
 		if (!formField.getClass().equals(EntityDefinition.class)){
+			
+			if (!this.multipleEntitiesStack.isEmpty()){
+				NodeDefinition tempNodeDef = this.multipleEntitiesStack.get(this.multipleEntitiesStack.size()-1);
+				Log.e("compared","=="+formField.getName());
+				boolean toBeRemoved = true;
+				NodeDefinition parentNodeDef = formField.getParentDefinition();
+				while (parentNodeDef!=null/*TabManager.survey.getSchema().getRootEntityDefinition(1)*/){
+					if (tempNodeDef.equals(parentNodeDef)){
+						toBeRemoved = false;
+					}
+					parentNodeDef = parentNodeDef.getParentDefinition();
+				}
+				if (toBeRemoved/*!tempNodeDef.equals(formField.getParentDefinition())*/){
+					for (int i=0;i<this.multipleEntitiesStack.size();i++){
+						Log.e("STACK"+i,"=="+this.multipleEntitiesStack.get(i).getName());
+					}
+					Log.e("removed", "=="+this.multipleEntitiesStack.get(this.multipleEntitiesStack.size()-1));
+					this.multipleEntitiesStack.remove(this.multipleEntitiesStack.size()-1);
+					
+					this.addRuler(ViewGroup.LayoutParams.FILL_PARENT, 5, Color.RED, false, -1);
+				}
+			}
 			this.uiFields.add(createUiField(formField));
+		}
+		else if (formField.isMultiple()&&(!formField.getName().equals("cluster"))&&(!formField.getName().equals("plot"))){
+			this.addRuler(ViewGroup.LayoutParams.FILL_PARENT, 5, Color.GREEN, true, -1);
+			this.multipleEntitiesStack.add(formField);
+			Log.e("added", "=="+formField.getName());
 		}
 	}
 	
 	private Field createUiField(NodeDefinition formField){
 		Field uiField = null;
 		if (formField.getClass().equals(NumberAttributeDefinition.class)){
-			uiField = new NumberField(this, formField.getLabel(null, null), null, formField.getLabel(null, null));
+			uiField = new NumberField(this, formField.getLabel(null, null), null, formField.getLabel(null, null), formField.isMultiple());
 		} else if (formField.getClass().equals(CodeAttributeDefinition.class)){
 			CodeAttributeDefinition codeAttrDef = (CodeAttributeDefinition) formField; 
 			
@@ -133,14 +177,26 @@ public class Tab extends Activity implements OnGesturePerformedListener {
 
 			uiField = new CodeField(this.getParent(), formField.getLabel(null, null), formField.getName(),
 					codes, options,
-					null, true);
+					null, true, formField.isMultiple());
 		} else if (formField.getClass().equals(BooleanAttributeDefinition.class)){
-			uiField = new BooleanField(this, formField.getLabel(null, null), false);
+			uiField = new BooleanField(this, formField.getLabel(null, null), false, formField.isMultiple());
 		} else if (formField.getClass().equals(TextAttributeDefinition.class)){
-			uiField = new TextField(this, formField.getLabel(null, null), null, formField.getLabel(null, null));
+			uiField = new TextField(this, formField.getLabel(null, null), null, formField.getLabel(null, null), formField.isMultiple());
+		} else if (formField.getClass().equals(DateAttributeDefinition.class)){
+			uiField = new TextField(this, formField.getLabel(null, null), null, formField.getLabel(null, null), formField.isMultiple());
+		} else if (formField.getClass().equals(TimeAttributeDefinition.class)){
+			uiField = new TextField(this, formField.getLabel(null, null), null, formField.getLabel(null, null), formField.isMultiple());
+		} else if (formField.getClass().equals(RangeAttributeDefinition.class)){
+			uiField = new TextField(this, formField.getLabel(null, null), null, formField.getLabel(null, null), formField.isMultiple());
 		} else {
-			uiField = new TextField(this, formField.getLabel(null, null), null, formField.getLabel(null, null));
+			uiField = new TextField(this, formField.getLabel(null, null), null, formField.getLabel(null, null), formField.isMultiple());
 		}
+		/*if (formField.isMultiple()){
+			Log.e("field:"+formField.getName(),"MULTIPLE");
+		}
+		if (formField.getParentDefinition().isMultiple()&&(!formField.getParentDefinition().getName().equals("plot"))&&(!formField.getParentDefinition().getName().equals("cluster"))){
+			Log.e("field:"+formField.getName(),"MULTIPLE PARENT ENTITY"+formField.getParentDefinition().getName());
+		}*/
 		return uiField;
 	}
 	
@@ -194,4 +250,35 @@ public class Tab extends Activity implements OnGesturePerformedListener {
 				}
 			}
 	    }
+	 
+	 private Collection<NodeDefinition> sortById(Collection<NodeDefinition> nodes){
+		 NodeDefinition[] nodesArray = new NodeDefinition[nodes.size()];
+		 nodes.toArray(nodesArray);
+		 List<NodeDefinition> nodesList = new ArrayList<NodeDefinition>();
+		 for (int i=0;i<nodesArray.length;i++){
+			 nodesList.add(nodesArray[i]);
+		 }
+		 Collections.sort(nodesList, new NodeIdComparator());
+		 return nodesList;
+	 }
+	 
+	 public class NodeIdComparator implements Comparator<NodeDefinition> {
+
+			@Override
+			public int compare(NodeDefinition lhs, NodeDefinition rhs) {				
+				return lhs.getId().compareTo(rhs.getId());
+			}
+		}
+	 
+	private void addRuler(int width, int height, int color, boolean hasArrows, int position){
+		Separator separator = new Separator(this.getParent(), hasArrows);
+		separator.setSeparatorColor(color);
+		//separator.setSeparatorLayout(new LayoutParams(ViewGroup.LayoutParams.FILL_PARENT,getResources().getInteger(R.integer.separator_height)));
+		if (position<0){
+			this.uiFields.add(separator);
+		} else{
+			this.uiFields.add(position, separator);
+		}
+		
+	}
 }

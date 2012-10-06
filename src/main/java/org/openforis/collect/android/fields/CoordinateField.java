@@ -14,8 +14,9 @@ public class CoordinateField extends InputField {
 	private EditText txtLatitude;
 	private EditText txtLongitude;
 	
-	public CoordinateField(Context context, String labelText, String initialText, String hintText) {		
-		super(context);
+	public CoordinateField(Context context, String labelText, String initialText, String hintText,
+			boolean isMultiple) {		
+		super(context, isMultiple);
 
 		this.label = new TextView(context);
 		this.label.setMaxLines(1);
@@ -34,6 +35,8 @@ public class CoordinateField extends InputField {
 	    			        	
 	        }
 	    });
+		
+		this.addView(this.scrollLeft);
 		this.addView(this.label);
 		
 		this.txtLatitude = new EditText(context);
@@ -43,6 +46,7 @@ public class CoordinateField extends InputField {
 		this.txtLongitude = new EditText(context);
 		this.txtLongitude.setLayoutParams(new LayoutParams(0,ViewGroup.LayoutParams.WRAP_CONTENT,(float) 2));
 		this.addView(txtLongitude);
+		this.addView(this.scrollRight);
 	}
 	
 	@Override

@@ -11,8 +11,9 @@ import android.widget.Toast;
 
 public class TaxonField extends InputField {
 	
-	public TaxonField(Context context, String labelText, String initialText, String hintText) {
-		super(context);
+	public TaxonField(Context context, String labelText, String initialText, String hintText,
+			boolean isMultiple) {
+		super(context, isMultiple);
 		
 		this.label = new TextView(context);
 		this.label.setMaxLines(1);
@@ -28,7 +29,10 @@ public class TaxonField extends InputField {
 		this.txtBox = new EditText(context);
 		this.setHint(hintText);
 		this.txtBox.setLayoutParams(new LayoutParams(0,ViewGroup.LayoutParams.WRAP_CONTENT,(float) 2));
+		
+		this.addView(this.scrollLeft);
 		this.addView(this.label);
 		this.addView(this.txtBox);
+		this.addView(this.scrollRight);
 	}
 }

@@ -4,6 +4,7 @@
     <integer name="tab_height">40</integer>
     
     <integer name="timeDifference4DoubleClick">1000</integer>
+    <integer name="separator_height">12</integer>
     
     <string name="application_folder">/mofc</string>
     <string name="data_folder">/mofc/data</string>
@@ -11,7 +12,7 @@
     <string name="logs_file_name">/log_</string>
     <string name="log_file_extension">.txt</string>
     <string name="backup_folder">/mofc/backups</string>
-    <string name="formDefinitionFile">/test.idm.xml</string>
+    <string name="formDefinitionFile">/test.idmMOJ.xml</string>
     
     <string name="sleepTime">sleepTime</string>
     

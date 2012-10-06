@@ -27,8 +27,9 @@ public class CodeField extends Field {
 	
 	public CodeField(Context context, String labelText, String promptText, 
 			ArrayList<String> codes, ArrayList<String> options, 
-			String selectedItem, boolean isSearchable) {
-		super(context);
+			String selectedItem, boolean isSearchable,
+			boolean isMultiple) {
+		super(context, isMultiple);
 		this.searchable = isSearchable;
 		
 		this.label = new TextView(context);
@@ -89,8 +90,10 @@ public class CodeField extends Field {
 		else
 			this.spinner.setSelection(0);
 		
+		this.addView(this.scrollLeft);
 		this.addView(this.label);
 		this.addView(this.spinner);
+		this.addView(this.scrollRight);
 	}
 	
 	public String getValue()
