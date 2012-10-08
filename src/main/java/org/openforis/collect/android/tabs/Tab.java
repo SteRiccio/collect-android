@@ -98,8 +98,8 @@ public class Tab extends Activity implements OnGesturePerformedListener {
         
 		
     	//gestures detection
-    	GestureOverlayView gestureOverlayView = new GestureOverlayView(this);
-        gestureOverlayView.addView(this.sv/*inflate*/);
+    	/*GestureOverlayView gestureOverlayView = new GestureOverlayView(this);
+        gestureOverlayView.addView(this.sv);
         gestureOverlayView.addOnGesturePerformedListener(this);
         gestureOverlayView.setGestureColor(Color.TRANSPARENT);
         gestureOverlayView.setUncertainGestureColor(Color.TRANSPARENT);
@@ -107,7 +107,8 @@ public class Tab extends Activity implements OnGesturePerformedListener {
         if (!gestureLib.load()) {
         	//finish();
         }
-        setContentView(gestureOverlayView);
+        setContentView(gestureOverlayView);*/
+        setContentView(this.sv);
 	}
 	
 	@Override

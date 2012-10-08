@@ -4,7 +4,8 @@
     <integer name="tab_height">40</integer>
     
     <integer name="timeDifference4DoubleClick">1000</integer>
-    <integer name="separator_height">12</integer>
+    <integer name="separator_height">22</integer>
+    <integer name="field_height">64</integer>
     
     <string name="application_folder">/mofc</string>
     <string name="data_folder">/mofc/data</string>
