@@ -41,7 +41,7 @@ public class GpsReader extends Activity implements LocationListener{
     						stopUsingGPS();
     						finish();
     					}
-    				}).show();
+    				},null).show();
 		}
 	}
 

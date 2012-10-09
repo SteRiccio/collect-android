@@ -4,13 +4,15 @@ import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.graphics.drawable.Drawable;
+import android.view.View;
 
 public class AlertMessage{
 	
 	public static AlertDialog createPositiveNegativeDialog(Context ctx, boolean isCancelable, Drawable icon,
 			String messageTitle,String messageBody, String positive, String negative,
 			DialogInterface.OnClickListener positiveButtonListener,
-			DialogInterface.OnClickListener negativeButtonListener){
+			DialogInterface.OnClickListener negativeButtonListener,
+			View viewToDisplay){
 		AlertDialog.Builder builder = new AlertDialog.Builder(ctx);	
 		builder.setTitle(messageTitle);
 	    builder.setMessage(messageBody);
@@ -18,6 +20,7 @@ public class AlertMessage{
 	    builder.setCancelable(isCancelable);
 	    builder.setPositiveButton(positive, positiveButtonListener);
 	    builder.setNegativeButton(negative, negativeButtonListener);
+	    builder.setView(viewToDisplay);
 	    return builder.create();
 	}
 	

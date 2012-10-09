@@ -5,6 +5,7 @@ import java.io.FileInputStream;
 import java.util.List;
 
 import org.openforis.collect.android.R;
+import org.openforis.collect.android.lists.ClusterChoiceActivity;
 import org.openforis.collect.android.messages.AlertMessage;
 import org.openforis.collect.android.misc.RunnableHandler;
 import org.openforis.collect.android.misc.WelcomeScreen;
@@ -28,11 +29,15 @@ import android.os.Environment;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.KeyEvent;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.LinearLayout;
 import android.widget.TabHost;
 import android.widget.TabWidget;
+import android.widget.Toast;
 
 public class TabManager extends TabActivity /*implements OnGesturePerformedListener*/ {
 
@@ -58,7 +63,7 @@ public class TabManager extends TabActivity /*implements OnGesturePerformedListe
             setContentView(R.layout.applicationwindow);            
             Log.i(getResources().getString(R.string.app_name),TAG+":onCreate");
             
-        	//showWelcomeScreen(5000);
+        	showWelcomeScreen(000);
             
         	//gestures detection
         	/*GestureOverlayView gestureOverlayView = new GestureOverlayView(this);
@@ -202,7 +207,8 @@ public class TabManager extends TabActivity /*implements OnGesturePerformedListe
     					public void onClick(DialogInterface dialog, int which) {
     						
     					}
-    				}).show();
+    				},
+    				null).show();
     	}catch (Exception e){
     		RunnableHandler.reportException(e,getResources().getString(R.string.app_name),TAG+":onBackPressed",
     				Environment.getExternalStorageDirectory().toString()
@@ -296,4 +302,71 @@ public class TabManager extends TabActivity /*implements OnGesturePerformedListe
     	}
     	return tabWidth;
     }
+    
+    // Initiating Menu XML file (menu.xml)
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu)
+    {
+        MenuInflater menuInflater = getMenuInflater();
+        menuInflater.inflate(R.layout.menu, menu);
+        return true;
+    }
+ 
+    /**
+     * Event Handling for Individual menu item selected
+     * Identify single menu item by it's id
+     * */
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item)
+    {
+ 
+        switch (item.getItemId())
+        {
+        case R.id.menu_open:
+        	AlertMessage.createPositiveNegativeDialog(TabManager.this, true, getResources().getDrawable(R.drawable.warningsign),
+    				getResources().getString(R.string.openingPlotListTitle), getResources().getString(R.string.openingPlotListMessage),
+    				getResources().getString(R.string.yes), getResources().getString(R.string.no),
+    	    		new DialogInterface.OnClickListener() {
+    					@Override
+    					public void onClick(DialogInterface dialog, int which) {
+    						TabManager.this.startActivityForResult(new Intent(TabManager.this, ClusterChoiceActivity.class),1);
+    					}
+    				},
+    	    		new DialogInterface.OnClickListener() {
+    					@Override
+    					public void onClick(DialogInterface dialog, int which) {
+    						
+    					}
+    				},
+    				null).show();
+            return true;
+ 
+        case R.id.menu_save:
+			AlertMessage.createPositiveNeutralNegativeDialog(TabManager.this, true, getResources().getDrawable(R.drawable.warningsign),
+    				getResources().getString(R.string.savingDataTitle), getResources().getString(R.string.savingDataMessage),
+    				getResources().getString(R.string.savingToDatabase), getResources().getString(R.string.savingToFile), getResources().getString(R.string.cancel),
+    	    		new DialogInterface.OnClickListener() {
+    					@Override
+    					public void onClick(DialogInterface dialog, int which) {
+    						
+    					}
+    				},
+    				new DialogInterface.OnClickListener() {
+    					@Override
+    					public void onClick(DialogInterface dialog, int which) {
+    						
+    					}
+    				},
+    	    		new DialogInterface.OnClickListener() {
+    					@Override
+    					public void onClick(DialogInterface dialog, int which) {
+    						
+    					}
+    				}).show();
+            return true;
+ 
+        default:
+            return super.onOptionsItemSelected(item);
+        }
+    }    
 }

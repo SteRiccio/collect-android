@@ -10,12 +10,11 @@ import org.openforis.collect.android.R;
 import org.openforis.collect.android.fields.BooleanField;
 import org.openforis.collect.android.fields.CodeField;
 import org.openforis.collect.android.fields.Field;
+import org.openforis.collect.android.fields.MemoField;
 import org.openforis.collect.android.fields.NumberField;
 import org.openforis.collect.android.fields.Separator;
 import org.openforis.collect.android.fields.TextField;
 import org.openforis.collect.android.fields.UiElement;
-import org.openforis.collect.android.lists.ClusterChoiceActivity;
-import org.openforis.collect.android.messages.AlertMessage;
 import org.openforis.idm.metamodel.BooleanAttributeDefinition;
 import org.openforis.idm.metamodel.CodeAttributeDefinition;
 import org.openforis.idm.metamodel.CodeListItem;
@@ -28,14 +27,7 @@ import org.openforis.idm.metamodel.TextAttributeDefinition;
 import org.openforis.idm.metamodel.TimeAttributeDefinition;
 
 import android.app.Activity;
-import android.content.DialogInterface;
 import android.content.Intent;
-import android.gesture.Gesture;
-import android.gesture.GestureLibraries;
-import android.gesture.GestureLibrary;
-import android.gesture.GestureOverlayView;
-import android.gesture.GestureOverlayView.OnGesturePerformedListener;
-import android.gesture.Prediction;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.util.Log;
@@ -43,15 +35,14 @@ import android.view.KeyEvent;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
 import android.widget.ScrollView;
-import android.widget.LinearLayout.LayoutParams;
 
-public class Tab extends Activity implements OnGesturePerformedListener {
+public class Tab extends Activity /*implements OnGesturePerformedListener*/ {
 
 	private static final String TAG = "Tab";
 	private String name;
 	private String label;
 	
-	private GestureLibrary gestureLib;
+	//private GestureLibrary gestureLib;
 	
 	private List<NodeDefinition> fieldsList;
 	public List<UiElement> uiFields;
@@ -101,8 +92,8 @@ public class Tab extends Activity implements OnGesturePerformedListener {
     	/*GestureOverlayView gestureOverlayView = new GestureOverlayView(this);
         gestureOverlayView.addView(this.sv);
         gestureOverlayView.addOnGesturePerformedListener(this);
-        gestureOverlayView.setGestureColor(Color.TRANSPARENT);
-        gestureOverlayView.setUncertainGestureColor(Color.TRANSPARENT);
+        gestureOverlayView.setGestureColor(Color.BLUE);
+        gestureOverlayView.setUncertainGestureColor(Color.RED);
         gestureLib = GestureLibraries.fromRawResource(this, R.raw.gestures);
         if (!gestureLib.load()) {
         	//finish();
@@ -128,42 +119,42 @@ public class Tab extends Activity implements OnGesturePerformedListener {
 
 	private void addUiElement(NodeDefinition formField){
 		this.fieldsList.add(formField);
-		if (!formField.getClass().equals(EntityDefinition.class)){
-			
-			if (!this.multipleEntitiesStack.isEmpty()){
+		if (!this.multipleEntitiesStack.isEmpty()){
+			int stackSize = this.multipleEntitiesStack.size();
+			for (int i=0;i<stackSize;i++){				
 				NodeDefinition tempNodeDef = this.multipleEntitiesStack.get(this.multipleEntitiesStack.size()-1);
-				Log.e("compared","=="+formField.getName());
 				boolean toBeRemoved = true;
 				NodeDefinition parentNodeDef = formField.getParentDefinition();
+				//Log.e("parent="+parentNodeDef.getName(),"last="+tempNodeDef.getName());
 				while (parentNodeDef!=null/*TabManager.survey.getSchema().getRootEntityDefinition(1)*/){
 					if (tempNodeDef.equals(parentNodeDef)){
 						toBeRemoved = false;
 					}
 					parentNodeDef = parentNodeDef.getParentDefinition();
 				}
+
 				if (toBeRemoved/*!tempNodeDef.equals(formField.getParentDefinition())*/){
-					for (int i=0;i<this.multipleEntitiesStack.size();i++){
-						Log.e("STACK"+i,"=="+this.multipleEntitiesStack.get(i).getName());
-					}
-					Log.e("removed", "=="+this.multipleEntitiesStack.get(this.multipleEntitiesStack.size()-1));
-					this.multipleEntitiesStack.remove(this.multipleEntitiesStack.size()-1);
-					
+					//Log.e("REMOVED","=="+this.multipleEntitiesStack.get(this.multipleEntitiesStack.size()-1).getName());
+					this.multipleEntitiesStack.remove(this.multipleEntitiesStack.size()-1);					
 					this.addRuler(ViewGroup.LayoutParams.FILL_PARENT, 5, Color.RED, false, -1);
 				}
 			}
+		}
+		if (!formField.getClass().equals(EntityDefinition.class)){
+			//Log.e("field"+formField.getName(),"ADDED");
 			this.uiFields.add(createUiField(formField));
 		}
-		else if (formField.isMultiple()&&(!formField.getName().equals("cluster"))&&(!formField.getName().equals("plot"))){
+		else if (formField.isMultiple()&&(!formField.getName().equals("cluster"))&&(!formField.getName().equals("plot"))&&(!formField.getName().equals("household"))){
 			this.addRuler(ViewGroup.LayoutParams.FILL_PARENT, 5, Color.GREEN, true, -1);
 			this.multipleEntitiesStack.add(formField);
-			Log.e("added", "=="+formField.getName());
+			//Log.e("ADDED","=="+formField.getName());
 		}
 	}
 	
 	private Field createUiField(NodeDefinition formField){
 		Field uiField = null;
 		if (formField.getClass().equals(NumberAttributeDefinition.class)){
-			uiField = new NumberField(this, formField.getLabel(null, null), null, formField.getLabel(null, null), formField.isMultiple());
+			uiField = new NumberField(this, formField.getLabel(null, null), null, null, formField.isMultiple());
 		} else if (formField.getClass().equals(CodeAttributeDefinition.class)){
 			CodeAttributeDefinition codeAttrDef = (CodeAttributeDefinition) formField; 
 			
@@ -180,17 +171,31 @@ public class Tab extends Activity implements OnGesturePerformedListener {
 					codes, options,
 					null, true, formField.isMultiple());
 		} else if (formField.getClass().equals(BooleanAttributeDefinition.class)){
-			uiField = new BooleanField(this, formField.getLabel(null, null), false, formField.isMultiple());
+			BooleanAttributeDefinition textField = (BooleanAttributeDefinition) formField;
+			Log.e("="+textField.getName(),"=="+textField.isAffirmativeOnly());
+			uiField = new BooleanField(this, textField.getLabel(null, null), false, false,
+					getResources().getString(R.string.yes), getResources().getString(R.string.no),
+					textField.isMultiple(), textField.isAffirmativeOnly());
 		} else if (formField.getClass().equals(TextAttributeDefinition.class)){
-			uiField = new TextField(this, formField.getLabel(null, null), null, formField.getLabel(null, null), formField.isMultiple());
+			TextAttributeDefinition textField = (TextAttributeDefinition) formField;			
+			Object fieldType = textField.getType();
+			if (fieldType!=null){
+				if(fieldType.toString().equals(getResources().getString(R.string.text_type_long))){//memo
+					uiField = new MemoField(this, formField.getLabel(null, null), null, null, formField.isMultiple());
+				} else {//short
+					uiField = new TextField(this, formField.getLabel(null, null), null, null, formField.isMultiple());
+				}
+			} else{//no type of text field specified
+				uiField = new TextField(this, formField.getLabel(null, null), null, null, formField.isMultiple());
+			}
 		} else if (formField.getClass().equals(DateAttributeDefinition.class)){
-			uiField = new TextField(this, formField.getLabel(null, null), null, formField.getLabel(null, null), formField.isMultiple());
+			uiField = new TextField(this, formField.getLabel(null, null), null, null, formField.isMultiple());
 		} else if (formField.getClass().equals(TimeAttributeDefinition.class)){
-			uiField = new TextField(this, formField.getLabel(null, null), null, formField.getLabel(null, null), formField.isMultiple());
+			uiField = new TextField(this, formField.getLabel(null, null), null, null, formField.isMultiple());
 		} else if (formField.getClass().equals(RangeAttributeDefinition.class)){
-			uiField = new TextField(this, formField.getLabel(null, null), null, formField.getLabel(null, null), formField.isMultiple());
+			uiField = new TextField(this, formField.getLabel(null, null), null, null, formField.isMultiple());
 		} else {
-			uiField = new TextField(this, formField.getLabel(null, null), null, formField.getLabel(null, null), formField.isMultiple());
+			uiField = new TextField(this, formField.getLabel(null, null), null, null, formField.isMultiple());
 		}
 		/*if (formField.isMultiple()){
 			Log.e("field:"+formField.getName(),"MULTIPLE");
@@ -201,7 +206,7 @@ public class Tab extends Activity implements OnGesturePerformedListener {
 		return uiField;
 	}
 	
-	 @Override
+	 /*@Override
 	    public void onGesturePerformed(GestureOverlayView overlay, Gesture gesture) {
 			ArrayList<Prediction> predictions = gestureLib.recognize(gesture);
 			for (Prediction prediction : predictions) {
@@ -250,7 +255,7 @@ public class Tab extends Activity implements OnGesturePerformedListener {
 					}				
 				}
 			}
-	    }
+	    }*/
 	 
 	 private Collection<NodeDefinition> sortById(Collection<NodeDefinition> nodes){
 		 NodeDefinition[] nodesArray = new NodeDefinition[nodes.size()];

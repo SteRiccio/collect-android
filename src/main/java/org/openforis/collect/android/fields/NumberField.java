@@ -3,6 +3,7 @@ package org.openforis.collect.android.fields;
 import org.openforis.collect.android.messages.ToastMessage;
 
 import android.content.Context;
+import android.text.method.DigitsKeyListener;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
@@ -30,9 +31,12 @@ public class NumberField extends InputField {
 		this.setHint(hintText);
 		this.txtBox.setLayoutParams(new LayoutParams(0,ViewGroup.LayoutParams.WRAP_CONTENT,(float) 2));
 		
+		this.setKeyboardType(new DigitsKeyListener(true,true));
+		
 		this.addView(this.scrollLeft);
 		this.addView(this.label);
 		this.addView(this.txtBox);
 		this.addView(this.scrollRight);
 	}
+	
 }

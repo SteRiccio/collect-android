@@ -4,6 +4,7 @@ import org.openforis.collect.android.messages.ToastMessage;
 
 import android.content.Context;
 import android.text.method.DigitsKeyListener;
+import android.text.method.KeyListener;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
@@ -11,6 +12,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 public class CoordinateField extends InputField {
+	
 	private EditText txtLatitude;
 	private EditText txtLongitude;
 	
@@ -43,6 +45,8 @@ public class CoordinateField extends InputField {
 		this.txtLatitude.setLayoutParams(new LayoutParams(0,ViewGroup.LayoutParams.WRAP_CONTENT,(float) 2));
 		this.addView(txtLatitude);
 
+		this.setKeyboardType(new DigitsKeyListener(true,true));
+		
 		this.txtLongitude = new EditText(context);
 		this.txtLongitude.setLayoutParams(new LayoutParams(0,ViewGroup.LayoutParams.WRAP_CONTENT,(float) 2));
 		this.addView(txtLongitude);
@@ -61,9 +65,15 @@ public class CoordinateField extends InputField {
 		this.txtLongitude.setText(longitude);
 	}
 	
-	public void makeNumericKeyboard(){
-		DigitsKeyListener dkl = new DigitsKeyListener(true,true);
-		txtLatitude.setKeyListener(dkl);
-		txtLongitude.setKeyListener(dkl);
+	@Override
+	public void setKeyboardType(KeyListener keyListener){
+		this.txtLatitude.setKeyListener(keyListener);
+		this.txtLongitude.setKeyListener(keyListener);
+	}
+	
+	@Override
+	public void setAlignment(int alignment){
+		this.txtLatitude.setGravity(alignment);
+		this.txtLongitude.setGravity(alignment);
 	}
 }

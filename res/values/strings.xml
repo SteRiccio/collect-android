@@ -22,6 +22,7 @@
     <string name="savingToFile">XML</string>
     <string name="openingPlotListTitle">Back to list&#8230;</string>    
     <string name="openingPlotListMessage">Do you want to open list of forms?</string>
+    <string name="editingMemoField">Editing</string>
     
     <!-- buttons -->
     <string name="footerSave">Save</string>
@@ -34,4 +35,9 @@
     <!-- images -->
     <string name="faologo">FAO logo</string>
     <string name="ofclogo">OpenForisCollect logo</string>
+    
+    <!-- menu -->
+    <string name="open">Back to list</string>
+    <string name="save">Save</string>
+    
 </resources>

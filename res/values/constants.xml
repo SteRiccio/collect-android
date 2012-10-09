@@ -26,4 +26,7 @@
     <string name="right_swipe">right_swipe</string>
     <string name="save_gesture">save</string>
     <string name="open_gesture">open</string>
+    
+    <string name="text_type_long">MEMO</string>
+    <string name="text_type_short">SHORT</string>
 </resources>
