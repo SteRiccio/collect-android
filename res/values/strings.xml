@@ -39,5 +39,8 @@
     <!-- menu -->
     <string name="open">Back to list</string>
     <string name="save">Save</string>
+    <string name="about">About</string>
+    
+    <string name="plotListPrompt">Choose entity </string>
     
 </resources>

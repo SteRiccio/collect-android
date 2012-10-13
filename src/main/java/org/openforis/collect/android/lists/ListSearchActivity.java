@@ -34,7 +34,7 @@ public class ListSearchActivity extends ListActivity implements TextWatcher{
 		
 		this.listName = this.getIntent().getStringExtra("listName");
 		
-		this.itemsList = TabManager.survey.getCodeList(this.listName).getItems();
+		/*this.itemsList = TabManager.survey.getCodeList(this.listName).getItems();
 		for (CodeListItem codeListItem : this.itemsList){
 			this.codes.add(codeListItem.getCode());
 			this.treeData.add(codeListItem.getLabel(null));
@@ -42,7 +42,7 @@ public class ListSearchActivity extends ListActivity implements TextWatcher{
         //this.codes = ;//this.getIntent().getStringExtra("codes").split("\\\");
         //this.treeData = ;//this.getIntent().getStringExtra("options").split("\\\");
         this.adapter = new ArrayAdapter<String>(this, R.layout.row, R.id.label, treeData);
-		this.setListAdapter(this.adapter);				
+		this.setListAdapter(this.adapter);		*/		
 	}
 
 	@Override

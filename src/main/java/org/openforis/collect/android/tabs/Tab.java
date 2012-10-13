@@ -70,7 +70,27 @@ public class Tab extends Activity /*implements OnGesturePerformedListener*/ {
 		
 		this.multipleEntitiesStack = new ArrayList<NodeDefinition>();
 		
-        Collection<NodeDefinition> formFields = TabManager.schema.getAllDefinitions();
+		Collection<NodeDefinition> formFields = TabManager.schema.getRootEntityDefinitions().get(0).getChildDefinitions();
+		Log.e(this.label+"iloscPOL"+this.name,"=="+formFields.size());
+        formFields = this.sortById(formFields);
+        EntityDefinition rootEntityDefn = TabManager.schema.getRootEntityDefinitions().get(0);
+    	Log.e("field="+rootEntityDefn.getName(),"=="+TabManager.survey.getUIOptions().getTabSet(rootEntityDefn));
+        for (NodeDefinition formField : formFields){
+        	if (TabManager.survey.getUIOptions().getTab(formField)!=null){
+            	if (TabManager.survey.getUIOptions().getTab(formField).getName().equals(this.name)){
+            		addUiElement(formField);
+            	}
+        	}
+        }
+    	for (int i=0;i<this.multipleEntitiesStack.size();i++){
+    		this.addRuler(ViewGroup.LayoutParams.FILL_PARENT, 5, Color.RED, false, -1);
+    	}
+
+        for (UiElement formField : this.uiFields){
+        	this.ll.addView(formField);
+        }
+		
+       /* Collection<NodeDefinition> formFields = TabManager.schema.getAllDefinitions();
         formFields = this.sortById(formFields);
         for (NodeDefinition formField : formFields){
         	if (TabManager.survey.getUIConfiguration().getTab(formField)!=null){
@@ -85,7 +105,7 @@ public class Tab extends Activity /*implements OnGesturePerformedListener*/ {
 
         for (UiElement formField : this.uiFields){
         	this.ll.addView(formField);
-        }
+        }*/
         
 		
     	//gestures detection
@@ -172,7 +192,6 @@ public class Tab extends Activity /*implements OnGesturePerformedListener*/ {
 					null, true, formField.isMultiple());
 		} else if (formField.getClass().equals(BooleanAttributeDefinition.class)){
 			BooleanAttributeDefinition textField = (BooleanAttributeDefinition) formField;
-			Log.e("="+textField.getName(),"=="+textField.isAffirmativeOnly());
 			uiField = new BooleanField(this, textField.getLabel(null, null), false, false,
 					getResources().getString(R.string.yes), getResources().getString(R.string.no),
 					textField.isMultiple(), textField.isAffirmativeOnly());
@@ -272,7 +291,7 @@ public class Tab extends Activity /*implements OnGesturePerformedListener*/ {
 
 			@Override
 			public int compare(NodeDefinition lhs, NodeDefinition rhs) {				
-				return lhs.getId().compareTo(rhs.getId());
+				return Integer.valueOf(lhs.getId()).compareTo(rhs.getId());//lhs.getId().compareTo(rhs.getId());
 			}
 		}
 	 

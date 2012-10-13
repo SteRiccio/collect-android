@@ -5,25 +5,27 @@ import java.io.FileInputStream;
 import java.util.List;
 
 import org.openforis.collect.android.R;
+import org.openforis.collect.android.database.CollectDatabase;
+import org.openforis.collect.android.database.DatabaseWrapper;
 import org.openforis.collect.android.lists.ClusterChoiceActivity;
 import org.openforis.collect.android.messages.AlertMessage;
 import org.openforis.collect.android.misc.RunnableHandler;
 import org.openforis.collect.android.misc.WelcomeScreen;
+import org.openforis.collect.metamodel.ui.UIOptions;
+import org.openforis.collect.metamodel.ui.UITab;
+import org.openforis.collect.metamodel.ui.UITabSet;
 import org.openforis.collect.model.CollectSurvey;
 import org.openforis.collect.model.CollectSurveyContext;
-import org.openforis.collect.model.ui.UIConfiguration;
-import org.openforis.collect.model.ui.UITab;
-import org.openforis.collect.model.ui.UITabDefinition;
-import org.openforis.collect.persistence.xml.CollectIdmlBindingContext;
-import org.openforis.idm.metamodel.Configuration;
+import org.openforis.collect.model.Configuration;
 import org.openforis.idm.metamodel.Schema;
 import org.openforis.idm.metamodel.validation.Validator;
-import org.openforis.idm.metamodel.xml.SurveyUnmarshaller;
+import org.openforis.idm.metamodel.xml.SurveyIdmlBinder;
 import org.openforis.idm.model.expression.ExpressionFactory;
 
 import android.app.TabActivity;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.PackageManager.NameNotFoundException;
 import android.os.Bundle;
 import android.os.Environment;
 import android.util.DisplayMetrics;
@@ -37,7 +39,6 @@ import android.view.WindowManager;
 import android.widget.LinearLayout;
 import android.widget.TabHost;
 import android.widget.TabWidget;
-import android.widget.Toast;
 
 public class TabManager extends TabActivity /*implements OnGesturePerformedListener*/ {
 
@@ -48,9 +49,11 @@ public class TabManager extends TabActivity /*implements OnGesturePerformedListe
 	
 	public static CollectSurvey survey;
 	public static List<Configuration> configList;
+	public static UITabSet tabSet;
 	public static List<UITab> uiTabsList;
 	public static Schema schema;
 
+	public static DatabaseWrapper databaseWrapper;
     /*private GestureDetector gestureDetector;
     View.OnTouchListener gestureListener;*/
 
@@ -99,24 +102,79 @@ public class TabManager extends TabActivity /*implements OnGesturePerformedListe
 		    folder = new File(sdcardPath+getResources().getString(R.string.logs_folder));
 		    folder.mkdirs();
 		    
+		    //creating database
+		    databaseWrapper = new DatabaseWrapper(this);
+		    CollectDatabase collectDB = new CollectDatabase(DatabaseWrapper.db);
+		    
+		    //creating tab container
         	tabHost = getTabHost();
         	tabWidget = tabHost.getTabWidget();
         	
         	//reading form definition
+        	long startTime = System.currentTimeMillis();
         	FileInputStream fis = new FileInputStream(sdcardPath+getResources().getString(R.string.formDefinitionFile));
         	ExpressionFactory expressionFactory = new ExpressionFactory();
         	Validator validator = new Validator();
-        	CollectSurveyContext surveyContext = new CollectSurveyContext(expressionFactory, validator, null);
-    		CollectIdmlBindingContext idmlBindingContext = new CollectIdmlBindingContext(surveyContext);
-    		SurveyUnmarshaller surveyUnmarshaller = idmlBindingContext.createSurveyUnmarshaller();
-    		TabManager.survey = (CollectSurvey) surveyUnmarshaller.unmarshal(fis);
-        	TabManager.schema = TabManager.survey.getSchema();
-			
-			//adding all tabs from form definition			
-        	TabManager.configList = survey.getConfigurations();
-        	int mainTabsNo = configList.size()+1;
-        	if (configList.size()>0){
-        		UIConfiguration uiConfig = (UIConfiguration)configList.get(0);
+        	CollectSurveyContext collectSurveyContext = new CollectSurveyContext(expressionFactory, validator, null);
+    		SurveyIdmlBinder binder = new SurveyIdmlBinder(collectSurveyContext);
+    		//binder.addApplicationOptionsBinder(new UIOptionsBinder());
+    		TabManager.survey = (CollectSurvey) binder.unmarshal(fis);
+    		TabManager.schema = TabManager.survey.getSchema();
+        	Log.e("TIME","=="+(System.currentTimeMillis()-startTime));
+        	//Log.e("tabsetsNo","=="+TabManager.survey.getUIOptions().getTabSets().size());
+        	//UIOptions uiOptions = TabManager.survey.getUIOptions();
+        	UIOptions uiOptions = new UIOptions();
+        	UITabSet tabSet = new UITabSet();
+        	tabSet.setName("ui");
+        	
+        	UITab tab = new UITab();
+        	tab.setName("cluster");
+        	tab.setLabel("EN", "Cluster");
+        	tabSet.addTab(tab);
+        	
+        	tab = new UITab();
+        	tab.setName("plot");
+        	tab.setLabel("EN", "Plot");
+        	UITab subtab = new UITab();
+        	subtab.setName("plot_det");
+        	subtab.setLabel("EN", "Details (2)");
+        	tab.addTab(subtab);
+        	subtab = new UITab();
+        	subtab.setName("shrubs_regen");
+        	subtab.setLabel("EN", "Shrubs & regeneration (3)");
+        	tab.addTab(subtab);
+        	tabSet.addTab(tab);
+        	
+        	uiOptions.addTabSet(tabSet);
+        	TabManager.survey.addApplicationOptions(uiOptions);
+        	
+        	//TabManager.configList = survey.getConfigurations();
+        	TabManager.tabSet = uiOptions.getTabSet("ui");
+        	int mainTabsNo = TabManager.tabSet.getTabs().size();
+        	if (mainTabsNo>0){
+        		TabManager.uiTabsList = TabManager.tabSet.getTabs();
+        		Log.e("tab set size","=="+TabManager.uiTabsList.size());
+        		Intent tabIntent;
+            	for (int i=0; i<mainTabsNo;i++){
+            		UITab uiTab = TabManager.uiTabsList.get(i);
+            		if (uiTab.getTabs().size()>0){
+            			tabIntent = new Intent(TabManager.this, TabContainer.class);
+            		}
+            		else{
+            			tabIntent = new Intent(TabManager.this, Tab.class);
+            		}
+            		tabIntent.putExtra("tabName", uiTab.getName());
+            		tabIntent.putExtra("tabLabel", uiTab.getLabel("EN"));
+            		tabIntent.putExtra("tabNo", i);
+            		tabIntent.putExtra("tabLevel", 1);
+            		TabManager.this.addTab(uiTab.getName(), 
+            				uiTab.getLabel("EN"),
+                			TabManager.this.tabWidget.getChildCount(),
+                			tabIntent,
+                			TabManager.this.calcTabWidth(mainTabsNo),
+                			getResources().getInteger(R.integer.tab_height));
+            	}
+        		/*UIConfiguration uiConfig = (UIConfiguration)configList.get(0);
             	List<UITabDefinition> uiTabDefList = uiConfig.getTabDefinitions();
             	UITabDefinition uiTabDef = uiTabDefList.get(0);
             	TabManager.uiTabsList = uiTabDef.getTabs();
@@ -124,9 +182,6 @@ public class TabManager extends TabActivity /*implements OnGesturePerformedListe
             	int tabNo = TabManager.uiTabsList.size();
             	for (int i=0; i<TabManager.uiTabsList.size();i++){
             		UITab uiTab = TabManager.uiTabsList.get(i);
-            		/*Log.e("tabName","=="+uiTab.getName());
-            		Log.e("tabLabel","=="+uiTab.getLabel());
-            		Log.e("subtabsNo","=="+uiTab.getTabs().size());*/
             		if (uiTab.getTabs().size()>0){
             			tabIntent = new Intent(TabManager.this, TabContainer.class);
             		}
@@ -143,16 +198,55 @@ public class TabManager extends TabActivity /*implements OnGesturePerformedListe
                 			tabIntent,
                 			TabManager.this.calcTabWidth(tabNo),
                 			getResources().getInteger(R.integer.tab_height));
-            	}	
-        	}			
+            	}*/
+        	}
+        	
+//        	Log.e("depth","=="+uiOptions.getTabSet("cluster").getDepth());
+        	/*ExpressionFactory expressionFactory = new ExpressionFactory();
+        	Validator validator = new Validator();
+        	CollectSurveyContext surveyContext = new CollectSurveyContext(expressionFactory, validator, null);
+    		CollectIdmlBindingContext idmlBindingContext = new CollectIdmlBindingContext(surveyContext);
+    		SurveyUnmarshaller surveyUnmarshaller = idmlBindingContext.createSurveyUnmarshaller();
+    		TabManager.survey = (CollectSurvey) surveyUnmarshaller.unmarshal(fis);
+        	TabManager.schema = TabManager.survey.getSchema();*/
+			
+			//adding all tabs from form definition			
+        	/*TabManager.configList = survey.getConfigurations();
+        	int mainTabsNo = configList.size()+1;
+        	if (configList.size()>0){
+        		UIConfiguration uiConfig = (UIConfiguration)configList.get(0);
+            	List<UITabDefinition> uiTabDefList = uiConfig.getTabDefinitions();
+            	UITabDefinition uiTabDef = uiTabDefList.get(0);
+            	TabManager.uiTabsList = uiTabDef.getTabs();
+            	Intent tabIntent;
+            	int tabNo = TabManager.uiTabsList.size();
+            	for (int i=0; i<TabManager.uiTabsList.size();i++){
+            		UITab uiTab = TabManager.uiTabsList.get(i);
+            		if (uiTab.getTabs().size()>0){
+            			tabIntent = new Intent(TabManager.this, TabContainer.class);
+            		}
+            		else{
+            			tabIntent = new Intent(TabManager.this, Tab.class);
+            		}            		
+            		tabIntent.putExtra("tabName", uiTab.getName());
+            		tabIntent.putExtra("tabLabel", uiTab.getLabel());
+            		tabIntent.putExtra("tabNo", i);
+            		tabIntent.putExtra("tabLevel", 1);
+            		TabManager.this.addTab(uiTab.getName(), 
+            				uiTab.getLabel(),
+                			TabManager.this.tabWidget.getChildCount(),
+                			tabIntent,
+                			TabManager.this.calcTabWidth(tabNo),
+                			getResources().getInteger(R.integer.tab_height));
+            	}
+        	}*/
         	//adding About tab
-        	TabManager.this.addTab(getResources().getString(R.string.aboutTabTitle), 
+        	/*TabManager.this.addTab(getResources().getString(R.string.aboutTabTitle), 
         			getResources().getString(R.string.aboutTabTitle), 
         			TabManager.this.tabWidget.getChildCount(),
         			new Intent(TabManager.this, AboutTab.class),
         			TabManager.this.calcTabWidth(mainTabsNo),
-        			getResources().getInteger(R.integer.tab_height));   				
-
+        			getResources().getInteger(R.integer.tab_height));*/
 		} catch (Exception e){
     		RunnableHandler.reportException(e,getResources().getString(R.string.app_name),TAG+":onCreate",
     				Environment.getExternalStorageDirectory().toString()
@@ -364,7 +458,31 @@ public class TabManager extends TabActivity /*implements OnGesturePerformedListe
     					}
     				}).show();
             return true;
- 
+
+        case R.id.menu_about:
+        	String versionName;
+        	try {
+				versionName = this.getPackageManager().getPackageInfo(this.getPackageName(), 0).versionName;
+			} catch (NameNotFoundException e) {
+				versionName = "";
+			}
+        	AlertMessage.createPositiveDialog(TabManager.this, true, null,
+    				getResources().getString(R.string.aboutTabTitle), 
+    				getResources().getString(R.string.lblApplicationName)+getResources().getString(R.string.app_name)
+    				+"\n"
+    				+getResources().getString(R.string.lblProgramVersionName)+versionName
+    				+"\n"
+    				+getResources().getString(R.string.lblFormVersionName)+TabManager.survey.getProjectName(null)+" "+TabManager.survey.getVersions().get(TabManager.survey.getVersions().size()-1).getName(),
+    				getResources().getString(R.string.okay),
+    	    		new DialogInterface.OnClickListener() {
+    					@Override
+    					public void onClick(DialogInterface dialog, int which) {
+    						
+    					}
+    				},
+    				null).show();
+            return true;
+            
         default:
             return super.onOptionsItemSelected(item);
         }
