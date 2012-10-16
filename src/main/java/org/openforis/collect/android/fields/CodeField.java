@@ -1,11 +1,13 @@
 package org.openforis.collect.android.fields;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import org.openforis.collect.android.R;
 import org.openforis.collect.android.messages.ToastMessage;
 
 import android.content.Context;
+import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
@@ -17,13 +19,16 @@ import android.widget.Toast;
 
 
 public class CodeField extends Field {
-	private ArrayAdapter<String> aa;
-	private Spinner spinner;;
 	
+	private ArrayAdapter<String> aa;
+	private Spinner spinner;
+
 	ArrayList<String> options;
 	ArrayList<String> codes;
 	
 	boolean searchable;
+	
+	private List<List<String>> values;
 	
 	public CodeField(Context context, String labelText, String promptText, 
 			ArrayList<String> codes, ArrayList<String> options, 
@@ -56,7 +61,9 @@ public class CodeField extends Field {
 		
 		this.codes = codes;
 		this.options = options;
-		this.aa = new ArrayAdapter<String>( context, android.R.layout.simple_spinner_item,options);
+		/*this.options = new ArrayList<String>();
+		this.options.add("OPTION!");*/
+		this.aa = new ArrayAdapter<String>(context, android.R.layout.simple_spinner_item, this.options);
 
 		this.aa.setDropDownViewResource(R.layout.codelistitem);
 
@@ -128,4 +135,35 @@ public class CodeField extends Field {
 	{
 		this.spinner.setSelection(0);
 	}
+	
+	/*@Override
+	protected void scrollLeft(){
+    	Log.e("SCROLL","LEFTCodeField");
+    	Log.e("currINstancenO","=="+CodeField.this.currentInstanceNo);
+    	if (CodeField.this.currentInstanceNo>1){
+    		CodeField.this.values.set(CodeField.this.currentInstanceNo-1, CodeField.this.txtBox.getText().toString());	        		
+    		CodeField.this.txtBox.setText(CodeField.this.values.get(CodeField.this.currentInstanceNo-2));
+    		CodeField.this.currentInstanceNo--;
+    	}
+    	Log.e("currentInstanceNO","=="+CodeField.this.currentInstanceNo);
+    	for (int i=0;i<CodeField.this.values.size();i++){
+    		Log.e("values"+i,"=="+CodeField.this.values.get(i));
+    	}
+	}
+	
+	@Override
+	protected void scrollRight(){
+    	Log.e("currINstancenO","=="+CodeField.this.currentInstanceNo);
+    	if (CodeField.this.values.size()==CodeField.this.currentInstanceNo){
+    		CodeField.this.values.add(CodeField.this.currentInstanceNo, "added");	        		
+    	}
+    	CodeField.this.values.set(CodeField.this.currentInstanceNo-1, CodeField.this.txtBox.getText().toString());        			        		
+		if (CodeField.this.values.size()>CodeField.this.currentInstanceNo)
+			CodeField.this.txtBox.setText(CodeField.this.values.get(CodeField.this.currentInstanceNo));
+		CodeField.this.currentInstanceNo++;
+    	Log.e("currentInstanceNO","=="+CodeField.this.currentInstanceNo);
+    	for (int i=0;i<CodeField.this.values.size();i++){
+    		Log.e("values"+i,"=="+CodeField.this.values.get(i));
+    	}
+	}*/
 }

@@ -1,9 +1,12 @@
 package org.openforis.collect.android.fields;
 
+import java.util.List;
+
 import org.openforis.collect.android.messages.ToastMessage;
 
 import android.content.Context;
 import android.text.method.DigitsKeyListener;
+import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
@@ -11,6 +14,8 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 public class NumberField extends InputField {
+	
+	private List<String> values;
 	
 	public NumberField(Context context, String labelText, String initialText, String hintText,
 			boolean isMultiple) {
@@ -37,6 +42,37 @@ public class NumberField extends InputField {
 		this.addView(this.label);
 		this.addView(this.txtBox);
 		this.addView(this.scrollRight);
+	}
+
+	@Override
+	protected void scrollLeft(){
+    	Log.e("SCROLL","LEFTNumberField");
+    	Log.e("currINstancenO","=="+NumberField.this.currentInstanceNo);
+    	if (NumberField.this.currentInstanceNo>1){
+    		NumberField.this.values.set(NumberField.this.currentInstanceNo-1, NumberField.this.txtBox.getText().toString());	        		
+    		NumberField.this.txtBox.setText(NumberField.this.values.get(NumberField.this.currentInstanceNo-2));
+    		NumberField.this.currentInstanceNo--;
+    	}
+    	Log.e("currentInstanceNO","=="+NumberField.this.currentInstanceNo);
+    	for (int i=0;i<NumberField.this.values.size();i++){
+    		Log.e("values"+i,"=="+NumberField.this.values.get(i));
+    	}
+	}
+	
+	@Override
+	protected void scrollRight(){
+    	Log.e("currINstancenO","=="+NumberField.this.currentInstanceNo);
+    	if (NumberField.this.values.size()==NumberField.this.currentInstanceNo){
+    		NumberField.this.values.add(NumberField.this.currentInstanceNo, "added");	        		
+    	}
+    	NumberField.this.values.set(NumberField.this.currentInstanceNo-1, NumberField.this.txtBox.getText().toString());        			        		
+		if (NumberField.this.values.size()>NumberField.this.currentInstanceNo)
+			NumberField.this.txtBox.setText(NumberField.this.values.get(NumberField.this.currentInstanceNo));
+		NumberField.this.currentInstanceNo++;
+    	Log.e("currentInstanceNO","=="+NumberField.this.currentInstanceNo);
+    	for (int i=0;i<NumberField.this.values.size();i++){
+    		Log.e("values"+i,"=="+NumberField.this.values.get(i));
+    	}
 	}
 	
 }

@@ -1,5 +1,7 @@
 package org.openforis.collect.android.fields;
 
+import java.util.List;
+
 import org.openforis.collect.android.messages.ToastMessage;
 
 import android.content.Context;
@@ -10,6 +12,8 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 public class RangeField extends InputField {
+	
+	private List<String> values;
 	
 	public RangeField(Context context, String labelText, String initialText, String hintText,
 			boolean isMultiple) {

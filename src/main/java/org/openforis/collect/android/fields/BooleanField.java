@@ -1,8 +1,11 @@
 package org.openforis.collect.android.fields;
 
+import java.util.List;
+
 import org.openforis.collect.android.messages.ToastMessage;
 
 import android.content.Context;
+import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CheckBox;
@@ -15,6 +18,8 @@ public class BooleanField extends Field {
 	private TextView label2;
 	private CheckBox chckBox1;
 	private CheckBox chckBox2;
+	
+	private List<List<Boolean>> values;
 	
 	public BooleanField(Context context, String labelText, boolean isChecked1, boolean isChecked2,
 			String label1Text, String label2Text,
@@ -80,4 +85,36 @@ public class BooleanField extends Field {
 	{
 		this.chckBox2.setChecked(isChecked);
 	}
+	
+	/*@Override
+	protected void scrollLeft(){
+    	Log.e("SCROLL","LEFTBooleanField");
+    	Log.e("currINstancenO","=="+BooleanField.this.currentInstanceNo);
+    	if (BooleanField.this.currentInstanceNo>1){
+    		BooleanField.this.values.set(BooleanField.this.currentInstanceNo-1, BooleanField.this.txtBox.getText().toString());	        		
+    		//BooleanField.this.txtBox.setText(BooleanField.this.values.get(BooleanField.this.currentInstanceNo-2));
+    		BooleanField.this.chckBox1.setChecked(BooleanField.this.values.get(BooleanField.this.currentInstanceNo-2));
+    		BooleanField.this.currentInstanceNo--;
+    	}
+    	Log.e("currentInstanceNO","=="+BooleanField.this.currentInstanceNo);
+    	for (int i=0;i<BooleanField.this.values.size();i++){
+    		Log.e("values"+i,"=="+BooleanField.this.values.get(i));
+    	}
+	}
+	
+	@Override
+	protected void scrollRight(){
+    	Log.e("currINstancenO","=="+BooleanField.this.currentInstanceNo);
+    	if (BooleanField.this.values.size()==BooleanField.this.currentInstanceNo){
+    		BooleanField.this.values.add(BooleanField.this.currentInstanceNo, "added");	        		
+    	}
+    	BooleanField.this.values.set(BooleanField.this.currentInstanceNo-1, BooleanField.this.txtBox.getText().toString());        			        		
+		if (BooleanField.this.values.size()>BooleanField.this.currentInstanceNo)
+			BooleanField.this.txtBox.setText(BooleanField.this.values.get(BooleanField.this.currentInstanceNo));
+		BooleanField.this.currentInstanceNo++;
+    	Log.e("currentInstanceNO","=="+BooleanField.this.currentInstanceNo);
+    	for (int i=0;i<BooleanField.this.values.size();i++){
+    		Log.e("values"+i,"=="+BooleanField.this.values.get(i));
+    	}
+	}*/
 }

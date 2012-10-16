@@ -49,7 +49,6 @@ public class TabContainer extends TabActivity {
         this.name = (startingIntent.getStringExtra("tabName")==null)?null:startingIntent.getStringExtra("tabName");
         this.label = (startingIntent.getStringExtra("tabLabel")==null)?null:startingIntent.getStringExtra("tabLabel");
         Collection<EntityDefinition> rootEntitiesDefs = TabManager.schema.getRootEntityDefinitions();
-        Log.e("rootsNo","=="+rootEntitiesDefs.size());
         
         Collection<NodeDefinition> formFields = TabManager.schema.getRootEntityDefinitions().get(0).getChildDefinitions();
         boolean hasFields = false;

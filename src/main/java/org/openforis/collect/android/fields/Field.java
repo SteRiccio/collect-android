@@ -3,7 +3,7 @@ package org.openforis.collect.android.fields;
 import android.content.Context;
 import android.widget.TextView;
 
-public abstract class Field extends UiElement{
+public abstract class Field extends UIElement{
 	
 	protected TextView label;
 	//public ImageView scrollLeft;

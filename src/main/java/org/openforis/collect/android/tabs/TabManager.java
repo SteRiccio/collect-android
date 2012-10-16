@@ -2,11 +2,18 @@ package org.openforis.collect.android.tabs;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.GregorianCalendar;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.openforis.collect.android.R;
 import org.openforis.collect.android.database.CollectDatabase;
 import org.openforis.collect.android.database.DatabaseWrapper;
+import org.openforis.collect.android.fields.UIElement;
 import org.openforis.collect.android.lists.ClusterChoiceActivity;
 import org.openforis.collect.android.messages.AlertMessage;
 import org.openforis.collect.android.misc.RunnableHandler;
@@ -14,12 +21,22 @@ import org.openforis.collect.android.misc.WelcomeScreen;
 import org.openforis.collect.metamodel.ui.UIOptions;
 import org.openforis.collect.metamodel.ui.UITab;
 import org.openforis.collect.metamodel.ui.UITabSet;
+import org.openforis.collect.model.CollectRecord;
+import org.openforis.collect.model.CollectRecord.State;
+import org.openforis.collect.model.CollectRecord.Step;
 import org.openforis.collect.model.CollectSurvey;
 import org.openforis.collect.model.CollectSurveyContext;
 import org.openforis.collect.model.Configuration;
+import org.openforis.collect.model.User;
+import org.openforis.idm.metamodel.EntityDefinition;
+import org.openforis.idm.metamodel.NodeDefinition;
 import org.openforis.idm.metamodel.Schema;
 import org.openforis.idm.metamodel.validation.Validator;
 import org.openforis.idm.metamodel.xml.SurveyIdmlBinder;
+import org.openforis.idm.model.Code;
+import org.openforis.idm.model.Date;
+import org.openforis.idm.model.Entity;
+import org.openforis.idm.model.EntityBuilder;
 import org.openforis.idm.model.expression.ExpressionFactory;
 
 import android.app.TabActivity;
@@ -53,6 +70,9 @@ public class TabManager extends TabActivity /*implements OnGesturePerformedListe
 	public static List<UITab> uiTabsList;
 	public static Schema schema;
 
+	public static List<NodeDefinition> fieldsList;
+	public static Map<Integer,UIElement> uiElementsMap;
+	
 	public static DatabaseWrapper databaseWrapper;
     /*private GestureDetector gestureDetector;
     View.OnTouchListener gestureListener;*/
@@ -120,12 +140,18 @@ public class TabManager extends TabActivity /*implements OnGesturePerformedListe
     		//binder.addApplicationOptionsBinder(new UIOptionsBinder());
     		TabManager.survey = (CollectSurvey) binder.unmarshal(fis);
     		TabManager.schema = TabManager.survey.getSchema();
+    		TabManager.fieldsList = new ArrayList<NodeDefinition>();
+    		TabManager.uiElementsMap = new HashMap<Integer,UIElement>();
+        	List<EntityDefinition> rootEntitiesDefsList = TabManager.schema.getRootEntityDefinitions();
+        	getAllFormFields(rootEntitiesDefsList);        	
+        	Log.e("fieldNo","=="+TabManager.fieldsList.size());
         	Log.e("TIME","=="+(System.currentTimeMillis()-startTime));
         	//Log.e("tabsetsNo","=="+TabManager.survey.getUIOptions().getTabSets().size());
         	//UIOptions uiOptions = TabManager.survey.getUIOptions();
+        	
         	UIOptions uiOptions = new UIOptions();
         	UITabSet tabSet = new UITabSet();
-        	tabSet.setName("ui");
+        	tabSet.setName("cluster");
         	
         	UITab tab = new UITab();
         	tab.setName("cluster");
@@ -149,11 +175,10 @@ public class TabManager extends TabActivity /*implements OnGesturePerformedListe
         	TabManager.survey.addApplicationOptions(uiOptions);
         	
         	//TabManager.configList = survey.getConfigurations();
-        	TabManager.tabSet = uiOptions.getTabSet("ui");
+        	TabManager.tabSet = uiOptions.getTabSet("cluster");
         	int mainTabsNo = TabManager.tabSet.getTabs().size();
         	if (mainTabsNo>0){
         		TabManager.uiTabsList = TabManager.tabSet.getTabs();
-        		Log.e("tab set size","=="+TabManager.uiTabsList.size());
         		Intent tabIntent;
             	for (int i=0; i<mainTabsNo;i++){
             		UITab uiTab = TabManager.uiTabsList.get(i);
@@ -201,6 +226,39 @@ public class TabManager extends TabActivity /*implements OnGesturePerformedListe
             	}*/
         	}
         	
+        	//RecordDao recordDao = new RecordDao();
+        	Map<String, User> users;
+
+    		users = new HashMap<String, User>();
+    		User user = new User();
+    		user.setId(1);
+    		user.setName("admin");
+    		users.put(user.getName(), user);
+    		user = new User();
+    		user.setId(2);
+    		user.setName("data_entry");
+    		users.put(user.getName(), user);
+    		
+        	CollectRecord record = new CollectRecord(survey, "2.0");
+    		User collectUser = users.get("admin");
+    		record.setCreatedBy(user);
+    		record.setModifiedBy(user);
+    		Entity cluster = record.createRootEntity("cluster");
+    		record.setCreationDate(new GregorianCalendar(2011, 12, 31, 23, 59).getTime());
+    		record.setModifiedDate(new GregorianCalendar(2012, 2, 3, 9, 30).getTime());
+    		record.setStep(Step.ENTRY);
+    		record.setState(State.REJECTED);
+    		
+    		CollectRecord clusterRecord = (CollectRecord) cluster.getRecord();
+    		{
+    			Entity ts = EntityBuilder.addEntity(cluster, "task");
+    			EntityBuilder.addValue(ts, "type", new Code("formChecked"));
+    			EntityBuilder.addValue(ts, "person", "lastname");
+    			EntityBuilder.addValue(ts, "date", new Date(2011,2,14));
+    		}
+    		record.updateRootEntityKeyValues();
+    		record.updateEntityCounts();
+    		
 //        	Log.e("depth","=="+uiOptions.getTabSet("cluster").getDepth());
         	/*ExpressionFactory expressionFactory = new ExpressionFactory();
         	Validator validator = new Validator();
@@ -256,6 +314,26 @@ public class TabManager extends TabActivity /*implements OnGesturePerformedListe
     				+getResources().getString(R.string.log_file_extension));
 		}
     }//onCreate
+    
+    private void getAllFormFields(List<EntityDefinition> rootEntitiesDefsList){
+    	for (int i=0;i<rootEntitiesDefsList.size();i++){
+    		TabManager.fieldsList.add(rootEntitiesDefsList.get(i));
+    		getFields(rootEntitiesDefsList.get(i).getChildDefinitions());
+    	}    	
+    	TabManager.fieldsList = this.sortById(TabManager.fieldsList);
+    }
+    
+    private void getFields(List<NodeDefinition> childrenList){
+    	for (int i=0;i<childrenList.size();i++){
+    		NodeDefinition field = childrenList.get(i);
+    		//Log.e("field","=="+field.getName());
+    		TabManager.fieldsList.add(field);
+    		if (field.getClass().equals(EntityDefinition.class)){
+    			EntityDefinition entityDef = (EntityDefinition) field;
+    			getFields(entityDef.getChildDefinitions());
+    		}
+    	}
+    }
     
     @Override
 	public void onResume()
@@ -486,5 +564,28 @@ public class TabManager extends TabActivity /*implements OnGesturePerformedListe
         default:
             return super.onOptionsItemSelected(item);
         }
-    }    
+    }
+    
+	 private List<NodeDefinition> sortById(List<NodeDefinition> nodes){
+		 NodeDefinition[] nodesArray = new NodeDefinition[nodes.size()];
+		 nodes.toArray(nodesArray);
+		 List<NodeDefinition> nodesList = new ArrayList<NodeDefinition>();
+		 for (int i=0;i<nodesArray.length;i++){
+			 nodesList.add(nodesArray[i]);
+		 }
+		 Collections.sort(nodesList, new NodeIdComparator());
+		 return nodesList;
+	 }
+	 
+	 public class NodeIdComparator implements Comparator<NodeDefinition> {
+
+			@Override
+			public int compare(NodeDefinition lhs, NodeDefinition rhs) {				
+				return Integer.valueOf(lhs.getId()).compareTo(rhs.getId());//lhs.getId().compareTo(rhs.getId());
+			}
+		}
+	 
+	 public static UIElement getUIElement(NodeDefinition nodeDefn){
+		 return TabManager.uiElementsMap.get(nodeDefn.getId());
+	 }
 }

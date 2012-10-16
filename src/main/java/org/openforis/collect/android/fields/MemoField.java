@@ -1,5 +1,7 @@
 package org.openforis.collect.android.fields;
 
+import java.util.List;
+
 import org.openforis.collect.android.R;
 import org.openforis.collect.android.messages.ToastMessage;
 
@@ -13,6 +15,8 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 public class MemoField extends InputField {
+	
+	private List<String> values;
 	
 	public MemoField(Context context, String labelText, String initialText, String hintText,
 			boolean isMultiple) {

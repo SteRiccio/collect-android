@@ -2,7 +2,10 @@ package org.openforis.collect.android.fields;
 
 import android.content.Context;
 import android.text.method.KeyListener;
+import android.util.Log;
 import android.view.Gravity;
+import android.view.View;
+import android.view.View.OnClickListener;
 import android.widget.EditText;
 
 public class InputField extends Field {

@@ -1,5 +1,7 @@
 package org.openforis.collect.android.fields;
 
+import java.util.List;
+
 import org.openforis.collect.android.messages.ToastMessage;
 
 import android.content.Context;
@@ -15,6 +17,8 @@ public class CoordinateField extends InputField {
 	
 	private EditText txtLatitude;
 	private EditText txtLongitude;
+	
+	private List<List<String>> values;
 	
 	public CoordinateField(Context context, String labelText, String initialText, String hintText,
 			boolean isMultiple) {		
