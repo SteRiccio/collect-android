@@ -14,9 +14,8 @@
     <string name="log_file_extension">.txt</string>
     <string name="backup_folder">/mofc/backups</string>
     <string name="formDefinitionFile">/test.idm.xml</string>
-    
+        
     <string name="sleepTime">sleepTime</string>
-    
     <string name="gpsPreferredWaitingTime">gps_timeout</string>
     <integer name="gpsPreferredWaitingTime">60000</integer>
     <integer name="gpsMinUpdateTime">60000</integer>

@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">mOFC</string>
-
     <!-- about tab -->
     <string name="aboutTabTitle">About</string>
     <string name="lblApplicationName">Application name:</string>
