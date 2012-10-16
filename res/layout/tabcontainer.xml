@@ -25,13 +25,6 @@
 				android:src="@drawable/add"	
 				android:background="#000000"			
 				android:layout_weight="1"/>
-			<!-- <ImageButton
-				android:id="@+id/btnDeletePlot"
-				android:layout_width="0dp"
-				android:layout_height="wrap_content"        
-				android:src="@drawable/delete"	
-				android:background="#000000"
-				android:layout_weight="1"/> -->
 		</TableRow>		
 	        <HorizontalScrollView
 	            android:layout_width="fill_parent"
