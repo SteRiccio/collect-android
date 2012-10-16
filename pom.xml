@@ -12,7 +12,6 @@
 	       <url>file://${project.basedir}/libs</url>
 	   </repository>
 	</repositories>
-	
 	<dependencies>
 		<dependency>
 			<groupId>com.google.android</groupId>
