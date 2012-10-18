@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<resources>
+    <integer name="tab_width">100</integer>
+    <integer name="tab_height">40</integer>
+    
+    <integer name="timeDifference4DoubleClick">1000</integer>
+    <integer name="separator_height">22</integer>
+    <integer name="field_height">64</integer>
+    
+    <string name="application_folder">/mofc</string>
+    <string name="data_folder">/mofc/data</string>
+    <string name="logs_folder">/mofc/logs</string>
+    <string name="logs_file_name">/log_</string>
+    <string name="log_file_extension">.txt</string>
+    <string name="backup_folder">/mofc/backups</string>
+    <string name="formDefinitionFile">/test.idm.xml</string>
+        
+    <string name="sleepTime">sleepTime</string>
+    <string name="gpsPreferredWaitingTime">gps_timeout</string>
+    <integer name="gpsPreferredWaitingTime">60000</integer>
+    <integer name="gpsMinUpdateTime">60000</integer>
+    <integer name="gpsMinUpdateDistance">10</integer>
+    
+    <string name="left_swipe">left_swipe</string>
+    <string name="right_swipe">right_swipe</string>
+    <string name="save_gesture">save</string>
+    <string name="open_gesture">open</string>
+    
+    <string name="text_type_long">MEMO</string>
+    <string name="text_type_short">SHORT</string>
+</resources>
