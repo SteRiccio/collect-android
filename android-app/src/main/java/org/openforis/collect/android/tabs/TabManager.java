@@ -10,7 +10,6 @@ import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.GregorianCalendar;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -29,23 +28,14 @@ import org.openforis.collect.android.misc.WelcomeScreen;
 import org.openforis.collect.metamodel.ui.UIOptions;
 import org.openforis.collect.metamodel.ui.UITab;
 import org.openforis.collect.metamodel.ui.UITabSet;
-import org.openforis.collect.model.CollectRecord;
-import org.openforis.collect.model.CollectRecord.State;
-import org.openforis.collect.model.CollectRecord.Step;
 import org.openforis.collect.model.CollectSurvey;
 import org.openforis.collect.model.CollectSurveyContext;
 import org.openforis.collect.model.Configuration;
-import org.openforis.collect.model.User;
-import org.openforis.collect.persistence.RecordDao;
 import org.openforis.idm.metamodel.EntityDefinition;
 import org.openforis.idm.metamodel.NodeDefinition;
 import org.openforis.idm.metamodel.Schema;
 import org.openforis.idm.metamodel.validation.Validator;
 import org.openforis.idm.metamodel.xml.SurveyIdmlBinder;
-import org.openforis.idm.model.Code;
-import org.openforis.idm.model.Date;
-import org.openforis.idm.model.Entity;
-import org.openforis.idm.model.EntityBuilder;
 import org.openforis.idm.model.expression.ExpressionFactory;
 
 import android.app.TabActivity;
@@ -71,7 +61,7 @@ public class TabManager extends TabActivity /*implements OnGesturePerformedListe
 	private static final String TAG = "TabManager";
 	//private GestureLibrary gestureLib;
 	private TabWidget tabWidget;
-	private TabHost tabHost;	
+	private TabHost tabHost;
 	
 	public static CollectSurvey survey;
 	public static List<Configuration> configList;
@@ -207,31 +197,6 @@ public class TabManager extends TabActivity /*implements OnGesturePerformedListe
                 			TabManager.this.calcTabWidth(mainTabsNo),
                 			getResources().getInteger(R.integer.tab_height));
             	}
-        		/*UIConfiguration uiConfig = (UIConfiguration)configList.get(0);
-            	List<UITabDefinition> uiTabDefList = uiConfig.getTabDefinitions();
-            	UITabDefinition uiTabDef = uiTabDefList.get(0);
-            	TabManager.uiTabsList = uiTabDef.getTabs();
-            	Intent tabIntent;
-            	int tabNo = TabManager.uiTabsList.size();
-            	for (int i=0; i<TabManager.uiTabsList.size();i++){
-            		UITab uiTab = TabManager.uiTabsList.get(i);
-            		if (uiTab.getTabs().size()>0){
-            			tabIntent = new Intent(TabManager.this, TabContainer.class);
-            		}
-            		else{
-            			tabIntent = new Intent(TabManager.this, Tab.class);
-            		}            		
-            		tabIntent.putExtra("tabName", uiTab.getName());
-            		tabIntent.putExtra("tabLabel", uiTab.getLabel());
-            		tabIntent.putExtra("tabNo", i);
-            		tabIntent.putExtra("tabLevel", 1);
-            		TabManager.this.addTab(uiTab.getName(), 
-            				uiTab.getLabel(),
-                			TabManager.this.tabWidget.getChildCount(),
-                			tabIntent,
-                			TabManager.this.calcTabWidth(tabNo),
-                			getResources().getInteger(R.integer.tab_height));
-            	}*/
         	}
         	
 
@@ -250,7 +215,7 @@ public class TabManager extends TabActivity /*implements OnGesturePerformedListe
                 }
                 Statement stmt = con.createStatement();
                 // creating Query String
-                String query = "INSERT INTO ofc_user VALUES (299,'test_user2','ACFDFD','Y')";
+                //String query = "INSERT INTO ofc_user VALUES (299,'test_user2','ACFDFD','Y')";
                 //int ret = stmt.executeUpdate(query);
                 //Log.e("INSERT","=="+ret);
                 SQLiteFactory create = new SQLiteFactory(con);
@@ -280,7 +245,7 @@ public class TabManager extends TabActivity /*implements OnGesturePerformedListe
             }
         	
         	//RecordDao recordDao = new RecordDao();
-        	Map<String, User> users;
+        	/*Map<String, User> users;
 
     		users = new HashMap<String, User>();
     		User user = new User();
@@ -310,7 +275,7 @@ public class TabManager extends TabActivity /*implements OnGesturePerformedListe
     			EntityBuilder.addValue(ts, "date", new Date(2011,2,14));
     		}
     		record.updateRootEntityKeyValues();
-    		record.updateEntityCounts();
+    		record.updateEntityCounts();*/
 		} catch (Exception e){
     		RunnableHandler.reportException(e,getResources().getString(R.string.app_name),TAG+":onCreate",
     				Environment.getExternalStorageDirectory().toString()
@@ -582,7 +547,7 @@ public class TabManager extends TabActivity /*implements OnGesturePerformedListe
 		 Collections.sort(nodesList, new NodeIdComparator());
 		 return nodesList;
 	 }
-	 
+	
 	 public class NodeIdComparator implements Comparator<NodeDefinition> {
 
 			@Override

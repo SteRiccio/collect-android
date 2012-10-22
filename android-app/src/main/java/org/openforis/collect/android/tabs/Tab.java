@@ -173,7 +173,9 @@ public class Tab extends Activity /*implements OnGesturePerformedListener*/ {
 	private Field createUiField(NodeDefinition formField){
 		Field uiField = null;
 		if (formField.getClass().equals(NumberAttributeDefinition.class)){
-			uiField = new NumberField(this, formField.getLabel(Type.INSTANCE, null), null, null, formField.isMultiple());
+			NumberAttributeDefinition numberAttrDef = (NumberAttributeDefinition) formField; 
+			uiField = new NumberField(this, numberAttrDef.getLabel(Type.INSTANCE, null), null, null, 
+					numberAttrDef.getType().toString(), numberAttrDef.isMultiple());
 		} else if (formField.getClass().equals(CodeAttributeDefinition.class)){
 			CodeAttributeDefinition codeAttrDef = (CodeAttributeDefinition) formField; 
 			

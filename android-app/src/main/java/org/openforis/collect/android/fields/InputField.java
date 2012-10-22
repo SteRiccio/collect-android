@@ -1,6 +1,7 @@
 package org.openforis.collect.android.fields;
 
 import android.content.Context;
+import android.text.method.DigitsKeyListener;
 import android.text.method.KeyListener;
 import android.view.Gravity;
 import android.widget.EditText;
@@ -41,5 +42,15 @@ public class InputField extends Field {
 	
 	public void setAlignment(int alignment){
 		this.txtBox.setGravity(alignment);
+	}
+	
+	public void makeReal()
+	{
+		this.txtBox.setKeyListener(new DigitsKeyListener(true,true));		
+	}
+	
+	public void makeInteger()
+	{
+		this.txtBox.setKeyListener(new DigitsKeyListener(true,false));
 	}
 }

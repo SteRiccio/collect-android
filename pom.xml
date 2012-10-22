@@ -10,5 +10,7 @@
 		<module>jaxb-android</module>
 		<module>jooq-android</module>
 		<module>jpa-android</module>
+		<module>jxpath-android</module>
 	</modules>
+
 </project>

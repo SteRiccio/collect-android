@@ -5,7 +5,6 @@ import java.util.List;
 import org.openforis.collect.android.messages.ToastMessage;
 
 import android.content.Context;
-import android.text.method.DigitsKeyListener;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
@@ -15,9 +14,10 @@ import android.widget.Toast;
 public class NumberField extends InputField {
 	
 	private List<String> values;
+	private String type;
 	
 	public NumberField(Context context, String labelText, String initialText, String hintText,
-			boolean isMultiple) {
+			String numberType, boolean isMultiple) {
 		super(context, isMultiple);
 		
 		this.label = new TextView(context);
@@ -35,7 +35,12 @@ public class NumberField extends InputField {
 		this.setHint(hintText);
 		this.txtBox.setLayoutParams(new LayoutParams(0,ViewGroup.LayoutParams.WRAP_CONTENT,(float) 2));
 		
-		this.setKeyboardType(new DigitsKeyListener(true,true));
+		this.type = numberType;
+		if (this.type.toLowerCase().equals("integer")){
+			this.makeInteger();
+		} else{
+			this.makeReal();
+		}
 		
 		this.addView(this.scrollLeft);
 		this.addView(this.label);
@@ -61,6 +66,5 @@ public class NumberField extends InputField {
 		if (NumberField.this.values.size()>NumberField.this.currentInstanceNo)
 			NumberField.this.txtBox.setText(NumberField.this.values.get(NumberField.this.currentInstanceNo));
 		NumberField.this.currentInstanceNo++;
-	}
-	
+	}	
 }
