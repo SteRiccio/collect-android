@@ -11,9 +11,12 @@
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" /> 
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission-group android:name="android.permission-group.STORAGE" />
+    <instrumentation android:name="android.test.InstrumentationTestRunner"
+       android:targetPackage="org.openforis.collect.android" android:label="Tests for mOFC" />
     
     <application android:icon="@drawable/applicationicon" android:label="@string/app_name">
-
+		<uses-library android:name="android.test.runner" />		
+		
 		<activity android:name=".tabs.TabManager"
 		          android:label="@string/app_name"
 		          android:theme="@android:style/Theme.NoTitleBar"

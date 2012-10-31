@@ -12,12 +12,6 @@ public class CollectDatabase{
 	}
 	
 	public void createTables(){
-		db.execSQL("drop table if exists ofc_user_role_id_seq");
-		/*db.execSQL(
-				"create table if not exists ofc_user_role_id_seq" + 
-				" (" 
-				+ "nextval integer "
-			    + ");"    );*/
 		
 		db.execSQL(
 				"create table if not exists ofc_application_info" + 

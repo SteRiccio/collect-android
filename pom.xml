@@ -15,12 +15,6 @@
 			<artifactId>android</artifactId>
 			<version>2.2.1</version>
 			<scope>provided</scope>
-			<exclusions>
-				<exclusion>
-					<artifactId>commons-logging</artifactId>
-					<groupId>commons-logging</groupId>
-				</exclusion>
-			</exclusions>
 		</dependency>
 		<dependency>
 			<groupId>com.google.android</groupId>
@@ -70,6 +64,23 @@
 					<artifactId>spring-jdbc</artifactId>
 					<groupId>org.springframework</groupId>
 				</exclusion>
+				<exclusion>
+					<artifactId>xmlpull</artifactId>
+					<groupId>xmlpull</groupId>
+				</exclusion>
+				<!-- unnecessary dependencies -->
+				<exclusion>
+					<artifactId>cglib</artifactId>
+					<groupId>cglib</groupId>
+				</exclusion>
+				<exclusion>
+					<artifactId>log4j</artifactId>
+					<groupId>log4j</groupId>
+				</exclusion>
+				<exclusion>
+					<artifactId>lucene-core</artifactId>
+					<groupId>org.apache.lucene</groupId>
+				</exclusion>
 			</exclusions>
 		</dependency>
 		<dependency>
@@ -104,7 +115,7 @@
 			<systemPath>${basedir}/lib/sqldroid-android-1.0.jar</systemPath>
 		</dependency>
 		<dependency>
-			<groupId>org.springframework</groupId>
+			<groupId>org.openforis.collect.android</groupId>
 			<artifactId>collect-android-spring</artifactId>
 			<version>1.0-SNAPSHOT</version>
 		</dependency>

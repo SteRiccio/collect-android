@@ -92,9 +92,6 @@ public class TabContainer extends TabActivity {
         
         this.cmbPlotList = (Spinner) findViewById(R.id.cmbPlotList);
         this.cmdAddPlot = (ImageButton)this.findViewById(R.id.btnNewPlot);
-        Log.e("!hasFields","=="+(!hasFields));
-        Log.e("entityDef!=null","=="+(entityDef!=null));
-        Log.e("!isRootEntity","=="+(!isRootEntity));
         if ((!hasFields)&&(entityDef!=null)&&(!isRootEntity)){//show add button above tabs
             ArrayList<String> options=new ArrayList<String>();
             options.add("plot1");
@@ -115,7 +112,7 @@ public class TabContainer extends TabActivity {
         	this.cmbPlotList.setVisibility(View.GONE);
         	this.cmdAddPlot.setVisibility(View.GONE);
         }
-    	Log.e("Adding tabs","TABCONTAINER");
+        
         Intent tabIntent;
         int tabNo = TabManager.tabSet.getTabs().size();// TabManager.uiTabsList.size();
         UITab currTab = TabManager.tabSet.getTabs().get(startingIntent.getIntExtra("tabNo", -1));//TabManager.uiTabsList.get(startingIntent.getIntExtra("tabNo", -1));
@@ -130,11 +127,11 @@ public class TabContainer extends TabActivity {
     			tabIntent = new Intent(TabContainer.this, Tab.class);
     		}            		
     		tabIntent.putExtra("tabName", uiTab.getName());
-    		tabIntent.putExtra("tabLabel", uiTab.getLabel("EN"));
+    		tabIntent.putExtra("tabLabel", uiTab.getLabel(null));
     		tabIntent.putExtra("tabNo", i);
     		tabIntent.putExtra("tabLevel", currLevel+1);
     		this.addTab(uiTab.getName(), 
-    				uiTab.getLabel("EN"),
+    				uiTab.getLabel(null),
         			this.tabWidget.getChildCount(),
         			tabIntent,
         			this.calcTabWidth(tabNo),

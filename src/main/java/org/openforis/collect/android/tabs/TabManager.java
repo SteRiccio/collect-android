@@ -41,9 +41,7 @@ import org.openforis.idm.metamodel.NodeDefinition;
 import org.openforis.idm.metamodel.Schema;
 import org.openforis.idm.metamodel.validation.Validator;
 import org.openforis.idm.metamodel.xml.SurveyIdmlBinder;
-import org.openforis.idm.model.Code;
 import org.openforis.idm.model.Entity;
-import org.openforis.idm.model.EntityBuilder;
 import org.openforis.idm.model.expression.ExpressionFactory;
 import org.springframework.jdbc.core.support.JdbcDaoSupport;
 
@@ -156,47 +154,48 @@ public class TabManager extends TabActivity /*implements OnGesturePerformedListe
         	this.userManager.setUserDao(new UserDao());
         	this.userManager.setRecordDao(new RecordDao());
         	
-        	//reading form definition
-        	/*long startTime = System.currentTimeMillis();
-        	FileInputStream fis = new FileInputStream(sdcardPath+getResources().getString(R.string.formDefinitionFile));        	
-        	SurveyIdmlBinder binder = new SurveyIdmlBinder(collectSurveyContext);
-    		binder.addApplicationOptionsBinder(new UIOptionsBinder());
-    		//setSurvey((CollectSurvey) binder.unmarshal(fis));
-    		TabManager.survey = (CollectSurvey) binder.unmarshal(fis); 
-    		setSurvey(this.surveyManager.unmarshalSurvey(fis));
-    		TabManager.schema = getSurvey().getSchema();
+        	//reading form definition if it is not available in database
+        	setSurvey(this.surveyManager.getSurveyDao().load("Archenland NFI"));
+        	if (getSurvey()==null){
+            	long startTime = System.currentTimeMillis();
+            	FileInputStream fis = new FileInputStream(sdcardPath+getResources().getString(R.string.formDefinitionFile));        	
+            	SurveyIdmlBinder binder = new SurveyIdmlBinder(collectSurveyContext);
+        		binder.addApplicationOptionsBinder(new UIOptionsBinder());
+        		setSurvey((CollectSurvey) binder.unmarshal(fis));
+        		getSurvey().setName(getSurvey().getProjectName(null));
+        		this.surveyManager.importModel(getSurvey());
+            	Log.e("TIME","=="+(System.currentTimeMillis()-startTime));       		
+        	}
+        	TabManager.schema = getSurvey().getSchema();
     		TabManager.fieldsList = new ArrayList<NodeDefinition>();
     		TabManager.uiElementsMap = new HashMap<Integer,UIElement>();
         	List<EntityDefinition> rootEntitiesDefsList = TabManager.schema.getRootEntityDefinitions();
         	getAllFormFields(rootEntitiesDefsList);
-        	Log.e("TIME","=="+(System.currentTimeMillis()-startTime));
-        	//Log.e("tabsetsNo","=="+TabManager.survey.getUIOptions().getTabSets().size());
-        	//UIOptions uiOptions = TabManager.survey.getUIOptions();
-        	
-        	UIOptions uiOptions = new UIOptions();
+        	UIOptions uiOptions = getSurvey().getUIOptions();
+        	/*uiOptions = new UIOptions();
         	UITabSet tabSet = new UITabSet();
         	tabSet.setName("cluster");
         	
         	UITab tab = new UITab();
         	tab.setName("cluster");
-        	tab.setLabel("EN", "Cluster");
+        	tab.setLabel(null, "Cluster");
         	tabSet.addTab(tab);
         	
         	tab = new UITab();
         	tab.setName("plot");
-        	tab.setLabel("EN", "Plot");
+        	tab.setLabel(null, "Plot");
         	UITab subtab = new UITab();
         	subtab.setName("plot_det");
-        	subtab.setLabel("EN", "Details (2)");
+        	subtab.setLabel(null, "Details (2)");
         	tab.addTab(subtab);
         	subtab = new UITab();
         	subtab.setName("shrubs_regen");
-        	subtab.setLabel("EN", "Shrubs & regeneration (3)");
+        	subtab.setLabel(null, "Shrubs & regeneration (3)");
         	tab.addTab(subtab);
         	tabSet.addTab(tab);
         	
-        	uiOptions.addTabSet(tabSet);
-        	TabManager.survey.addApplicationOptions(uiOptions);
+        	uiOptions.addTabSet(tabSet);*/
+        	getSurvey().addApplicationOptions(uiOptions);
         	
         	//TabManager.configList = survey.getConfigurations();
         	TabManager.tabSet = uiOptions.getTabSet("cluster");
@@ -213,29 +212,27 @@ public class TabManager extends TabActivity /*implements OnGesturePerformedListe
             			tabIntent = new Intent(TabManager.this, Tab.class);
             		}
             		tabIntent.putExtra("tabName", uiTab.getName());
-            		tabIntent.putExtra("tabLabel", uiTab.getLabel("EN"));
+            		tabIntent.putExtra("tabLabel", uiTab.getLabel(null));
             		tabIntent.putExtra("tabNo", i);
             		tabIntent.putExtra("tabLevel", 1);
             		TabManager.this.addTab(uiTab.getName(), 
-            				uiTab.getLabel("EN"),
+            				uiTab.getLabel(null),
                 			TabManager.this.tabWidget.getChildCount(),
                 			tabIntent,
                 			TabManager.this.calcTabWidth(mainTabsNo),
                 			getResources().getInteger(R.integer.tab_height));
             	}
-        	}*/
+        	}
         	
         	//saving schema, user, etc. to database
         	JdbcDaoSupport jdbcDao = new JdbcDaoSupport();
 
         	//saving schema to database
         	/*if (getSurvey()!=null){
-        		Log.e("getSurvey","=="+(getSurvey()!=null));
         		if (this.surveyManager.getSurveyDao().load(getSurvey().getName())==null){
-        			Log.e("loadingNULL","=="+(this.surveyManager.getSurveyDao().load(getSurvey().getName())==null));
         			this.surveyManager.importModel(getSurvey());
         		}
-        	}*/
+        	}**/
         	
         	//adding default user to database if not exists        	
         	User defaultUser = new User();
@@ -255,6 +252,33 @@ public class TabManager extends TabActivity /*implements OnGesturePerformedListe
             SelectJoinStep q = create.select().from("ofc_user");
             Log.e("CSV:",result.formatCSV());*/
             
+        	this.recordManager = new RecordManager();
+    		this.recordManager.setRecordDao(new RecordDao());
+    		
+    		CollectRecord record = new CollectRecord(getSurvey(), "2.0");        	
+    		record.setCreatedBy(defaultUser);
+    		record.getCreatedBy().setId(99999);
+    		record.getSurvey().setId(1);
+    		Entity cluster = record.createRootEntity("cluster");
+    		record.setCreationDate(new GregorianCalendar(2000, 1, 3, 11, 22).getTime());
+    		record.setStep(Step.ENTRY);
+    		record.setState(State.REJECTED);
+    		record.setWarnings(1);
+    		record.setErrors(11);
+    		record.setSkipped(111);
+    		
+    		//this.recordManager.getRecordDao().insert(record);
+    		CollectRecord loadedRecord = this.recordManager.load(getSurvey(), 1, 1);
+    		Log.e("loadedRecordId","=="+loadedRecord.getId());
+    		Log.e("loadedRecordUserName","=="+loadedRecord.getCreatedBy().getName());
+    		Log.e("loadedRecordDate","=="+loadedRecord.getCreationDate().toString());
+    		Log.e("loadedRecordWarnings","=="+loadedRecord.getWarnings());
+    		
+    		loadedRecord = this.recordManager.load(getSurvey(), 2, 1);
+    		Log.e("loadedRecordId","=="+loadedRecord.getId());
+    		Log.e("loadedRecordUserName","=="+loadedRecord.getCreatedBy().getName());
+    		Log.e("loadedRecordDate","=="+loadedRecord.getCreationDate().toString());
+    		Log.e("loadedRecordWarnings","=="+loadedRecord.getWarnings());
             JdbcDaoSupport.close();
 
         	/*CollectRecord record = new CollectRecord(getSurvey(), "2.0");        	
@@ -273,10 +297,8 @@ public class TabManager extends TabActivity /*implements OnGesturePerformedListe
     			EntityBuilder.addValue(ts, "person", "lastname");
     		}
     		record.updateRootEntityKeyValues();
-    		record.updateEntityCounts();
+    		record.updateEntityCounts();*/
     		
-    		this.recordManager = new RecordManager();
-    		this.recordManager.setRecordDao(new RecordDao());*/
 		} catch (Exception e){
     		RunnableHandler.reportException(e,getResources().getString(R.string.app_name),TAG+":onCreate",
     				Environment.getExternalStorageDirectory().toString()
@@ -492,7 +514,7 @@ public class TabManager extends TabActivity /*implements OnGesturePerformedListe
     	    		new DialogInterface.OnClickListener() {
     					@Override
     					public void onClick(DialogInterface dialog, int which) {
-    						
+    						saveData();
     					}
     				},
     				new DialogInterface.OnClickListener() {
@@ -580,6 +602,10 @@ public class TabManager extends TabActivity /*implements OnGesturePerformedListe
 	 
 	 public static void setSurvey(CollectSurvey surv){
 		 survey = surv;
+	 }
+	 
+	 public void saveData(){
+		 
 	 }
 	
 }
