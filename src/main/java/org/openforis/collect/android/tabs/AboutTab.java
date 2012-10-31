@@ -2,7 +2,6 @@ package org.openforis.collect.android.tabs;
 
 import org.openforis.collect.android.R;
 import org.openforis.collect.android.misc.RunnableHandler;
-import org.openforis.collect.android.misc.SwipeDetector;
 
 import android.app.Activity;
 import android.content.SharedPreferences;
@@ -13,8 +12,6 @@ import android.text.TextWatcher;
 import android.util.Log;
 import android.view.GestureDetector;
 import android.view.KeyEvent;
-import android.view.MotionEvent;
-import android.view.View;
 import android.view.ViewTreeObserver;
 import android.view.ViewTreeObserver.OnGlobalLayoutListener;
 import android.widget.EditText;
@@ -55,18 +52,7 @@ public class AboutTab extends Activity implements TextWatcher{
 					ViewTreeObserver observer = txtGpsTimeout.getViewTreeObserver();
 					observer.removeGlobalOnLayoutListener(this);
 				}
-			});
-			
-			/*gestureDetector = new GestureDetector(new SwipeDetector(this));
-            this.lblGpsTimeout.setOnTouchListener(new View.OnTouchListener()
-            {
-                @Override
-                public boolean onTouch(View v, MotionEvent event)
-                {
-                	gestureDetector.onTouchEvent(event);
-                    return true;
-                }
-            })*/
+			});			
 
             this.txtApplicationName = (TextView)findViewById(R.id.txtApplicationName);
             this.txtApplicationName.setText(getResources().getString(R.string.app_name));

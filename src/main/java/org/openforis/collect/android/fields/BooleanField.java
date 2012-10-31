@@ -25,7 +25,7 @@ public class BooleanField extends Field {
 			String label1Text, String label2Text,
 			boolean isMultiple, boolean isAffirmativeOnly) {
 		super(context, isMultiple);
-		
+
 		this.values = new ArrayList<ArrayList<Boolean>>();
 		ArrayList<Boolean> initialValue = new ArrayList<Boolean>();
 		initialValue.add(isChecked1);

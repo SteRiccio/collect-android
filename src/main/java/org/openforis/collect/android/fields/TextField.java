@@ -69,7 +69,7 @@ public class TextField extends InputField {
 	@Override
 	public void scrollRight(){
     	if (TextField.this.values.size()==TextField.this.currentInstanceNo){
-    		TextField.this.values.add(TextField.this.currentInstanceNo, "");	        		
+    		TextField.this.values.add(TextField.this.currentInstanceNo, "");
     	}
     	TextField.this.values.set(TextField.this.currentInstanceNo-1, TextField.this.txtBox.getText().toString());        			        		
 		if (TextField.this.values.size()>TextField.this.currentInstanceNo)

@@ -14,6 +14,7 @@ import android.widget.Toast;
 public class NumberField extends InputField {
 	
 	private List<String> values;
+
 	private String type;
 	
 	public NumberField(Context context, String labelText, String initialText, String hintText,
@@ -66,5 +67,5 @@ public class NumberField extends InputField {
 		if (NumberField.this.values.size()>NumberField.this.currentInstanceNo)
 			NumberField.this.txtBox.setText(NumberField.this.values.get(NumberField.this.currentInstanceNo));
 		NumberField.this.currentInstanceNo++;
-	}	
+	}
 }

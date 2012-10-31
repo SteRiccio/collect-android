@@ -34,7 +34,7 @@ public class CodeField extends Field {
 			String selectedItem, boolean isSearchable,
 			boolean isMultiple) {
 		super(context, isMultiple);
-		this.searchable = isSearchable;		
+		this.searchable = isSearchable;
 		
 		this.label = new TextView(context);
 		this.label.setMaxLines(1);
@@ -98,7 +98,6 @@ public class CodeField extends Field {
 		
 		this.values = new ArrayList<Integer>();
 		this.values.add(this.spinner.getSelectedItemPosition());
-		
 		this.addView(this.scrollLeft);
 		this.addView(this.label);
 		this.addView(this.spinner);

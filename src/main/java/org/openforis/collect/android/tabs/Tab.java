@@ -1,9 +1,7 @@
 package org.openforis.collect.android.tabs;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import org.openforis.collect.android.R;
 import org.openforis.collect.android.fields.BooleanField;

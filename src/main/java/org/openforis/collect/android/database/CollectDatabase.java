@@ -12,7 +12,6 @@ public class CollectDatabase{
 	}
 	
 	public void createTables(){
-		
 		db.execSQL(
 				"create table if not exists ofc_application_info" + 
 				" (" 
@@ -105,7 +104,7 @@ public class CollectDatabase{
 				+ "name text not null,"
 				+ "metadata text not null"
 			    + ");"    );
-
+		
 		db.execSQL(
 				"create table if not exists ofc_user" + 
 				" (" 

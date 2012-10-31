@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8"?>
+<TabHost xmlns:android="http://schemas.android.com/apk/res/android"
+	    android:id="@android:id/tabhost"
+	    android:layout_width="fill_parent"
+	    android:layout_height="fill_parent">
+	    <RelativeLayout             
+	        android:layout_width="fill_parent"
+	        android:layout_height="fill_parent">
+		    <LinearLayout
+		    	android:id="@+id/main"
+		        android:orientation="vertical"
+		        android:layout_width="fill_parent"
+		        android:layout_height="fill_parent"
+		        android:padding="5dp">
+		        <HorizontalScrollView
+		            android:layout_width="fill_parent"
+		            android:layout_height="wrap_content"
+		            android:scrollbars="none">
+		            <TabWidget
+		                android:id="@android:id/tabs"
+		                android:layout_width="wrap_content"
+		                android:layout_height="wrap_content" />
+		        </HorizontalScrollView>
+		        <FrameLayout
+		            android:id="@android:id/tabcontent"
+		            android:layout_width="fill_parent"
+		            android:layout_height="fill_parent"
+		            android:padding="5dp" />   
+		    </LinearLayout>			       
+		    <!--<TableLayout
+	            xmlns:android="http://schemas.android.com/apk/res/android"
+	            android:id="@+id/footer"
+	            android:orientation="vertical"
+	            android:layout_width="fill_parent"
+	            android:layout_height="wrap_content"             
+	            android:background="#000000"
+	            android:layout_alignParentBottom="true"
+	            android:weightSum="2"
+	    		android:stretchColumns="0"> 
+	    		<TableRow>       
+				   	<Button
+				        android:id="@+id/btnFooterSave"
+				        android:layout_width="wrap_content"
+				        android:layout_height="wrap_content"
+				        android:text="@string/footerSave"			        
+				        android:layout_weight="1"/>
+				   	<Button
+				        android:id="@+id/btnFooterClusterList"
+				        android:layout_width="wrap_content"
+				        android:layout_height="wrap_content"
+				        android:text="@string/footerClusterList"			        
+				        android:layout_weight="2"/>
+				</TableRow>   	   
+	        </TableLayout> -->  
+	        
+    </RelativeLayout>
+</TabHost>

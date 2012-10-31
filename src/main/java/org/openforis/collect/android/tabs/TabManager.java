@@ -222,6 +222,7 @@ public class TabManager extends TabActivity /*implements OnGesturePerformedListe
                 			TabManager.this.calcTabWidth(mainTabsNo),
                 			getResources().getInteger(R.integer.tab_height));
             	}
+
         	}
         	
         	//saving schema, user, etc. to database
@@ -298,7 +299,6 @@ public class TabManager extends TabActivity /*implements OnGesturePerformedListe
     		}
     		record.updateRootEntityKeyValues();
     		record.updateEntityCounts();*/
-    		
 		} catch (Exception e){
     		RunnableHandler.reportException(e,getResources().getString(R.string.app_name),TAG+":onCreate",
     				Environment.getExternalStorageDirectory().toString()
@@ -570,7 +570,7 @@ public class TabManager extends TabActivity /*implements OnGesturePerformedListe
 		 Collections.sort(nodesList, new NodeIdComparator());
 		 return nodesList;
 	 }
-	
+
 	 public class NodeIdComparator implements Comparator<NodeDefinition> {
 
 			@Override
@@ -607,5 +607,4 @@ public class TabManager extends TabActivity /*implements OnGesturePerformedListe
 	 public void saveData(){
 		 
 	 }
-	
 }

@@ -15,8 +15,8 @@
        android:targetPackage="org.openforis.collect.android" android:label="Tests for mOFC" />
     
     <application android:icon="@drawable/applicationicon" android:label="@string/app_name">
-		<uses-library android:name="android.test.runner" />		
-		
+		<uses-library android:name="android.test.runner" />
+        
 		<activity android:name=".tabs.TabManager"
 		          android:label="@string/app_name"
 		          android:theme="@android:style/Theme.NoTitleBar"

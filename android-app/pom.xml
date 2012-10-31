@@ -1,0 +1,191 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<parent>	
+		<groupId>org.openforis.collect.android</groupId>
+		<artifactId>collect-android</artifactId>
+		<version>3.0-SNAPSHOT</version>
+	</parent>
+	<artifactId>collect-android-app</artifactId>
+	<packaging>apk</packaging>
+ 	
+	<dependencies>
+		<dependency>
+			<groupId>com.google.android</groupId>
+			<artifactId>android</artifactId>
+			<version>2.2.1</version>
+			<scope>provided</scope>
+			<exclusions>
+				<exclusion>
+					<artifactId>commons-logging</artifactId>
+					<groupId>commons-logging</groupId>
+				</exclusion>
+			</exclusions>
+		</dependency>
+		<dependency>
+			<groupId>com.google.android</groupId>
+			<artifactId>android-test</artifactId>
+			<version>2.2.1</version>
+			<scope>provided</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.openforis.collect</groupId>
+			<artifactId>collect-core</artifactId>
+			<version>3.0-Alpha5-SNAPSHOT</version>
+			<exclusions>
+<!-- 				<exclusion>
+					<artifactId>commons-jxpath</artifactId>
+					<groupId>commons-jxpath</groupId>
+				</exclusion> -->
+<!-- 				<exclusion>
+					<artifactId>idm-api-protostuff</artifactId>
+					<groupId>org.openforis.idm</groupId>
+				</exclusion> -->
+<!-- 				<exclusion>
+					<artifactId>spring-jdbc</artifactId>
+					<groupId>org.springframework</groupId>
+				</exclusion> -->
+ 				<!--<exclusion>
+					<artifactId>commons-codec</artifactId>
+					<groupId>commons-codec</groupId>
+				</exclusion>-->
+<!--  				<exclusion>
+					<artifactId>commons-beanutils</artifactId>
+					<groupId>commons-beanutils</groupId>
+				</exclusion> -->
+<!-- 				<exclusion>
+					<artifactId>commons-io</artifactId>
+					<groupId>org.apache.commons</groupId>
+				</exclusion> -->
+				<exclusion>
+					<artifactId>spring-tx</artifactId>
+					<groupId>org.springframework</groupId>
+				</exclusion>
+<!-- 				<exclusion>
+					<artifactId>commons-logging</artifactId>
+					<groupId>commons-logging</groupId>
+				</exclusion> -->
+<!-- 				<exclusion>
+					<artifactId>cglib</artifactId>
+					<groupId>cglib</groupId>
+				</exclusion>  -->
+<!-- 				<exclusion>
+					<artifactId>log4j</artifactId>
+					<groupId>log4j</groupId>
+				</exclusion> -->
+				<!-- conflicts with repackaged jxpath -->
+ 				<exclusion>
+					<artifactId>commons-collections</artifactId>
+					<groupId>commons-collections</groupId>
+				</exclusion>
+<!-- 				<exclusion>
+					<artifactId>commons-lang3</artifactId>
+					<groupId>org.apache.commons</groupId>
+				</exclusion> -->
+				
+				<exclusion>
+					<artifactId>gt-epsg-wkt</artifactId>
+					<groupId>org.geotools</groupId>
+				</exclusion>
+				<exclusion>
+					<artifactId>gt-metadata</artifactId>
+					<groupId>org.geotools</groupId>
+				</exclusion>
+				<exclusion>
+					<artifactId>gt-main</artifactId>
+					<groupId>org.geotools</groupId>
+				</exclusion>
+				<exclusion>
+					<artifactId>gt-referencing</artifactId>
+					<groupId>org.geotools</groupId>
+				</exclusion>
+				<exclusion>
+					<artifactId>commons-jxpath</artifactId>
+					<groupId>commons-jxpath</groupId>
+				</exclusion>
+			</exclusions>
+		</dependency>
+		<dependency>
+			<groupId>org.openforis.collect.android</groupId>
+			<artifactId>collect-android-jxpath</artifactId>
+			<version>3.0-SNAPSHOT</version>
+			<exclusions>
+		 		<exclusion>
+					<artifactId>commons-beanutils</artifactId>
+					<groupId>commons-beanutils</groupId>
+				</exclusion>
+				<exclusion>
+					<groupId>org.eclipse.jetty.orbit</groupId>
+					<artifactId>javax.servlet</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>org.apache.tomcat</groupId>
+					<artifactId>servlet-api</artifactId>
+				</exclusion>		
+			</exclusions>
+		</dependency>
+		<dependency>
+			<groupId>org.jooq</groupId>
+			<artifactId>collect-android-jooq</artifactId>
+			<version>2.6.0-SNAPSHOT</version>
+		</dependency>
+	    <dependency>
+			<groupId>org.sqldroid</groupId>
+			<artifactId>sqldroid-android</artifactId>
+			<version>1.0</version>
+			<scope>system</scope>
+			<systemPath>${basedir}/lib/sqldroid-android-1.0.jar</systemPath>
+		</dependency>
+	</dependencies>
+	
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>com.jayway.maven.plugins.android.generation2</groupId>
+				<artifactId>android-maven-plugin</artifactId>
+				<version>3.1.1</version>			
+				<configuration>
+				    <dex>
+						<coreLibrary>true</coreLibrary>
+					</dex>
+					<sdk>
+						<platform>2.3.3</platform>
+					</sdk>
+					<emulator>
+						<avd>a233</avd>
+					</emulator>
+					<deleteConflictingFiles>true</deleteConflictingFiles>
+					<undeployBeforeDeploy>true</undeployBeforeDeploy>
+				</configuration>
+				<extensions>true</extensions>
+			</plugin>
+			<plugin>
+				<artifactId>maven-compiler-plugin</artifactId>
+				<version>2.3.2</version>
+				<configuration>
+					<source>1.6</source>
+					<target>1.6</target>
+				</configuration>
+			</plugin>
+			<!-- <plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>build-helper-maven-plugin</artifactId>
+				<version>1.7</version>
+				<executions>
+					<execution>
+						<id>add-source</id>
+						<phase>generate-sources</phase>
+						<goals>
+							<goal>add-source</goal>
+						</goals>
+						<configuration>
+							<sources>
+								<source>gen</source>
+							</sources>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin> -->
+		</plugins> 
+	</build>
+</project>

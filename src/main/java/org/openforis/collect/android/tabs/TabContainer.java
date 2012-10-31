@@ -112,7 +112,7 @@ public class TabContainer extends TabActivity {
         	this.cmbPlotList.setVisibility(View.GONE);
         	this.cmdAddPlot.setVisibility(View.GONE);
         }
-        
+
         Intent tabIntent;
         int tabNo = TabManager.tabSet.getTabs().size();// TabManager.uiTabsList.size();
         UITab currTab = TabManager.tabSet.getTabs().get(startingIntent.getIntExtra("tabNo", -1));//TabManager.uiTabsList.get(startingIntent.getIntExtra("tabNo", -1));
@@ -189,6 +189,4 @@ public class TabContainer extends TabActivity {
     	}
     	return tabWidth;
     }
-	
-    
 }

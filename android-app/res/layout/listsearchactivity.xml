@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent" android:layout_height="fill_parent">
+
+    <EditText android:layout_width="fill_parent"
+        android:layout_height="wrap_content" android:id="@+id/txtSearchByName"
+        android:layout_alignParentBottom="true"
+        />
+    <!--  <Button android:layout_width="fill_parent"
+        android:layout_height="wrap_content" android:id="@+id/searchButton"
+        android:text="@string/search_hint" android:layout_alignParentBottom="true" />-->
+     <ListView android:id="@id/android:list"
+               android:layout_width="fill_parent"
+               android:layout_height="fill_parent"
+               android:layout_alignParentTop="true" android:layout_above="@id/txtSearchByName"/>
+
+</RelativeLayout>
+
+<!-- <?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+         android:orientation="vertical"
+         android:layout_width="fill_parent"
+         android:layout_height="fill_parent"
+         android:paddingLeft="8dp"
+         android:paddingRight="8dp">
+
+     <ListView android:id="@id/android:list"
+               android:layout_width="fill_parent"
+               android:layout_height="fill_parent"
+               android:layout_weight="1"
+               android:drawSelectorOnTop="false"/>
+
+      <TextView android:id="@id/android:empty"
+               android:layout_width="fill_parent"
+               android:layout_height="fill_parent"
+               android:text="No data"/>
+ </LinearLayout> -->
+<!-- <?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout android:id="@+id/treesearchactivity"
+android:layout_width="fill_parent"
+android:layout_height="fill_parent"
+xmlns:android="http://schemas.android.com/apk/res/android"> -->
+<!-- <ListView android:id="@+id/ListView01"
+android:layout_width="wrap_content"
+android:layout_height="wrap_content" />-->
+<!-- <ListView android:id="@id/android:list"
+              android:layout_width="fill_parent"
+              android:layout_height="fill_parent"
+              android:layout_weight="5"
+              android:drawSelectorOnTop="false"/> 
+
+</RelativeLayout>
+-->

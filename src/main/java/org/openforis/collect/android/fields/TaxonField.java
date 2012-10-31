@@ -47,6 +47,7 @@ public class TaxonField extends Field {
 	            return true;
 	        }
 	    });
+
 		if (this.searchable){
 			this.label.setOnClickListener(new OnClickListener() {
 				@Override
@@ -54,7 +55,7 @@ public class TaxonField extends Field {
 					
 				}});
 		}
-		
+
 		this.txtBox = new EditText(context);
 		this.setHint(hintText);
 		this.txtBox.setLayoutParams(new LayoutParams(0,ViewGroup.LayoutParams.WRAP_CONTENT,(float) 2));
@@ -107,7 +108,6 @@ public class TaxonField extends Field {
 		initialValue.add(String.valueOf(this.spinner.getSelectedItemPosition()));
 		initialValue.add(initialText);
 		this.values.add(initialValue);
-		
 		
 		this.addView(this.scrollLeft);
 		this.addView(this.label);

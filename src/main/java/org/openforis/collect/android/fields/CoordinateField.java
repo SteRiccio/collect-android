@@ -1,5 +1,6 @@
 package org.openforis.collect.android.fields;
 
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -19,6 +20,7 @@ public class CoordinateField extends InputField {
 	private EditText txtLatitude;
 	private EditText txtLongitude;
 	
+
 	private List<ArrayList<String>> values;
 	
 	public CoordinateField(Context context, String labelText,

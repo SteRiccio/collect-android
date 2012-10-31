@@ -51,7 +51,7 @@ public class Separator extends UIElement {
 		this.addView(this.container);
 		
 		this.entity = entityDef;
-		
+
 		//swipe detection
     	gestureDetector = new GestureDetector(new SwipeDetector(this));
         gestureListener = new View.OnTouchListener() {
