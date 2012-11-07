@@ -5,7 +5,7 @@ import java.io.FileInputStream;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.GregorianCalendar;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -13,6 +13,15 @@ import java.util.Map;
 import org.openforis.collect.android.R;
 import org.openforis.collect.android.database.CollectDatabase;
 import org.openforis.collect.android.database.DatabaseWrapper;
+import org.openforis.collect.android.fields.BooleanField;
+import org.openforis.collect.android.fields.CodeField;
+import org.openforis.collect.android.fields.DateField;
+import org.openforis.collect.android.fields.MemoField;
+import org.openforis.collect.android.fields.NumberField;
+import org.openforis.collect.android.fields.RangeField;
+import org.openforis.collect.android.fields.TaxonField;
+import org.openforis.collect.android.fields.TextField;
+import org.openforis.collect.android.fields.TimeField;
 import org.openforis.collect.android.fields.UIElement;
 import org.openforis.collect.android.lists.ClusterChoiceActivity;
 import org.openforis.collect.android.messages.AlertMessage;
@@ -25,23 +34,43 @@ import org.openforis.collect.metamodel.ui.UIOptions;
 import org.openforis.collect.metamodel.ui.UITab;
 import org.openforis.collect.metamodel.ui.UITabSet;
 import org.openforis.collect.model.CollectRecord;
-import org.openforis.collect.model.CollectRecord.State;
 import org.openforis.collect.model.CollectRecord.Step;
 import org.openforis.collect.model.CollectSurvey;
 import org.openforis.collect.model.CollectSurveyContext;
 import org.openforis.collect.model.Configuration;
 import org.openforis.collect.model.User;
 import org.openforis.collect.persistence.RecordDao;
+import org.openforis.collect.persistence.RecordPersistenceException;
 import org.openforis.collect.persistence.SurveyDao;
 import org.openforis.collect.persistence.SurveyWorkDao;
 import org.openforis.collect.persistence.UserDao;
 import org.openforis.collect.persistence.xml.UIOptionsBinder;
+import org.openforis.idm.metamodel.BooleanAttributeDefinition;
+import org.openforis.idm.metamodel.CodeAttributeDefinition;
+import org.openforis.idm.metamodel.DateAttributeDefinition;
 import org.openforis.idm.metamodel.EntityDefinition;
 import org.openforis.idm.metamodel.NodeDefinition;
+import org.openforis.idm.metamodel.NumberAttributeDefinition;
+import org.openforis.idm.metamodel.RangeAttributeDefinition;
 import org.openforis.idm.metamodel.Schema;
+import org.openforis.idm.metamodel.TaxonAttributeDefinition;
+import org.openforis.idm.metamodel.TextAttributeDefinition;
+import org.openforis.idm.metamodel.TimeAttributeDefinition;
 import org.openforis.idm.metamodel.validation.Validator;
 import org.openforis.idm.metamodel.xml.SurveyIdmlBinder;
+import org.openforis.idm.model.BooleanAttribute;
+import org.openforis.idm.model.Code;
+import org.openforis.idm.model.CodeAttribute;
+import org.openforis.idm.model.DateAttribute;
 import org.openforis.idm.model.Entity;
+import org.openforis.idm.model.EntityBuilder;
+import org.openforis.idm.model.Node;
+import org.openforis.idm.model.NumberAttribute;
+import org.openforis.idm.model.NumericRangeAttribute;
+import org.openforis.idm.model.TaxonAttribute;
+import org.openforis.idm.model.TextAttribute;
+import org.openforis.idm.model.Time;
+import org.openforis.idm.model.TimeAttribute;
 import org.openforis.idm.model.expression.ExpressionFactory;
 import org.springframework.jdbc.core.support.JdbcDaoSupport;
 
@@ -72,7 +101,7 @@ public class TabManager extends TabActivity /*implements OnGesturePerformedListe
 	
 	private static CollectSurvey survey;
 	public static List<Configuration> configList;
-	public static UITabSet tabSet;
+	public static UITabSet clusterTabSet;
 	public static List<UITab> uiTabsList;
 	public static Schema schema;
 
@@ -158,6 +187,7 @@ public class TabManager extends TabActivity /*implements OnGesturePerformedListe
         	setSurvey(this.surveyManager.getSurveyDao().load("Archenland NFI"));
         	if (getSurvey()==null){
             	long startTime = System.currentTimeMillis();
+            	Log.e("PARSING","====================");     
             	FileInputStream fis = new FileInputStream(sdcardPath+getResources().getString(R.string.formDefinitionFile));        	
             	SurveyIdmlBinder binder = new SurveyIdmlBinder(collectSurveyContext);
         		binder.addApplicationOptionsBinder(new UIOptionsBinder());
@@ -198,10 +228,10 @@ public class TabManager extends TabActivity /*implements OnGesturePerformedListe
         	getSurvey().addApplicationOptions(uiOptions);
         	
         	//TabManager.configList = survey.getConfigurations();
-        	TabManager.tabSet = uiOptions.getTabSet("cluster");
-        	int mainTabsNo = TabManager.tabSet.getTabs().size();
+    		TabManager.clusterTabSet = uiOptions.getTabSet("cluster");
+        	int mainTabsNo = TabManager.clusterTabSet.getTabs().size();
         	if (mainTabsNo>0){
-        		TabManager.uiTabsList = TabManager.tabSet.getTabs();
+        		TabManager.uiTabsList = TabManager.clusterTabSet.getTabs();
         		Intent tabIntent;
             	for (int i=0; i<mainTabsNo;i++){
             		UITab uiTab = TabManager.uiTabsList.get(i);
@@ -222,18 +252,11 @@ public class TabManager extends TabActivity /*implements OnGesturePerformedListe
                 			TabManager.this.calcTabWidth(mainTabsNo),
                 			getResources().getInteger(R.integer.tab_height));
             	}
-
         	}
         	
         	//saving schema, user, etc. to database
         	JdbcDaoSupport jdbcDao = new JdbcDaoSupport();
-
-        	//saving schema to database
-        	/*if (getSurvey()!=null){
-        		if (this.surveyManager.getSurveyDao().load(getSurvey().getName())==null){
-        			this.surveyManager.importModel(getSurvey());
-        		}
-        	}**/
+        	jdbcDao.getConnection();
         	
         	//adding default user to database if not exists        	
         	User defaultUser = new User();
@@ -245,60 +268,15 @@ public class TabManager extends TabActivity /*implements OnGesturePerformedListe
         	if (!userExists(defaultUser)){
         		this.userManager.insert(defaultUser);
         	}
-        	
-        	/*SQLiteFactory create = new SQLiteFactory(jdbcDao.getConnection());
-            Result<Record> result = create.select()
-				.from("ofc_user")
-				.fetch();
-            SelectJoinStep q = create.select().from("ofc_user");
-            Log.e("CSV:",result.formatCSV());*/
-            
+
         	this.recordManager = new RecordManager();
     		this.recordManager.setRecordDao(new RecordDao());
     		
-    		CollectRecord record = new CollectRecord(getSurvey(), "2.0");        	
-    		record.setCreatedBy(defaultUser);
-    		record.getCreatedBy().setId(99999);
-    		record.getSurvey().setId(1);
-    		Entity cluster = record.createRootEntity("cluster");
-    		record.setCreationDate(new GregorianCalendar(2000, 1, 3, 11, 22).getTime());
-    		record.setStep(Step.ENTRY);
-    		record.setState(State.REJECTED);
-    		record.setWarnings(1);
-    		record.setErrors(11);
-    		record.setSkipped(111);
-    		
-    		//this.recordManager.getRecordDao().insert(record);
-    		CollectRecord loadedRecord = this.recordManager.load(getSurvey(), 1, 1);
-    		Log.e("loadedRecordId","=="+loadedRecord.getId());
-    		Log.e("loadedRecordUserName","=="+loadedRecord.getCreatedBy().getName());
-    		Log.e("loadedRecordDate","=="+loadedRecord.getCreationDate().toString());
-    		Log.e("loadedRecordWarnings","=="+loadedRecord.getWarnings());
-    		
-    		loadedRecord = this.recordManager.load(getSurvey(), 2, 1);
-    		Log.e("loadedRecordId","=="+loadedRecord.getId());
-    		Log.e("loadedRecordUserName","=="+loadedRecord.getCreatedBy().getName());
-    		Log.e("loadedRecordDate","=="+loadedRecord.getCreationDate().toString());
-    		Log.e("loadedRecordWarnings","=="+loadedRecord.getWarnings());
+    		long startTime = System.currentTimeMillis();
+    		CollectRecord loadedRecord = loadData(27);
+    		Log.e("loadingTIME","=="+(System.currentTimeMillis()-startTime)/1000);
+    		displayEntityData(loadedRecord.getRootEntity());
             JdbcDaoSupport.close();
-
-        	/*CollectRecord record = new CollectRecord(getSurvey(), "2.0");        	
-    		record.setCreatedBy(defaultUser);
-    		record.setModifiedBy(defaultUser);
-    		Entity cluster = record.createRootEntity("cluster");
-    		record.setCreationDate(new GregorianCalendar(2011, 12, 31, 23, 59).getTime());
-    		record.setModifiedDate(new GregorianCalendar(2012, 2, 3, 9, 30).getTime());
-    		record.setStep(Step.ENTRY);
-    		record.setState(State.REJECTED);
-    		
-    		CollectRecord clusterRecord = (CollectRecord) cluster.getRecord();
-    		{
-    			Entity ts = EntityBuilder.addEntity(cluster, "task");
-    			EntityBuilder.addValue(ts, "type", new Code("formChecked"));
-    			EntityBuilder.addValue(ts, "person", "lastname");
-    		}
-    		record.updateRootEntityKeyValues();
-    		record.updateEntityCounts();*/
 		} catch (Exception e){
     		RunnableHandler.reportException(e,getResources().getString(R.string.app_name),TAG+":onCreate",
     				Environment.getExternalStorageDirectory().toString()
@@ -508,27 +486,22 @@ public class TabManager extends TabActivity /*implements OnGesturePerformedListe
             return true;
  
         case R.id.menu_save:
-			AlertMessage.createPositiveNeutralNegativeDialog(TabManager.this, true, getResources().getDrawable(R.drawable.warningsign),
+        	saveData();
+			/*AlertMessage.createPositiveNegativeDialog(TabManager.this, true, getResources().getDrawable(R.drawable.warningsign),
     				getResources().getString(R.string.savingDataTitle), getResources().getString(R.string.savingDataMessage),
-    				getResources().getString(R.string.savingToDatabase), getResources().getString(R.string.savingToFile), getResources().getString(R.string.cancel),
+    				getResources().getString(R.string.savingToDatabase), getResources().getString(R.string.cancel),
     	    		new DialogInterface.OnClickListener() {
     					@Override
     					public void onClick(DialogInterface dialog, int which) {
     						saveData();
     					}
     				},
-    				new DialogInterface.OnClickListener() {
-    					@Override
-    					public void onClick(DialogInterface dialog, int which) {
-    						
-    					}
-    				},
     	    		new DialogInterface.OnClickListener() {
     					@Override
     					public void onClick(DialogInterface dialog, int which) {
     						
     					}
-    				}).show();
+    				}, null).show();*/
             return true;
 
         case R.id.menu_about:
@@ -579,8 +552,8 @@ public class TabManager extends TabActivity /*implements OnGesturePerformedListe
 			}
 		}
 	 
-	 public static UIElement getUIElement(NodeDefinition nodeDefn){
-		 return TabManager.uiElementsMap.get(nodeDefn.getId());
+	 public static UIElement getUIElement(int elementId){
+		 return TabManager.uiElementsMap.get(elementId);
 	 }
 	 
 	 private boolean userExists(User user){
@@ -604,7 +577,239 @@ public class TabManager extends TabActivity /*implements OnGesturePerformedListe
 		 survey = surv;
 	 }
 	 
-	 public void saveData(){
-		 
-	 }
+	public void saveData(){
+		try{
+			JdbcDaoSupport jdbcDao = new JdbcDaoSupport();
+			jdbcDao.getConnection();
+			
+			//initializing data record 
+			CollectRecord record = new CollectRecord(TabManager.survey, TabManager.survey.getVersions().get(TabManager.survey.getVersions().size()-1).getName());        	
+			record.setCreatedBy(this.userManager.loadById(getResources().getInteger(R.integer.defaulUsertId)));
+			Entity cluster = record.createRootEntity(TabManager.survey.getSchema().getRootEntityDefinitions().get(0).getName());
+			cluster.setId(TabManager.survey.getSchema().getRootEntityDefinitions().get(0).getId());
+			
+			record.setCreationDate(new Date());
+			record.setStep(Step.ENTRY);
+			
+			//getting data from fields
+			UIElement uiField = null;
+			Map<Integer,Entity> entitiesMap = new HashMap<Integer,Entity>();
+			entitiesMap.put(TabManager.survey.getSchema().getRootEntityDefinitions().get(0).getId(),cluster);
+			Entity parentEntity = cluster;
+			for (int i=0;i<1000;i++){
+				NodeDefinition nodeDef = TabManager.schema.getDefinitionById(i);
+				if (nodeDef!=null){
+					if (nodeDef.getClass().equals(EntityDefinition.class)
+							&&
+						!nodeDef.equals(TabManager.survey.getSchema().getRootEntityDefinitions().get(0))){
+						
+						//Log.e("entitiesMap==null","=="+(entitiesMap==null));
+						//Log.e("entitiesMap.size","=="+entitiesMap.size());
+						if (parentEntity!=null){
+							if (nodeDef.getParentDefinition()!=null){
+								//Log.e("parentID","=="+nodeDef.getParentDefinition().getId());						
+								parentEntity = entitiesMap.get(nodeDef.getParentDefinition().getId());
+								parentEntity.setId(nodeDef.getParentDefinition().getId());
+								//Log.e("parentEntity"+parentEntity.getId(),"=="+parentEntity.getName());
+								//Log.e("parentEntity==null","=="+(parentEntity==null));
+							}
+							else {
+								//Log.e("parentID","=="+cluster.getId());						
+								parentEntity = cluster;
+								//Log.e("parentEntity==null","=="+(parentEntity==null));
+							}
+							Entity currentEntity = EntityBuilder.addEntity(parentEntity, nodeDef.getName());
+							entitiesMap.put(i, currentEntity);			
+						}
+					}
+				}
+			}
+			/*for (int i=0;i<1000;i++){
+				if (entitiesMap.get(i)!=null){
+					if (entitiesMap.get(i).getParent()!=null){
+						Log.e("MAP:ID"+i,entitiesMap.get(i).getName()+"=="+entitiesMap.get(i).getParent().getName());	
+					}
+					else {
+						Log.e("MAP:id"+i,entitiesMap.get(i).getName()+"=="+entitiesMap.get(i).getId());
+					}
+				}					
+			}*/
+
+			for (NodeDefinition formField : TabManager.fieldsList){
+				uiField = TabManager.getUIElement(formField.getId());
+				if ((uiField!=null)){
+					//Log.e("UIField.id"+uiField.getElementId(),uiField.getClass()+"==");	
+				}
+				
+				if ((uiField!=null)&&(uiField.getElementId()!=-1)){
+					//Log.e("parentSearch"+formField.getParentDefinition().getId(),"=="+formField.getParentDefinition().getName());
+					Entity parent = entitiesMap.get(formField.getParentDefinition().getId());
+					if (parent==null)
+						parent = cluster;
+					//Log.e("parent",parent.getId()+"=="+parent.getName());
+					addValueToRecord(parent, formField, uiField,0);
+				}
+			}
+			{
+				Entity ts = EntityBuilder.addEntity(cluster, "task");
+				EntityBuilder.addValue(ts, "type", new Code("2"));
+				EntityBuilder.addValue(ts, "person", "JANel");
+				EntityBuilder.addValue(ts, "date", new org.openforis.idm.model.Date(2010,2,15));
+			}
+			EntityBuilder.addValue(cluster, "district", new Code("123"));
+			
+			Log.e("inserting","====================");
+			long startTime = System.currentTimeMillis();
+
+			//this.recordManager.getRecordDao().insert(record);
+			//Log.e("loadedRecord","=="+record.getId());
+			//Log.e("date","#=="+record.toString());
+			//Log.e("insertingOVER","=="+(System.currentTimeMillis()-startTime)/1000);
+			CollectRecord loadedRecord = this.recordManager.load(getSurvey(), record.getId(), 1);
+			Entity rootEntity = loadedRecord.getRootEntity();
+			//Log.e("rootEntity","=="+rootEntity.getName());
+			//displayEntityData(rootEntity);
+			JdbcDaoSupport.close();
+		} catch (Exception e){
+    		RunnableHandler.reportException(e,getResources().getString(R.string.app_name),TAG+":saveData",
+    				Environment.getExternalStorageDirectory().toString()
+    				+getResources().getString(R.string.logs_folder)
+    				+getResources().getString(R.string.logs_file_name)
+    				+System.currentTimeMillis()
+    				+getResources().getString(R.string.log_file_extension));
+		}
+	}
+	
+	void displayEntityData(Entity parentEntity){
+		for (Node n : parentEntity.getChildren()){
+			if (n.getClass().equals(NumberAttribute.class)){
+				NumberAttribute number = (NumberAttribute)n;
+				Log.e("number"+number.getName(),"=="+number.getValue());
+				NumberField nu = (NumberField)TabManager.getUIElement(n.getId());
+				nu.setValue("987"+number.getValue());
+			} else if (n.getClass().equals(CodeAttribute.class)){
+				CodeAttribute code = (CodeAttribute)n;
+				Log.e("code"+code.getName(),"=="+code.getValue().getCode());
+				Log.e("id"+(n.getId()==null),"==");
+				CodeField co = (CodeField)TabManager.getUIElement(n.getId());
+				co.setValue(code.getValue().getCode());
+			} else if (n.getClass().equals(BooleanAttribute.class)){
+				BooleanAttribute bool = (BooleanAttribute)n;
+				Log.e("bool"+bool.getName(),"=="+bool.getValue().getValue());
+			} else if (n.getClass().equals(TextAttribute.class)){
+				TextAttribute text = (TextAttribute)n;
+				Log.e("text"+text.getName(),"=="+text.getValue().getValue());
+				Log.e("id"+(n.getId()==null),"==");
+				TextField te = (TextField)TabManager.getUIElement(n.getId());
+				te.setValue("abc"+text.getValue());
+			} else if (n.getClass().equals(DateAttribute.class)){
+				DateAttribute date = (DateAttribute)n;
+				Log.e("date"+date.getName(),"=="+date.getValue().getYear());
+				DateField da = (DateField)TabManager.getUIElement(n.getId());
+				da.setValue("abc"+date.getValue());
+			} else if (n.getClass().equals(TimeAttribute.class)){
+				TimeAttribute time = (TimeAttribute)n;
+				Log.e("time"+time.getName(),"=="+time.getValue());	
+			} else if (n.getClass().equals(NumericRangeAttribute.class)){
+				
+			} else if (n.getClass().equals(TaxonAttribute.class)){
+				
+			} else if (n.getClass().equals(Entity.class)){
+				displayEntityData((Entity)n);
+			}
+		}
+	}
+	
+	private void addValueToRecord(Entity parent, NodeDefinition formField, UIElement uiField, int uiFieldInstanceNo){
+		//Log.e("addedfield","=="+formField.getName());
+		//Log.e("addedparentEntity","=="+formField.getParentDefinition().getName());
+		
+		if (formField.getClass().equals(NumberAttributeDefinition.class)){
+			NumberField field = (NumberField)uiField;
+			//Log.e("value",field.getType()+"=="+field.getValue(0));
+			if (field.getType().equals("INTEGER")){
+				EntityBuilder.addValue(parent, formField.getName(), (field.getValue(0).equals(""))?null:Integer.valueOf(field.getValue(uiFieldInstanceNo)));
+			} else {
+				EntityBuilder.addValue(parent, formField.getName(), (field.getValue(0).equals(""))?null:Double.valueOf(field.getValue(uiFieldInstanceNo)));
+			}
+		} else if (formField.getClass().equals(CodeAttributeDefinition.class)){
+			CodeField field = (CodeField)uiField;
+			//Log.e("value","=="+field.getValue(0));
+			EntityBuilder.addValue(parent, formField.getName(), new Code(String.valueOf(field.getValue(uiFieldInstanceNo))));
+		} else if (formField.getClass().equals(BooleanAttributeDefinition.class)){
+			BooleanField field = (BooleanField)uiField;
+			//Log.e("value","=="+field.getValue(0));
+			EntityBuilder.addValue(parent, formField.getName(), field.getValue(uiFieldInstanceNo).get(0));
+		} else if (formField.getClass().equals(TextAttributeDefinition.class)){
+			TextAttributeDefinition textAttrField = (TextAttributeDefinition) formField;			
+			Object fieldType = textAttrField.getType();
+			if (fieldType!=null){
+				if(fieldType.toString().equals(getResources().getString(R.string.text_type_long))){//memo
+					MemoField field = (MemoField)uiField;
+					//Log.e("value","=="+field.getValue(0));
+					EntityBuilder.addValue(parent, formField.getName(), field.getValue(uiFieldInstanceNo));
+				} else {//short
+					TextField field = (TextField)uiField;
+					Log.e("value","=="+field.getValue(0));
+					EntityBuilder.addValue(parent, formField.getName(), field.getValue(uiFieldInstanceNo));
+				}
+			} else{//no type of text field specified
+				TextField field = (TextField)uiField;
+				//Log.e("value","=="+field.getValue(0));
+				EntityBuilder.addValue(parent, formField.getName(), field.getValue(uiFieldInstanceNo));
+			}			
+		} else if (formField.getClass().equals(DateAttributeDefinition.class)){
+			DateField field = (DateField)uiField;
+			//Log.e("value","=="+field.getValue(0));
+			EntityBuilder.addValue(parent, formField.getName(), new org.openforis.idm.model.Date(2011,2,14)/*field.getValue(uiFieldInstanceNo)*/);
+		} else if (formField.getClass().equals(TimeAttributeDefinition.class)){
+			TimeField field = (TimeField)uiField;
+			//Log.e("value","=="+field.getValue(0));
+			EntityBuilder.addValue(parent, formField.getName(), new Time(11,55)/*field.getValue(uiFieldInstanceNo)*/);
+		} else if (formField.getClass().equals(RangeAttributeDefinition.class)){
+			RangeField field = (RangeField)uiField;
+			//Log.e("value","=="+field.getValue(0));
+		} else if (formField.getClass().equals(TaxonAttributeDefinition.class)){
+			TaxonField field = (TaxonField)uiField;
+		}
+	}
+	/*	CollectRecord record = (CollectRecord) cluster.getRecord();
+EntityBuilder.addValue(cluster, "id", new Code("123_456"));
+EntityBuilder.addValue(cluster, "gps_realtime", Boolean.TRUE);
+EntityBuilder.addValue(cluster, "region", new Code("001"));
+CodeAttribute districtAttr = EntityBuilder.addValue(cluster, "district", new Code("XXX"));
+record.setErrorConfirmed(districtAttr, true);
+EntityBuilder.addValue(cluster, "crew_no", 10);
+EntityBuilder.addValue(cluster, "map_sheet", "value 1");
+EntityBuilder.addValue(cluster, "map_sheet", "value 2");
+EntityBuilder.addValue(cluster, "vehicle_location", new Coordinate((double)432423423l, (double)4324324l, "srs"));
+EntityBuilder.addValue(cluster, "gps_model", "TomTom 1.232");
+cluster.setChildState("accessibility", 1);
+{
+Entity ts = EntityBuilder.addEntity(cluster, "time_study");
+EntityBuilder.addValue(ts, "date", new Date(2011,2,14));
+EntityBuilder.addValue(ts, "start_time", new Time(8,15));
+EntityBuilder.addValue(ts, "end_time", new Time(15,29));
+}
+{
+Entity ts = EntityBuilder.addEntity(cluster, "time_study");
+EntityBuilder.addValue(ts, "date", new Date(2011,2,15));
+EntityBuilder.addValue(ts, "start_time", new Time(8,32));
+EntityBuilder.addValue(ts, "end_time", new Time(11,20));
+}*/
+	
+	public CollectRecord loadData(int recordId){
+		CollectRecord loadedRecord = null;
+		try {
+			loadedRecord = this.recordManager.load(getSurvey(), recordId, 1);
+		} catch (Exception e) {
+    		RunnableHandler.reportException(e,getResources().getString(R.string.app_name),TAG+":loadData",
+    				Environment.getExternalStorageDirectory().toString()
+    				+getResources().getString(R.string.logs_folder)
+    				+getResources().getString(R.string.logs_file_name)
+    				+System.currentTimeMillis()
+    				+getResources().getString(R.string.log_file_extension));
+		}
+		return loadedRecord;
+	}
 }

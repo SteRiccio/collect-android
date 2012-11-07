@@ -30,11 +30,11 @@ public class TaxonField extends Field {
 	
 	private List<ArrayList<String>> values;
 	
-	public TaxonField(Context context, String labelText, String initialText, String hintText, String promptText, 
+	public TaxonField(Context context, int id, String labelText, String initialText, String hintText, String promptText, 
 			ArrayList<String> codes, ArrayList<String> options, 
 			String selectedItem, boolean isSearchable,
 			boolean isMultiple) {
-		super(context, isMultiple);
+		super(context, id, isMultiple);
 		
 		this.label = new TextView(context);
 		this.label.setMaxLines(1);
@@ -107,7 +107,7 @@ public class TaxonField extends Field {
 		ArrayList<String> initialValue = new ArrayList<String>();
 		initialValue.add(String.valueOf(this.spinner.getSelectedItemPosition()));
 		initialValue.add(initialText);
-		this.values.add(initialValue);
+		this.values.add(currentInstanceNo, initialValue);
 		
 		this.addView(this.scrollLeft);
 		this.addView(this.label);
@@ -117,12 +117,12 @@ public class TaxonField extends Field {
 	
 	@Override
 	public void scrollLeft(){
-    	if (TaxonField.this.currentInstanceNo>1){
+    	if (TaxonField.this.currentInstanceNo>0){
     		ArrayList<String> tempValue = new ArrayList<String>();
     		tempValue.add(String.valueOf(TaxonField.this.spinner.getSelectedItemPosition()));
     		tempValue.add(TaxonField.this.txtBox.getText().toString());
-    		TaxonField.this.values.set(TaxonField.this.currentInstanceNo-1, tempValue);
-    		TaxonField.this.txtBox.setText(TaxonField.this.values.get(TaxonField.this.currentInstanceNo-2).get(1).toString());
+    		TaxonField.this.values.set(TaxonField.this.currentInstanceNo, tempValue);
+    		TaxonField.this.txtBox.setText(TaxonField.this.values.get(TaxonField.this.currentInstanceNo-1).get(1).toString());
 			TaxonField.this.spinner.setSelection(Integer.valueOf(TaxonField.this.values.get(TaxonField.this.currentInstanceNo-2).get(0)));
     		TaxonField.this.currentInstanceNo--;
     	}
@@ -140,7 +140,7 @@ public class TaxonField extends Field {
 		ArrayList<String> tempValue = new ArrayList<String>();
 		tempValue.add(String.valueOf(TaxonField.this.spinner.getSelectedItemPosition()));
 		tempValue.add(TaxonField.this.txtBox.getText().toString());
-    	TaxonField.this.values.set(TaxonField.this.currentInstanceNo-1, tempValue);        			        		
+    	TaxonField.this.values.set(TaxonField.this.currentInstanceNo, tempValue);        			        		
 		if (TaxonField.this.values.size()>TaxonField.this.currentInstanceNo){
 			TaxonField.this.txtBox.setText(TaxonField.this.values.get(TaxonField.this.currentInstanceNo).get(1).toString());
 			TaxonField.this.spinner.setSelection(Integer.valueOf(TaxonField.this.values.get(TaxonField.this.currentInstanceNo).get(0)));
@@ -157,4 +157,8 @@ public class TaxonField extends Field {
 	{
 		this.txtBox.setHint(value);
 	}
+	
+	/* 
+	 * getValue and saving field value after state changed i.e. user selected from menu or typed sth
+	 * TO BE IMPLEMENTED */
 }

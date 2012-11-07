@@ -1,10 +1,12 @@
 package org.openforis.collect.android.fields;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.openforis.collect.android.messages.ToastMessage;
 
 import android.content.Context;
+import android.text.Editable;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
@@ -17,9 +19,12 @@ public class NumberField extends InputField {
 
 	private String type;
 	
-	public NumberField(Context context, String labelText, String initialText, String hintText,
+	public NumberField(Context context, int id, String labelText, String initialText, String hintText,
 			String numberType, boolean isMultiple) {
-		super(context, isMultiple);
+		super(context, id, isMultiple);
+		
+		this.values = new ArrayList<String>();
+		NumberField.this.values.add(NumberField.this.currentInstanceNo, "");
 		
 		this.label = new TextView(context);
 		this.label.setMaxLines(1);
@@ -46,26 +51,40 @@ public class NumberField extends InputField {
 		this.addView(this.scrollLeft);
 		this.addView(this.label);
 		this.addView(this.txtBox);
-		this.addView(this.scrollRight);
+		this.addView(this.scrollRight);		
 	}
 
 	@Override
 	public void scrollLeft(){
-    	if (NumberField.this.currentInstanceNo>1){
-    		NumberField.this.values.set(NumberField.this.currentInstanceNo-1, NumberField.this.txtBox.getText().toString());	        		
-    		NumberField.this.txtBox.setText(NumberField.this.values.get(NumberField.this.currentInstanceNo-2));
+    	if (NumberField.this.currentInstanceNo>0){
+    		NumberField.this.values.set(NumberField.this.currentInstanceNo, NumberField.this.txtBox.getText().toString());	        		
     		NumberField.this.currentInstanceNo--;
+    		NumberField.this.txtBox.setText(NumberField.this.values.get(NumberField.this.currentInstanceNo));    		
     	}
 	}
 	
 	@Override
 	public void scrollRight(){
-    	if (NumberField.this.values.size()==NumberField.this.currentInstanceNo){
-    		NumberField.this.values.add(NumberField.this.currentInstanceNo, "");	        		
+    	if (NumberField.this.values.size()==(NumberField.this.currentInstanceNo+1)){
+    		NumberField.this.values.add(NumberField.this.currentInstanceNo+1, "");
     	}
-    	NumberField.this.values.set(NumberField.this.currentInstanceNo-1, NumberField.this.txtBox.getText().toString());        			        		
-		if (NumberField.this.values.size()>NumberField.this.currentInstanceNo)
+    	NumberField.this.values.set(NumberField.this.currentInstanceNo, NumberField.this.txtBox.getText().toString());
+    	NumberField.this.currentInstanceNo++;
+		if (NumberField.this.values.size()>=(NumberField.this.currentInstanceNo+1)){
 			NumberField.this.txtBox.setText(NumberField.this.values.get(NumberField.this.currentInstanceNo));
-		NumberField.this.currentInstanceNo++;
+		}
+	}
+	
+	public String getValue(int index){
+		return NumberField.this.values.get(index);
+	}
+	
+	@Override
+	public void afterTextChanged(Editable s) {
+		NumberField.this.values.add(currentInstanceNo, s.toString());
+	}
+	
+	public String getType(){
+		return this.type;
 	}
 }

@@ -18,12 +18,17 @@ public class UIElement extends LinearLayout{
 	
 	protected int currentInstanceNo;
 	
-	public UIElement(Context context, boolean hasScrollingArrows){
+	protected int elemId;	
+	
+	public UIElement(Context context, int id, boolean hasScrollingArrows){
 		super(context);
+		
+		this.elemId = id;
+		
 		this.container = new LinearLayout(context);
 		this.container.setLayoutParams(new LayoutParams(ViewGroup.LayoutParams.FILL_PARENT, getResources().getInteger(R.integer.field_height)));
 		
-		this.currentInstanceNo = 1;
+		this.currentInstanceNo = 0;
 		
 		this.scrollLeft = new ImageView(context);			
 		this.scrollRight = new ImageView(context);			
@@ -62,6 +67,10 @@ public class UIElement extends LinearLayout{
 	
 	public void scrollRight(){
 		
+	}
+	
+	public int getElementId(){
+		return this.elemId;
 	}
 	
 }

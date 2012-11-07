@@ -6,23 +6,22 @@ import java.util.List;
 import org.openforis.collect.android.messages.ToastMessage;
 
 import android.content.Context;
+import android.text.Editable;
+import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 
 public class TextField extends InputField {
-	
-	//private GestureDetector gestureDetector;
-	// View.OnTouchListener gestureListener;
 
 	protected List<String> values;
 	
-	public TextField(Context context, String labelText, String initialText, String hintText,
+	public TextField(Context context, int id, String labelText, String initialText, String hintText,
 			boolean isMultiple) {
-		super(context, isMultiple);
+		super(context, id, isMultiple);
 		
 		this.values = new ArrayList<String>();
-		this.values.add("");
+		TextField.this.values.add(TextField.this.currentInstanceNo, "");
 		
 		this.label.setText(labelText);
 		this.label.setLayoutParams(new LayoutParams(0, ViewGroup.LayoutParams.WRAP_CONTENT, (float) 1));
@@ -35,6 +34,7 @@ public class TextField extends InputField {
 	    });
 		this.setHint(hintText);		
 		this.txtBox.setLayoutParams(new LayoutParams(0,ViewGroup.LayoutParams.WRAP_CONTENT,(float) 3));
+		this.txtBox.addTextChangedListener(this);
 		
 		this.container.addView(this.scrollLeft);
 		this.container.addView(this.label);
@@ -59,21 +59,31 @@ public class TextField extends InputField {
 	
 	@Override
 	public void scrollLeft(){
-    	if (TextField.this.currentInstanceNo>1){
-    		TextField.this.values.set(TextField.this.currentInstanceNo-1, TextField.this.txtBox.getText().toString());	        		
-    		TextField.this.txtBox.setText(TextField.this.values.get(TextField.this.currentInstanceNo-2));
+    	if (TextField.this.currentInstanceNo>0){
+    		TextField.this.values.set(TextField.this.currentInstanceNo, TextField.this.txtBox.getText().toString());	        		
     		TextField.this.currentInstanceNo--;
+    		TextField.this.txtBox.setText(TextField.this.values.get(TextField.this.currentInstanceNo));    		
     	}
 	}
 	
 	@Override
 	public void scrollRight(){
-    	if (TextField.this.values.size()==TextField.this.currentInstanceNo){
-    		TextField.this.values.add(TextField.this.currentInstanceNo, "");
+    	if (TextField.this.values.size()==(TextField.this.currentInstanceNo+1)){
+    		TextField.this.values.add(TextField.this.currentInstanceNo+1, "");
     	}
-    	TextField.this.values.set(TextField.this.currentInstanceNo-1, TextField.this.txtBox.getText().toString());        			        		
-		if (TextField.this.values.size()>TextField.this.currentInstanceNo)
+    	TextField.this.values.set(TextField.this.currentInstanceNo, TextField.this.txtBox.getText().toString());
+    	TextField.this.currentInstanceNo++;
+		if (TextField.this.values.size()>=(TextField.this.currentInstanceNo+1)){
 			TextField.this.txtBox.setText(TextField.this.values.get(TextField.this.currentInstanceNo));
-		TextField.this.currentInstanceNo++;
+		}
+	}
+	
+	public String getValue(int index){
+		return TextField.this.values.get(index);
+	}
+	
+	@Override
+	public void afterTextChanged(Editable s) {
+		TextField.this.values.set(TextField.this.currentInstanceNo, s.toString());
 	}
 }

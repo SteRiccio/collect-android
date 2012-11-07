@@ -25,8 +25,8 @@ public class Separator extends UIElement {
 	
 	private EntityDefinition entity;
 	
-	public Separator(Context context, boolean hasScrollingArrows, EntityDefinition entityDef) {
-		super(context, hasScrollingArrows);
+	public Separator(Context context, int id, boolean hasScrollingArrows, EntityDefinition entityDef) {
+		super(context, id, hasScrollingArrows);
 		
 		this.separator = new Button(context);
 		
@@ -68,11 +68,11 @@ public class Separator extends UIElement {
 	
 	@Override
 	public void scrollLeft(){
-    	if (Separator.this.currentInstanceNo>1){
+    	if (Separator.this.currentInstanceNo>0){
     		List<NodeDefinition> childrenList = Separator.this.entity.getChildDefinitions();
     		for (int i=0;i<childrenList.size();i++){
     			NodeDefinition nodeDefn = childrenList.get(i);
-    			UIElement field = TabManager.getUIElement(nodeDefn);
+    			UIElement field = TabManager.getUIElement(nodeDefn.getId());
     			field.scrollLeft();
     		}
     		Separator.this.currentInstanceNo--;
@@ -84,7 +84,7 @@ public class Separator extends UIElement {
     	List<NodeDefinition> childrenList = Separator.this.entity.getChildDefinitions();
 		for (int i=0;i<childrenList.size();i++){
 			NodeDefinition nodeDefn = childrenList.get(i);
-			UIElement field = TabManager.getUIElement(nodeDefn);
+			UIElement field = TabManager.getUIElement(nodeDefn.getId());
 			field.scrollRight();		
 		}
 		Separator.this.currentInstanceNo++;

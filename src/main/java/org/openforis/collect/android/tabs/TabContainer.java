@@ -10,7 +10,9 @@ import org.openforis.collect.metamodel.ui.UITab;
 import org.openforis.idm.metamodel.EntityDefinition;
 import org.openforis.idm.metamodel.NodeDefinition;
 
+import android.app.AlertDialog;
 import android.app.TabActivity;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Environment;
@@ -19,6 +21,7 @@ import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.ArrayAdapter;
+import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.Spinner;
@@ -36,6 +39,7 @@ public class TabContainer extends TabActivity {
 	
 	private Spinner cmbPlotList;
 	private ImageButton cmdAddPlot;
+	private ArrayList<String> itemsList;
 	
 	public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);       
@@ -92,16 +96,37 @@ public class TabContainer extends TabActivity {
         
         this.cmbPlotList = (Spinner) findViewById(R.id.cmbPlotList);
         this.cmdAddPlot = (ImageButton)this.findViewById(R.id.btnNewPlot);
-        if ((!hasFields)&&(entityDef!=null)&&(!isRootEntity)){//show add button above tabs
-            ArrayList<String> options=new ArrayList<String>();
-            options.add("plot1");
-            options.add("plot2");
-            ArrayAdapter<String> adapter = new ArrayAdapter<String>(this,android.R.layout.simple_spinner_item,options);
-            adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-            this.cmbPlotList.setAdapter(adapter);
+        if ((!hasFields)&&(entityDef!=null)&&(!isRootEntity)){//show add button above tabs           
+	        if (this.itemsList==null || this.itemsList.isEmpty()){
+	        	this.itemsList=new ArrayList<String>();
+				AlertDialog.Builder alert = new AlertDialog.Builder(this);		
+				alert.setTitle(getResources().getString(R.string.plotListTitle));
+				alert.setMessage(null);
+				
+				final EditText input = new EditText(this);
+				alert.setView(input);
+				alert.setCancelable(false);
+				alert.setPositiveButton(getResources().getString(R.string.okay), new DialogInterface.OnClickListener() {
+				
+				public void onClick(DialogInterface dialog, int whichButton) {
+							String value = input.getText().toString();
+							itemsList.remove(0);
+							if (!value.isEmpty()){
+								itemsList.add(value);
+							}
+							else {
+								itemsList.add("no_name");
+							}
+							cmbPlotList.setSelection(itemsList.size()-1);
+					}
+				});
+				alert.create().show();
+	        }
+	        this.itemsList.add("");
+            ArrayAdapter<String> adapter = new ArrayAdapter<String>(this,android.R.layout.simple_spinner_item,this.itemsList);
+            adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);           
+            this.cmbPlotList.setAdapter(adapter);            
             this.cmbPlotList = (Spinner)this.findViewById(R.id.cmbPlotList);
-            
-               		
     		this.cmdAddPlot.setOnClickListener(new OnClickListener(){
     			@Override
     	        public void onClick(View v) {
@@ -114,8 +139,8 @@ public class TabContainer extends TabActivity {
         }
 
         Intent tabIntent;
-        int tabNo = TabManager.tabSet.getTabs().size();// TabManager.uiTabsList.size();
-        UITab currTab = TabManager.tabSet.getTabs().get(startingIntent.getIntExtra("tabNo", -1));//TabManager.uiTabsList.get(startingIntent.getIntExtra("tabNo", -1));
+        int tabNo = TabManager.clusterTabSet.getTabs().size();
+        UITab currTab = TabManager.clusterTabSet.getTabs().get(startingIntent.getIntExtra("tabNo", -1));
     	int currLevel = startingIntent.getIntExtra("tabLevel", -1);
     	List<UITab> uiTabs = currTab.getTabs();
     	for (int i=0; i<uiTabs.size();i++){
@@ -162,7 +187,7 @@ public class TabContainer extends TabActivity {
         			getResources().getInteger(R.integer.tab_height));        	
     	}*/
 	}
-	
+
 	private void addTab(String title, String indicator, int index, Intent content, int width, int height){
     	try{
     		this.tabHost.addTab(tabHost.newTabSpec(title)
