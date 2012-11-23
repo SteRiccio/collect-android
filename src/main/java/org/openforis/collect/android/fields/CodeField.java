@@ -7,7 +7,6 @@ import org.openforis.collect.android.R;
 import org.openforis.collect.android.messages.ToastMessage;
 
 import android.content.Context;
-import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
@@ -28,13 +27,13 @@ public class CodeField extends Field {
 	
 	boolean searchable;
 	
-	private List<List<String>> values;
+	private List<Integer> values;
 	
-	public CodeField(Context context, String labelText, String promptText, 
+	public CodeField(Context context, int id, String labelText, String promptText, 
 			ArrayList<String> codes, ArrayList<String> options, 
 			String selectedItem, boolean isSearchable,
 			boolean isMultiple) {
-		super(context, isMultiple);
+		super(context, id, isMultiple);
 		this.searchable = isSearchable;
 		
 		this.label = new TextView(context);
@@ -61,10 +60,8 @@ public class CodeField extends Field {
 		
 		this.codes = codes;
 		this.options = options;
-		/*this.options = new ArrayList<String>();
-		this.options.add("OPTION!");*/
-		this.aa = new ArrayAdapter<String>(context, android.R.layout.simple_spinner_item, this.options);
 
+		this.aa = new ArrayAdapter<String>(context, android.R.layout.simple_spinner_item, this.options);
 		this.aa.setDropDownViewResource(R.layout.codelistitem);
 
 		this.spinner.setAdapter(aa);
@@ -72,7 +69,7 @@ public class CodeField extends Field {
 		this.spinner.setOnItemSelectedListener(new OnItemSelectedListener() {
 		    @Override
 		    public void onItemSelected(AdapterView<?> parentView, View selectedItemView, int position, long id) {
-		    	
+		    	CodeField.this.values.set(CodeField.this.currentInstanceNo, CodeField.this.spinner.getSelectedItemPosition());
 		    }
 
 		    @Override
@@ -97,6 +94,8 @@ public class CodeField extends Field {
 		else
 			this.spinner.setSelection(0);
 		
+		this.values = new ArrayList<Integer>();
+		this.values.add(this.spinner.getSelectedItemPosition());
 		this.addView(this.scrollLeft);
 		this.addView(this.label);
 		this.addView(this.spinner);
@@ -136,34 +135,28 @@ public class CodeField extends Field {
 		this.spinner.setSelection(0);
 	}
 	
-	/*@Override
-	protected void scrollLeft(){
-    	Log.e("SCROLL","LEFTCodeField");
-    	Log.e("currINstancenO","=="+CodeField.this.currentInstanceNo);
-    	if (CodeField.this.currentInstanceNo>1){
-    		CodeField.this.values.set(CodeField.this.currentInstanceNo-1, CodeField.this.txtBox.getText().toString());	        		
-    		CodeField.this.txtBox.setText(CodeField.this.values.get(CodeField.this.currentInstanceNo-2));
+	@Override
+	public void scrollLeft(){
+    	if (CodeField.this.currentInstanceNo>0){
+    		CodeField.this.values.set(CodeField.this.currentInstanceNo, CodeField.this.spinner.getSelectedItemPosition());
     		CodeField.this.currentInstanceNo--;
-    	}
-    	Log.e("currentInstanceNO","=="+CodeField.this.currentInstanceNo);
-    	for (int i=0;i<CodeField.this.values.size();i++){
-    		Log.e("values"+i,"=="+CodeField.this.values.get(i));
+    		CodeField.this.spinner.setSelection(CodeField.this.values.get(CodeField.this.currentInstanceNo));    		
     	}
 	}
 	
 	@Override
-	protected void scrollRight(){
-    	Log.e("currINstancenO","=="+CodeField.this.currentInstanceNo);
-    	if (CodeField.this.values.size()==CodeField.this.currentInstanceNo){
-    		CodeField.this.values.add(CodeField.this.currentInstanceNo, "added");	        		
+	public void scrollRight(){
+    	if (CodeField.this.values.size()==(CodeField.this.currentInstanceNo+1)){
+    		CodeField.this.values.add(CodeField.this.currentInstanceNo+1, 0);
     	}
-    	CodeField.this.values.set(CodeField.this.currentInstanceNo-1, CodeField.this.txtBox.getText().toString());        			        		
-		if (CodeField.this.values.size()>CodeField.this.currentInstanceNo)
-			CodeField.this.txtBox.setText(CodeField.this.values.get(CodeField.this.currentInstanceNo));
-		CodeField.this.currentInstanceNo++;
-    	Log.e("currentInstanceNO","=="+CodeField.this.currentInstanceNo);
-    	for (int i=0;i<CodeField.this.values.size();i++){
-    		Log.e("values"+i,"=="+CodeField.this.values.get(i));
-    	}
-	}*/
+    	CodeField.this.values.set(CodeField.this.currentInstanceNo, CodeField.this.spinner.getSelectedItemPosition());
+    	CodeField.this.currentInstanceNo++;
+		if (CodeField.this.values.size()>=(CodeField.this.currentInstanceNo+1)){
+			CodeField.this.spinner.setSelection(CodeField.this.values.get(CodeField.this.currentInstanceNo));
+		}		
+	}
+	
+	public int getValue(int index){
+		return CodeField.this.values.get(index);
+	}	
 }

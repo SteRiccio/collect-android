@@ -3,24 +3,18 @@ package org.openforis.collect.android.fields;
 import android.content.Context;
 import android.widget.TextView;
 
-public abstract class Field extends UIElement{
+public abstract class Field extends UIElement {
 	
 	protected TextView label;
-	//public ImageView scrollLeft;
-	//public ImageView scrollRight;
 	
 	public boolean isMultiple;
 	public boolean hasMultipleParent;
 	
-	public Field(Context context, boolean isMultiple) {
-		super(context, isMultiple);
+	public Field(Context context, int id, boolean isMultiple) {
+		super(context, id, isMultiple);
 		
 		this.label = new TextView(context);
 		this.label.setMaxLines(1);
-		
-		//this.scrollLeft = new ImageView(context);			
-		//this.scrollRight = new ImageView(context);				
-
 	}
 
 	public String getLabelText(){

@@ -9,7 +9,6 @@ import org.openforis.idm.metamodel.EntityDefinition;
 import org.openforis.idm.metamodel.NodeDefinition;
 
 import android.content.Context;
-import android.util.Log;
 import android.view.GestureDetector;
 import android.view.Gravity;
 import android.view.MotionEvent;
@@ -26,8 +25,8 @@ public class Separator extends UIElement {
 	
 	private EntityDefinition entity;
 	
-	public Separator(Context context, boolean hasScrollingArrows, EntityDefinition entityDef) {
-		super(context, hasScrollingArrows);
+	public Separator(Context context, int id, boolean hasScrollingArrows, EntityDefinition entityDef) {
+		super(context, id, hasScrollingArrows);
 		
 		this.separator = new Button(context);
 		
@@ -44,15 +43,6 @@ public class Separator extends UIElement {
 		this.addView(separator);
 		this.addView(this.scrollRight);*/
 		
-		//swipe detection
-    	gestureDetector = new GestureDetector(new SwipeDetector(context));
-        gestureListener = new View.OnTouchListener() {
-            public boolean onTouch(View v, MotionEvent event) {
-                return gestureDetector.onTouchEvent(event);
-            }
-        };
-        this.separator.setOnTouchListener(gestureListener);
-		
 		this.container.addView(scrollLeft);
 		this.container.addView(separator);
 		this.container.addView(scrollRight);
@@ -61,54 +51,42 @@ public class Separator extends UIElement {
 		this.addView(this.container);
 		
 		this.entity = entityDef;
+
+		//swipe detection
+    	gestureDetector = new GestureDetector(new SwipeDetector(this));
+        gestureListener = new View.OnTouchListener() {
+            public boolean onTouch(View v, MotionEvent event) {
+                return gestureDetector.onTouchEvent(event);
+            }
+        };
+        this.separator.setOnTouchListener(gestureListener);
 	}
 	
 	public void setSeparatorColor(int color){
 		this.separator.setBackgroundColor(color);
 	}
 	
-	/*public void setSeparatorLayout(LayoutParams params){
-		this.separator.setLayoutParams(params);
-	}*/
-	
 	@Override
-	protected void scrollLeft(){
-    	Log.e("SCROLL","LEFTSeparator");
-    	Log.e("currINstancenO","=="+Separator.this.currentInstanceNo);
-    	if (Separator.this.currentInstanceNo>1){    		
-    		//Separator.this.values.set(Separator.this.currentInstanceNo-1, Separator.this.txtBox.getText().toString());
-    		//Separator.this.txtBox.setText(Separator.this.values.get(Separator.this.currentInstanceNo-2));
+	public void scrollLeft(){
+    	if (Separator.this.currentInstanceNo>0){
     		List<NodeDefinition> childrenList = Separator.this.entity.getChildDefinitions();
     		for (int i=0;i<childrenList.size();i++){
     			NodeDefinition nodeDefn = childrenList.get(i);
-    			
-    			UIElement textField = TabManager.getUIElement(nodeDefn);
-    			Log.e("textField"+nodeDefn.getName(),"=="+textField.currentInstanceNo);
-    			textField.scrollLeft();
+    			UIElement field = TabManager.getUIElement(nodeDefn.getId());
+    			field.scrollLeft();
     		}
     		Separator.this.currentInstanceNo--;
     	}
-    	Log.e("currentInstanceNO","=="+Separator.this.currentInstanceNo);
-    	/*for (int i=0;i<Separator.this.values.size();i++){
-    		Log.e("values"+i,"=="+Separator.this.values.get(i));
-    	}*/
 	}
 	
 	@Override
-	protected void scrollRight(){
-		Log.e("SCROLL","RIGHTSeparator");
-    	Log.e("currINstancenO","=="+Separator.this.currentInstanceNo);
-    	/*if (Separator.this.values.size()==Separator.this.currentInstanceNo){
-    		Separator.this.values.add(Separator.this.currentInstanceNo, "added");	        		
-    	}
-    	Separator.this.values.set(Separator.this.currentInstanceNo-1, Separator.this.txtBox.getText().toString());        			        		
-		if (Separator.this.values.size()>Separator.this.currentInstanceNo)
-			Separator.this.txtBox.setText(Separator.this.values.get(Separator.this.currentInstanceNo));
-		*/
+	public void scrollRight(){
+    	List<NodeDefinition> childrenList = Separator.this.entity.getChildDefinitions();
+		for (int i=0;i<childrenList.size();i++){
+			NodeDefinition nodeDefn = childrenList.get(i);
+			UIElement field = TabManager.getUIElement(nodeDefn.getId());
+			field.scrollRight();		
+		}
 		Separator.this.currentInstanceNo++;
-    	Log.e("currentInstanceNO","=="+Separator.this.currentInstanceNo);
-    	/*for (int i=0;i<Separator.this.values.size();i++){
-    		Log.e("values"+i,"=="+Separator.this.values.get(i));
-    	}*/
 	}
 }

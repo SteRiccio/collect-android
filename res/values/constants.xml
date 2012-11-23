@@ -28,4 +28,10 @@
     
     <string name="text_type_long">MEMO</string>
     <string name="text_type_short">SHORT</string>
+    
+    <!-- DEFAULT USER -->
+    <string name="defaultUsername">collect</string>
+    <string name="defaultUserPassword">collect</string>
+    <integer name ="defaulUsertId">99999</integer>
+    <string name="defaultUserRole">ROLE_ADMIN</string>
 </resources>

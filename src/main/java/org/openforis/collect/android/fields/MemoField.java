@@ -1,5 +1,6 @@
 package org.openforis.collect.android.fields;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.openforis.collect.android.R;
@@ -8,6 +9,7 @@ import org.openforis.collect.android.messages.ToastMessage;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.text.Editable;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
@@ -18,9 +20,12 @@ public class MemoField extends InputField {
 	
 	private List<String> values;
 	
-	public MemoField(Context context, String labelText, String initialText, String hintText,
+	public MemoField(Context context, int id, String labelText, String initialText, String hintText,
 			boolean isMultiple) {
-		super(context, isMultiple);
+		super(context, id, isMultiple);
+		
+		MemoField.this.values = new ArrayList<String>();
+		MemoField.this.values.add(MemoField.this.currentInstanceNo, "");
 		
 		this.label = new TextView(context);
 		this.label.setMaxLines(1);
@@ -53,36 +58,46 @@ public class MemoField extends InputField {
 	                    }
 	                }).setNegativeButton(getResources().getString(R.string.cancel), new DialogInterface.OnClickListener() {
 	                    public void onClick(DialogInterface dialog, int whichButton) {
-	                        // Do nothing.
+	                        //do nothing.
 	                    }
 	                }).show();
-	            	/*final EditText input = new EditText(MemoField.this.getContext());
-	            	AlertMessage.createPositiveNegativeDialog(MemoField.this.getContext(), false, getResources().getDrawable(R.drawable.warningsign),
-	        				getResources().getString(R.string.exitAppTitle), getResources().getString(R.string.exitAppMessage),
-	        				getResources().getString(R.string.yes), getResources().getString(R.string.no),
-	        	    		new DialogInterface.OnClickListener() {
-	        					@Override
-	        					public void onClick(DialogInterface dialog, int which) {
-	        						String value = input.getText().toString(); 
-	        						Log.e("TEXT","=="+value);
-	        						txtBox.setText(value);
-	        					}
-	        				},
-	        	    		new DialogInterface.OnClickListener() {
-	        					@Override
-	        					public void onClick(DialogInterface dialog, int which) {
-	        						
-	        					}
-	        				},
-	        				input).show();*/
 	            }
 	        }
-
 	    });
 		
 		this.addView(this.scrollLeft);
 		this.addView(this.label);
 		this.addView(this.txtBox);
 		this.addView(this.scrollRight);
+	}
+	
+	@Override
+	public void scrollLeft(){
+    	if (MemoField.this.currentInstanceNo>0){
+    		MemoField.this.values.set(MemoField.this.currentInstanceNo, MemoField.this.txtBox.getText().toString());	        		
+    		MemoField.this.currentInstanceNo--;
+    		MemoField.this.txtBox.setText(MemoField.this.values.get(MemoField.this.currentInstanceNo));    		
+    	}
+	}
+	
+	@Override
+	public void scrollRight(){
+    	if (MemoField.this.values.size()==(MemoField.this.currentInstanceNo+1)){
+    		MemoField.this.values.add(MemoField.this.currentInstanceNo+1, "");
+    	}
+    	MemoField.this.values.set(MemoField.this.currentInstanceNo, MemoField.this.txtBox.getText().toString());
+    	MemoField.this.currentInstanceNo++;
+		if (MemoField.this.values.size()>=(MemoField.this.currentInstanceNo+1)){
+			MemoField.this.txtBox.setText(MemoField.this.values.get(MemoField.this.currentInstanceNo));
+		}
+	}
+	
+	public String getValue(int index){
+		return MemoField.this.values.get(index);
+	}
+	
+	@Override
+	public void afterTextChanged(Editable s) {
+		MemoField.this.values.add(currentInstanceNo, s.toString());
 	}
 }
