@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
 		package="org.openforis.collect.android"
-		android:versionCode="0" android:versionName="3.0">   
+		android:versionCode="3" android:versionName="3.0">   
 	<uses-sdk android:minSdkVersion="10" android:targetSdkVersion="10" />
     <uses-permission android:name="android.permission.READ_LOGS" />
 	<uses-permission android:name="android.permission.INTERNET" /> 
@@ -11,14 +11,17 @@
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" /> 
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission-group android:name="android.permission-group.STORAGE" />
+    <instrumentation android:name="android.test.InstrumentationTestRunner"
+       android:targetPackage="org.openforis.collect.android" android:label="Tests for mOFC" />
     
     <application android:icon="@drawable/applicationicon" android:label="@string/app_name">
-
+		<uses-library android:name="android.test.runner" />
+        
 		<activity android:name=".tabs.TabManager"
 		          android:label="@string/app_name"
 		          android:theme="@android:style/Theme.NoTitleBar"
 		          android:configChanges="orientation|keyboardHidden"
-		          android:screenOrientation="portrait">                  
+		          android:screenOrientation="portrait">      
 			<intent-filter>
 			    <action android:name="android.intent.action.MAIN" />
 			    <category android:name="android.intent.category.LAUNCHER" />
@@ -31,7 +34,7 @@
 		          android:configChanges="orientation|keyboardHidden">
 		</activity>
 		
-		<activity android:name=".tabs.AboutTab"
+		<activity android:name=".tabs.SettingsTab"
 		          android:label="@string/app_name"
 		          android:theme="@android:style/Theme.NoTitleBar"
 		          android:configChanges="orientation|keyboardHidden">
@@ -59,7 +62,6 @@
 		          android:label="@string/app_name"
 		          android:theme="@android:style/Theme.NoTitleBar"
 		          android:configChanges="orientation|keyboardHidden">
-		</activity>
-				
+		</activity>				
     </application>
 </manifest> 

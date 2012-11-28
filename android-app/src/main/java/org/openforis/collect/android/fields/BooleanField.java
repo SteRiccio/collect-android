@@ -6,6 +6,7 @@ import java.util.List;
 import org.openforis.collect.android.messages.ToastMessage;
 
 import android.content.Context;
+import android.graphics.Color;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CheckBox;
@@ -21,19 +22,17 @@ public class BooleanField extends Field {
 	
 	private List<ArrayList<Boolean>> values;
 	
-	public BooleanField(Context context, String labelText, boolean isChecked1, boolean isChecked2,
+	public BooleanField(Context context, int id, String labelText, boolean isChecked1, boolean isChecked2,
 			String label1Text, String label2Text,
-			boolean isMultiple, boolean isAffirmativeOnly) {
-		super(context, isMultiple);
-		
+			boolean isMultiple, boolean isAffirmativeOnly, boolean isRequired) {
+		super(context, id, isMultiple, isRequired);
+
 		this.values = new ArrayList<ArrayList<Boolean>>();
 		ArrayList<Boolean> initialValue = new ArrayList<Boolean>();
 		initialValue.add(isChecked1);
 		initialValue.add(isChecked2);
 		this.values.add(initialValue);
 		
-		this.label = new TextView(context);
-		this.label.setMaxLines(1);
 		this.label.setText(labelText);
 		this.label.setLayoutParams(new LayoutParams(0,ViewGroup.LayoutParams.WRAP_CONTENT, (float) 2));
 		this.label.setOnLongClickListener(new OnLongClickListener() {
@@ -46,16 +45,39 @@ public class BooleanField extends Field {
 		this.chckBox1 = new CheckBox(context);
 		this.chckBox1.setChecked(isChecked1);
 		this.chckBox1.setLayoutParams(new LayoutParams(0,ViewGroup.LayoutParams.WRAP_CONTENT, (float) 1));
+		this.chckBox1.setOnClickListener(new OnClickListener() {
+			@Override
+			public void onClick(View v) {
+				chckBox2.setChecked(!chckBox1.isChecked());
+				ArrayList<Boolean> tempValue = new ArrayList<Boolean>();
+				tempValue.add(chckBox1.isChecked());
+				tempValue.add(chckBox2.isChecked());
+				values.set(currentInstanceNo, tempValue);
+  			}
+	    });
 		this.label1 = new TextView(context);
 		this.label1.setText(label1Text);
 		this.label1.setLayoutParams(new LayoutParams(0,ViewGroup.LayoutParams.WRAP_CONTENT, (float) 1));
+		this.label1.setTextColor(Color.BLACK);
 		
 		this.chckBox2 = new CheckBox(context);
 		this.chckBox2.setChecked(isChecked2);
 		this.chckBox2.setLayoutParams(new LayoutParams(0,ViewGroup.LayoutParams.WRAP_CONTENT, (float) 1));
+		this.chckBox2.setOnClickListener(new OnClickListener() {
+	          @Override
+	          public void onClick(View v) {
+	        	  	chckBox1.setChecked(!chckBox2.isChecked());
+					ArrayList<Boolean> tempValue = new ArrayList<Boolean>();
+					tempValue.add(chckBox1.isChecked());
+					tempValue.add(chckBox2.isChecked());
+					values.set(currentInstanceNo, tempValue);
+					
+	          }
+	    });
 		this.label2 = new TextView(context);
 		this.label2.setText(label2Text);
 		this.label2.setLayoutParams(new LayoutParams(0,ViewGroup.LayoutParams.WRAP_CONTENT, (float) 1));
+		this.label2.setTextColor(Color.BLACK);
 		
 		if (isAffirmativeOnly){
 			this.chckBox2.setVisibility(View.GONE);
@@ -94,33 +116,55 @@ public class BooleanField extends Field {
 	
 	@Override
 	public void scrollLeft(){
-    	if (BooleanField.this.currentInstanceNo>1){
+    	if (BooleanField.this.currentInstanceNo>0){
     		ArrayList<Boolean> tempValue = new ArrayList<Boolean>();
     		tempValue.add(BooleanField.this.chckBox1.isChecked());
     		tempValue.add(BooleanField.this.chckBox2.isChecked());
-    		BooleanField.this.values.set(BooleanField.this.currentInstanceNo-1, tempValue);
-    		BooleanField.this.chckBox1.setChecked(BooleanField.this.values.get(BooleanField.this.currentInstanceNo-2).get(0));
-    		BooleanField.this.chckBox1.setChecked(BooleanField.this.values.get(BooleanField.this.currentInstanceNo-2).get(1));
+    		BooleanField.this.values.set(BooleanField.this.currentInstanceNo, tempValue);
+    		BooleanField.this.chckBox1.setChecked(BooleanField.this.values.get(BooleanField.this.currentInstanceNo-1).get(0));
+    		BooleanField.this.chckBox1.setChecked(BooleanField.this.values.get(BooleanField.this.currentInstanceNo-1).get(1));
     		BooleanField.this.currentInstanceNo--;
     	}
 	}
 	
 	@Override
 	public void scrollRight(){
-    	if (BooleanField.this.values.size()==BooleanField.this.currentInstanceNo){    		
+    	if (BooleanField.this.values.size()==(BooleanField.this.currentInstanceNo+1)){    		
     		ArrayList<Boolean> tempValue = new ArrayList<Boolean>();
     		tempValue.add(false);
     		tempValue.add(false);
-    		BooleanField.this.values.add(BooleanField.this.currentInstanceNo, tempValue);
+    		BooleanField.this.values.add(BooleanField.this.currentInstanceNo+1, tempValue);
     	}
     	ArrayList<Boolean> tempValue = new ArrayList<Boolean>();
 		tempValue.add(BooleanField.this.chckBox1.isChecked());
 		tempValue.add(BooleanField.this.chckBox2.isChecked());
-    	BooleanField.this.values.set(BooleanField.this.currentInstanceNo-1, tempValue);        			        		
-		if (BooleanField.this.values.size()>BooleanField.this.currentInstanceNo){
+    	BooleanField.this.values.set(BooleanField.this.currentInstanceNo, tempValue);
+    	BooleanField.this.currentInstanceNo++;
+		if (BooleanField.this.values.size()>=(BooleanField.this.currentInstanceNo+1)){
 			BooleanField.this.chckBox1.setChecked(BooleanField.this.values.get(BooleanField.this.currentInstanceNo).get(0));
     		BooleanField.this.chckBox1.setChecked(BooleanField.this.values.get(BooleanField.this.currentInstanceNo).get(1));
 		}
-		BooleanField.this.currentInstanceNo++;
+	}
+	
+	public List<Boolean> getValue(int index){
+		return BooleanField.this.values.get(index);
+	}
+	
+	@Override
+	public int getInstancesNo(){
+		return this.values.size();
+	}
+	
+	public void resetValues(){
+		this.values = new ArrayList<ArrayList<Boolean>>();
+	}
+	
+	public void addValue(ArrayList<Boolean> value){
+		this.values.add(value);
+		this.currentInstanceNo++;
+	}
+	
+	public List<ArrayList<Boolean>> getValues(){
+		return this.values;
 	}
 }

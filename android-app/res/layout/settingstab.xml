@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent">
+    
+    
+    <TextView 
+   		android:id="@+id/lblTitle"
+   		android:layout_width="wrap_content"
+   		android:layout_height="wrap_content"
+   		android:text="@string/settingsScreenTitle"
+   		 >
+   	</TextView>
+	<CheckBox
+		android:id="@+id/chkSoftKeyboardOnText"
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
+		android:layout_below="@id/lblTitle"
+		android:text="@string/showSoftKeyboardOnText" />
+	 <CheckBox
+		android:id="@+id/chkSoftKeyboardOnNumeric"
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
+		android:layout_below="@id/chkSoftKeyboardOnText"
+		android:text="@string/showSoftKeyboardOnNumeric" />
+	 	 <CheckBox
+		android:id="@+id/chckWhiteBackground"
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
+		android:layout_below="@id/chkSoftKeyboardOnNumeric"
+		android:text="@string/whiteBackground" />
+<!--      <TextView 
+   		android:id="@+id/lblApplicationName"
+   		android:layout_width="wrap_content"
+   		android:layout_height="wrap_content"
+   		android:text="@string/lblApplicationName"
+   		 >
+   	</TextView>
+   	
+     <TextView 
+   		android:id="@+id/txtApplicationName"
+   		android:layout_width="wrap_content"
+   		android:layout_height="wrap_content"
+   		android:layout_toRightOf="@id/lblApplicationName"
+   		 >
+   	</TextView>
+
+    <TextView 
+   		android:id="@+id/lblProgramVersionName"
+   		android:layout_width="wrap_content"
+   		android:layout_height="wrap_content"
+   		android:layout_below="@id/lblApplicationName"
+   		android:text="@string/lblProgramVersionName"
+   		 >
+   	</TextView>
+   	
+    <TextView 
+   		android:id="@+id/txtProgramVersionName"
+   		android:layout_width="wrap_content"
+   		android:layout_height="wrap_content"
+   		android:layout_below="@id/lblApplicationName"
+   		android:layout_toRightOf="@id/lblProgramVersionName"
+   		 >
+   	</TextView>
+   	
+    <TextView 
+   		android:id="@+id/lblFormVersionName"
+   		android:layout_width="wrap_content"
+   		android:layout_height="wrap_content"
+   		android:layout_below="@id/lblProgramVersionName"
+   		android:text="@string/lblFormVersionName"
+   		 >
+   	</TextView>
+    
+    <TextView 
+   		android:id="@+id/txtFormVersionName"
+   		android:layout_width="wrap_content"
+   		android:layout_height="wrap_content"
+   		android:layout_below="@id/lblProgramVersionName"
+   		android:layout_toRightOf="@id/lblFormVersionName"
+   		 >
+   	</TextView>
+    
+    <TextView 
+   		android:id="@+id/lblLoadedDataFileName"
+   		android:layout_width="wrap_content"
+   		android:layout_height="wrap_content"
+   		android:layout_below="@id/lblFormVersionName"
+   		android:text="@string/lblLoadedDataFileName"
+   		 >
+   	</TextView>
+   	
+    <TextView 
+   		android:id="@+id/lblGpsTimeout"
+   		android:layout_width="wrap_content"
+   		android:layout_height="wrap_content"
+   		android:gravity="center_vertical|center_horizontal"
+   		android:layout_below="@id/lblLoadedDataFileName"
+   		android:text="@string/lblGpsTimeout"
+   		 >
+   	</TextView>
+   	
+    <EditText 
+   		android:id="@+id/txtGpsTimeout"
+   		android:layout_width="fill_parent"
+   		android:layout_height="wrap_content"
+   		android:inputType="number"
+   		android:layout_toRightOf="@id/lblGpsTimeout"
+   		android:layout_below="@id/lblLoadedDataFileName"
+   		android:hint="@string/txtGpsTimeout"
+   		 >
+   	</EditText>     -->            
+</RelativeLayout>

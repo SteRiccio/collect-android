@@ -7,6 +7,7 @@ import org.openforis.collect.android.R;
 import org.openforis.collect.android.messages.ToastMessage;
 
 import android.content.Context;
+import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
@@ -29,15 +30,13 @@ public class CodeField extends Field {
 	
 	private List<Integer> values;
 	
-	public CodeField(Context context, String labelText, String promptText, 
+	public CodeField(Context context, int id, String labelText, String promptText, 
 			ArrayList<String> codes, ArrayList<String> options, 
 			String selectedItem, boolean isSearchable,
-			boolean isMultiple) {
-		super(context, isMultiple);
-		this.searchable = isSearchable;		
-		
-		this.label = new TextView(context);
-		this.label.setMaxLines(1);
+			boolean isMultiple, boolean isRequired) {
+		super(context, id, isMultiple, isRequired);
+		this.searchable = isSearchable;
+
 		this.label.setText(labelText);
 		this.label.setLayoutParams(new LayoutParams(0, ViewGroup.LayoutParams.WRAP_CONTENT, (float) 1));
 		this.label.setOnLongClickListener(new OnLongClickListener() {
@@ -60,10 +59,8 @@ public class CodeField extends Field {
 		
 		this.codes = codes;
 		this.options = options;
-		/*this.options = new ArrayList<String>();
-		this.options.add("OPTION!");*/
-		this.aa = new ArrayAdapter<String>(context, android.R.layout.simple_spinner_item, this.options);
 
+		this.aa = new ArrayAdapter<String>(context, android.R.layout.simple_spinner_item, this.options);
 		this.aa.setDropDownViewResource(R.layout.codelistitem);
 
 		this.spinner.setAdapter(aa);
@@ -71,7 +68,7 @@ public class CodeField extends Field {
 		this.spinner.setOnItemSelectedListener(new OnItemSelectedListener() {
 		    @Override
 		    public void onItemSelected(AdapterView<?> parentView, View selectedItemView, int position, long id) {
-		    	
+		    	CodeField.this.values.set(CodeField.this.currentInstanceNo, CodeField.this.spinner.getSelectedItemPosition());
 		    }
 
 		    @Override
@@ -98,7 +95,6 @@ public class CodeField extends Field {
 		
 		this.values = new ArrayList<Integer>();
 		this.values.add(this.spinner.getSelectedItemPosition());
-		
 		this.addView(this.scrollLeft);
 		this.addView(this.label);
 		this.addView(this.spinner);
@@ -140,22 +136,60 @@ public class CodeField extends Field {
 	
 	@Override
 	public void scrollLeft(){
-    	if (CodeField.this.currentInstanceNo>1){
-    		CodeField.this.values.set(CodeField.this.currentInstanceNo-1, CodeField.this.spinner.getSelectedItemPosition());
-    		CodeField.this.spinner.setSelection(CodeField.this.values.get(CodeField.this.currentInstanceNo-2));
+		Log.e("scrollLEFT","=="+this.currentInstanceNo);
+    	if (CodeField.this.currentInstanceNo>0){
+    		CodeField.this.values.set(CodeField.this.currentInstanceNo, CodeField.this.spinner.getSelectedItemPosition());
     		CodeField.this.currentInstanceNo--;
+    		CodeField.this.spinner.setSelection(CodeField.this.values.get(CodeField.this.currentInstanceNo));    		
     	}
 	}
 	
 	@Override
 	public void scrollRight(){
-    	if (CodeField.this.values.size()==CodeField.this.currentInstanceNo){
-    		CodeField.this.values.add(0);    		
+		Log.e("scrollRIGHT","=="+this.currentInstanceNo);
+    	if (CodeField.this.values.size()==(CodeField.this.currentInstanceNo+1)){
+    		CodeField.this.values.add(CodeField.this.currentInstanceNo+1, 0);
     	}
-    	CodeField.this.values.set(CodeField.this.currentInstanceNo-1, CodeField.this.spinner.getSelectedItemPosition());        		
-		if (CodeField.this.values.size()>CodeField.this.currentInstanceNo){
+    	CodeField.this.values.set(CodeField.this.currentInstanceNo, CodeField.this.spinner.getSelectedItemPosition());
+    	CodeField.this.currentInstanceNo++;
+		if (CodeField.this.values.size()>=(CodeField.this.currentInstanceNo+1)){
 			CodeField.this.spinner.setSelection(CodeField.this.values.get(CodeField.this.currentInstanceNo));
+		}		
+	}
+	
+	public String getValue(int index){
+		//return CodeField.this.values.get(index);
+		if (this.codes.size()>0)
+			return this.codes.get(index);
+		else
+			return null;
+	}
+	
+	@Override
+	public int getInstancesNo(){
+		return this.values.size();
+	}
+	
+	public void resetValues(){
+		this.values = new ArrayList<Integer>();
+	}
+	
+	public void addValue(String valueCode){
+		boolean isFound = false;
+		int position = 0;
+		while (!isFound&&position<this.codes.size()){
+			if (this.codes.get(position).equals(valueCode)){
+				isFound = true;
+			}
+			position++;
 		}
-		CodeField.this.currentInstanceNo++;
+		if (isFound){
+			this.values.add(position-1);
+			this.currentInstanceNo++;
+		}
+	}
+	
+	public List<Integer> getValues(){
+		return this.values;
 	}
 }

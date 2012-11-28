@@ -19,7 +19,8 @@ public class InputMessage{
 	    builder.setIcon(icon);
 	    builder.setCancelable(isCancelable);
 	    builder.setPositiveButton(positive, positiveButtonListener);
-	    builder.setNegativeButton(negative, negativeButtonListener);
+	    if (negativeButtonListener!=null)
+	    	builder.setNegativeButton(negative, negativeButtonListener);
 	    builder.setView(input);
 	    return builder.create();
 	}

@@ -2,7 +2,6 @@ package org.openforis.collect.android.misc;
 
 import org.openforis.collect.android.fields.UIElement;
 
-import android.util.Log;
 import android.view.GestureDetector.SimpleOnGestureListener;
 import android.view.MotionEvent;
 
@@ -10,6 +9,7 @@ public class SwipeDetector extends SimpleOnGestureListener {
 	private static final int SWIPE_MIN_DISTANCE = 120;
     private static final int SWIPE_MAX_OFF_PATH = 250;
     private static final int SWIPE_THRESHOLD_VELOCITY = 200;
+    
     private UIElement uiElement;
 
     public SwipeDetector(UIElement uiEl){

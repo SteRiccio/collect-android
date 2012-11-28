@@ -1,5 +1,6 @@
 package org.openforis.collect.android.fields;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.openforis.collect.android.messages.ToastMessage;
@@ -15,12 +16,13 @@ public class RangeField extends InputField {
 	
 	private List<String> values;
 	
-	public RangeField(Context context, String labelText, String initialText, String hintText,
-			boolean isMultiple) {
-		super(context, isMultiple);
+	public RangeField(Context context, int id, String labelText, String initialText, String hintText,
+			boolean isMultiple, boolean isRequired) {
+		super(context, id, isMultiple, isRequired);
 		
-		this.label = new TextView(context);
-		this.label.setMaxLines(1);
+		RangeField.this.values = new ArrayList<String>();
+		RangeField.this.values.add(RangeField.this.currentInstanceNo, "");
+
 		this.label.setText(labelText);
 		this.label.setLayoutParams(new LayoutParams(0, ViewGroup.LayoutParams.WRAP_CONTENT, (float) 2));
 		this.label.setOnLongClickListener(new OnLongClickListener() {
@@ -32,7 +34,7 @@ public class RangeField extends InputField {
 	    });
 		this.txtBox = new EditText(context);
 		this.setHint(hintText);
-		this.txtBox.setLayoutParams(new LayoutParams(0,ViewGroup.LayoutParams.WRAP_CONTENT,(float) 2));
+		this.txtBox.setLayoutParams(new LayoutParams(0,ViewGroup.LayoutParams.WRAP_CONTENT,(float) 2));		
 		
 		this.addView(this.scrollLeft);
 		this.addView(this.label);
@@ -42,21 +44,31 @@ public class RangeField extends InputField {
 	
 	@Override
 	public void scrollLeft(){
-    	if (RangeField.this.currentInstanceNo>1){
-    		RangeField.this.values.set(RangeField.this.currentInstanceNo-1, RangeField.this.txtBox.getText().toString());	        		
-    		RangeField.this.txtBox.setText(RangeField.this.values.get(RangeField.this.currentInstanceNo-2));
+    	if (RangeField.this.currentInstanceNo>0){
+    		RangeField.this.values.set(RangeField.this.currentInstanceNo, RangeField.this.txtBox.getText().toString());	        		
     		RangeField.this.currentInstanceNo--;
+    		RangeField.this.txtBox.setText(RangeField.this.values.get(RangeField.this.currentInstanceNo));    		
     	}
 	}
 	
 	@Override
 	public void scrollRight(){
-    	if (RangeField.this.values.size()==RangeField.this.currentInstanceNo){
-    		RangeField.this.values.add(RangeField.this.currentInstanceNo, "");	        		
+    	if (RangeField.this.values.size()==(RangeField.this.currentInstanceNo+1)){
+    		RangeField.this.values.add(RangeField.this.currentInstanceNo+1, "");
     	}
-    	RangeField.this.values.set(RangeField.this.currentInstanceNo-1, RangeField.this.txtBox.getText().toString());        			        		
-		if (RangeField.this.values.size()>RangeField.this.currentInstanceNo)
+    	RangeField.this.values.set(RangeField.this.currentInstanceNo, RangeField.this.txtBox.getText().toString());
+    	RangeField.this.currentInstanceNo++;
+		if (RangeField.this.values.size()>=(RangeField.this.currentInstanceNo+1)){
 			RangeField.this.txtBox.setText(RangeField.this.values.get(RangeField.this.currentInstanceNo));
-		RangeField.this.currentInstanceNo++;
+		}
 	}
+	
+	@Override
+	public int getInstancesNo(){
+		return this.values.size();
+	}
+	
+	/* 
+	 * getValue and saving field value after state changed i.e. user selected from menu or typed sth
+	 * TO BE IMPLEMENTED */
 }

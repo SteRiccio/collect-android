@@ -2,7 +2,6 @@ package org.openforis.collect.android.tabs;
 
 import org.openforis.collect.android.R;
 import org.openforis.collect.android.misc.RunnableHandler;
-import org.openforis.collect.android.misc.SwipeDetector;
 
 import android.app.Activity;
 import android.content.SharedPreferences;
@@ -13,8 +12,6 @@ import android.text.TextWatcher;
 import android.util.Log;
 import android.view.GestureDetector;
 import android.view.KeyEvent;
-import android.view.MotionEvent;
-import android.view.View;
 import android.view.ViewTreeObserver;
 import android.view.ViewTreeObserver.OnGlobalLayoutListener;
 import android.widget.EditText;
@@ -55,18 +52,7 @@ public class AboutTab extends Activity implements TextWatcher{
 					ViewTreeObserver observer = txtGpsTimeout.getViewTreeObserver();
 					observer.removeGlobalOnLayoutListener(this);
 				}
-			});
-			
-			/*gestureDetector = new GestureDetector(new SwipeDetector(this));
-            this.lblGpsTimeout.setOnTouchListener(new View.OnTouchListener()
-            {
-                @Override
-                public boolean onTouch(View v, MotionEvent event)
-                {
-                	gestureDetector.onTouchEvent(event);
-                    return true;
-                }
-            })*/
+			});			
 
             this.txtApplicationName = (TextView)findViewById(R.id.txtApplicationName);
             this.txtApplicationName.setText(getResources().getString(R.string.app_name));
@@ -75,7 +61,7 @@ public class AboutTab extends Activity implements TextWatcher{
             this.txtProgramVersionName.setText(this.getPackageManager().getPackageInfo(this.getPackageName(), 0).versionName);
             
             this.txtFormVersionName = (TextView)findViewById(R.id.txtFormVersionName);
-            this.txtFormVersionName.setText(TabManager.survey.getProjectName(null)+" "+TabManager.survey.getVersions().get(TabManager.survey.getVersions().size()-1).getName());
+            this.txtFormVersionName.setText(TabManager.getSurvey().getProjectName(null)+" "+TabManager.getSurvey().getVersions().get(TabManager.getSurvey().getVersions().size()-1).getName());
             
         } catch (Exception e){
     		RunnableHandler.reportException(e,getResources().getString(R.string.app_name),TAG+":onCreate",

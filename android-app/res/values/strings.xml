@@ -17,7 +17,7 @@
     <string name="startGpsMessage">GPS on your device is disabled. Do you want to enable it in operating system Settings?</string>
     <string name="savingDataTitle">Saving&#8230;</string>    
     <string name="savingDataMessage">Do you want to save data from form?</string>
-    <string name="savingToDatabase">SQL</string>
+    <string name="savingToDatabase">Save</string>
     <string name="savingToFile">XML</string>
     <string name="openingPlotListTitle">Back to list&#8230;</string>    
     <string name="openingPlotListMessage">Do you want to open list of forms?</string>
@@ -38,8 +38,26 @@
     <!-- menu -->
     <string name="open">Back to list</string>
     <string name="save">Save</string>
+    <string name="settings">Settings</string>
     <string name="about">About</string>
     
+    
+    <!-- settings screen -->
+    <string name="settingsScreenTitle">Settings</string>
+    <string name="showSoftKeyboardOnNumeric">Show soft-keyboard on numeric fields</string>
+    <string name="showSoftKeyboardOnText">Show soft-keyboard on text fields</string>
+    <string name="whiteBackground">Use white background</string>
+    
     <string name="plotListPrompt">Choose entity </string>
+    <string name="plotListTitle">Insert name </string>
+    
+    
+    <!-- progress -->
+    <string name="workInProgress">Processing&#8230;</string>
+    <string name="saving">Saving&#8230;</string>
+    <string name="loading">Loading&#8230;</string>
+    
+    <!-- cluster selection -->
+    <string name="clusterChoiceFailedBecauseNoDataSaved">No data saved in local database</string>
     
 </resources>
