@@ -3,15 +3,20 @@ package org.openforis.collect.android.fields;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
+import org.openforis.collect.android.R;
 import org.openforis.collect.android.messages.ToastMessage;
+import org.openforis.collect.android.tabs.TabManager;
 
 import android.content.Context;
 import android.text.Editable;
 import android.text.method.DigitsKeyListener;
 import android.text.method.KeyListener;
+import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.View.OnFocusChangeListener;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -63,7 +68,13 @@ public class CoordinateField extends InputField {
 		this.txtLatitude.addTextChangedListener(this);
 		this.addView(txtLatitude);
 
-		this.setKeyboardType(new DigitsKeyListener(true,true));
+		this.txtLatitude.setOnFocusChangeListener(new OnFocusChangeListener(){
+			@Override
+			public void onFocusChange(View v, boolean hasFocus) {
+				Log.i(getResources().getString(R.string.app_name), "Lattitude field got focus");				
+			}
+		});
+//		this.setKeyboardType(new DigitsKeyListener(true,true));
 		
 		this.txtLongitude = new EditText(context);
 		this.txtLongitude.setLayoutParams(new LayoutParams(0,ViewGroup.LayoutParams.WRAP_CONTENT,(float) 2));
@@ -72,6 +83,33 @@ public class CoordinateField extends InputField {
 		this.txtLongitude.addTextChangedListener(this);
 		this.addView(txtLongitude);
 		this.addView(this.scrollRight);
+		
+		this.txtLongitude.setOnFocusChangeListener(new OnFocusChangeListener(){
+			@Override
+			public void onFocusChange(View v, boolean hasFocus) {
+				Log.i(getResources().getString(R.string.app_name), "Longitude field got focus");
+			}
+		});		
+		// When NumberField got focus
+		this.txtBox.setOnFocusChangeListener(new OnFocusChangeListener() {
+		    @Override
+		    public void onFocusChange(View v, boolean hasFocus) {
+		    	//Get current settings about software keyboard for text fields
+		    	if(this.getClass().toString().contains("CoordinateField")){
+			    	Map<String, ?> settings = TabManager.sharedPreferences.getAll();
+			    	Boolean valueForNum = (Boolean)settings.get(getResources().getString(R.string.showSoftKeyboardOnNumeric));
+			    	//Switch on or off Software keyboard depend of settings
+			    	if(valueForNum){
+			    		Log.i(getResources().getString(R.string.app_name), "Setting coordinate field is: " + valueForNum);
+			    		CoordinateField.this.makeReal();		    		
+			        }
+			    	else {
+			    		Log.i(getResources().getString(R.string.app_name), "Setting coordinate field is: " + valueForNum);
+			    		CoordinateField.this.setKeyboardType(null);
+			    	}
+		    	}
+		    }
+	    });			
 	}
 	
 	@Override

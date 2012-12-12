@@ -2,14 +2,23 @@ package org.openforis.collect.android.fields;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.Random;
 
+import org.openforis.collect.android.R;
+import org.openforis.collect.android.dialogs.DateSetDialog;
+import org.openforis.collect.android.dialogs.TimeSetDialog;
 import org.openforis.collect.android.messages.ToastMessage;
+import org.openforis.collect.android.tabs.TabManager;
 
 import android.content.Context;
+import android.content.Intent;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.View.OnFocusChangeListener;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -42,8 +51,44 @@ public class TimeField extends InputField implements TextWatcher {
 		this.addView(this.scrollLeft);
 		this.addView(this.label);
 		this.addView(this.txtBox);
-		this.addView(this.scrollRight);				
+		this.addView(this.scrollRight);		
+		
+		// When TimeField got focus
+		this.txtBox.setOnFocusChangeListener(new OnFocusChangeListener() {
+		    @Override
+		    public void onFocusChange(View v, boolean hasFocus) {
+		    	//Get current settings about software keyboard for text fields
+		    	if(hasFocus){
+			    	if(this.getClass().toString().contains("TimeField")){
+				    	Map<String, ?> settings = TabManager.sharedPreferences.getAll();
+				    	Boolean valueForNum = (Boolean)settings.get(getResources().getString(R.string.showSoftKeyboardOnNumeric));
+				    	//Switch on or off Software keyboard depend of settings
+				    	if(valueForNum){
+				    		Log.i(getResources().getString(R.string.app_name), "Setting time field is: " + valueForNum);
+				    		TimeField.this.makeReal();			    		
+				        }
+				    	else {
+				    		Log.i(getResources().getString(R.string.app_name), "Setting time field is: " + valueForNum);
+				    		TimeField.this.setKeyboardType(null);
+				    	}
+				    	//Generate random id for text box
+				    	final Random myRandom = new Random();
+				    	TimeField.this.txtBox.setId(myRandom.nextInt());
+				    	//Show Time picker
+				    	showTimePickerDialog(TimeField.this.elemId);				    	
+			    	}
+		    	}
+		    }
+	    });			
 	}
+	
+	private void showTimePickerDialog(int id) {  	
+//		Log.i(getResources().getString(R.string.app_name), "Id from date field was: " + id);
+		Intent timePickerIntent = new Intent(TimeField.this.getContext(), TimeSetDialog.class);
+		timePickerIntent.putExtra("timefield_id", id);
+		timePickerIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+    	super.getContext().startActivity(timePickerIntent);	
+	}	
 	
 	@Override
 	public void scrollLeft(){

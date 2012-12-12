@@ -2,13 +2,20 @@ package org.openforis.collect.android.fields;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import org.openforis.collect.android.R;
 import org.openforis.collect.android.messages.ToastMessage;
+import org.openforis.collect.android.tabs.TabManager;
 
 import android.content.Context;
+import android.text.method.KeyListener;
+import android.text.method.QwertyKeyListener;
+import android.text.method.TextKeyListener;
+import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.View.OnFocusChangeListener;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemSelectedListener;
 import android.widget.ArrayAdapter;
@@ -57,6 +64,29 @@ public class TaxonField extends Field {
 		this.txtBox = new EditText(context);
 		this.setHint(hintText);
 		this.txtBox.setLayoutParams(new LayoutParams(0,ViewGroup.LayoutParams.WRAP_CONTENT,(float) 2));
+		
+		// When TaxonField gets focus
+		this.txtBox.setOnFocusChangeListener(new OnFocusChangeListener() {
+		    @Override
+		    public void onFocusChange(View v, boolean hasFocus) {
+		    	// Get current settings about software keyboard for text fields
+		    	if(hasFocus){
+			    	if(this.getClass().toString().contains("TaxonField")){
+				    	Map<String, ?> settings = TabManager.sharedPreferences.getAll();
+				    	Boolean valueForText = (Boolean)settings.get(getResources().getString(R.string.showSoftKeyboardOnText));
+				    	// Switch on or off Software keyboard depend of settings
+				    	if(valueForText){
+				    		Log.i(getResources().getString(R.string.app_name), "Setting taxon field is: " + valueForText);
+				    		TaxonField.this.setKeyboardType(new QwertyKeyListener(TextKeyListener.Capitalize.NONE, false));
+				        }
+				    	else {
+				    		Log.i(getResources().getString(R.string.app_name), "Setting taxon field is: " + valueForText);
+				    		TaxonField.this.setKeyboardType(null);
+				    	}
+			    	}
+		    	}
+		    }
+	    });			
 		
 		this.searchable = isSearchable;
 		
@@ -113,6 +143,10 @@ public class TaxonField extends Field {
 		this.addView(this.scrollRight);
 	}
 	
+	private void setKeyboardType(KeyListener keyListener){
+		this.txtBox.setKeyListener(keyListener);
+	}
+
 	@Override
 	public void scrollLeft(){
     	if (TaxonField.this.currentInstanceNo>0){

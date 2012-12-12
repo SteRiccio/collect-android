@@ -1,16 +1,29 @@
 package org.openforis.collect.android.fields;
 
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.GregorianCalendar;
 import java.util.List;
+import java.util.Map;
+import java.util.Random;
 
+import org.openforis.collect.android.R;
+import org.openforis.collect.android.dialogs.DateSetDialog;
 import org.openforis.collect.android.messages.ToastMessage;
-
+import org.openforis.collect.android.misc.WelcomeScreen;
+import org.openforis.collect.android.tabs.TabManager;
+import android.app.DatePickerDialog;
+import android.app.Dialog;
 import android.content.Context;
+import android.content.Intent;
+import android.os.Bundle;
+import android.support.v4.app.DialogFragment;
 import android.text.Editable;
+import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.DatePicker;
 import android.widget.EditText;
-import android.widget.TextView;
 import android.widget.Toast;
 
 public class DateField extends InputField {
@@ -41,7 +54,43 @@ public class DateField extends InputField {
 		this.addView(this.scrollLeft);
 		this.addView(this.label);
 		this.addView(this.txtBox);
-		this.addView(this.scrollRight);			
+		this.addView(this.scrollRight);		
+		// When text box in DateField got focus
+		this.txtBox.setOnFocusChangeListener(new OnFocusChangeListener() {
+		    @Override
+		    public void onFocusChange(View v, boolean hasFocus) {
+		    	//Get current settings about software keyboard for text fields
+		    	if(hasFocus){
+			    	if(this.getClass().toString().contains("DateField")){
+				    	Map<String, ?> settings = TabManager.sharedPreferences.getAll();
+				    	Boolean valueForNum = (Boolean)settings.get(getResources().getString(R.string.showSoftKeyboardOnNumeric));
+				    	//Switch on or off Software keyboard depend of settings
+				    	if(valueForNum){
+				    		Log.i(getResources().getString(R.string.app_name), "Setting date field is: " + valueForNum);
+				    		DateField.this.makeReal();			    		
+				        }
+				    	else {
+				    		Log.i(getResources().getString(R.string.app_name), "Setting date field is: " + valueForNum);
+				    		DateField.this.setKeyboardType(null);
+				    	}
+				    	//Generate random id for text box
+				    	final Random myRandom = new Random();
+				    	DateField.this.txtBox.setId(myRandom.nextInt());
+				    	//Show Date picker
+				    	showDatePickerDialog(DateField.this.elemId);
+			    	}
+		    	}
+		    }
+	    });	
+		
+	}
+
+	private void showDatePickerDialog(int id) {  	
+//		Log.i(getResources().getString(R.string.app_name), "Id from date field was: " + id);
+		Intent datePickerIntent = new Intent(DateField.this.getContext(), DateSetDialog.class);
+    	datePickerIntent.putExtra("datefield_id", id);
+    	datePickerIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+    	super.getContext().startActivity(datePickerIntent);	
 	}
 	
 	@Override

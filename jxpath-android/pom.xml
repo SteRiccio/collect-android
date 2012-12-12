@@ -11,8 +11,8 @@
 			<groupId>com.googlecode</groupId>
 			<artifactId>openbeans</artifactId>
 			<version>1.0</version>
-<!-- 			<scope>system</scope> -->
-<!-- 			<systemPath>${basedir}/lib/openbeans-1.0.jar</systemPath> -->
+<!--  			<scope>system</scope>  -->
+<!--  			<systemPath>${basedir}/lib/openbeans-1.0.jar</systemPath>  -->
 		</dependency>
 		<dependency>
 			<groupId>jdom</groupId>

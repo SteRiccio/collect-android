@@ -2,13 +2,19 @@ package org.openforis.collect.android.fields;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
+import org.openforis.collect.android.R;
 import org.openforis.collect.android.messages.ToastMessage;
+import org.openforis.collect.android.tabs.TabManager;
 
 import android.content.Context;
 import android.text.Editable;
+import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.View.OnFocusChangeListener;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -50,6 +56,33 @@ public class NumberField extends InputField {
 		this.addView(this.label);
 		this.addView(this.txtBox);
 		this.addView(this.scrollRight);		
+		
+		// When NumberField got focus
+		this.txtBox.setOnFocusChangeListener(new OnFocusChangeListener() {
+		    @Override
+		    public void onFocusChange(View v, boolean hasFocus) {
+		    	//Get current settings about software keyboard for text fields
+		    	if(hasFocus){
+			    	if(this.getClass().toString().contains("NumberField")){
+				    	Map<String, ?> settings = TabManager.sharedPreferences.getAll();
+				    	Boolean valueForNum = (Boolean)settings.get(getResources().getString(R.string.showSoftKeyboardOnNumeric));
+				    	//Switch on or off Software keyboard depend of settings
+				    	if(valueForNum){
+				    		Log.i(getResources().getString(R.string.app_name), "Setting numeric field is: " + valueForNum);
+				    		if (NumberField.this.type.toLowerCase().equals("integer")){
+				    			NumberField.this.makeInteger();
+				    		} else{
+				    			NumberField.this.makeReal();
+				    		}			    		
+				        }
+				    	else {
+				    		Log.i(getResources().getString(R.string.app_name), "Setting numeric field is: " + valueForNum);
+				    		NumberField.this.setKeyboardType(null);
+				    	}
+			    	}
+		    	}
+		    }
+	    });		
 	}
 
 	@Override

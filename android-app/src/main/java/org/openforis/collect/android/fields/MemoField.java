@@ -2,16 +2,22 @@ package org.openforis.collect.android.fields;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import org.openforis.collect.android.R;
 import org.openforis.collect.android.messages.ToastMessage;
+import org.openforis.collect.android.tabs.TabManager;
 
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.text.Editable;
+import android.text.method.QwertyKeyListener;
+import android.text.method.TextKeyListener;
+import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.WindowManager;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -43,10 +49,17 @@ public class MemoField extends InputField {
 	        @Override
 	        public void onFocusChange(View v, boolean hasFocus) {
 	            if (hasFocus) {
+	            	//First check software keyboard settings
+			    	Map<String, ?> settings = TabManager.sharedPreferences.getAll();
+			    	Boolean valueForText = (Boolean)settings.get(getResources().getString(R.string.showSoftKeyboardOnText));
+	            	
+	            	//Create dialog for Memo
 	            	final EditText input = new EditText(MemoField.this.getContext());
 	            	input.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.FILL_PARENT,ViewGroup.LayoutParams.WRAP_CONTENT));
 	            	input.setText(txtBox.getText());
-	            	new AlertDialog.Builder(MemoField.this.getContext())	            	
+	            	
+            	
+	            	AlertDialog dialog = new AlertDialog.Builder(MemoField.this.getContext())	            	
 	                .setTitle(getResources().getString(R.string.editingMemoField)+" "+MemoField.this.getLabelText())
 	                .setView(input)
 	                .setPositiveButton(getResources().getString(R.string.okay), new DialogInterface.OnClickListener() {
@@ -59,6 +72,17 @@ public class MemoField extends InputField {
 	                        //do nothing.
 	                    }
 	                }).show();
+			    	// Switch on or off Software keyboard depend of settings
+			    	if(valueForText){
+			    		Log.i(getResources().getString(R.string.app_name), "Setting memo field is: " + valueForText);
+			    		input.setKeyListener(new QwertyKeyListener(TextKeyListener.Capitalize.NONE, false));
+			    		dialog.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE);
+			        }
+			    	else {
+			    		Log.i(getResources().getString(R.string.app_name), "Setting memo field is: " + valueForText);
+			    		input.setKeyListener(null);
+			    		dialog.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
+			    	}	            	
 	            }
 	        }
 	    });

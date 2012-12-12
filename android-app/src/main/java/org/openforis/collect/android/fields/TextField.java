@@ -2,15 +2,22 @@ package org.openforis.collect.android.fields;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import org.openforis.collect.android.R;
 import org.openforis.collect.android.messages.ToastMessage;
+import org.openforis.collect.android.tabs.TabManager;
 
 import android.content.Context;
 import android.text.Editable;
 import android.text.InputFilter;
+import android.text.method.QwertyKeyListener;
+import android.text.method.TextKeyListener;
+import android.util.Log;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.EditText;
 import android.widget.Toast;
 
 public class TextField extends InputField {
@@ -34,19 +41,20 @@ public class TextField extends InputField {
 	            return true;
 	        }
 	    });
+		this.txtBox = new EditText(context);
 		this.setHint(hintText);
 		this.txtBox.setLayoutParams(new LayoutParams(0,ViewGroup.LayoutParams.WRAP_CONTENT,(float) 3));
 		//this.txtBox.setLayoutParams(new LayoutParams(LayoutParams.FILL_PARENT,  getResources().getInteger(R.integer.input_field_height)));
 		this.txtBox.addTextChangedListener(this);
 		this.txtBox.setFilters(new InputFilter[]{new InputFilter.AllCaps()});
- 
+		
 		this.container.addView(this.label);
 		this.container.addView(this.scrollLeft);		
 		this.container.addView(this.txtBox);
 		this.container.addView(this.scrollRight);
 		//this.container.setLayoutParams(new LayoutParams(LayoutParams.FILL_PARENT,  LayoutParams.WRAP_CONTENT));
-		this.addView(this.container);
-		
+		this.addView(this.container);   	
+    	
 		this.scrollLeft.setOnClickListener(new OnClickListener() {
 	        @Override
 	        public void onClick(View v) {
@@ -57,9 +65,32 @@ public class TextField extends InputField {
 		this.scrollRight.setOnClickListener(new OnClickListener() {
 	        @Override
 	        public void onClick(View v) {
-	        	TextField.this.scrollRight();
+	        	TextField.this.scrollRight();        	
 	        }
 	    });
+		
+		// When TextField gets focus
+		this.txtBox.setOnFocusChangeListener(new OnFocusChangeListener() {
+		    @Override
+		    public void onFocusChange(View v, boolean hasFocus) {
+		    	// Get current settings about software keyboard for text fields
+		    	if(hasFocus){
+			    	if(this.getClass().toString().contains("TextField")){
+				    	Map<String, ?> settings = TabManager.sharedPreferences.getAll();
+				    	Boolean valueForText = (Boolean)settings.get(getResources().getString(R.string.showSoftKeyboardOnText));
+				    	// Switch on or off Software keyboard depend of settings
+				    	if(valueForText){
+				    		Log.i(getResources().getString(R.string.app_name), "Setting text field is: " + valueForText);
+				    		TextField.this.setKeyboardType(new QwertyKeyListener(TextKeyListener.Capitalize.NONE, false));
+				        }
+				    	else {
+				    		Log.i(getResources().getString(R.string.app_name), "Setting text field is: " + valueForText);
+				    		TextField.this.setKeyboardType(null);
+				    	}
+			    	}
+		    	}
+		    }
+	    });				
 	}
 	
 	@Override
@@ -69,7 +100,7 @@ public class TextField extends InputField {
     		TextField.this.currentInstanceNo--;
     		TextField.this.txtBox.setText(TextField.this.values.get(TextField.this.currentInstanceNo));    		
     	}
-	}
+	} 
 	
 	@Override
 	public void scrollRight(){
@@ -90,6 +121,7 @@ public class TextField extends InputField {
 	@Override
 	public void afterTextChanged(Editable s) {
 		TextField.this.values.set(TextField.this.currentInstanceNo, s.toString().toUpperCase());
+		// Log.i(getResources().getString(R.string.app_name), "Text in TextField was changed");
 	}
 	
 	@Override
