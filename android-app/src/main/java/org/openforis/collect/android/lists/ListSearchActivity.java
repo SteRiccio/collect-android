@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.openforis.collect.android.R;
-import org.openforis.collect.android.tabs.TabManager;
 import org.openforis.idm.metamodel.CodeListItem;
 
 import android.app.ListActivity;

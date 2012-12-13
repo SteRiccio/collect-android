@@ -3,25 +3,29 @@ package org.openforis.collect.android.lists;
 import java.util.List;
 
 import org.openforis.collect.android.R;
+import org.openforis.collect.android.management.ApplicationManager;
+import org.openforis.collect.android.messages.AlertMessage;
 import org.openforis.collect.android.misc.RunnableHandler;
-import org.openforis.collect.android.tabs.TabManager;
 import org.openforis.collect.model.CollectRecord;
-import org.springframework.jdbc.core.support.JdbcDaoSupport;
 
 import android.app.ListActivity;
-import android.app.ProgressDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Environment;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
+import android.widget.TextView;
 
 public class ClusterChoiceActivity extends ListActivity{
 	
 	private static final String TAG = "ClusterChoiceActivity";
 
+	private TextView activityLabel;
+	
 	private List<CollectRecord> recordsList;
 	private String[] clusterList;
 	private ArrayAdapter<String> adapter;
@@ -36,8 +40,20 @@ public class ClusterChoiceActivity extends ListActivity{
         Log.i(getResources().getString(R.string.app_name),TAG+":onCreate");
         setContentView(R.layout.clusterchoiceactivity);
         try{
-        	ProgressDialog pd = ProgressDialog.show(ClusterChoiceActivity.this, getResources().getString(R.string.workInProgress), getResources().getString(R.string.loading), true, false);
-            //populating available cluster list - all files in constants.dataSavingPath folder
+        	this.activityLabel = (TextView)findViewById(R.id.lblList);
+        	this.activityLabel.setText(getResources().getString(R.string.clusterChoiceListLabel));
+        	
+        	clusterList = new String[5];
+			for (int i=0;i<4;i++){
+				clusterList[i] = "Record "+(i+1)+"\n";
+				clusterList[i] += "key1 key2 key3...";
+			}
+			
+			clusterList[4] = "Add new record";
+            this.adapter = new ArrayAdapter<String>(this, R.layout.localclusterrow, R.id.plotlabel, clusterList);
+    		this.setListAdapter(this.adapter);
+        	/*ProgressDialog pd = ProgressDialog.show(ClusterChoiceActivity.this, getResources().getString(R.string.workInProgress), getResources().getString(R.string.loading), true, false);
+            //populating available cluster list
 			JdbcDaoSupport jdbcDao = new JdbcDaoSupport();
 			jdbcDao.getConnection();
 			
@@ -61,7 +77,7 @@ public class ClusterChoiceActivity extends ListActivity{
     			//no data saved in database
     			setResult(getResources().getInteger(R.integer.clusterChoiceFailed), new Intent());
     			ClusterChoiceActivity.this.finish();
-    		}
+    		}*/
         } catch (Exception e){
     		RunnableHandler.reportException(e,getResources().getString(R.string.app_name),TAG+":onCreate",
     				Environment.getExternalStorageDirectory().toString()
@@ -82,7 +98,7 @@ public class ClusterChoiceActivity extends ListActivity{
 		super.onListItemClick(l, v, position, id);
 		Log.i(getResources().getString(R.string.app_name),TAG+":onListItemClick");
 		Intent resultHolder = new Intent();
-		resultHolder.putExtra("clusterId", this.recordsList.get(position).getId());
+		resultHolder.putExtra(getResources().getString(R.string.recordId), position/*this.recordsList.get(position).getId()*/);
 		setResult(getResources().getInteger(R.integer.clusterChoiceSuccessful),resultHolder);
 		ClusterChoiceActivity.this.finish();
 		/*
@@ -98,5 +114,40 @@ public class ClusterChoiceActivity extends ListActivity{
 				ClusterChoiceActivity.this.finish();
 			}
 		}*/
+	}
+    
+	@Override
+    public boolean onKeyDown(int keyCode, KeyEvent event)  {
+        if (android.os.Build.VERSION.SDK_INT < android.os.Build.VERSION_CODES.ECLAIR
+                && keyCode == KeyEvent.KEYCODE_BACK
+                && event.getRepeatCount() == 0) {
+            onBackPressed();
+        }
+        return super.onKeyDown(keyCode, event);
+    }
+	
+	@Override
+	public void onBackPressed() { 
+		//Log.e("parent==null","=="+(this.getParent()==null));
+		//this.getParent().onBackPressed();
+//		setResult(getResources().getInteger(R.integer.backButtonPressed), new Intent());
+//		ClusterChoiceActivity.this.finish();
+		AlertMessage.createPositiveNegativeDialog(ClusterChoiceActivity.this, false, getResources().getDrawable(R.drawable.warningsign),
+				getResources().getString(R.string.exitAppTitle), getResources().getString(R.string.exitAppMessage),
+				getResources().getString(R.string.yes), getResources().getString(R.string.no),
+	    		new DialogInterface.OnClickListener() {
+					@Override
+					public void onClick(DialogInterface dialog, int which) {
+						setResult(getResources().getInteger(R.integer.backButtonPressed), new Intent());
+						ClusterChoiceActivity.this.finish();
+					}
+				},
+	    		new DialogInterface.OnClickListener() {
+					@Override
+					public void onClick(DialogInterface dialog, int which) {
+						
+					}
+				},
+				null).show();
 	}
 }
