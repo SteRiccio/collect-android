@@ -5,7 +5,7 @@ import java.util.GregorianCalendar;
 
 import org.openforis.collect.android.R;
 import org.openforis.collect.android.fields.DateField;
-import org.openforis.collect.android.tabs.TabManager;
+import org.openforis.collect.android.management.ApplicationManager;
 
 import android.app.DatePickerDialog;
 import android.app.Dialog;
@@ -74,7 +74,7 @@ public class DateSetDialog extends FragmentActivity {
 	    if (extras != null) {
 	    	  int widget_id = extras.getInt("datefield_id");
 	    	  Log.i(getResources().getString(R.string.app_name), "Id of target field in DateSetDialog is: " + widget_id);
-	    	  View v = TabManager.getUIElement(widget_id);
+	    	  View v = ApplicationManager.getUIElement(widget_id);
 	    	  if (v != null){
 //	    		  Log.i(getResources().getString(R.string.app_name), "View for DateSetDialog is: " +v.toString());
 	    		  showDatePickerDialog((DateField)v);

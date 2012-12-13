@@ -4,7 +4,7 @@ import java.util.Calendar;
 
 import org.openforis.collect.android.R;
 import org.openforis.collect.android.fields.TimeField;
-import org.openforis.collect.android.tabs.TabManager;
+import org.openforis.collect.android.management.ApplicationManager;
 
 import android.app.Dialog;
 import android.app.TimePickerDialog;
@@ -77,7 +77,7 @@ public class TimeSetDialog extends FragmentActivity {
 	    if (extras != null) {
 	    	  int widget_id = extras.getInt("timefield_id");
 	    	  Log.i(getResources().getString(R.string.app_name), "Id of target field in TimeSetDialog is: " + widget_id);
-	    	  View v = TabManager.getUIElement(widget_id);
+	    	  View v = ApplicationManager.getUIElement(widget_id);
 	    	  if (v != null){
 //	    		  Log.i(getResources().getString(R.string.app_name), "View for TimeSetDialog is: " +v.toString());
 	    		  showTimePickerDialog((TimeField)v);
