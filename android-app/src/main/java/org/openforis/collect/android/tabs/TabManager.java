@@ -599,7 +599,7 @@ public class TabManager extends TabActivity /*implements OnGesturePerformedListe
  
         switch (item.getItemId())
         {
-        case R.id.menu_open:
+       /* case R.id.menu_open:
         	AlertMessage.createPositiveNegativeDialog(TabManager.this, true, getResources().getDrawable(R.drawable.warningsign),
     				getResources().getString(R.string.openingPlotListTitle), getResources().getString(R.string.openingPlotListMessage),
     				getResources().getString(R.string.yes), getResources().getString(R.string.no),
@@ -616,7 +616,7 @@ public class TabManager extends TabActivity /*implements OnGesturePerformedListe
     					}
     				},
     				null).show();
-            return true;
+            return true;*/
  
         case R.id.menu_save:
         	saveData();

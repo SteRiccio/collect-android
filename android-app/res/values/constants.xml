@@ -42,6 +42,35 @@
     <string name="defaultUserRole">ROLE_ADMIN</string>
     
     <!-- REQUEST CODES FOR ACTIVITIES -->
+    <integer name="clusterSelection">789</integer>
     <integer name="clusterChoiceSuccessful">123</integer>
     <integer name="clusterChoiceFailed">456</integer>
+    <integer name="startingFormScreen">1000</integer>
+    <integer name="backButtonPressed">997</integer>  
+   
+    <!-- INTENT EXTRAS -->
+    <string name="recordId">recordId</string>
+    <string name="entityId">entityId</string>
+    <string name="attributeId">attributeId</string>
+    <string name="breadcrumbSeparator">-></string>
+    <string name="breadcrumb">breadcrumb</string>
+    <string name="intentType">intentType</string>
+    <string name="idmlId">idmlId</string>
+    <string name="parentFormScreenId">parentFormScreenId</string>
+    <string name="instanceNo">instanceNo</string>
+    <string name="numberOfInstances">numberOfInstances</string>
+    <string name="instanceValues">instanceValues</string>
+    <integer name="multipleAttributeIntent">1</integer>
+    <integer name="multipleEntityIntent">2</integer>
+    <string name="rootScreen">ROOT</string>
+    <integer name="breadcrumbFontSize">24</integer>
+    
+    <!-- BUTTONS IDs -->
+    <integer name="leftButtonMultipleAttribute">11</integer>
+    <integer name="rightButtonMultipleAttribute">22</integer>
+    
+    <string name="valuesSeparator">,</string>
+    <string name="valuesNotVisibleSign">...</string>
+    
+    
 </resources>

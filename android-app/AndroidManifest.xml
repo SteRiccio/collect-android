@@ -17,9 +17,20 @@
     <application android:icon="@drawable/applicationicon" android:label="@string/app_name">
 		<uses-library android:name="android.test.runner" />
         
-		<activity android:name=".tabs.TabManager"
+<!-- 		<activity android:name="test.custom.adapter.CustomAdapterExample"
 		          android:label="@string/app_name"
-		          android:theme="@android:style/Theme.NoTitleBar"
+		          android:theme="@android:style/Theme.Translucent.NoTitleBar"
+		          android:configChanges="orientation|keyboardHidden"
+		          android:screenOrientation="portrait">      
+			<intent-filter>
+			    <action android:name="android.intent.action.MAIN" />
+			    <category android:name="android.intent.category.LAUNCHER" />
+			</intent-filter>
+		</activity> -->
+		
+ 		<activity android:name=".management.ApplicationManager"
+		          android:label="@string/app_name"
+		          android:theme="@android:style/Theme.Translucent.NoTitleBar"
 		          android:configChanges="orientation|keyboardHidden"
 		          android:screenOrientation="portrait">      
 			<intent-filter>
@@ -28,18 +39,42 @@
 			</intent-filter>
 		</activity>
 		
+		<activity android:name=".management.FormScreen"
+		          android:label="@string/app_name"
+		          android:theme="@android:style/Theme.NoTitleBar"
+		          android:configChanges="orientation|keyboardHidden"> 
+		</activity>		
+		
+		<activity android:name=".management.BaseActivity"
+		          android:label="@string/app_name"
+		          android:theme="@android:style/Theme.NoTitleBar"
+		          android:configChanges="orientation|keyboardHidden"> 
+		</activity>		
+		
 		<activity android:name=".misc.WelcomeScreen"
 		          android:label="@string/app_name"
 		          android:theme="@android:style/Theme.NoTitleBar"
-		          android:configChanges="orientation|keyboardHidden">
+		          android:configChanges="orientation|keyboardHidden"
+		          >
 		</activity>
 		
-		<activity android:name=".tabs.SettingsTab"
+		<activity android:name="org.openforis.collect.android.tabs.SettingsScreen"
 		          android:label="@string/app_name"
 		          android:theme="@android:style/Theme.NoTitleBar"
 		          android:configChanges="orientation|keyboardHidden">
 		</activity>
 		
+<!-- 	 	<activity android:name=".tabs.TabManager"
+		          android:label="@string/app_name"
+		          android:theme="@android:style/Theme.Translucent.NoTitleBar"
+		          android:configChanges="orientation|keyboardHidden"
+		          android:screenOrientation="portrait">      
+			<intent-filter>
+			    <action android:name="android.intent.action.MAIN" />
+			    <category android:name="android.intent.category.LAUNCHER" />
+			</intent-filter>
+		</activity>	
+
 		<activity android:name=".tabs.TabContainer"
 		          android:label="@string/app_name"
 		          android:theme="@android:style/Theme.NoTitleBar"
@@ -50,7 +85,7 @@
 		          android:label="@string/app_name"
 		          android:theme="@android:style/Theme.NoTitleBar"
 		          android:configChanges="orientation|keyboardHidden">
-		</activity>
+		</activity> -->
 		
 		<activity android:name=".misc.GpsReader"
 		          android:label="@string/app_name"
@@ -63,17 +98,6 @@
 		          android:theme="@android:style/Theme.NoTitleBar"
 		          android:configChanges="orientation|keyboardHidden">
 		</activity>
-		
-		<activity android:name="org.openforis.collect.android.dialogs.DateSetDialog"
-		          android:label="@string/app_name"
-		          android:theme="@android:style/Theme.NoTitleBar"
-		          android:configChanges="orientation|keyboardHidden">
-		</activity>	
-		
-		<activity android:name="org.openforis.collect.android.dialogs.TimeSetDialog"
-		          android:label="@string/app_name"
-		          android:theme="@android:style/Theme.NoTitleBar"
-		          android:configChanges="orientation|keyboardHidden">
-		</activity>		
+				
     </application>
 </manifest> 

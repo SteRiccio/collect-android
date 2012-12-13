@@ -3,7 +3,7 @@
     android:layout_width="fill_parent" android:layout_height="wrap_content">
 
     <TextView
-        android:id="@+id/lblPlotsList"
+        android:id="@+id/lblList"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
         /> 
@@ -12,6 +12,6 @@
                android:layout_height="wrap_content"
                android:layout_weight="1"
                android:drawSelectorOnTop="false"
-               android:layout_below="@id/lblPlotsList"/>
+               android:layout_below="@id/lblList"/>
 
 </RelativeLayout>
