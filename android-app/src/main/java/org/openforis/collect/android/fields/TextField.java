@@ -5,8 +5,8 @@ import java.util.List;
 import java.util.Map;
 
 import org.openforis.collect.android.R;
+import org.openforis.collect.android.management.ApplicationManager;
 import org.openforis.collect.android.messages.ToastMessage;
-import org.openforis.collect.android.tabs.TabManager;
 
 import android.content.Context;
 import android.text.Editable;
@@ -14,7 +14,6 @@ import android.text.InputFilter;
 import android.text.method.QwertyKeyListener;
 import android.text.method.TextKeyListener;
 import android.util.Log;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
@@ -76,7 +75,7 @@ public class TextField extends InputField {
 		    	// Get current settings about software keyboard for text fields
 		    	if(hasFocus){
 			    	if(this.getClass().toString().contains("TextField")){
-				    	Map<String, ?> settings = TabManager.sharedPreferences.getAll();
+				    	Map<String, ?> settings = ApplicationManager.appPreferences.getAll();
 				    	Boolean valueForText = (Boolean)settings.get(getResources().getString(R.string.showSoftKeyboardOnText));
 				    	// Switch on or off Software keyboard depend of settings
 				    	if(valueForText){

@@ -6,19 +6,16 @@ import java.util.List;
 import java.util.Map;
 
 import org.openforis.collect.android.R;
+import org.openforis.collect.android.management.ApplicationManager;
 import org.openforis.collect.android.messages.ToastMessage;
-import org.openforis.collect.android.tabs.TabManager;
 
 import android.content.Context;
 import android.text.Editable;
-import android.text.method.DigitsKeyListener;
 import android.text.method.KeyListener;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.View.OnFocusChangeListener;
 import android.widget.EditText;
-import android.widget.TextView;
 import android.widget.Toast;
 
 public class CoordinateField extends InputField {
@@ -96,7 +93,7 @@ public class CoordinateField extends InputField {
 		    public void onFocusChange(View v, boolean hasFocus) {
 		    	//Get current settings about software keyboard for text fields
 		    	if(this.getClass().toString().contains("CoordinateField")){
-			    	Map<String, ?> settings = TabManager.sharedPreferences.getAll();
+			    	Map<String, ?> settings = ApplicationManager.appPreferences.getAll();
 			    	Boolean valueForNum = (Boolean)settings.get(getResources().getString(R.string.showSoftKeyboardOnNumeric));
 			    	//Switch on or off Software keyboard depend of settings
 			    	if(valueForNum){

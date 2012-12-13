@@ -1,28 +1,21 @@
 package org.openforis.collect.android.fields;
 
 import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.GregorianCalendar;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
 
 import org.openforis.collect.android.R;
 import org.openforis.collect.android.dialogs.DateSetDialog;
+import org.openforis.collect.android.management.ApplicationManager;
 import org.openforis.collect.android.messages.ToastMessage;
-import org.openforis.collect.android.misc.WelcomeScreen;
-import org.openforis.collect.android.tabs.TabManager;
-import android.app.DatePickerDialog;
-import android.app.Dialog;
+
 import android.content.Context;
 import android.content.Intent;
-import android.os.Bundle;
-import android.support.v4.app.DialogFragment;
 import android.text.Editable;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.Toast;
 
@@ -62,7 +55,7 @@ public class DateField extends InputField {
 		    	//Get current settings about software keyboard for text fields
 		    	if(hasFocus){
 			    	if(this.getClass().toString().contains("DateField")){
-				    	Map<String, ?> settings = TabManager.sharedPreferences.getAll();
+				    	Map<String, ?> settings = ApplicationManager.appPreferences.getAll();
 				    	Boolean valueForNum = (Boolean)settings.get(getResources().getString(R.string.showSoftKeyboardOnNumeric));
 				    	//Switch on or off Software keyboard depend of settings
 				    	if(valueForNum){

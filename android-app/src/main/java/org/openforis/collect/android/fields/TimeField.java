@@ -6,10 +6,9 @@ import java.util.Map;
 import java.util.Random;
 
 import org.openforis.collect.android.R;
-import org.openforis.collect.android.dialogs.DateSetDialog;
 import org.openforis.collect.android.dialogs.TimeSetDialog;
+import org.openforis.collect.android.management.ApplicationManager;
 import org.openforis.collect.android.messages.ToastMessage;
-import org.openforis.collect.android.tabs.TabManager;
 
 import android.content.Context;
 import android.content.Intent;
@@ -18,9 +17,7 @@ import android.text.TextWatcher;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.View.OnFocusChangeListener;
 import android.widget.EditText;
-import android.widget.TextView;
 import android.widget.Toast;
 
 public class TimeField extends InputField implements TextWatcher {
@@ -60,7 +57,7 @@ public class TimeField extends InputField implements TextWatcher {
 		    	//Get current settings about software keyboard for text fields
 		    	if(hasFocus){
 			    	if(this.getClass().toString().contains("TimeField")){
-				    	Map<String, ?> settings = TabManager.sharedPreferences.getAll();
+				    	Map<String, ?> settings = ApplicationManager.appPreferences.getAll();
 				    	Boolean valueForNum = (Boolean)settings.get(getResources().getString(R.string.showSoftKeyboardOnNumeric));
 				    	//Switch on or off Software keyboard depend of settings
 				    	if(valueForNum){

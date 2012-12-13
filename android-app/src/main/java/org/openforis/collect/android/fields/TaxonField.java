@@ -5,8 +5,8 @@ import java.util.List;
 import java.util.Map;
 
 import org.openforis.collect.android.R;
+import org.openforis.collect.android.management.ApplicationManager;
 import org.openforis.collect.android.messages.ToastMessage;
-import org.openforis.collect.android.tabs.TabManager;
 
 import android.content.Context;
 import android.text.method.KeyListener;
@@ -15,13 +15,11 @@ import android.text.method.TextKeyListener;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.View.OnFocusChangeListener;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemSelectedListener;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.Spinner;
-import android.widget.TextView;
 import android.widget.Toast;
 
 public class TaxonField extends Field {
@@ -72,7 +70,7 @@ public class TaxonField extends Field {
 		    	// Get current settings about software keyboard for text fields
 		    	if(hasFocus){
 			    	if(this.getClass().toString().contains("TaxonField")){
-				    	Map<String, ?> settings = TabManager.sharedPreferences.getAll();
+				    	Map<String, ?> settings = ApplicationManager.appPreferences.getAll();
 				    	Boolean valueForText = (Boolean)settings.get(getResources().getString(R.string.showSoftKeyboardOnText));
 				    	// Switch on or off Software keyboard depend of settings
 				    	if(valueForText){

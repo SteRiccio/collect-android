@@ -5,8 +5,8 @@ import java.util.List;
 import java.util.Map;
 
 import org.openforis.collect.android.R;
+import org.openforis.collect.android.management.ApplicationManager;
 import org.openforis.collect.android.messages.ToastMessage;
-import org.openforis.collect.android.tabs.TabManager;
 
 import android.app.AlertDialog;
 import android.content.Context;
@@ -19,7 +19,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.widget.EditText;
-import android.widget.TextView;
 import android.widget.Toast;
 
 public class MemoField extends InputField {
@@ -50,7 +49,7 @@ public class MemoField extends InputField {
 	        public void onFocusChange(View v, boolean hasFocus) {
 	            if (hasFocus) {
 	            	//First check software keyboard settings
-			    	Map<String, ?> settings = TabManager.sharedPreferences.getAll();
+			    	Map<String, ?> settings = ApplicationManager.appPreferences.getAll();
 			    	Boolean valueForText = (Boolean)settings.get(getResources().getString(R.string.showSoftKeyboardOnText));
 	            	
 	            	//Create dialog for Memo

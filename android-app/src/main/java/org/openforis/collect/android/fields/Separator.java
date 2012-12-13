@@ -3,8 +3,8 @@ package org.openforis.collect.android.fields;
 import java.util.List;
 
 import org.openforis.collect.android.R;
+import org.openforis.collect.android.management.ApplicationManager;
 import org.openforis.collect.android.misc.SwipeDetector;
-import org.openforis.collect.android.tabs.TabManager;
 import org.openforis.idm.metamodel.BooleanAttributeDefinition;
 import org.openforis.idm.metamodel.CodeAttributeDefinition;
 import org.openforis.idm.metamodel.DateAttributeDefinition;
@@ -81,7 +81,7 @@ public class Separator extends UIElement {
     		List<NodeDefinition> childrenList = Separator.this.entity.getChildDefinitions();
     		for (int i=0;i<childrenList.size();i++){
     			NodeDefinition nodeDefn = childrenList.get(i);
-    			UIElement field = TabManager.getUIElement(nodeDefn.getId());
+    			UIElement field = ApplicationManager.getUIElement(nodeDefn.getId());
     			field.scrollLeft();
     		}
     		Separator.this.currentInstanceNo--;
@@ -95,7 +95,7 @@ public class Separator extends UIElement {
     	List<NodeDefinition> childrenList = Separator.this.entity.getChildDefinitions();
 		for (int i=0;i<childrenList.size();i++){
 			NodeDefinition nodeDefn = childrenList.get(i);
-			UIElement field = TabManager.getUIElement(nodeDefn.getId());
+			UIElement field = ApplicationManager.getUIElement(nodeDefn.getId());
 			field.scrollRight();		
 		}
 		Separator.this.currentInstanceNo++;
@@ -108,7 +108,7 @@ public class Separator extends UIElement {
 	
 	public int getInstancesNo(){
 		NodeDefinition nodeDefn = Separator.this.entity.getChildDefinitions().get(0);
-		UIElement uiField = TabManager.getUIElement(nodeDefn.getId());
+		UIElement uiField = ApplicationManager.getUIElement(nodeDefn.getId());
 		if (nodeDefn.getClass().equals(NumberAttributeDefinition.class)){
 			NumberField field = (NumberField)uiField;
 			return field.getInstancesNo();
