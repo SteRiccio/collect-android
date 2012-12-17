@@ -14,7 +14,6 @@ import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.FragmentActivity;
 import android.text.format.DateFormat;
-import android.util.Log;
 import android.view.View;
 import android.view.Window;
 import android.widget.DatePicker;
@@ -57,7 +56,6 @@ public class DateSetDialog extends FragmentActivity {
 			//Set date to the clicked DateField 
 			Calendar cal = new GregorianCalendar(year, month, day);
 			String strDate = DateFormat.getDateFormat(getActivity()).format(cal.getTime());
-			Log.i(getResources().getString(R.string.app_name), "Date in DateSetDialog is: " + strDate);
 			activity_edittext.txtBox.setText(strDate);	
 		    //Finish activity
 		    finish();
@@ -73,15 +71,11 @@ public class DateSetDialog extends FragmentActivity {
 	    Bundle extras = getIntent().getExtras(); 
 	    if (extras != null) {
 	    	  int widget_id = extras.getInt("datefield_id");
-	    	  Log.i(getResources().getString(R.string.app_name), "Id of target field in DateSetDialog is: " + widget_id);
 	    	  View v = ApplicationManager.getUIElement(widget_id);
 	    	  if (v != null){
 //	    		  Log.i(getResources().getString(R.string.app_name), "View for DateSetDialog is: " +v.toString());
 	    		  showDatePickerDialog((DateField)v);
 	    	  }
-	    	  else
-	    		  Log.i(getResources().getString(R.string.app_name), "View is NULL!");
-	    	  
 	    }    
 	    
 	}	

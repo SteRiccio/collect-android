@@ -13,7 +13,6 @@ import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.FragmentActivity;
 import android.text.format.DateFormat;
-import android.util.Log;
 import android.view.View;
 import android.view.Window;
 import android.widget.TimePicker;
@@ -52,8 +51,7 @@ public class TimeSetDialog extends FragmentActivity {
 
 		public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
 		    //Set time to the clicked TimeField
-			String strTime = pad(hourOfDay) + ":" + pad(minute);
-			Log.i(getResources().getString(R.string.app_name), "Time in TimeSetDialog is: " + strTime);
+			String strTime = pad(hourOfDay) + ":" + pad(minute);		
 			activity_edittext.txtBox.setText(strTime);			
 			//Finish activity
 		    finish();
@@ -76,15 +74,11 @@ public class TimeSetDialog extends FragmentActivity {
 	    Bundle extras = getIntent().getExtras(); 
 	    if (extras != null) {
 	    	  int widget_id = extras.getInt("timefield_id");
-	    	  Log.i(getResources().getString(R.string.app_name), "Id of target field in TimeSetDialog is: " + widget_id);
 	    	  View v = ApplicationManager.getUIElement(widget_id);
 	    	  if (v != null){
 //	    		  Log.i(getResources().getString(R.string.app_name), "View for TimeSetDialog is: " +v.toString());
 	    		  showTimePickerDialog((TimeField)v);
 	    	  }
-	    	  else
-	    		  Log.i(getResources().getString(R.string.app_name), "View is NULL!");
-	    	  
 	    }    
 	    
 	}	
