@@ -13,9 +13,11 @@ import java.util.UUID;
 import org.openforis.collect.android.R;
 import org.openforis.collect.android.database.CollectDatabase;
 import org.openforis.collect.android.database.DatabaseWrapper;
+import org.openforis.collect.android.fields.UIElement;
 import org.openforis.collect.android.lists.ClusterChoiceActivity;
 import org.openforis.collect.android.messages.AlertMessage;
 import org.openforis.collect.android.misc.RunnableHandler;
+import org.openforis.collect.android.screens.FormScreen;
 import org.openforis.collect.manager.RecordManager;
 import org.openforis.collect.manager.SurveyManager;
 import org.openforis.collect.manager.UserManager;
@@ -33,7 +35,6 @@ import org.openforis.idm.metamodel.Schema;
 import org.openforis.idm.metamodel.Survey;
 import org.openforis.idm.metamodel.validation.Validator;
 import org.openforis.idm.metamodel.xml.SurveyIdmlBinder;
-import org.openforis.idm.model.Node;
 import org.openforis.idm.model.expression.ExpressionFactory;
 import org.springframework.jdbc.core.support.JdbcDaoSupport;
 
@@ -67,6 +68,7 @@ public class ApplicationManager extends Activity{
 	public static SharedPreferences appPreferences;
 	
 	public static Map<String,FormScreen> formScreensMap;
+	public static Map<Integer,UIElement> uiElementsMap;
 	
 	public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -134,7 +136,8 @@ public class ApplicationManager extends Activity{
         	List<EntityDefinition> rootEntitiesDefsList = schema.getRootEntityDefinitions();
         	getAllFormFields(rootEntitiesDefsList);
         	
-        	ApplicationManager.formScreensMap = new HashMap<String,FormScreen>();        	
+        	ApplicationManager.formScreensMap = new HashMap<String,FormScreen>();
+        	ApplicationManager.uiElementsMap = new HashMap<Integer,UIElement>();       	
         	
         	//adding default user to database if not exists        	
         	User defaultUser = new User();
@@ -347,5 +350,9 @@ public class ApplicationManager extends Activity{
 		public int compare(NodeDefinition lhs, NodeDefinition rhs) {				
 			return Integer.valueOf(lhs.getId()).compareTo(rhs.getId());//lhs.getId().compareTo(rhs.getId());
 		}
-	}    
+	}
+	
+	public static UIElement getUIElement(int elementId){
+		return ApplicationManager.uiElementsMap.get(elementId);
+	}
 }
