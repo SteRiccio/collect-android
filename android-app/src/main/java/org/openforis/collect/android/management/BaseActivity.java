@@ -1,15 +1,14 @@
 package org.openforis.collect.android.management;
 
-import org.openforis.collect.android.messages.AlertMessage;
-import org.openforis.collect.android.tabs.SettingsScreen;
-
 import org.openforis.collect.android.R;
+import org.openforis.collect.android.messages.AlertMessage;
+import org.openforis.collect.android.screens.SettingsScreen;
+
 import android.app.Activity;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager.NameNotFoundException;
 import android.graphics.Color;
-import android.graphics.drawable.ColorDrawable;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
