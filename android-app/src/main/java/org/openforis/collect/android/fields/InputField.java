@@ -17,7 +17,6 @@ public class InputField extends Field implements TextWatcher {
 		super(context, id, isMultiple, isRequired);
 		this.txtBox = new EditText(context);
 		this.txtBox.addTextChangedListener(this);
-		this.setAlignment(Gravity.LEFT);
 	}
 	
 	public void setKeyboardType(KeyListener keyListener){
