@@ -62,7 +62,7 @@
 		          android:label="@string/app_name"
 		          android:theme="@android:style/Theme.NoTitleBar"
 		          android:configChanges="orientation|keyboardHidden"> 
-		</activity>				
+		</activity>		
 		
 <!-- 	 	<activity android:name=".tabs.TabManager"
 		          android:label="@string/app_name"
