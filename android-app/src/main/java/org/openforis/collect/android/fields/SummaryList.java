@@ -44,7 +44,7 @@ public class SummaryList extends UIElement {
 			List<String> keys = keysList.get(i);
 			String keysLine = "";
 			for (String key : keys){
-				keysLine += key + getResources().getString(R.string.valuesSeparator);
+				keysLine += key + getResources().getString(R.string.valuesSeparator1);
 				if (keysLine.length()>threshold){
 					break;
 				}
@@ -59,14 +59,14 @@ public class SummaryList extends UIElement {
 			String detailsLine = "";
 			List<String> details = detailsList.get(i);
 			for (String detail : details){
-				detailsLine += detail + getResources().getString(R.string.valuesSeparator);
+				detailsLine += detail + getResources().getString(R.string.valuesSeparator1);
 				if (detailsLine.length()>threshold){
 					break;
 				}
 			}
 			if (detailsLine.length()>threshold){
 				String visibleDetails = detailsLine.substring(0,threshold-3);
-				if (visibleDetails.substring(visibleDetails.length()-1, visibleDetails.length()).equals(getResources().getString(R.string.valuesSeparator))){
+				if (visibleDetails.substring(visibleDetails.length()-1, visibleDetails.length()).equals(getResources().getString(R.string.valuesSeparator1))){
 					visibleDetails = visibleDetails.substring(0,visibleDetails.length()-1);
 				}
 				detailsLine = visibleDetails;

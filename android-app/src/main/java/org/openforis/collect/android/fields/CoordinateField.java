@@ -97,11 +97,9 @@ public class CoordinateField extends InputField {
 			    	Boolean valueForNum = (Boolean)settings.get(getResources().getString(R.string.showSoftKeyboardOnNumeric));
 			    	//Switch on or off Software keyboard depend of settings
 			    	if(valueForNum){
-			    		Log.i(getResources().getString(R.string.app_name), "Setting coordinate field is: " + valueForNum);
 			    		CoordinateField.this.makeReal();		    		
 			        }
 			    	else {
-			    		Log.i(getResources().getString(R.string.app_name), "Setting coordinate field is: " + valueForNum);
 			    		CoordinateField.this.setKeyboardType(null);
 			    	}
 		    	}

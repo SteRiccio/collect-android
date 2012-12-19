@@ -13,7 +13,6 @@ import org.openforis.collect.android.messages.ToastMessage;
 import android.content.Context;
 import android.content.Intent;
 import android.text.Editable;
-import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
@@ -59,11 +58,9 @@ public class DateField extends InputField {
 				    	Boolean valueForNum = (Boolean)settings.get(getResources().getString(R.string.showSoftKeyboardOnNumeric));
 				    	//Switch on or off Software keyboard depend of settings
 				    	if(valueForNum){
-				    		Log.i(getResources().getString(R.string.app_name), "Setting date field is: " + valueForNum);
 				    		DateField.this.makeReal();			    		
 				        }
 				    	else {
-				    		Log.i(getResources().getString(R.string.app_name), "Setting date field is: " + valueForNum);
 				    		DateField.this.setKeyboardType(null);
 				    	}
 				    	//Generate random id for text box

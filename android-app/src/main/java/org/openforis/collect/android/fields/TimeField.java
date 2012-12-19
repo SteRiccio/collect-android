@@ -14,7 +14,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
@@ -61,11 +60,9 @@ public class TimeField extends InputField implements TextWatcher {
 				    	Boolean valueForNum = (Boolean)settings.get(getResources().getString(R.string.showSoftKeyboardOnNumeric));
 				    	//Switch on or off Software keyboard depend of settings
 				    	if(valueForNum){
-				    		Log.i(getResources().getString(R.string.app_name), "Setting time field is: " + valueForNum);
 				    		TimeField.this.makeReal();			    		
 				        }
 				    	else {
-				    		Log.i(getResources().getString(R.string.app_name), "Setting time field is: " + valueForNum);
 				    		TimeField.this.setKeyboardType(null);
 				    	}
 				    	//Generate random id for text box

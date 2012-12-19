@@ -14,7 +14,6 @@ import android.content.DialogInterface;
 import android.text.Editable;
 import android.text.method.QwertyKeyListener;
 import android.text.method.TextKeyListener;
-import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
@@ -73,12 +72,10 @@ public class MemoField extends InputField {
 	                }).show();
 			    	// Switch on or off Software keyboard depend of settings
 			    	if(valueForText){
-			    		Log.i(getResources().getString(R.string.app_name), "Setting memo field is: " + valueForText);
 			    		input.setKeyListener(new QwertyKeyListener(TextKeyListener.Capitalize.NONE, false));
 			    		dialog.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE);
 			        }
 			    	else {
-			    		Log.i(getResources().getString(R.string.app_name), "Setting memo field is: " + valueForText);
 			    		input.setKeyListener(null);
 			    		dialog.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
 			    	}	            	
