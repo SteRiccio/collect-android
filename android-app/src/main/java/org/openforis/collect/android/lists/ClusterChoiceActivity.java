@@ -11,12 +11,18 @@ import org.openforis.collect.model.CollectRecord;
 import android.app.ListActivity;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.os.Environment;
+import android.text.Html;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
+import android.view.Window;
+import android.view.WindowManager;
 import android.widget.ArrayAdapter;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 
@@ -38,20 +44,14 @@ public class ClusterChoiceActivity extends ListActivity{
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         Log.i(getResources().getString(R.string.app_name),TAG+":onCreate");
+        requestWindowFeature(Window.FEATURE_NO_TITLE);
+        getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
         setContentView(R.layout.clusterchoiceactivity);
         try{
         	this.activityLabel = (TextView)findViewById(R.id.lblList);
         	this.activityLabel.setText(getResources().getString(R.string.clusterChoiceListLabel));
         	
-        	clusterList = new String[5];
-			for (int i=0;i<4;i++){
-				clusterList[i] = "Record "+(i+1)+"\n";
-				clusterList[i] += "key1 key2 key3...";
-			}
-			
-			clusterList[4] = "Add new record";
-            this.adapter = new ArrayAdapter<String>(this, R.layout.localclusterrow, R.id.plotlabel, clusterList);
-    		this.setListAdapter(this.adapter);
+        	
         	/*ProgressDialog pd = ProgressDialog.show(ClusterChoiceActivity.this, getResources().getString(R.string.workInProgress), getResources().getString(R.string.loading), true, false);
             //populating available cluster list
 			JdbcDaoSupport jdbcDao = new JdbcDaoSupport();
@@ -91,6 +91,19 @@ public class ClusterChoiceActivity extends ListActivity{
     protected void onResume(){
 		super.onResume();
 		Log.i(getResources().getString(R.string.app_name),TAG+":onResume");
+		
+		int backgroundColor = ApplicationManager.appPreferences.getInt(getResources().getString(R.string.backgroundColor), Color.WHITE);	
+		changeBackgroundColor(backgroundColor);
+		clusterList = new String[5];
+		for (int i=0;i<4;i++){
+			clusterList[i] = "Record "+(i+1)+"\n";
+			clusterList[i] += "key1 key2 key3...";
+		}		
+		clusterList[4] = "Add new record";
+		
+		int layout = (backgroundColor!=Color.WHITE)?R.layout.localclusterrow_white:R.layout.localclusterrow_black;
+        this.adapter = new ArrayAdapter<String>(this, layout, R.id.plotlabel, clusterList);
+		this.setListAdapter(this.adapter);
     }
     
     @Override
@@ -150,4 +163,29 @@ public class ClusterChoiceActivity extends ListActivity{
 				},
 				null).show();
 	}
+	
+    private void changeBackgroundColor(int backgroundColor){
+		getWindow().setBackgroundDrawable(new ColorDrawable(backgroundColor));
+		this.activityLabel.setTextColor((backgroundColor!=Color.WHITE)?Color.WHITE:Color.BLACK);
+
+		/*ListView lv = getListView();
+		int itemsNo = lv.getAdapter().getCount();
+		for (int i=0;i<itemsNo;i++){			
+			View view = lv.getAdapter().getView(i, null, null);
+			if (view instanceof LinearLayout){
+				LinearLayout ll = (LinearLayout)view;
+				int childNo = ll.getChildCount();
+				for (int j=0;j<childNo;j++){
+					View childView = ll.getChildAt(j);
+					if (childView instanceof TextView){
+						TextView tv = (TextView)childView;
+						//tv.setTextColor(Color.RED);
+						//tv.setBackgroundColor(Color.BLUE);
+						tv.setText(Html.fromHtml("<p style='color:red'>" + tv.getText() + "</p>"));
+						//tv.setTextColor((backgroundColor!=Color.WHITE)?Color.WHITE:Color.BLACK);
+					}					
+				}
+			}			
+		}*/ 
+    }
 }
