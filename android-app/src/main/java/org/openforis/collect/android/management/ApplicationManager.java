@@ -11,6 +11,9 @@ import java.util.Map;
 import java.util.UUID;
 
 import org.openforis.collect.android.R;
+import org.openforis.collect.android.data.DataTree;
+import org.openforis.collect.android.data.DataTreeNode;
+import org.openforis.collect.android.data.FieldValue;
 import org.openforis.collect.android.database.CollectDatabase;
 import org.openforis.collect.android.database.DatabaseWrapper;
 import org.openforis.collect.android.fields.UIElement;
@@ -38,7 +41,6 @@ import org.openforis.idm.metamodel.xml.SurveyIdmlBinder;
 import org.openforis.idm.model.expression.ExpressionFactory;
 import org.springframework.jdbc.core.support.JdbcDaoSupport;
 
-import android.app.Activity;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -47,10 +49,8 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.util.Log;
 import android.view.KeyEvent;
-import android.view.Window;
-import android.view.WindowManager;
 
-public class ApplicationManager extends Activity{
+public class ApplicationManager extends BaseActivity{
 	
 	private static final String TAG = "ApplicationManager";
 	
@@ -70,12 +70,14 @@ public class ApplicationManager extends Activity{
 	public static Map<String,FormScreen> formScreensMap;
 	public static Map<Integer,UIElement> uiElementsMap;
 	
+	public static DataTree valuesTree;
+	
+	public static FieldValue fieldValueToPass;
+	
 	public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         try{
-        	Log.i(getResources().getString(R.string.app_name),TAG+":onCreate");
-        	requestWindowFeature(Window.FEATURE_NO_TITLE);
-            getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
+        	Log.i(getResources().getString(R.string.app_name),TAG+":onCreate");       
             //setContentView(R.layout.applicationwindow);
             initSession();
             
@@ -85,6 +87,8 @@ public class ApplicationManager extends Activity{
 			editor.putInt(getResources().getString(R.string.backgroundColor), backgroundColor);
 			editor.commit();
             
+			ApplicationManager.fieldValueToPass = null;
+			
 			//creating file structure used by application
         	String sdcardPath = Environment.getExternalStorageDirectory().toString();
 			File folder = new File(sdcardPath+getResources().getString(R.string.application_folder));
@@ -137,7 +141,8 @@ public class ApplicationManager extends Activity{
         	getAllFormFields(rootEntitiesDefsList);
         	
         	ApplicationManager.formScreensMap = new HashMap<String,FormScreen>();
-        	ApplicationManager.uiElementsMap = new HashMap<Integer,UIElement>();       	
+        	ApplicationManager.uiElementsMap = new HashMap<Integer,UIElement>();
+        	
         	
         	//adding default user to database if not exists        	
         	User defaultUser = new User();
@@ -157,6 +162,8 @@ public class ApplicationManager extends Activity{
             
             //this.startActivityForResult(new Intent(this, ClusterChoiceActivity.class),getResources().getInteger(R.integer.clusterSelection));
             showRecordsListScreen();
+            
+            //ApplicationManager.valuesTree = new DataTree(this, null);
             
     		Thread thread = new Thread(new RunnableHandler(0, Environment.getExternalStorageDirectory().toString()
     				+getResources().getString(R.string.logs_folder)
@@ -181,7 +188,8 @@ public class ApplicationManager extends Activity{
 		super.onResume();
 		Log.i(getResources().getString(R.string.app_name),TAG+":onResume");
 		try{
-
+			//restore data from database - TBI
+			
 		} catch (Exception e){
     		RunnableHandler.reportException(e,getResources().getString(R.string.app_name),TAG+":onResume",
     				Environment.getExternalStorageDirectory().toString()
@@ -199,7 +207,8 @@ public class ApplicationManager extends Activity{
 	    	Log.e("request="+requestCode,/*data.getIntExtra(getResources().getString(R.string.recordId), -111)+*/"result="+resultCode);
 	 	    if (requestCode==getResources().getInteger(R.integer.clusterSelection)){	 	    	
 	 	    	if (resultCode==getResources().getInteger(R.integer.clusterChoiceSuccessful)){//record was selected
-	 	    		showFormRootScreen();	 	    		
+	 	    		showFormRootScreen();
+	 	    		
 	 	    		int recordId = data.getIntExtra(getResources().getString(R.string.recordId), -1);
 	 	    		if (recordId==-1){//new record
 	 	    			
@@ -288,16 +297,19 @@ public class ApplicationManager extends Activity{
 	}
 	
 	private void showFormRootScreen(){
-		List<EntityDefinition> rootEntitiesDefsList = schema.getRootEntityDefinitions();
+		ApplicationManager.valuesTree = new DataTree(this, null);
+		
+		List<EntityDefinition> rootEntitiesDefsList = schema.getRootEntityDefinitions();		
 		Intent intent = new Intent(this,FormScreen.class);
 		intent.putExtra(getResources().getString(R.string.breadcrumb), getResources().getString(R.string.rootScreen));
 		intent.putExtra(getResources().getString(R.string.intentType), getResources().getInteger(R.integer.multipleEntityIntent));
-		intent.putExtra(getResources().getString(R.string.parentFormScreenId), "root");
+		intent.putExtra(getResources().getString(R.string.parentFormScreenId), "");
         intent.putExtra(getResources().getString(R.string.idmlId), 0);
         intent.putExtra(getResources().getString(R.string.instanceNo), 0);
 		for (int i=0;i<rootEntitiesDefsList.size();i++){
-			intent.putExtra(getResources().getString(R.string.attributeId)+i, rootEntitiesDefsList.get(i).getId());
-			//Log.e("entity"+rootEntitiesDefsList.get(i).getPath(),rootEntitiesDefsList.get(i).getName()+"=="+rootEntitiesDefsList.get(i).getId());
+			int id = rootEntitiesDefsList.get(i).getId();
+			intent.putExtra(getResources().getString(R.string.attributeId)+i, id);
+			ApplicationManager.valuesTree.addChildToRoot(new DataTreeNode(id, 0, "", ApplicationManager.valuesTree.getChild(""), null));
 		}
 		this.startActivityForResult(intent,getResources().getInteger(R.integer.startingFormScreen));		
 	}

@@ -9,28 +9,37 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager.NameNotFoundException;
 import android.graphics.Color;
+import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.Window;
+import android.view.WindowManager;
 
 
-public class BaseActivity extends Activity{
+public class BaseActivity extends Activity {
 	
 	private static final String TAG = "BaseActivity";
 	
 	protected int backgroundColor;
+	
+	@Override
+	public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);       
+        requestWindowFeature(Window.FEATURE_NO_TITLE);
+        getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
+	}
 	
     @Override
 	public void onResume()
 	{
 		super.onResume();
 		Log.i(getResources().getString(R.string.app_name),TAG+":onResume");
-		
 		this.backgroundColor = ApplicationManager.appPreferences.getInt(getResources().getString(R.string.backgroundColor), Color.WHITE);
 	}
 	
-	 @Override
+    @Override
     public boolean onCreateOptionsMenu(Menu menu)
     {
         MenuInflater menuInflater = getMenuInflater();
@@ -66,7 +75,8 @@ public class BaseActivity extends Activity{
 	            return true;
 	 		*/
 	        case R.id.menu_save:
-	        	//saveData();		
+	        	//saveData();	
+	        	return true;
 			case R.id.menu_settings:
 				startActivity(new Intent(BaseActivity.this,SettingsScreen.class));
 			    return true;
