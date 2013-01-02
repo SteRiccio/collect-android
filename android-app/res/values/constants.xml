@@ -69,7 +69,8 @@
     <integer name="leftButtonMultipleAttribute">11</integer>
     <integer name="rightButtonMultipleAttribute">22</integer>
     
-    <string name="valuesSeparator">,</string>
+    <string name="valuesSeparator1">,</string>
+    <string name="valuesSeparator2">;</string>
     <string name="valuesNotVisibleSign">...</string>
     
     
