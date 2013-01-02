@@ -53,29 +53,7 @@ public class BaseActivity extends Activity {
  
         switch (item.getItemId())
         {
-	        /*case R.id.menu_open:
-	        	AlertMessage.createPositiveNegativeDialog(BaseActivity.this, true, getResources().getDrawable(R.drawable.warningsign),
-	    				getResources().getString(R.string.openingPlotListTitle), getResources().getString(R.string.openingPlotListMessage),
-	    				getResources().getString(R.string.yes), getResources().getString(R.string.no),
-	    	    		new DialogInterface.OnClickListener() {
-	    					@Override
-	    					public void onClick(DialogInterface dialog, int which) {
-	    						//ApplicationManager.this.startActivityForResult(new Intent(ApplicationManager.this, ClusterChoiceActivity.class),getResources().getInteger(R.integer.clusterChoiceSuccessful));
-	    						//showRecordsListScreen();
-	    						BaseActivity.this.startActivityForResult(new Intent(BaseActivity.this, ClusterChoiceActivity.class),getResources().getInteger(R.integer.clusterChoiceSuccessful));
-	    					}
-	    				},
-	    	    		new DialogInterface.OnClickListener() {
-	    					@Override
-	    					public void onClick(DialogInterface dialog, int which) {
-	    						
-	    					}
-	    				},
-	    				null).show();
-	            return true;
-	 		*/
 	        case R.id.menu_save:
-	        	//saveData();	
 	        	return true;
 			case R.id.menu_settings:
 				startActivity(new Intent(BaseActivity.this,SettingsScreen.class));
