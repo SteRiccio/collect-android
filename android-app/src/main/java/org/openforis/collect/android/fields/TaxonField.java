@@ -135,10 +135,10 @@ public class TaxonField extends Field {
 		initialValue.add(initialText);
 		this.values.add(currentInstanceNo, initialValue);
 		
-		this.addView(this.scrollLeft);
+		//this.addView(this.scrollLeft);
 		this.addView(this.label);
 		this.addView(this.txtBox);
-		this.addView(this.scrollRight);
+		//this.addView(this.scrollRight);
 	}
 	
 	private void setKeyboardType(KeyListener keyListener){

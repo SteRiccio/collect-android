@@ -1,8 +1,9 @@
 package org.openforis.collect.android.fields;
 
+import org.openforis.collect.android.data.FieldValue;
+
 import android.content.Context;
 import android.graphics.Color;
-import android.view.ViewGroup;
 import android.widget.TextView;
 
 public abstract class Field extends UIElement {
@@ -12,6 +13,8 @@ public abstract class Field extends UIElement {
 	public boolean isMultiple;
 	public boolean hasMultipleParent;
 	public boolean isRequired;
+	
+	public FieldValue value;
 	
 	public Field(Context context, int id, boolean isMultiple, boolean required) {
 		super(context, id, isMultiple);

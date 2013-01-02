@@ -95,10 +95,10 @@ public class CodeField extends Field {
 		
 		this.values = new ArrayList<Integer>();
 		this.values.add(this.spinner.getSelectedItemPosition());
-		this.addView(this.scrollLeft);
+		//this.addView(this.scrollLeft);
 		this.addView(this.label);
 		this.addView(this.spinner);
-		this.addView(this.scrollRight);
+		//this.addView(this.scrollRight);
 	}
 	
 	public String getValue()
@@ -134,7 +134,7 @@ public class CodeField extends Field {
 		this.spinner.setSelection(0);
 	}
 	
-	@Override
+	/*@Override
 	public void scrollLeft(){
 		Log.e("scrollLEFT","=="+this.currentInstanceNo);
     	if (CodeField.this.currentInstanceNo>0){
@@ -155,7 +155,7 @@ public class CodeField extends Field {
 		if (CodeField.this.values.size()>=(CodeField.this.currentInstanceNo+1)){
 			CodeField.this.spinner.setSelection(CodeField.this.values.get(CodeField.this.currentInstanceNo));
 		}		
-	}
+	}*/
 	
 	public String getValue(int index){
 		//return CodeField.this.values.get(index);

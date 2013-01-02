@@ -85,13 +85,13 @@ public class BooleanField extends Field {
 			this.label1.setVisibility(View.GONE);
 		}
 		
-		this.addView(this.scrollLeft);
+		//this.addView(this.scrollLeft);
 		this.addView(this.label);
 		this.addView(this.chckBox1);
 		this.addView(this.label1);
 		this.addView(this.chckBox2);
 		this.addView(this.label2);
-		this.addView(this.scrollRight);
+		//this.addView(this.scrollRight);
 	}
 
 	public boolean getValue1()

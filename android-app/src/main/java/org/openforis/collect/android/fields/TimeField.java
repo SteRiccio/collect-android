@@ -44,10 +44,10 @@ public class TimeField extends InputField implements TextWatcher {
 		this.txtBox.setLayoutParams(new LayoutParams(0,ViewGroup.LayoutParams.WRAP_CONTENT,(float) 2));
 		this.txtBox.addTextChangedListener(this);
 		
-		this.addView(this.scrollLeft);
+		//this.addView(this.scrollLeft);
 		this.addView(this.label);
 		this.addView(this.txtBox);
-		this.addView(this.scrollRight);		
+		//this.addView(this.scrollRight);		
 		
 		// When TimeField got focus
 		this.txtBox.setOnFocusChangeListener(new OnFocusChangeListener() {

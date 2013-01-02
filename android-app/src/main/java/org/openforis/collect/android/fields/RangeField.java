@@ -39,10 +39,10 @@ public class RangeField extends InputField {
 		this.setHint(hintText);
 		this.txtBox.setLayoutParams(new LayoutParams(0,ViewGroup.LayoutParams.WRAP_CONTENT,(float) 2));		
 		
-		this.addView(this.scrollLeft);
+		//this.addView(this.scrollLeft);
 		this.addView(this.label);
 		this.addView(this.txtBox);
-		this.addView(this.scrollRight);
+		//this.addView(this.scrollRight);
 		
 		// When RangeField got focus
 		this.txtBox.setOnFocusChangeListener(new OnFocusChangeListener() {

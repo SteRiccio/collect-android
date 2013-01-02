@@ -73,7 +73,6 @@ public class DateSetDialog extends FragmentActivity {
 	    	  int widget_id = extras.getInt("datefield_id");
 	    	  View v = ApplicationManager.getUIElement(widget_id);
 	    	  if (v != null){
-//	    		  Log.i(getResources().getString(R.string.app_name), "View for DateSetDialog is: " +v.toString());
 	    		  showDatePickerDialog((DateField)v);
 	    	  }
 	    }    

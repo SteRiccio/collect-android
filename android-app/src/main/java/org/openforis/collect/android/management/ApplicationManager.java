@@ -297,8 +297,7 @@ public class ApplicationManager extends BaseActivity{
 	}
 	
 	private void showFormRootScreen(){
-		ApplicationManager.valuesTree = new DataTree(this, null);
-		
+		ApplicationManager.valuesTree = new DataTree(this, null);		
 		List<EntityDefinition> rootEntitiesDefsList = schema.getRootEntityDefinitions();		
 		Intent intent = new Intent(this,FormScreen.class);
 		intent.putExtra(getResources().getString(R.string.breadcrumb), getResources().getString(R.string.rootScreen));
@@ -309,7 +308,7 @@ public class ApplicationManager extends BaseActivity{
 		for (int i=0;i<rootEntitiesDefsList.size();i++){
 			int id = rootEntitiesDefsList.get(i).getId();
 			intent.putExtra(getResources().getString(R.string.attributeId)+i, id);
-			ApplicationManager.valuesTree.addChildToRoot(new DataTreeNode(id, 0, "", ApplicationManager.valuesTree.getChild(""), null));
+			//ApplicationManager.valuesTree.addChildToRoot(new DataTreeNode(id, 0, "", ApplicationManager.valuesTree.getChild(""), new ArrayList<FieldValue>()));
 		}
 		this.startActivityForResult(intent,getResources().getInteger(R.integer.startingFormScreen));		
 	}

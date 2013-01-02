@@ -3,19 +3,15 @@ package org.openforis.collect.android.fields;
 import org.openforis.collect.android.R;
 
 import android.content.Context;
-import android.view.Gravity;
-import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.TableLayout;
 
 public class UIElement extends LinearLayout{
 	
 	protected LinearLayout container;
 	
-	protected ImageView scrollLeft;
-	protected ImageView scrollRight;
+	//protected ImageView scrollLeft;
+	//protected ImageView scrollRight;
 	
 	protected int currentInstanceNo;
 	
@@ -31,7 +27,7 @@ public class UIElement extends LinearLayout{
 		
 		this.currentInstanceNo = 0;
 		
-		this.scrollLeft = new ImageView(context);			
+		/*this.scrollLeft = new ImageView(context);			
 		this.scrollRight = new ImageView(context);			
 		
 		if (hasScrollingArrows){
@@ -60,7 +56,7 @@ public class UIElement extends LinearLayout{
 		else{
 			this.scrollLeft.setVisibility(View.GONE);
 			this.scrollRight.setVisibility(View.GONE);
-		}
+		}*/
 	}
 	
 	public void scrollLeft(){

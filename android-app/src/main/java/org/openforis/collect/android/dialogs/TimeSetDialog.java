@@ -76,7 +76,6 @@ public class TimeSetDialog extends FragmentActivity {
 	    	  int widget_id = extras.getInt("timefield_id");
 	    	  View v = ApplicationManager.getUIElement(widget_id);
 	    	  if (v != null){
-//	    		  Log.i(getResources().getString(R.string.app_name), "View for TimeSetDialog is: " +v.toString());
 	    		  showTimePickerDialog((TimeField)v);
 	    	  }
 	    }    

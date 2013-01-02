@@ -55,7 +55,7 @@ public class CoordinateField extends InputField {
 	        }
 	    });
 		
-		this.addView(this.scrollLeft);
+		//this.addView(this.scrollLeft);
 		this.addView(this.label);
 		
 		this.txtLatitude = new EditText(context);
@@ -79,7 +79,7 @@ public class CoordinateField extends InputField {
 		this.txtLongitude.setHint(hintTextLon);
 		this.txtLongitude.addTextChangedListener(this);
 		this.addView(txtLongitude);
-		this.addView(this.scrollRight);
+		//this.addView(this.scrollRight);
 		
 		this.txtLongitude.setOnFocusChangeListener(new OnFocusChangeListener(){
 			@Override

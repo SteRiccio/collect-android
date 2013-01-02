@@ -49,10 +49,10 @@ public class NumberField extends InputField {
 			this.makeReal();
 		}
 		
-		this.addView(this.scrollLeft);
+		//this.addView(this.scrollLeft);
 		this.addView(this.label);
 		this.addView(this.txtBox);
-		this.addView(this.scrollRight);		
+		//this.addView(this.scrollRight);		
 		
 		// When NumberField got focus
 		this.txtBox.setOnFocusChangeListener(new OnFocusChangeListener() {

@@ -6,6 +6,7 @@ import org.openforis.collect.android.R;
 
 import android.content.Context;
 import android.graphics.Color;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.ViewGroup;
 import android.widget.TableLayout;
@@ -47,8 +48,14 @@ public class SummaryTable extends UIElement {
 		
 		TableRow colHeaders = new TableRow(context);
 		
+		TextView colTitle = new TextView(context);
+		//colTitle.setBackgroundDrawable(getResources().getDrawable(R.drawable.cellshape));
+		colTitle.setPadding(20, 5, 20, 5);
+		colTitle.setGravity(Gravity.CENTER);
+		colTitle.setText("ID");
+		colHeaders.addView(colTitle);
 		for (int i=0;i<colNo;i++){
-			TextView colTitle = new TextView(context);
+			colTitle = new TextView(context);
 			//colTitle.setBackgroundDrawable(getResources().getDrawable(R.drawable.cellshape));
 			colTitle.setPadding(20, 5, 20, 5);
 			colTitle.setGravity(Gravity.CENTER);
@@ -60,12 +67,16 @@ public class SummaryTable extends UIElement {
 		for (int i=0;i<rowNo;i++){
 			TableRow tempRow = new TableRow(context);
 			List<String> rowValues = rows.get(i);
-			for (int j=0;j<colNo;j++){
+			for (int j=-1;j<colNo;j++){
 				TextView cell = new TextView(context);
 				//cell.setBackgroundDrawable(getResources().getDrawable(R.drawable.cellshape));
 				cell.setPadding(20, 5, 20, 5);
 				cell.setGravity(Gravity.CENTER);
-				cell.setText(rowValues.get(j));
+				if (j>=0){
+					cell.setText(rowValues.get(j));	
+				} else {
+					cell.setText(""+i);	
+				}				
 				cell.setId(i);
 				cell.setOnClickListener(listener);
 				/*cell.setOnClickListener(new OnClickListener() {                      

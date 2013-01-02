@@ -51,9 +51,9 @@ public class Separator extends UIElement {
 		this.addView(separator);
 		this.addView(this.scrollRight);*/
 		
-		this.container.addView(scrollLeft);
+		//this.container.addView(scrollLeft);
 		this.container.addView(separator);
-		this.container.addView(scrollRight);
+		//this.container.addView(scrollRight);
 		this.container.setLayoutParams(new LayoutParams(ViewGroup.LayoutParams.FILL_PARENT, getResources().getInteger(R.integer.field_height)));
 		
 		this.addView(this.container);

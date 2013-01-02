@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.openforis.collect.android.R;
+import org.openforis.collect.android.data.DataTreeNode;
+import org.openforis.collect.android.data.FieldValue;
 import org.openforis.collect.android.fields.BooleanField;
 import org.openforis.collect.android.fields.CodeField;
 import org.openforis.collect.android.fields.CoordinateField;
@@ -38,6 +40,8 @@ import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.os.Environment;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.View;
@@ -50,7 +54,7 @@ import android.widget.RelativeLayout;
 import android.widget.ScrollView;
 import android.widget.TextView;
 
-public class FormScreen extends BaseActivity implements OnClickListener{
+public class FormScreen extends BaseActivity implements OnClickListener, TextWatcher{
 	
 	private static final String TAG = "FormScreen";
 
@@ -66,21 +70,88 @@ public class FormScreen extends BaseActivity implements OnClickListener{
 	private int numberOfInstances;
 	private String parentFormScreenId;
 	
-	private ArrayList<List<String>> values;
-	
-	String breadcrumb;
+	private Intent startingIntent;
+
+	private String breadcrumb;
+
+	private DataTreeNode currentNode;
+	private FieldValue currentFieldValue;
+	private FieldValue currentMultipleFieldValue;
 	
 	public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         try{
         	Log.i(getResources().getString(R.string.app_name),TAG+":onCreate");
         	requestWindowFeature(Window.FEATURE_NO_TITLE);
-            getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);                                  
-            
-            this.sv = new ScrollView(this);
-    		this.ll = new LinearLayout(this);
-    		this.ll.setOrientation(android.widget.LinearLayout.VERTICAL);
-    		this.sv.addView(ll);
+            getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
+    		
+            //breadcrumb of the screen
+    		startingIntent = getIntent();
+    		this.breadcrumb = startingIntent.getStringExtra(getResources().getString(R.string.breadcrumb));
+    		this.intentType = startingIntent.getIntExtra(getResources().getString(R.string.intentType),-1);
+    		this.idmlId = startingIntent.getIntExtra(getResources().getString(R.string.idmlId),-1);
+    		this.currInstanceNo = startingIntent.getIntExtra(getResources().getString(R.string.instanceNo),-1);
+    		this.numberOfInstances = startingIntent.getIntExtra(getResources().getString(R.string.numberOfInstances),-1);
+    		this.parentFormScreenId = startingIntent.getStringExtra(getResources().getString(R.string.parentFormScreenId));;
+    	
+    		//ApplicationManager.valuesTree.printTree(ApplicationManager.valuesTree.getChild("0,0"));
+    		if ((this.intentType==getResources().getInteger(R.integer.multipleEntityIntent))&&(!this.parentFormScreenId.equals(""))){
+    			//Log.e("TWORZENIE OBECNEGO WEZLA",getFormScreenId());
+    			this.currentNode = ApplicationManager.valuesTree.getChild(getFormScreenId());
+    			//Log.e("this.currentNode==null","=="+(this.currentNode==null));
+    			if (this.currentNode==null){
+    				Log.e("WEZEL","NIE ISTNIAL W DRZEWIE");
+    				this.currentNode = new DataTreeNode(this.idmlId, this.currInstanceNo, this.parentFormScreenId, ApplicationManager.valuesTree.getChild(this.parentFormScreenId) , new ArrayList<FieldValue>());
+            		ApplicationManager.valuesTree.addChild(getFormScreenId(), this.currentNode);
+    			}
+        		this.currentMultipleFieldValue = null;
+    		} else if (!this.parentFormScreenId.equals("")){//current screen isn't entity
+    			//Log.e("NIE INSTANCJA ENTITY",this.idmlId+"=============="+getFormScreenId());
+    			this.currentNode=null;
+    			ArrayList<String> tableColHeaders = new ArrayList<String>();
+        		//tableColHeaders.add("ID");
+        		tableColHeaders.add("Value");
+        		ArrayList<List<String>> tableRowLists = new ArrayList<List<String>>();
+        		ArrayList<String> row1 = new ArrayList<String>();
+        		//row1.add("1");
+        		row1.add("value1");
+        		tableRowLists.add(row1);
+        		ArrayList<String> row2 = new ArrayList<String>();
+        		//row2.add("2");
+        		row2.add("value2");
+        		tableRowLists.add(row2);
+        		ArrayList<String> row3 = new ArrayList<String>();
+        		//row3.add("3");
+        		row3.add("value3");
+        		tableRowLists.add(row3);
+    			this.currentMultipleFieldValue = new FieldValue(this.idmlId, getFormScreenId(), tableRowLists);
+    		}
+    		
+    		ApplicationManager.formScreensMap.put(getFormScreenId(), this);
+        } catch (Exception e){
+    		RunnableHandler.reportException(e,getResources().getString(R.string.app_name),TAG+":onCreate",
+    				Environment.getExternalStorageDirectory().toString()
+    				+getResources().getString(R.string.logs_folder)
+    				+getResources().getString(R.string.logs_file_name)
+    				+System.currentTimeMillis()
+    				+getResources().getString(R.string.log_file_extension));
+		}
+	}
+	
+    @Override
+	public void onResume()
+	{
+		super.onResume();
+		Log.i(getResources().getString(R.string.app_name),TAG+":onResume");
+		try{
+			if (ApplicationManager.fieldValueToPass!=null){
+//				for (int i=0;i<ApplicationManager.fieldValueToPass.size();i++){
+//					Log.e("savedFieldVALUE"+i,"=="+ApplicationManager.fieldValueToPass.getValue(i));					
+//				}	
+				this.currentNode.addFieldValue(ApplicationManager.fieldValueToPass);
+				ApplicationManager.fieldValueToPass = null;				
+			}
+			
     		ArrayList<List<String>> keysLists1 = new ArrayList<List<String>>();
     		ArrayList<String> key1 = new ArrayList<String>();
     		key1.add("task");
@@ -119,35 +190,42 @@ public class FormScreen extends BaseActivity implements OnClickListener{
     		detailsLists2.add(detail2);
     		
     		ArrayList<String> tableColHeaders = new ArrayList<String>();
-    		tableColHeaders.add("ID");
+    		//tableColHeaders.add("ID");
     		tableColHeaders.add("Value");
     		ArrayList<List<String>> tableRowLists = new ArrayList<List<String>>();
     		ArrayList<String> row1 = new ArrayList<String>();
-    		row1.add("1");
+    		//row1.add("1");
     		row1.add("value1");
     		tableRowLists.add(row1);
     		ArrayList<String> row2 = new ArrayList<String>();
-    		row2.add("2");
+    		//row2.add("2");
     		row2.add("value2");
     		tableRowLists.add(row2);
     		ArrayList<String> row3 = new ArrayList<String>();
-    		row3.add("3");
+    		//row3.add("3");
     		row3.add("value3");
     		tableRowLists.add(row3);
     		
+    		this.sv = new ScrollView(this);
+    		this.ll = new LinearLayout(this);
+    		this.ll.setOrientation(android.widget.LinearLayout.VERTICAL);
+    		this.sv.addView(ll);
     		
-    		//breadcrumb of the screen
-    		Intent startingIntent = getIntent();
-    		this.breadcrumb = startingIntent.getStringExtra(getResources().getString(R.string.breadcrumb));
-    		this.intentType = startingIntent.getIntExtra(getResources().getString(R.string.intentType),-1);
-    		this.idmlId = startingIntent.getIntExtra(getResources().getString(R.string.idmlId),-1);
-    		this.currInstanceNo = startingIntent.getIntExtra(getResources().getString(R.string.instanceNo),-1);
-    		this.numberOfInstances = startingIntent.getIntExtra(getResources().getString(R.string.numberOfInstances),-1);
-    		this.parentFormScreenId = startingIntent.getStringExtra(getResources().getString(R.string.parentFormScreenId));;
-    		
-    		ApplicationManager.formScreensMap.put(getFormScreenId(), this);
-    		Log.e("FORM SCREEN ID","=="+getFormScreenId());
-    		
+    		/*this.valuesNode = new DataTreeNode(this.idmlId, this.currInstanceNo, getFormScreenId(), ApplicationManager.valuesTree.getChild(this.parentFormScreenId), null);
+    		//ApplicationManager.valuesTree.printTree(ApplicationManager.valuesTree.getChild("0,0"));'
+    		DataTreeNode existingTreeNode = ApplicationManager.valuesTree.getChild(getFormScreenId());
+    		Log.e("existingTreeNode==null",getFormScreenId()+"=="+(existingTreeNode==null));
+    		if (existingTreeNode==null){
+    			ApplicationManager.valuesTree.addChild(getFormScreenId(), this.valuesNode);
+    			Log.e("added new node",this.idmlId+"=="+this.currInstanceNo);
+    		} else {//load data from node
+    			Log.e("adding data", "from node"+this.idmlId+"=="+this.currInstanceNo);
+    			this.valuesNode = existingTreeNode;    			
+    		}*/
+			
+			Log.e("ROOOOT","=============================");
+			ApplicationManager.valuesTree.printTree();
+			Log.e("BRANCH","=============================");
     		TextView breadcrumb = new TextView(this);
     		breadcrumb.setText(this.breadcrumb);
     		breadcrumb.setTextSize(getResources().getInteger(R.integer.breadcrumbFontSize));
@@ -179,35 +257,106 @@ public class FormScreen extends BaseActivity implements OnClickListener{
         					detailsList.add(childDef.getName());
         				}
         				detailsLists.add(detailsList);
-    				}    
+    				}
+    				String label = entityDef.getLabel(Type.INSTANCE, null);
+    				if (label==null){
+    					if (entityDef.getLabels().size()>0)
+    						label = entityDef.getLabels().get(0).getText();
+    				}
     				SummaryList summaryListView = new SummaryList(this,entityDef.getId(), entityDef, calcNoOfCharsFitInOneLine(),
-    						entityDef.getName(),keysLists2,detailsLists,
+    						label,keysLists2,detailsLists,
     						this);
     				summaryListView.setOnClickListener(this);
     				summaryListView.setId(nodeDef.getId());
     				this.ll.addView(summaryListView);
     			} else if (nodeDef instanceof TextAttributeDefinition){
-    				if (!nodeDef.isMultiple()||(this.intentType==getResources().getInteger(R.integer.multipleAttributeIntent))){
-    					TextField textField= new TextField(this, nodeDef.getId(), nodeDef.getLabel(Type.INSTANCE, null), null, null, false, false);
+    				if (!nodeDef.isMultiple()){
+        				int numberOfInstances = startingIntent.getIntExtra(getResources().getString(R.string.numberOfInstances), -1);
+//        				Log.e("ILOSC INSTANCJI","=="+numberOfInstances);
+        				FieldValue tempFieldValue = new FieldValue(nodeDef.getId(),getFormScreenId(),null);
+        				if (numberOfInstances!=-1){
+        					ArrayList<String> instanceValues = new ArrayList<String>();
+            				//Log.e("numberOFinstances","=="+numberOfInstances);
+            				//for (int k=0;k<numberOfInstances;k++){
+        					instanceValues = startingIntent.getStringArrayListExtra(getResources().getString(R.string.instanceValues)+0);
+        					tempFieldValue.addValue(instanceValues);
+            				//Log.e("dodanowartosc","=="+instanceValues.get(1));
+            				//}	
+        				}
+        				else {
+        					ArrayList<String> instanceValues = new ArrayList<String>();
+        					instanceValues.add("");
+        					tempFieldValue.addValue(instanceValues);
+        				}
+        				
+        				TextField textField= new TextField(this, nodeDef.getId(), nodeDef.getLabel(Type.INSTANCE, null), null, null, false, false, tempFieldValue);
         				textField.setOnClickListener(this);
         				textField.setId(nodeDef.getId());
+        				//textField.txtBox.addTextChangedListener(this);
+        				textField.setValue(tempFieldValue.getValue(0).get(0));
+        				this.currentFieldValue = this.currentNode.getFieldValue(nodeDef.getId());
+        				Log.e("this.currentFieldValue==null",nodeDef.getId()+"=="+(this.currentFieldValue==null));
+        				if (this.currentFieldValue==null){
+        					ArrayList<String> initialValue = new ArrayList<String>();
+        					initialValue.add(textField.getValue());
+        					this.currentFieldValue = new FieldValue(nodeDef.getId(),getFormScreenId(),null);
+        					this.currentFieldValue.addValue(initialValue);
+        					this.currentNode.addFieldValue(this.currentFieldValue);
+        				} else {
+        					Log.e("wczytanaWARTOSC","=="+this.currentFieldValue.getValue(0).get(0));
+        					textField.setValue(this.currentFieldValue.getValue(0).get(0));
+        				}
+        				textField.addTextChangedListener(new TextWatcher(){
+        			        public void afterTextChanged(Editable s) {
+        			            //Log.e("s","=="+s.toString());
+        			            ArrayList<String> value = new ArrayList<String>();
+        			            value.add(s.toString());
+        			            FormScreen.this.currentFieldValue.setValue(0, value);
+        			            //Log.e("retrieved","ValueOFsingleField=="+FormScreen.this.currentFieldValue.getValue(0));
+        			        }
+        			        public void beforeTextChanged(CharSequence s, int start, int count, int after){}
+        			        public void onTextChanged(CharSequence s, int start, int before, int count){}
+        			    });
+        				this.ll.addView(textField);
+        				//this.currentNode.addFieldValue(tempFieldValue);
+        	    		//Log.e("iloscPOLzWARTOSCIA","=="+this.currentNode.getFieldsNo());       				
+    				} else if (this.intentType==getResources().getInteger(R.integer.multipleAttributeIntent)){    					
         				int numberOfInstances = startingIntent.getIntExtra(getResources().getString(R.string.numberOfInstances), -1);
-        				this.values = new ArrayList<List<String>>();
+        				this.currentMultipleFieldValue = new FieldValue(nodeDef.getId(), getFormScreenId(),null);
         				ArrayList<String> instanceValues = new ArrayList<String>();
+        				//Log.e("numberOFinstances","=="+numberOfInstances);
         				for (int k=0;k<numberOfInstances;k++){
         					instanceValues = startingIntent.getStringArrayListExtra(getResources().getString(R.string.instanceValues)+k);
-        					values.add(instanceValues);
+        					this.currentMultipleFieldValue.addValue(instanceValues);
+        					//Log.e("dodanowartosc","=="+instanceValues.get(1));
         				}
-        				if (values.size()>this.currInstanceNo){
-        					textField.setValue(values.get(this.currInstanceNo).get(1));	
-        				}
+
+        				TextField textField= new TextField(this, nodeDef.getId(), nodeDef.getLabel(Type.INSTANCE, null), null, null, false, false, this.currentMultipleFieldValue);
+        				textField.setOnClickListener(this);
+        				textField.setId(nodeDef.getId());
+        				textField.txtBox.addTextChangedListener(this);
+        				//Log.e("TEXTvalues.size",this.currInstanceNo+"=="+values.size());
+        				if (this.currentMultipleFieldValue.size()>this.currInstanceNo){
+        					textField.setValue(this.currentMultipleFieldValue.getValue(this.currInstanceNo).get(0));	
+        				}			
         				this.ll.addView(textField);
     				} else {
-    					SummaryTable summaryTableView = new SummaryTable(this, nodeDef.getId(), nodeDef.getName(), tableColHeaders, tableRowLists, this);
-    					summaryTableView.setOnClickListener(this);
-        				summaryTableView.setId(nodeDef.getId());
-        				this.ll.addView(summaryTableView);
-    				}    				
+    					FieldValue fieldValueToBeRestored = this.currentNode.getFieldValue(nodeDef.getId());
+    					Log.e("fieldValueToBeRestored!=null",this.currentNode.getNodeValues().size()+"=="+(fieldValueToBeRestored!=null));
+    					if (fieldValueToBeRestored!=null){
+    						Log.e("POWROT","z MULTIPLE FIELD");
+    						SummaryTable summaryTableView = new SummaryTable(this, nodeDef.getId(), nodeDef.getLabel(Type.INSTANCE, null), tableColHeaders, fieldValueToBeRestored.getValues(), this);
+        					summaryTableView.setOnClickListener(this);
+            				summaryTableView.setId(nodeDef.getId());
+            				this.ll.addView(summaryTableView);
+    					} else{
+    						Log.e("PIERWSZE","OTWARCIE");					
+    						SummaryTable summaryTableView = new SummaryTable(this, nodeDef.getId(), nodeDef.getLabel(Type.INSTANCE, null), tableColHeaders, tableRowLists, this);
+        					summaryTableView.setOnClickListener(this);
+            				summaryTableView.setId(nodeDef.getId());
+            				this.ll.addView(summaryTableView);
+    					}			
+    				}
     			} else if (nodeDef instanceof NumberAttributeDefinition){
     				if (!nodeDef.isMultiple()||(this.intentType==getResources().getInteger(R.integer.multipleAttributeIntent))){
     					NumberAttributeDefinition numberAttrDef = (NumberAttributeDefinition)nodeDef;
@@ -216,7 +365,7 @@ public class FormScreen extends BaseActivity implements OnClickListener{
         				numberField.setId(nodeDef.getId());
         				this.ll.addView(numberField);
     				} else {
-    					SummaryTable summaryTableView = new SummaryTable(this, nodeDef.getId(), nodeDef.getName(), tableColHeaders, tableRowLists, this);
+    					SummaryTable summaryTableView = new SummaryTable(this, nodeDef.getId(), nodeDef.getLabel(Type.INSTANCE, null), tableColHeaders, tableRowLists, this);
     					summaryTableView.setOnClickListener(this);
         				summaryTableView.setId(nodeDef.getId());
         				this.ll.addView(summaryTableView);
@@ -229,7 +378,7 @@ public class FormScreen extends BaseActivity implements OnClickListener{
         				codeField.setId(nodeDef.getId());
         				this.ll.addView(codeField);
     				} else {
-    					SummaryTable summaryTableView = new SummaryTable(this, nodeDef.getId(), nodeDef.getName(), tableColHeaders, tableRowLists, this);
+    					SummaryTable summaryTableView = new SummaryTable(this, nodeDef.getId(), nodeDef.getLabel(Type.INSTANCE, null), tableColHeaders, tableRowLists, this);
     					summaryTableView.setOnClickListener(this);
         				summaryTableView.setId(nodeDef.getId());
         				this.ll.addView(summaryTableView);
@@ -242,7 +391,7 @@ public class FormScreen extends BaseActivity implements OnClickListener{
         				booleanField.setId(nodeDef.getId());
         				this.ll.addView(booleanField);
     				} else {
-    					SummaryTable summaryTableView = new SummaryTable(this, nodeDef.getId(), nodeDef.getName(), tableColHeaders, tableRowLists, this);
+    					SummaryTable summaryTableView = new SummaryTable(this, nodeDef.getId(), nodeDef.getLabel(Type.INSTANCE, null), tableColHeaders, tableRowLists, this);
     					summaryTableView.setOnClickListener(this);
         				summaryTableView.setId(nodeDef.getId());
         				this.ll.addView(summaryTableView);
@@ -255,7 +404,7 @@ public class FormScreen extends BaseActivity implements OnClickListener{
         				coordinateField.setId(nodeDef.getId());
         				this.ll.addView(coordinateField);
     				} else {
-    					SummaryTable summaryTableView = new SummaryTable(this, nodeDef.getId(), nodeDef.getName(), tableColHeaders, tableRowLists, this);
+    					SummaryTable summaryTableView = new SummaryTable(this, nodeDef.getId(), nodeDef.getLabel(Type.INSTANCE, null), tableColHeaders, tableRowLists, this);
     					summaryTableView.setOnClickListener(this);
         				summaryTableView.setId(nodeDef.getId());
         				this.ll.addView(summaryTableView);
@@ -269,7 +418,7 @@ public class FormScreen extends BaseActivity implements OnClickListener{
         				ApplicationManager.uiElementsMap.put(dateField.getId(), dateField);
         				this.ll.addView(dateField);
     				} else {
-    					SummaryTable summaryTableView = new SummaryTable(this, nodeDef.getId(), nodeDef.getName(), tableColHeaders, tableRowLists, this);
+    					SummaryTable summaryTableView = new SummaryTable(this, nodeDef.getId(), nodeDef.getLabel(Type.INSTANCE, null), tableColHeaders, tableRowLists, this);
     					summaryTableView.setOnClickListener(this);
         				summaryTableView.setId(nodeDef.getId());
         				this.ll.addView(summaryTableView);
@@ -282,7 +431,7 @@ public class FormScreen extends BaseActivity implements OnClickListener{
         				rangeField.setId(nodeDef.getId());
         				this.ll.addView(rangeField);
     				} else {
-    					SummaryTable summaryTableView = new SummaryTable(this, nodeDef.getId(), nodeDef.getName(), tableColHeaders, tableRowLists, this);
+    					SummaryTable summaryTableView = new SummaryTable(this, nodeDef.getId(), nodeDef.getLabel(Type.INSTANCE, null), tableColHeaders, tableRowLists, this);
     					summaryTableView.setOnClickListener(this);
         				summaryTableView.setId(nodeDef.getId());
         				this.ll.addView(summaryTableView);
@@ -295,7 +444,7 @@ public class FormScreen extends BaseActivity implements OnClickListener{
         				taxonField.setId(nodeDef.getId());
         				this.ll.addView(taxonField);
     				} else {
-    					SummaryTable summaryTableView = new SummaryTable(this, nodeDef.getId(), nodeDef.getName(), tableColHeaders, tableRowLists, this);
+    					SummaryTable summaryTableView = new SummaryTable(this, nodeDef.getId(), nodeDef.getLabel(Type.INSTANCE, null), tableColHeaders, tableRowLists, this);
     					summaryTableView.setOnClickListener(this);
         				summaryTableView.setId(nodeDef.getId());
         				this.ll.addView(summaryTableView);
@@ -309,7 +458,7 @@ public class FormScreen extends BaseActivity implements OnClickListener{
            				ApplicationManager.uiElementsMap.put(timeField.getId(), timeField);
         				this.ll.addView(timeField);
     				} else {
-    					SummaryTable summaryTableView = new SummaryTable(this, nodeDef.getId(), nodeDef.getName(), tableColHeaders, tableRowLists, this);
+    					SummaryTable summaryTableView = new SummaryTable(this, nodeDef.getId(), nodeDef.getLabel(Type.INSTANCE, null), tableColHeaders, tableRowLists, this);
     					summaryTableView.setOnClickListener(this);
         				summaryTableView.setId(nodeDef.getId());
         				this.ll.addView(summaryTableView);
@@ -323,24 +472,9 @@ public class FormScreen extends BaseActivity implements OnClickListener{
 				Log.e("multiple","ENTITY");
 			}
     		setContentView(this.sv);
-        } catch (Exception e){
-    		RunnableHandler.reportException(e,getResources().getString(R.string.app_name),TAG+":onCreate",
-    				Environment.getExternalStorageDirectory().toString()
-    				+getResources().getString(R.string.logs_folder)
-    				+getResources().getString(R.string.logs_file_name)
-    				+System.currentTimeMillis()
-    				+getResources().getString(R.string.log_file_extension));
-		}
-	}
-	
-    @Override
-	public void onResume()
-	{
-		super.onResume();
-		Log.i(getResources().getString(R.string.app_name),TAG+":onResume");
-		try{
+			
 			int backgroundColor = ApplicationManager.appPreferences.getInt(getResources().getString(R.string.backgroundColor), Color.WHITE);		
-    		changeBackgroundColor(backgroundColor);
+    		changeBackgroundColor(backgroundColor);    		
 		} catch (Exception e){
     		RunnableHandler.reportException(e,getResources().getString(R.string.app_name),TAG+":onResume",
     				Environment.getExternalStorageDirectory().toString()
@@ -350,6 +484,19 @@ public class FormScreen extends BaseActivity implements OnClickListener{
     				+getResources().getString(R.string.log_file_extension));
 		}
 	}
+    
+    @Override
+    public void onPause(){    
+		Log.i(getResources().getString(R.string.app_name),TAG+":onPause");
+		if (this.currentMultipleFieldValue!=null){
+			Log.e("multipleFieldVALUESno","=="+this.currentMultipleFieldValue.size());
+			for (int i=0;i<this.currentMultipleFieldValue.size();i++){
+				Log.e("multipleFieldVALUE"+i,"=="+this.currentMultipleFieldValue.getValue(i));
+			}	
+			ApplicationManager.fieldValueToPass = this.currentMultipleFieldValue;
+		}
+		super.onPause();
+    }
 	
 	/*@Override
     public boolean onKeyDown(int keyCode, KeyEvent event)  {
@@ -375,15 +522,14 @@ public class FormScreen extends BaseActivity implements OnClickListener{
 
 	@Override
 	public void onClick(View arg0) {
-		Log.e("clickedVIEW",arg0.getClass()+"=="+arg0.getId());
+		//Log.e("clickedVIEW",arg0.getClass()+"=="+arg0.getId());
 		if (arg0 instanceof SummaryList){
-			Log.e("summary","list");
+			//Log.e("summary","list");
 			SummaryList temp = (SummaryList)arg0;
-			Log.e("nazwa","=="+temp.getTitle());
+			//Log.e("nazwa","=="+temp.getTitle());
 		} else if (arg0 instanceof Button){
 			Button btn = (Button)arg0;
 			if (btn.getId()==getResources().getInteger(R.integer.leftButtonMultipleAttribute)){
-				Log.e("CLICKED","LEFT");
 				if (this.currInstanceNo>0){
 					View fieldView = (View)this.ll.getChildAt(1);
 					String currValue = "";
@@ -391,54 +537,52 @@ public class FormScreen extends BaseActivity implements OnClickListener{
 						TextField tempTextField = (TextField)fieldView;
 						currValue = tempTextField.getValue();
 					}
-					values.get(this.currInstanceNo).set(1, currValue);
+					this.currentMultipleFieldValue.getValue(this.currInstanceNo).set(0, currValue);
 					this.currInstanceNo--;
 					if (fieldView instanceof TextField){
 						TextField tempTextField = (TextField)fieldView;
-						tempTextField.setValue(this.values.get(this.currInstanceNo).get(1));
+						tempTextField.setValue(this.currentMultipleFieldValue.getValue(this.currInstanceNo).get(0));
 					}
 				}
 			} else if (btn.getId()==getResources().getInteger(R.integer.rightButtonMultipleAttribute)){
-				Log.e("CLICKED","RIGHT");
 				View fieldView = (View)this.ll.getChildAt(1);
 				String currValue = "";
 				if (fieldView instanceof TextField){
 					TextField tempTextField = (TextField)fieldView;
 					currValue = tempTextField.getValue();
 				}
-				this.values.get(this.currInstanceNo).set(1, currValue);
+				this.currentMultipleFieldValue.getValue(this.currInstanceNo).set(0, currValue);
 				this.currInstanceNo++;
 				if (this.currInstanceNo<this.numberOfInstances){
 					if (fieldView instanceof TextField){
 						TextField tempTextField = (TextField)fieldView;
-						tempTextField.setValue(this.values.get(this.currInstanceNo).get(1));
+						tempTextField.setValue(this.currentMultipleFieldValue.getValue(this.currInstanceNo).get(0));
 					}
 				} else {//new instance
 					ArrayList<String> newValue = new ArrayList<String>();
-					newValue.add(""+this.currInstanceNo);
+					//newValue.add(""+(this.currInstanceNo+1));
 					newValue.add("");
-					this.values.add(this.currInstanceNo,newValue);
+					this.currentMultipleFieldValue.addValue(this.currInstanceNo,newValue);
 					if (fieldView instanceof TextField){
 						TextField tempTextField = (TextField)fieldView;
 						tempTextField.setValue("");
 					}
 					this.numberOfInstances++;
-				}
-				
+				}		
 			}
 		} else if (arg0 instanceof TextView){
-			Log.e("summary","list row");
+			//Log.e("summary","list row");
 			TextView tv = (TextView)arg0;
-			Log.e("klikniety","id"+tv.getId()+"=="+tv.getText().toString());
-			Log.e("parentClass","=="+arg0.getParent().getParent().getParent().getParent());
+			//Log.e("klikniety","id"+tv.getId()+"=="+tv.getText().toString());
+			//Log.e("parentClass","=="+arg0.getParent().getParent().getParent().getParent());
 			Object parentView = arg0.getParent().getParent().getParent().getParent();
 			if (parentView instanceof SummaryList){
 				SummaryList temp = (SummaryList)arg0.getParent().getParent().getParent().getParent();
-				Log.e("nazwa","=="+temp.getTitle());	
+				//Log.e("nazwa","=="+temp.getTitle());	
 				this.startActivity(this.prepareIntentForNewScreen(temp));				
 			} else if (parentView instanceof SummaryTable){
 				SummaryTable temp = (SummaryTable)parentView;
-				Log.e("nazwa","=="+temp.getTitle());	
+				//Log.e("nazwa","=="+temp.getTitle());	
 				this.startActivity(this.prepareIntentForMultipleField(temp, tv.getId(), temp.getValues()));
 			}			
 		}
@@ -455,15 +599,8 @@ public class FormScreen extends BaseActivity implements OnClickListener{
         List<NodeDefinition> entityAttributes = summaryList.getEntityDefinition().getChildDefinitions();
         int counter = 0;
         for (NodeDefinition formField : entityAttributes){
-        	//NodeDefinition parentDef = formField.getParentDefinition();
-        	//if (parentDef!=null){
-        		//if (parentDef instanceof EntityDefinition){
-        			//if (parentDef.getId()==summaryList.getId()){
-        				intent.putExtra(getResources().getString(R.string.attributeId)+counter, formField.getId());
-        				counter++;
-        			//}
-        		//}
-        	//}
+			intent.putExtra(getResources().getString(R.string.attributeId)+counter, formField.getId());
+			counter++;
         }
 		return intent;
 	}
@@ -540,6 +677,37 @@ public class FormScreen extends BaseActivity implements OnClickListener{
     }
     
     private String getFormScreenId(){
-    	return this.parentFormScreenId+getResources().getString(R.string.valuesNotVisibleSign)+this.idmlId+getResources().getString(R.string.valuesSeparator)+this.currInstanceNo;
+    	if (this.parentFormScreenId.equals("")){
+    		return this.idmlId+getResources().getString(R.string.valuesSeparator1)+this.currInstanceNo;
+    	} else 
+    		return this.parentFormScreenId+getResources().getString(R.string.valuesSeparator2)+this.idmlId+getResources().getString(R.string.valuesSeparator1)+this.currInstanceNo;
     }
+
+	@Override
+	public void afterTextChanged(Editable arg0) {
+		if (this.currentMultipleFieldValue!=null){
+			//Log.e("currInstanceNo",this.currentFieldValue.size()+"TEXTFIELD=="+this.currInstanceNo);
+			ArrayList<String> tempValue = new ArrayList<String>();
+			tempValue.add(arg0.toString());
+			this.currentMultipleFieldValue.setValue(this.currInstanceNo, tempValue);
+		} else {
+			ArrayList<List<String>> valuesLists = new ArrayList<List<String>>();
+			ArrayList<String> currentValuesList = new ArrayList<String>();
+			currentValuesList.add(arg0.toString());
+			valuesLists.add(currentValuesList);
+			FieldValue tempValue = new FieldValue(13, "", valuesLists);
+			this.currentNode.addFieldValue(tempValue);
+		}
+	}
+
+	@Override
+	public void beforeTextChanged(CharSequence arg0, int arg1, int arg2,
+			int arg3) {
+		
+	}
+
+	@Override
+	public void onTextChanged(CharSequence arg0, int arg1, int arg2, int arg3) {
+		
+	}
 }
