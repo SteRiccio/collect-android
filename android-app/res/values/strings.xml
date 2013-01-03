@@ -30,6 +30,8 @@
     <string name="no">No</string>
     <string name="cancel">Cancel</string>
     <string name="okay">OK</string>
+    <string name="previousInstanceButton">PREVIOUS</string>
+    <string name="nextInstanceButton">NEXT</string>
     
     <!-- images -->
     <string name="faologo">FAO logo</string>

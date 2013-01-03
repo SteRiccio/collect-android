@@ -554,7 +554,7 @@ public class FormScreen extends BaseActivity implements OnClickListener, TextWat
     		}
 			if (this.intentType==getResources().getInteger(R.integer.multipleAttributeIntent)){
 				Log.e("multiple","ATTRIBUTE");
-				this.ll.addView(arrangeButtonsInLine(new Button(this),"LEFT",new Button(this),"RIGHT",this));
+				this.ll.addView(arrangeButtonsInLine(new Button(this),getResources().getString(R.string.previousInstanceButton),new Button(this),getResources().getString(R.string.nextInstanceButton),this));
 			} else {
 				Log.e("multiple","ENTITY");
 			}
