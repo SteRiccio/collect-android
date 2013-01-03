@@ -88,6 +88,8 @@ public class TextField extends InputField {
 				    	else {
 				    		TextField.this.setKeyboardType(null);
 				    	}
+				    	Log.e("CHANGING","CURRENT FIELDVALUE"+TextField.this.getElementId());
+				    	FormScreen.currentFieldValue = TextField.this.value;
 			    	}
 		    	}
 		    }
@@ -116,7 +118,16 @@ public class TextField extends InputField {
 	}
 	
 	public String getValue(int index){
-		return TextField.this.values.get(index);
+		//return TextField.this.values.get(index);
+		return TextField.this.value.getValue(index).get(0);
+	}
+	
+	public void setValue(int position, String value)
+	{
+		this.txtBox.setText(value);
+		ArrayList<String> valueToAdd = new ArrayList<String>();
+		valueToAdd.add(value);
+		TextField.this.value.setValue(position, valueToAdd);
 	}
 	
 	/*@Override

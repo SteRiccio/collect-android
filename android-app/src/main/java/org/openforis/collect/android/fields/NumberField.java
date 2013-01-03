@@ -82,7 +82,7 @@ public class NumberField extends InputField {
 	    });		
 	}
 
-	@Override
+	/*@Override
 	public void scrollLeft(){
     	if (NumberField.this.currentInstanceNo>0){
     		NumberField.this.values.set(NumberField.this.currentInstanceNo, NumberField.this.txtBox.getText().toString());	        		
@@ -101,15 +101,28 @@ public class NumberField extends InputField {
 		if (NumberField.this.values.size()>=(NumberField.this.currentInstanceNo+1)){
 			NumberField.this.txtBox.setText(NumberField.this.values.get(NumberField.this.currentInstanceNo));
 		}
-	}
+	}*/
 	
-	public String getValue(int index){
+	/*public String getValue(int index){
 		return NumberField.this.values.get(index);
-	}
+	}*/
 	
-	@Override
+	/*@Override
 	public void afterTextChanged(Editable s) {
 		NumberField.this.values.add(currentInstanceNo, s.toString());
+	}*/
+	
+	public String getValue(int index){
+		//return TextField.this.values.get(index);
+		return NumberField.this.value.getValue(index).get(0);
+	}
+	
+	public void setValue(int position, String value)
+	{
+		this.txtBox.setText(value);
+		ArrayList<String> valueToAdd = new ArrayList<String>();
+		valueToAdd.add(value);
+		NumberField.this.value.setValue(position, valueToAdd);
 	}
 	
 	public String getType(){
