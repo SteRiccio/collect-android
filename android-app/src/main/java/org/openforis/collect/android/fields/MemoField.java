@@ -5,13 +5,14 @@ import java.util.List;
 import java.util.Map;
 
 import org.openforis.collect.android.R;
+import org.openforis.collect.android.data.FieldValue;
 import org.openforis.collect.android.management.ApplicationManager;
 import org.openforis.collect.android.messages.ToastMessage;
+import org.openforis.collect.android.screens.FormScreen;
 
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
-import android.text.Editable;
 import android.text.method.QwertyKeyListener;
 import android.text.method.TextKeyListener;
 import android.view.View;
@@ -25,7 +26,7 @@ public class MemoField extends InputField {
 	private List<String> values;
 	
 	public MemoField(Context context, int id, String labelText, String initialText, String hintText,
-			boolean isMultiple, boolean isRequired) {
+			boolean isMultiple, boolean isRequired, FieldValue fieldValue) {
 		super(context, id, isMultiple, isRequired);
 		
 		MemoField.this.values = new ArrayList<String>();
@@ -83,10 +84,34 @@ public class MemoField extends InputField {
 	        }
 	    });
 		
+		this.value = fieldValue;
+		
 		//this.addView(this.scrollLeft);
 		this.addView(this.label);
 		this.addView(this.txtBox);
 		//this.addView(this.scrollRight);
+		
+		this.txtBox.setOnFocusChangeListener(new OnFocusChangeListener() {
+		    @Override
+		    public void onFocusChange(View v, boolean hasFocus) {
+		    	// Get current settings about software keyboard for text fields
+		    	if(hasFocus){
+			    	if(this.getClass().toString().contains("MemoField")){
+				    	Map<String, ?> settings = ApplicationManager.appPreferences.getAll();
+				    	Boolean valueForText = (Boolean)settings.get(getResources().getString(R.string.showSoftKeyboardOnText));
+				    	// Switch on or off Software keyboard depend of settings
+				    	if(valueForText){
+				    		MemoField.this.setKeyboardType(new QwertyKeyListener(TextKeyListener.Capitalize.NONE, false));
+				        }
+				    	else {
+				    		MemoField.this.setKeyboardType(null);
+				    	}
+				    	//Log.e("CHANGING","CURRENT FIELDVALUE"+TextField.this.getElementId());
+				    	FormScreen.currentFieldValue = MemoField.this.value;
+			    	}
+		    	}
+		    }
+	    });	
 	}
 	
 	/*@Override
@@ -110,13 +135,25 @@ public class MemoField extends InputField {
 		}
 	}*/
 	
-	public String getValue(int index){
+	/*public String getValue(int index){
 		return MemoField.this.values.get(index);
 	}
 	
 	@Override
 	public void afterTextChanged(Editable s) {
 		MemoField.this.values.add(currentInstanceNo, s.toString());
+	}*/
+	public String getValue(int index){
+		//return TextField.this.values.get(index);
+		return MemoField.this.value.getValue(index).get(0);
+	}
+	
+	public void setValue(int position, String value)
+	{
+		this.txtBox.setText(value);
+		ArrayList<String> valueToAdd = new ArrayList<String>();
+		valueToAdd.add(value);
+		MemoField.this.value.setValue(position, valueToAdd);
 	}
 	
 	@Override

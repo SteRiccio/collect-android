@@ -12,6 +12,7 @@ import org.openforis.collect.android.fields.CoordinateField;
 import org.openforis.collect.android.fields.DateField;
 import org.openforis.collect.android.fields.Field;
 import org.openforis.collect.android.fields.InputField;
+import org.openforis.collect.android.fields.MemoField;
 import org.openforis.collect.android.fields.NumberField;
 import org.openforis.collect.android.fields.RangeField;
 import org.openforis.collect.android.fields.SummaryList;
@@ -272,99 +273,195 @@ public class FormScreen extends BaseActivity implements OnClickListener, TextWat
     				summaryListView.setId(nodeDef.getId());
     				this.ll.addView(summaryListView);
     			} else if (nodeDef instanceof TextAttributeDefinition){
-    				if (!nodeDef.isMultiple()){
-        				int numberOfInstances = startingIntent.getIntExtra(getResources().getString(R.string.numberOfInstances), -1);
-//        				Log.e("ILOSC INSTANCJI","=="+numberOfInstances);
-        				FieldValue tempFieldValue = new FieldValue(nodeDef.getId(),getFormScreenId(),null);
-        				if (numberOfInstances!=-1){
-        					ArrayList<String> instanceValues = new ArrayList<String>();
+    				if (((TextAttributeDefinition) nodeDef).getType().toString().toLowerCase().equals("short")){
+    					if (!nodeDef.isMultiple()){
+            				int numberOfInstances = startingIntent.getIntExtra(getResources().getString(R.string.numberOfInstances), -1);
+//            				Log.e("ILOSC INSTANCJI","=="+numberOfInstances);
+            				FieldValue tempFieldValue = new FieldValue(nodeDef.getId(),getFormScreenId(),null);
+            				if (numberOfInstances!=-1){
+            					ArrayList<String> instanceValues = new ArrayList<String>();
+                				//Log.e("numberOFinstances","=="+numberOfInstances);
+                				//for (int k=0;k<numberOfInstances;k++){
+            					instanceValues = startingIntent.getStringArrayListExtra(getResources().getString(R.string.instanceValues)+0);
+            					tempFieldValue.addValue(instanceValues);
+                				//Log.e("dodanowartosc","=="+instanceValues.get(1));
+                				//}	
+            				}
+            				else {
+            					ArrayList<String> instanceValues = new ArrayList<String>();
+            					instanceValues.add("");
+            					tempFieldValue.addValue(instanceValues);
+            				}
+            				
+            				TextField textField= new TextField(this, nodeDef.getId(), nodeDef.getLabel(Type.INSTANCE, null), null, null, false, false, tempFieldValue);
+            				textField.setOnClickListener(this);
+            				textField.setId(nodeDef.getId());
+            				//textField.txtBox.addTextChangedListener(this);
+            				textField.setValue(0, tempFieldValue.getValue(0).get(0));
+            				FormScreen.currentFieldValue = this.currentNode.getFieldValue(nodeDef.getId());
+            				//Log.e("FormScreen.currentFieldValue==null",nodeDef.getId()+"=="+(FormScreen.currentFieldValue==null));
+            				if (FormScreen.currentFieldValue==null){
+            					ArrayList<String> initialValue = new ArrayList<String>();
+            					initialValue.add(textField.getValue(0));
+            					FormScreen.currentFieldValue = new FieldValue(nodeDef.getId(),getFormScreenId(),null);
+            					FormScreen.currentFieldValue.addValue(initialValue);
+            					this.currentNode.addFieldValue(FormScreen.currentFieldValue);        		
+            				} else {
+            					//Log.e("wczytanaWARTOSC","=="+FormScreen.currentFieldValue.getValue(0).get(0));
+            					textField.setValue(0, FormScreen.currentFieldValue.getValue(0).get(0));       
+            				}
+            				textField.addTextChangedListener(new TextWatcher(){
+            			        public void afterTextChanged(Editable s) {
+            			            //Log.e("s","=="+s.toString());
+            			            ArrayList<String> value = new ArrayList<String>();
+            			            value.add(s.toString());
+            			            FormScreen.currentFieldValue.setValue(0, value);
+            			            FormScreen.this.currentNode.addFieldValue(FormScreen.currentFieldValue);  
+            			            //Log.e("changed",FormScreen.currentFieldValue.getId()+"ValueOFsingleField=="+FormScreen.currentFieldValue.getValue(0).get(0));
+            			        }
+            			        public void beforeTextChanged(CharSequence s, int start, int count, int after){}
+            			        public void onTextChanged(CharSequence s, int start, int before, int count){}
+            			    });
+            				this.ll.addView(textField);
+            				//this.currentNode.addFieldValue(tempFieldValue);
+            	    		//Log.e("iloscPOLzWARTOSCIA","=="+this.currentNode.getFieldsNo());       				
+        				} else if (this.intentType==getResources().getInteger(R.integer.multipleAttributeIntent)){    					
+            				int numberOfInstances = startingIntent.getIntExtra(getResources().getString(R.string.numberOfInstances), -1);
+            				this.currentMultipleFieldValue = new FieldValue(nodeDef.getId(), getFormScreenId(),null);
+            				ArrayList<String> instanceValues = new ArrayList<String>();
             				//Log.e("numberOFinstances","=="+numberOfInstances);
-            				//for (int k=0;k<numberOfInstances;k++){
-        					instanceValues = startingIntent.getStringArrayListExtra(getResources().getString(R.string.instanceValues)+0);
-        					tempFieldValue.addValue(instanceValues);
-            				//Log.e("dodanowartosc","=="+instanceValues.get(1));
-            				//}	
-        				}
-        				else {
-        					ArrayList<String> instanceValues = new ArrayList<String>();
-        					instanceValues.add("");
-        					tempFieldValue.addValue(instanceValues);
-        				}
-        				
-        				TextField textField= new TextField(this, nodeDef.getId(), nodeDef.getLabel(Type.INSTANCE, null), null, null, false, false, tempFieldValue);
-        				textField.setOnClickListener(this);
-        				textField.setId(nodeDef.getId());
-        				//textField.txtBox.addTextChangedListener(this);
-        				textField.setValue(0, tempFieldValue.getValue(0).get(0));
-        				FormScreen.currentFieldValue = this.currentNode.getFieldValue(nodeDef.getId());
-        				//Log.e("FormScreen.currentFieldValue==null",nodeDef.getId()+"=="+(FormScreen.currentFieldValue==null));
-        				if (FormScreen.currentFieldValue==null){
-        					ArrayList<String> initialValue = new ArrayList<String>();
-        					initialValue.add(textField.getValue(0));
-        					FormScreen.currentFieldValue = new FieldValue(nodeDef.getId(),getFormScreenId(),null);
-        					FormScreen.currentFieldValue.addValue(initialValue);
-        					this.currentNode.addFieldValue(FormScreen.currentFieldValue);        		
-        				} else {
-        					//Log.e("wczytanaWARTOSC","=="+FormScreen.currentFieldValue.getValue(0).get(0));
-        					textField.setValue(0, FormScreen.currentFieldValue.getValue(0).get(0));       
-        				}
-        				textField.addTextChangedListener(new TextWatcher(){
-        			        public void afterTextChanged(Editable s) {
-        			            //Log.e("s","=="+s.toString());
-        			            ArrayList<String> value = new ArrayList<String>();
-        			            value.add(s.toString());
-        			            FormScreen.currentFieldValue.setValue(0, value);
-        			            FormScreen.this.currentNode.addFieldValue(FormScreen.currentFieldValue);  
-        			            //Log.e("changed",FormScreen.currentFieldValue.getId()+"ValueOFsingleField=="+FormScreen.currentFieldValue.getValue(0).get(0));
-        			        }
-        			        public void beforeTextChanged(CharSequence s, int start, int count, int after){}
-        			        public void onTextChanged(CharSequence s, int start, int before, int count){}
-        			    });
-        				this.ll.addView(textField);
-        				//this.currentNode.addFieldValue(tempFieldValue);
-        	    		//Log.e("iloscPOLzWARTOSCIA","=="+this.currentNode.getFieldsNo());       				
-    				} else if (this.intentType==getResources().getInteger(R.integer.multipleAttributeIntent)){    					
-        				int numberOfInstances = startingIntent.getIntExtra(getResources().getString(R.string.numberOfInstances), -1);
-        				this.currentMultipleFieldValue = new FieldValue(nodeDef.getId(), getFormScreenId(),null);
-        				ArrayList<String> instanceValues = new ArrayList<String>();
-        				//Log.e("numberOFinstances","=="+numberOfInstances);
-        				for (int k=0;k<numberOfInstances;k++){
-        					instanceValues = startingIntent.getStringArrayListExtra(getResources().getString(R.string.instanceValues)+k);
-        					this.currentMultipleFieldValue.addValue(instanceValues);
-        					//Log.e("dodanowartosc","=="+instanceValues.get(1));
-        				}
+            				for (int k=0;k<numberOfInstances;k++){
+            					instanceValues = startingIntent.getStringArrayListExtra(getResources().getString(R.string.instanceValues)+k);
+            					this.currentMultipleFieldValue.addValue(instanceValues);
+            					//Log.e("dodanowartosc","=="+instanceValues.get(1));
+            				}
 
-        				TextField textField= new TextField(this, nodeDef.getId(), nodeDef.getLabel(Type.INSTANCE, null), null, null, false, false, this.currentMultipleFieldValue);
-        				textField.setOnClickListener(this);
-        				textField.setId(nodeDef.getId());
-        				textField.txtBox.addTextChangedListener(this);
-        				//Log.e("TEXTvalues.size",this.currInstanceNo+"=="+this.currentMultipleFieldValue.getValue(this.currInstanceNo).get(0));
-        				if (this.currentMultipleFieldValue.size()>this.currInstanceNo){
-        					textField.setValue(this.currInstanceNo, this.currentMultipleFieldValue.getValue(this.currInstanceNo).get(0));	
-        				}			
-        				this.ll.addView(textField);
-    				} else {
-    					FieldValue fieldValueToBeRestored = this.currentNode.getFieldValue(nodeDef.getId());
-    					//Log.e("fieldValueToBeRestored!=null",this.currentNode.getNodeValues().size()+"=="+(fieldValueToBeRestored!=null));
-    					if (fieldValueToBeRestored!=null){
-    						//Log.e("POWROT","z MULTIPLE FIELD");
-    						SummaryTable summaryTableView = new SummaryTable(this, nodeDef.getId(), nodeDef.getLabel(Type.INSTANCE, null), tableColHeaders, fieldValueToBeRestored.getValues(), this);
-        					summaryTableView.setOnClickListener(this);
-            				summaryTableView.setId(nodeDef.getId());
-            				this.ll.addView(summaryTableView);
-    					} else{
-    						//Log.e("PIERWSZE","OTWARCIE");
-    			    		ArrayList<List<String>> tableValuesLists = new ArrayList<List<String>>();
-    			    		ArrayList<String> valueRow1 = new ArrayList<String>();
-    			    		//row1.add("1");
-    			    		valueRow1.add("");
-    			    		tableValuesLists.add(valueRow1);
-    						SummaryTable summaryTableView = new SummaryTable(this, nodeDef.getId(), nodeDef.getLabel(Type.INSTANCE, null), tableColHeaders, tableValuesLists, this);
-        					summaryTableView.setOnClickListener(this);
-            				summaryTableView.setId(nodeDef.getId());
-            				this.ll.addView(summaryTableView);
-    					}			
-    				}
+            				TextField textField= new TextField(this, nodeDef.getId(), nodeDef.getLabel(Type.INSTANCE, null), null, null, false, false, this.currentMultipleFieldValue);
+            				textField.setOnClickListener(this);
+            				textField.setId(nodeDef.getId());
+            				textField.txtBox.addTextChangedListener(this);
+            				//Log.e("TEXTvalues.size",this.currInstanceNo+"=="+this.currentMultipleFieldValue.getValue(this.currInstanceNo).get(0));
+            				if (this.currentMultipleFieldValue.size()>this.currInstanceNo){
+            					textField.setValue(this.currInstanceNo, this.currentMultipleFieldValue.getValue(this.currInstanceNo).get(0));	
+            				}			
+            				this.ll.addView(textField);
+        				} else {
+        					FieldValue fieldValueToBeRestored = this.currentNode.getFieldValue(nodeDef.getId());
+        					//Log.e("fieldValueToBeRestored!=null",this.currentNode.getNodeValues().size()+"=="+(fieldValueToBeRestored!=null));
+        					if (fieldValueToBeRestored!=null){
+        						//Log.e("POWROT","z MULTIPLE FIELD");
+        						SummaryTable summaryTableView = new SummaryTable(this, nodeDef.getId(), nodeDef.getLabel(Type.INSTANCE, null), tableColHeaders, fieldValueToBeRestored.getValues(), this);
+            					summaryTableView.setOnClickListener(this);
+                				summaryTableView.setId(nodeDef.getId());
+                				this.ll.addView(summaryTableView);
+        					} else{
+        						//Log.e("PIERWSZE","OTWARCIE");
+        			    		ArrayList<List<String>> tableValuesLists = new ArrayList<List<String>>();
+        			    		ArrayList<String> valueRow1 = new ArrayList<String>();
+        			    		//row1.add("1");
+        			    		valueRow1.add("");
+        			    		tableValuesLists.add(valueRow1);
+        						SummaryTable summaryTableView = new SummaryTable(this, nodeDef.getId(), nodeDef.getLabel(Type.INSTANCE, null), tableColHeaders, tableValuesLists, this);
+            					summaryTableView.setOnClickListener(this);
+                				summaryTableView.setId(nodeDef.getId());
+                				this.ll.addView(summaryTableView);
+        					}			
+        				}
+    				} else {//memo field
+    					if (!nodeDef.isMultiple()){
+            				int numberOfInstances = startingIntent.getIntExtra(getResources().getString(R.string.numberOfInstances), -1);
+//            				Log.e("ILOSC INSTANCJI","=="+numberOfInstances);
+            				FieldValue tempFieldValue = new FieldValue(nodeDef.getId(),getFormScreenId(),null);
+            				if (numberOfInstances!=-1){
+            					ArrayList<String> instanceValues = new ArrayList<String>();
+                				//Log.e("numberOFinstances","=="+numberOfInstances);
+                				//for (int k=0;k<numberOfInstances;k++){
+            					instanceValues = startingIntent.getStringArrayListExtra(getResources().getString(R.string.instanceValues)+0);
+            					tempFieldValue.addValue(instanceValues);
+                				//Log.e("dodanowartosc","=="+instanceValues.get(1));
+                				//}	
+            				}
+            				else {
+            					ArrayList<String> instanceValues = new ArrayList<String>();
+            					instanceValues.add("");
+            					tempFieldValue.addValue(instanceValues);
+            				}
+            				
+            				MemoField memoField= new MemoField(this, nodeDef.getId(), nodeDef.getLabel(Type.INSTANCE, null), null, null, false, false, tempFieldValue);
+            				memoField.setOnClickListener(this);
+            				memoField.setId(nodeDef.getId());
+            				//textField.txtBox.addTextChangedListener(this);
+            				memoField.setValue(0, tempFieldValue.getValue(0).get(0));
+            				FormScreen.currentFieldValue = this.currentNode.getFieldValue(nodeDef.getId());
+            				//Log.e("FormScreen.currentFieldValue==null",nodeDef.getId()+"=="+(FormScreen.currentFieldValue==null));
+            				if (FormScreen.currentFieldValue==null){
+            					ArrayList<String> initialValue = new ArrayList<String>();
+            					initialValue.add(memoField.getValue(0));
+            					FormScreen.currentFieldValue = new FieldValue(nodeDef.getId(),getFormScreenId(),null);
+            					FormScreen.currentFieldValue.addValue(initialValue);
+            					this.currentNode.addFieldValue(FormScreen.currentFieldValue);        		
+            				} else {
+            					//Log.e("wczytanaWARTOSC","=="+FormScreen.currentFieldValue.getValue(0).get(0));
+            					memoField.setValue(0, FormScreen.currentFieldValue.getValue(0).get(0));       
+            				}
+            				memoField.addTextChangedListener(new TextWatcher(){
+            			        public void afterTextChanged(Editable s) {
+            			            //Log.e("s","=="+s.toString());
+            			            ArrayList<String> value = new ArrayList<String>();
+            			            value.add(s.toString());
+            			            FormScreen.currentFieldValue.setValue(0, value);
+            			            FormScreen.this.currentNode.addFieldValue(FormScreen.currentFieldValue);  
+            			            //Log.e("changed",FormScreen.currentFieldValue.getId()+"ValueOFsingleField=="+FormScreen.currentFieldValue.getValue(0).get(0));
+            			        }
+            			        public void beforeTextChanged(CharSequence s, int start, int count, int after){}
+            			        public void onTextChanged(CharSequence s, int start, int before, int count){}
+            			    });
+            				this.ll.addView(memoField);
+            				//this.currentNode.addFieldValue(tempFieldValue);
+            	    		//Log.e("iloscPOLzWARTOSCIA","=="+this.currentNode.getFieldsNo());       				
+        				} else if (this.intentType==getResources().getInteger(R.integer.multipleAttributeIntent)){    					
+            				int numberOfInstances = startingIntent.getIntExtra(getResources().getString(R.string.numberOfInstances), -1);
+            				this.currentMultipleFieldValue = new FieldValue(nodeDef.getId(), getFormScreenId(),null);
+            				ArrayList<String> instanceValues = new ArrayList<String>();
+            				//Log.e("numberOFinstances","=="+numberOfInstances);
+            				for (int k=0;k<numberOfInstances;k++){
+            					instanceValues = startingIntent.getStringArrayListExtra(getResources().getString(R.string.instanceValues)+k);
+            					this.currentMultipleFieldValue.addValue(instanceValues);
+            					//Log.e("dodanowartosc","=="+instanceValues.get(1));
+            				}
+
+            				MemoField memoField= new MemoField(this, nodeDef.getId(), nodeDef.getLabel(Type.INSTANCE, null), null, null, false, false, this.currentMultipleFieldValue);
+            				memoField.setOnClickListener(this);
+            				memoField.setId(nodeDef.getId());
+            				memoField.txtBox.addTextChangedListener(this);
+            				//Log.e("TEXTvalues.size",this.currInstanceNo+"=="+this.currentMultipleFieldValue.getValue(this.currInstanceNo).get(0));
+            				if (this.currentMultipleFieldValue.size()>this.currInstanceNo){
+            					memoField.setValue(this.currInstanceNo, this.currentMultipleFieldValue.getValue(this.currInstanceNo).get(0));	
+            				}			
+            				this.ll.addView(memoField);
+        				} else {
+        					FieldValue fieldValueToBeRestored = this.currentNode.getFieldValue(nodeDef.getId());
+        					//Log.e("fieldValueToBeRestored!=null",this.currentNode.getNodeValues().size()+"=="+(fieldValueToBeRestored!=null));
+        					if (fieldValueToBeRestored!=null){
+        						//Log.e("POWROT","z MULTIPLE FIELD");
+        						SummaryTable summaryTableView = new SummaryTable(this, nodeDef.getId(), nodeDef.getLabel(Type.INSTANCE, null), tableColHeaders, fieldValueToBeRestored.getValues(), this);
+            					summaryTableView.setOnClickListener(this);
+                				summaryTableView.setId(nodeDef.getId());
+                				this.ll.addView(summaryTableView);
+        					} else{
+        						//Log.e("PIERWSZE","OTWARCIE");
+        			    		ArrayList<List<String>> tableValuesLists = new ArrayList<List<String>>();
+        			    		ArrayList<String> valueRow1 = new ArrayList<String>();
+        			    		//row1.add("1");
+        			    		valueRow1.add("");
+        			    		tableValuesLists.add(valueRow1);
+        						SummaryTable summaryTableView = new SummaryTable(this, nodeDef.getId(), nodeDef.getLabel(Type.INSTANCE, null), tableColHeaders, tableValuesLists, this);
+            					summaryTableView.setOnClickListener(this);
+                				summaryTableView.setId(nodeDef.getId());
+                				this.ll.addView(summaryTableView);
+        					}			
+        				}
+    				}    				
     			} else if (nodeDef instanceof NumberAttributeDefinition){
     				if (!nodeDef.isMultiple()){
         				int numberOfInstances = startingIntent.getIntExtra(getResources().getString(R.string.numberOfInstances), -1);
@@ -757,6 +854,9 @@ public class FormScreen extends BaseActivity implements OnClickListener, TextWat
 					if (fieldView instanceof TextField){
 						TextField tempTextField = (TextField)fieldView;
 						currValue = tempTextField.getValue(this.currInstanceNo);
+					} else if (fieldView instanceof MemoField){
+						MemoField tempMemoField = (MemoField)fieldView;
+						currValue = tempMemoField.getValue(this.currInstanceNo);
 					} else if (fieldView instanceof NumberField){
 						NumberField tempNumberField = (NumberField)fieldView;
 						currValue = tempNumberField.getValue(this.currInstanceNo);
@@ -769,6 +869,9 @@ public class FormScreen extends BaseActivity implements OnClickListener, TextWat
 					if (fieldView instanceof TextField){
 						TextField tempTextField = (TextField)fieldView;
 						tempTextField.setValue(this.currInstanceNo, this.currentMultipleFieldValue.getValue(this.currInstanceNo).get(0));
+					} else if (fieldView instanceof NumberField){
+						MemoField tempMemoField = (MemoField)fieldView;
+						tempMemoField.setValue(this.currInstanceNo, this.currentMultipleFieldValue.getValue(this.currInstanceNo).get(0));
 					} else if (fieldView instanceof NumberField){
 						NumberField tempNumberField = (NumberField)fieldView;
 						tempNumberField.setValue(this.currInstanceNo, this.currentMultipleFieldValue.getValue(this.currInstanceNo).get(0));
@@ -783,6 +886,9 @@ public class FormScreen extends BaseActivity implements OnClickListener, TextWat
 				if (fieldView instanceof TextField){
 					TextField tempTextField = (TextField)fieldView;
 					currValue = tempTextField.getValue(this.currInstanceNo);
+				} else if (fieldView instanceof MemoField){
+					MemoField tempMemoField = (MemoField)fieldView;
+					currValue = tempMemoField.getValue(this.currInstanceNo);
 				} else if (fieldView instanceof NumberField){
 					NumberField tempNumberField = (NumberField)fieldView;
 					currValue = tempNumberField.getValue(this.currInstanceNo);
@@ -796,6 +902,9 @@ public class FormScreen extends BaseActivity implements OnClickListener, TextWat
 					if (fieldView instanceof TextField){
 						TextField tempTextField = (TextField)fieldView;
 						tempTextField.setValue(this.currInstanceNo, this.currentMultipleFieldValue.getValue(this.currInstanceNo).get(0));
+					} else if (fieldView instanceof MemoField){
+						MemoField tempMemoField = (MemoField)fieldView;
+						tempMemoField.setValue(this.currInstanceNo, this.currentMultipleFieldValue.getValue(this.currInstanceNo).get(0));
 					} else if (fieldView instanceof NumberField){
 						NumberField tempNumberField = (NumberField)fieldView;
 						tempNumberField.setValue(this.currInstanceNo, this.currentMultipleFieldValue.getValue(this.currInstanceNo).get(0));
@@ -816,6 +925,9 @@ public class FormScreen extends BaseActivity implements OnClickListener, TextWat
 					if (fieldView instanceof TextField){
 						TextField tempTextField = (TextField)fieldView;
 						tempTextField.setValue(this.currInstanceNo, "");
+					} else if (fieldView instanceof MemoField){
+						MemoField tempMemoField = (MemoField)fieldView;
+						tempMemoField.setValue(this.currInstanceNo, this.currentMultipleFieldValue.getValue(this.currInstanceNo).get(0));
 					} else if (fieldView instanceof NumberField){
 						NumberField tempNumberField = (NumberField)fieldView;
 						tempNumberField.setValue(this.currInstanceNo, this.currentMultipleFieldValue.getValue(this.currInstanceNo).get(0));
