@@ -11,6 +11,7 @@ import org.openforis.collect.android.fields.CodeField;
 import org.openforis.collect.android.fields.CoordinateField;
 import org.openforis.collect.android.fields.DateField;
 import org.openforis.collect.android.fields.Field;
+import org.openforis.collect.android.fields.InputField;
 import org.openforis.collect.android.fields.NumberField;
 import org.openforis.collect.android.fields.RangeField;
 import org.openforis.collect.android.fields.SummaryList;
@@ -66,7 +67,7 @@ public class FormScreen extends BaseActivity implements OnClickListener, TextWat
 	private int intentType;
 	
 	private int idmlId;
-	private int currInstanceNo;
+	public int currInstanceNo;
 	private int numberOfInstances;
 	private String parentFormScreenId;
 	
@@ -74,7 +75,7 @@ public class FormScreen extends BaseActivity implements OnClickListener, TextWat
 
 	private String breadcrumb;
 
-	private DataTreeNode currentNode;
+	public DataTreeNode currentNode;
 	public static FieldValue currentFieldValue;
 	private FieldValue currentMultipleFieldValue;
 	
@@ -100,7 +101,7 @@ public class FormScreen extends BaseActivity implements OnClickListener, TextWat
     			this.currentNode = ApplicationManager.valuesTree.getChild(getFormScreenId());
     			//Log.e("this.currentNode==null","=="+(this.currentNode==null));
     			if (this.currentNode==null){
-    				Log.e("WEZEL","NIE ISTNIAL W DRZEWIE");
+    				//Log.e("WEZEL","NIE ISTNIAL W DRZEWIE");
     				this.currentNode = new DataTreeNode(this.idmlId, this.currInstanceNo, this.parentFormScreenId, ApplicationManager.valuesTree.getChild(this.parentFormScreenId) , new ArrayList<FieldValue>());
             		ApplicationManager.valuesTree.addChild(getFormScreenId(), this.currentNode);
     			}
@@ -147,7 +148,8 @@ public class FormScreen extends BaseActivity implements OnClickListener, TextWat
 			if (ApplicationManager.fieldValueToPass!=null){
 //				for (int i=0;i<ApplicationManager.fieldValueToPass.size();i++){
 //					Log.e("savedFieldVALUE"+i,"=="+ApplicationManager.fieldValueToPass.getValue(i));					
-//				}	
+//				}
+				Log.e("currentNode==null","=="+(this.currentNode==null));
 				this.currentNode.addFieldValue(ApplicationManager.fieldValueToPass);
 				ApplicationManager.fieldValueToPass = null;				
 			}
@@ -223,9 +225,9 @@ public class FormScreen extends BaseActivity implements OnClickListener, TextWat
     			this.valuesNode = existingTreeNode;    			
     		}*/
 			
-			Log.e("ROOOOT","=============================");
-			ApplicationManager.valuesTree.printTree();
-			Log.e("BRANCH","=============================");
+			//Log.e("ROOOOT","=============================");
+			//ApplicationManager.valuesTree.printTree();
+			//Log.e("BRANCH","=============================");
     		TextView breadcrumb = new TextView(this);
     		breadcrumb.setText(this.breadcrumb);
     		breadcrumb.setTextSize(getResources().getInteger(R.integer.breadcrumbFontSize));
@@ -343,15 +345,15 @@ public class FormScreen extends BaseActivity implements OnClickListener, TextWat
         				this.ll.addView(textField);
     				} else {
     					FieldValue fieldValueToBeRestored = this.currentNode.getFieldValue(nodeDef.getId());
-    					Log.e("fieldValueToBeRestored!=null",this.currentNode.getNodeValues().size()+"=="+(fieldValueToBeRestored!=null));
+    					//Log.e("fieldValueToBeRestored!=null",this.currentNode.getNodeValues().size()+"=="+(fieldValueToBeRestored!=null));
     					if (fieldValueToBeRestored!=null){
-    						Log.e("POWROT","z MULTIPLE FIELD");
+    						//Log.e("POWROT","z MULTIPLE FIELD");
     						SummaryTable summaryTableView = new SummaryTable(this, nodeDef.getId(), nodeDef.getLabel(Type.INSTANCE, null), tableColHeaders, fieldValueToBeRestored.getValues(), this);
         					summaryTableView.setOnClickListener(this);
             				summaryTableView.setId(nodeDef.getId());
             				this.ll.addView(summaryTableView);
     					} else{
-    						Log.e("PIERWSZE","OTWARCIE");
+    						//Log.e("PIERWSZE","OTWARCIE");
     			    		ArrayList<List<String>> tableValuesLists = new ArrayList<List<String>>();
     			    		ArrayList<String> valueRow1 = new ArrayList<String>();
     			    		//row1.add("1");
@@ -383,24 +385,24 @@ public class FormScreen extends BaseActivity implements OnClickListener, TextWat
         					tempFieldValue.addValue(instanceValues);
         				}
         				
-        				TextField textField= new TextField(this, nodeDef.getId(), nodeDef.getLabel(Type.INSTANCE, null), null, null, false, false, tempFieldValue);
-        				textField.setOnClickListener(this);
-        				textField.setId(nodeDef.getId());
+        				NumberField numberField= new NumberField(this, nodeDef.getId(), nodeDef.getLabel(Type.INSTANCE, null), null, null, "real", false, false, tempFieldValue);
+        				numberField.setOnClickListener(this);
+        				numberField.setId(nodeDef.getId());
         				//textField.txtBox.addTextChangedListener(this);
-        				textField.setValue(0, tempFieldValue.getValue(0).get(0));
+        				numberField.setValue(0, tempFieldValue.getValue(0).get(0));
         				FormScreen.currentFieldValue = this.currentNode.getFieldValue(nodeDef.getId());
         				//Log.e("FormScreen.currentFieldValue==null",nodeDef.getId()+"=="+(FormScreen.currentFieldValue==null));
         				if (FormScreen.currentFieldValue==null){
         					ArrayList<String> initialValue = new ArrayList<String>();
-        					initialValue.add(textField.getValue(0));
+        					initialValue.add(numberField.getValue(0));
         					FormScreen.currentFieldValue = new FieldValue(nodeDef.getId(),getFormScreenId(),null);
         					FormScreen.currentFieldValue.addValue(initialValue);
         					this.currentNode.addFieldValue(FormScreen.currentFieldValue);        		
         				} else {
         					//Log.e("wczytanaWARTOSC","=="+FormScreen.currentFieldValue.getValue(0).get(0));
-        					textField.setValue(0, FormScreen.currentFieldValue.getValue(0).get(0));       
+        					numberField.setValue(0, FormScreen.currentFieldValue.getValue(0).get(0));       
         				}
-        				textField.addTextChangedListener(new TextWatcher(){
+        				numberField.addTextChangedListener(new TextWatcher(){
         			        public void afterTextChanged(Editable s) {
         			            //Log.e("s","=="+s.toString());
         			            ArrayList<String> value = new ArrayList<String>();
@@ -412,7 +414,7 @@ public class FormScreen extends BaseActivity implements OnClickListener, TextWat
         			        public void beforeTextChanged(CharSequence s, int start, int count, int after){}
         			        public void onTextChanged(CharSequence s, int start, int before, int count){}
         			    });
-        				this.ll.addView(textField);
+        				this.ll.addView(numberField);
         				//this.currentNode.addFieldValue(tempFieldValue);
         	    		//Log.e("iloscPOLzWARTOSCIA","=="+this.currentNode.getFieldsNo());       				
     				} else if (this.intentType==getResources().getInteger(R.integer.multipleAttributeIntent)){    					
@@ -426,26 +428,26 @@ public class FormScreen extends BaseActivity implements OnClickListener, TextWat
         					//Log.e("dodanowartosc","=="+instanceValues.get(1));
         				}
 
-        				TextField textField= new TextField(this, nodeDef.getId(), nodeDef.getLabel(Type.INSTANCE, null), null, null, false, false, this.currentMultipleFieldValue);
-        				textField.setOnClickListener(this);
-        				textField.setId(nodeDef.getId());
-        				textField.txtBox.addTextChangedListener(this);
+        				NumberField numberField= new NumberField(this, nodeDef.getId(), nodeDef.getLabel(Type.INSTANCE, null), null, null, "real", false, false, this.currentMultipleFieldValue);
+        				numberField.setOnClickListener(this);
+        				numberField.setId(nodeDef.getId());
+        				numberField.txtBox.addTextChangedListener(this);
         				//Log.e("TEXTvalues.size",this.currInstanceNo+"=="+this.currentMultipleFieldValue.getValue(this.currInstanceNo).get(0));
         				if (this.currentMultipleFieldValue.size()>this.currInstanceNo){
-        					textField.setValue(this.currInstanceNo, this.currentMultipleFieldValue.getValue(this.currInstanceNo).get(0));	
+        					numberField.setValue(this.currInstanceNo, this.currentMultipleFieldValue.getValue(this.currInstanceNo).get(0));	
         				}			
-        				this.ll.addView(textField);
+        				this.ll.addView(numberField);
     				} else {
     					FieldValue fieldValueToBeRestored = this.currentNode.getFieldValue(nodeDef.getId());
-    					Log.e("fieldValueToBeRestored!=null",this.currentNode.getNodeValues().size()+"=="+(fieldValueToBeRestored!=null));
+    					//Log.e("fieldValueToBeRestored!=null",this.currentNode.getNodeValues().size()+"=="+(fieldValueToBeRestored!=null));
     					if (fieldValueToBeRestored!=null){
-    						Log.e("POWROT","z MULTIPLE FIELD");
+    						//Log.e("POWROT","z MULTIPLE FIELD");
     						SummaryTable summaryTableView = new SummaryTable(this, nodeDef.getId(), nodeDef.getLabel(Type.INSTANCE, null), tableColHeaders, fieldValueToBeRestored.getValues(), this);
         					summaryTableView.setOnClickListener(this);
             				summaryTableView.setId(nodeDef.getId());
             				this.ll.addView(summaryTableView);
     					} else{
-    						Log.e("PIERWSZE","OTWARCIE");
+    						//Log.e("PIERWSZE","OTWARCIE");
     			    		ArrayList<List<String>> tableValuesLists = new ArrayList<List<String>>();
     			    		ArrayList<String> valueRow1 = new ArrayList<String>();
     			    		//row1.add("1");
@@ -471,7 +473,7 @@ public class FormScreen extends BaseActivity implements OnClickListener, TextWat
         				this.ll.addView(summaryTableView);
     				}
     			} else if (nodeDef instanceof BooleanAttributeDefinition){
-    				if (!nodeDef.isMultiple()||(this.intentType==getResources().getInteger(R.integer.multipleAttributeIntent))){
+    				/*if (!nodeDef.isMultiple()||(this.intentType==getResources().getInteger(R.integer.multipleAttributeIntent))){
     					BooleanAttributeDefinition booleanAttrDef = (BooleanAttributeDefinition)nodeDef;
         				BooleanField booleanField= new BooleanField(this, nodeDef.getId(), nodeDef.getLabel(Type.INSTANCE, null), false, false, null, null, booleanAttrDef.isMultiple(), booleanAttrDef.isAffirmativeOnly(), false);
         				booleanField.setOnClickListener(this);
@@ -482,6 +484,138 @@ public class FormScreen extends BaseActivity implements OnClickListener, TextWat
     					summaryTableView.setOnClickListener(this);
         				summaryTableView.setId(nodeDef.getId());
         				this.ll.addView(summaryTableView);
+    				}*/
+    				if (!nodeDef.isMultiple()){
+        				int numberOfInstances = startingIntent.getIntExtra(getResources().getString(R.string.numberOfInstances), -1);
+//        				Log.e("ILOSC INSTANCJI","=="+numberOfInstances);
+        				FieldValue tempFieldValue = new FieldValue(nodeDef.getId(),getFormScreenId(),null);
+        				if (numberOfInstances!=-1){
+        					ArrayList<String> instanceValues = new ArrayList<String>();
+            				//Log.e("numberOFinstances","=="+numberOfInstances);
+            				//for (int k=0;k<numberOfInstances;k++){
+        					instanceValues = startingIntent.getStringArrayListExtra(getResources().getString(R.string.instanceValues)+0);
+        					tempFieldValue.addValue(instanceValues);
+            				//Log.e("dodanowartosc","=="+instanceValues.get(1));
+            				//}	
+        				}
+        				else {
+        					ArrayList<String> instanceValues = new ArrayList<String>();
+        					instanceValues.add("false");
+        					instanceValues.add("false");
+        					tempFieldValue.addValue(instanceValues);
+        				}
+        				
+        				BooleanField booleanField= new BooleanField(this, this, nodeDef.getId(), nodeDef.getLabel(Type.INSTANCE, null), 
+        						false, false, getResources().getString(R.string.yes), getResources().getString(R.string.no),
+        						false, ((BooleanAttributeDefinition) nodeDef).isAffirmativeOnly(), false, tempFieldValue);
+        				booleanField.setOnClickListener(this);
+        				booleanField.setId(nodeDef.getId());
+        				//textField.txtBox.addTextChangedListener(this);
+        				booleanField.setValue(0, Boolean.valueOf(tempFieldValue.getValue(0).get(0)), Boolean.valueOf(tempFieldValue.getValue(0).get(1)));
+        				FormScreen.currentFieldValue = this.currentNode.getFieldValue(nodeDef.getId());
+        				Log.e("FormScreen.currentFieldValue==null",nodeDef.getId()+"=="+(FormScreen.currentFieldValue==null));
+        				if (FormScreen.currentFieldValue==null){
+        					ArrayList<String> initialValue = new ArrayList<String>();
+        					initialValue.add(booleanField.getValue(0,0));
+        					initialValue.add(booleanField.getValue(0,1));
+        					FormScreen.currentFieldValue = new FieldValue(nodeDef.getId(),getFormScreenId(),null);
+        					FormScreen.currentFieldValue.addValue(initialValue);
+        					this.currentNode.addFieldValue(FormScreen.currentFieldValue);        		
+        				} else {
+        					Log.e("wczytanaWARTOSC",FormScreen.currentFieldValue.getId()+"=="+FormScreen.currentFieldValue.getValue(0).get(0));
+        					booleanField.setValue(0, Boolean.valueOf(FormScreen.currentFieldValue.getValue(0).get(0)), Boolean.valueOf(FormScreen.currentFieldValue.getValue(0).get(1)));    
+        				}
+        				/*booleanField.addTextChangedListener(new TextWatcher(){
+        			        public void afterTextChanged(Editable s) {
+        			            //Log.e("s","=="+s.toString());
+        			            ArrayList<String> value = new ArrayList<String>();
+        			            value.add(s.toString());
+        			            FormScreen.currentFieldValue.setValue(0, value);
+        			            FormScreen.this.currentNode.addFieldValue(FormScreen.currentFieldValue);  
+        			            //Log.e("changed",FormScreen.currentFieldValue.getId()+"ValueOFsingleField=="+FormScreen.currentFieldValue.getValue(0).get(0));
+        			        }
+        			        public void beforeTextChanged(CharSequence s, int start, int count, int after){}
+        			        public void onTextChanged(CharSequence s, int start, int before, int count){}
+        			    });*/
+        				/*booleanField.addOnClickListener(new OnClickListener() {
+							@Override
+							public void onClick(View v) {
+								Log.e("CHANGING","CURRENT FIELDVALUE"+BooleanField.this.getElementId());
+						    	FormScreen.currentFieldValue = BooleanField.this.value;
+								CheckBox checkBox1 = (CheckBox)v;
+								ArrayList<String> value = new ArrayList<String>();
+								value.add(String.valueOf(checkBox1.isChecked()));
+								value.add(String.valueOf(!checkBox1.isChecked()));								
+								FormScreen.currentFieldValue.setValue(0, value);
+        			            FormScreen.this.currentNode.addFieldValue(FormScreen.currentFieldValue);
+        			            Log.e("CLICKED1","=="+checkBox1.isChecked());
+				  			}
+					    }, new OnClickListener() {
+							@Override
+							public void onClick(View v) {
+								CheckBox checkBox2 = (CheckBox)v;
+								ArrayList<String> value = new ArrayList<String>();
+								value.add(String.valueOf(!checkBox2.isChecked()));
+								value.add(String.valueOf(checkBox2.isChecked()));								
+								FormScreen.currentFieldValue.setValue(0, value);
+        			            FormScreen.this.currentNode.addFieldValue(FormScreen.currentFieldValue);
+        			            Log.e("CLICKED2","=="+checkBox2.isChecked());
+				  			}
+					    });*/
+        				this.ll.addView(booleanField);
+        				//this.currentNode.addFieldValue(tempFieldValue);
+        	    		//Log.e("iloscPOLzWARTOSCIA","=="+this.currentNode.getFieldsNo());       				
+    				} else if (this.intentType==getResources().getInteger(R.integer.multipleAttributeIntent)){    					
+        				int numberOfInstances = startingIntent.getIntExtra(getResources().getString(R.string.numberOfInstances), -1);
+        				this.currentMultipleFieldValue = new FieldValue(nodeDef.getId(), getFormScreenId(),null);
+        				ArrayList<String> instanceValues = new ArrayList<String>();
+        				//Log.e("numberOFinstances","=="+numberOfInstances);
+        				for (int k=0;k<numberOfInstances;k++){
+        					instanceValues = startingIntent.getStringArrayListExtra(getResources().getString(R.string.instanceValues)+k);
+        					this.currentMultipleFieldValue.addValue(instanceValues);
+        					//Log.e("dodanowartosc","=="+instanceValues.get(1));
+        				}
+
+        				BooleanField booleanField = new BooleanField(this, this, nodeDef.getId(), nodeDef.getLabel(Type.INSTANCE, null), 
+        						false, false, getResources().getString(R.string.yes), getResources().getString(R.string.no),
+        						false, ((BooleanAttributeDefinition) nodeDef).isAffirmativeOnly(), false, this.currentMultipleFieldValue);
+        				booleanField.setOnClickListener(this);
+        				booleanField.setId(nodeDef.getId());
+        				//booleanField.txtBox.addTextChangedListener(this);
+        				//!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+        				//add onclick listener for multiple field
+        				//Log.e("TEXTvalues.size",this.currInstanceNo+"=="+this.currentMultipleFieldValue.getValue(this.currInstanceNo).get(0));
+        				if (this.currentMultipleFieldValue.size()>this.currInstanceNo){        					
+        					if (!Boolean.valueOf(this.currentMultipleFieldValue.getValue(this.currInstanceNo).get(0))&&! Boolean.valueOf(this.currentMultipleFieldValue.getValue(this.currInstanceNo).get(1))){
+        						booleanField.setValue(this.currInstanceNo,null,null);	
+        					} else {
+        						booleanField.setValue(this.currInstanceNo, Boolean.valueOf(this.currentMultipleFieldValue.getValue(this.currInstanceNo).get(0)),Boolean.valueOf(this.currentMultipleFieldValue.getValue(this.currInstanceNo).get(1)));	
+        					}
+        					
+        				}			
+        				this.ll.addView(booleanField);
+    				} else {
+    					FieldValue fieldValueToBeRestored = this.currentNode.getFieldValue(nodeDef.getId());
+    					//Log.e("fieldValueToBeRestored!=null",this.currentNode.getNodeValues().size()+"=="+(fieldValueToBeRestored!=null));
+    					if (fieldValueToBeRestored!=null){
+    						//Log.e("POWROT","z MULTIPLE FIELD");
+    						SummaryTable summaryTableView = new SummaryTable(this, nodeDef.getId(), nodeDef.getLabel(Type.INSTANCE, null), tableColHeaders, fieldValueToBeRestored.getValues(), this);
+        					summaryTableView.setOnClickListener(this);
+            				summaryTableView.setId(nodeDef.getId());
+            				this.ll.addView(summaryTableView);
+    					} else{
+    						//Log.e("PIERWSZE","OTWARCIE");
+    			    		ArrayList<List<String>> tableValuesLists = new ArrayList<List<String>>();
+    			    		ArrayList<String> valueRow1 = new ArrayList<String>();
+    			    		//row1.add("1");
+    			    		valueRow1.add("");
+    			    		valueRow1.add("");
+    			    		tableValuesLists.add(valueRow1);
+    						SummaryTable summaryTableView = new SummaryTable(this, nodeDef.getId(), nodeDef.getLabel(Type.INSTANCE, null), tableColHeaders, tableValuesLists, this);
+        					summaryTableView.setOnClickListener(this);
+            				summaryTableView.setId(nodeDef.getId());
+            				this.ll.addView(summaryTableView);
+    					}			
     				}
     			} else if (nodeDef instanceof CoordinateAttributeDefinition){
     				if (!nodeDef.isMultiple()||(this.intentType==getResources().getInteger(R.integer.multipleAttributeIntent))){
@@ -553,10 +687,10 @@ public class FormScreen extends BaseActivity implements OnClickListener, TextWat
     			}
     		}
 			if (this.intentType==getResources().getInteger(R.integer.multipleAttributeIntent)){
-				Log.e("multiple","ATTRIBUTE");
+				//Log.e("multiple","ATTRIBUTE");
 				this.ll.addView(arrangeButtonsInLine(new Button(this),getResources().getString(R.string.previousInstanceButton),new Button(this),getResources().getString(R.string.nextInstanceButton),this));
 			} else {
-				Log.e("multiple","ENTITY");
+				//Log.e("multiple","ENTITY");
 			}
     		setContentView(this.sv);
 			
@@ -576,10 +710,10 @@ public class FormScreen extends BaseActivity implements OnClickListener, TextWat
     public void onPause(){    
 		Log.i(getResources().getString(R.string.app_name),TAG+":onPause");
 		if (this.currentMultipleFieldValue!=null){
-			Log.e("multipleFieldVALUESno","=="+this.currentMultipleFieldValue.size());
-			for (int i=0;i<this.currentMultipleFieldValue.size();i++){
+			//Log.e("multipleFieldVALUESno","=="+this.currentMultipleFieldValue.size());
+			/*for (int i=0;i<this.currentMultipleFieldValue.size();i++){
 				Log.e("multipleFieldVALUE"+i,"=="+this.currentMultipleFieldValue.getValue(i));
-			}	
+			}*/	
 			ApplicationManager.fieldValueToPass = this.currentMultipleFieldValue;
 		}
 		super.onPause();
@@ -609,7 +743,7 @@ public class FormScreen extends BaseActivity implements OnClickListener, TextWat
 
 	@Override
 	public void onClick(View arg0) {
-		//Log.e("clickedVIEW",arg0.getClass()+"=="+arg0.getId());
+//		Log.e("clickedVIEW",arg0.getClass()+"=="+arg0.getId());
 		if (arg0 instanceof SummaryList){
 			//Log.e("summary","list");
 			SummaryList temp = (SummaryList)arg0;
@@ -623,12 +757,24 @@ public class FormScreen extends BaseActivity implements OnClickListener, TextWat
 					if (fieldView instanceof TextField){
 						TextField tempTextField = (TextField)fieldView;
 						currValue = tempTextField.getValue(this.currInstanceNo);
+					} else if (fieldView instanceof NumberField){
+						NumberField tempNumberField = (NumberField)fieldView;
+						currValue = tempNumberField.getValue(this.currInstanceNo);
+					} else if (fieldView instanceof BooleanField){
+						BooleanField tempBooleanField = (BooleanField)fieldView;
+						currValue = tempBooleanField.getValue(this.currInstanceNo, 0);
 					}
 					this.currentMultipleFieldValue.getValue(this.currInstanceNo).set(0, currValue);
 					this.currInstanceNo--;
 					if (fieldView instanceof TextField){
 						TextField tempTextField = (TextField)fieldView;
 						tempTextField.setValue(this.currInstanceNo, this.currentMultipleFieldValue.getValue(this.currInstanceNo).get(0));
+					} else if (fieldView instanceof NumberField){
+						NumberField tempNumberField = (NumberField)fieldView;
+						tempNumberField.setValue(this.currInstanceNo, this.currentMultipleFieldValue.getValue(this.currInstanceNo).get(0));
+					} else if (fieldView instanceof BooleanField){
+						BooleanField tempBooleanField = (BooleanField)fieldView;
+						tempBooleanField.setValue(this.currInstanceNo, Boolean.valueOf(this.currentMultipleFieldValue.getValue(this.currInstanceNo).get(0)),!Boolean.valueOf(this.currentMultipleFieldValue.getValue(this.currInstanceNo).get(0)));
 					}
 				}
 			} else if (btn.getId()==getResources().getInteger(R.integer.rightButtonMultipleAttribute)){
@@ -637,6 +783,12 @@ public class FormScreen extends BaseActivity implements OnClickListener, TextWat
 				if (fieldView instanceof TextField){
 					TextField tempTextField = (TextField)fieldView;
 					currValue = tempTextField.getValue(this.currInstanceNo);
+				} else if (fieldView instanceof NumberField){
+					NumberField tempNumberField = (NumberField)fieldView;
+					currValue = tempNumberField.getValue(this.currInstanceNo);
+				} else if (fieldView instanceof BooleanField){
+					BooleanField tempBooleanField = (BooleanField)fieldView;
+					currValue = tempBooleanField.getValue(this.currInstanceNo, 0);
 				}
 				this.currentMultipleFieldValue.getValue(this.currInstanceNo).set(0, currValue);
 				this.currInstanceNo++;
@@ -644,18 +796,36 @@ public class FormScreen extends BaseActivity implements OnClickListener, TextWat
 					if (fieldView instanceof TextField){
 						TextField tempTextField = (TextField)fieldView;
 						tempTextField.setValue(this.currInstanceNo, this.currentMultipleFieldValue.getValue(this.currInstanceNo).get(0));
+					} else if (fieldView instanceof NumberField){
+						NumberField tempNumberField = (NumberField)fieldView;
+						tempNumberField.setValue(this.currInstanceNo, this.currentMultipleFieldValue.getValue(this.currInstanceNo).get(0));
+					} else if (fieldView instanceof BooleanField){
+						BooleanField tempBooleanField = (BooleanField)fieldView;
+						tempBooleanField.setValue(this.currInstanceNo, Boolean.valueOf(this.currentMultipleFieldValue.getValue(this.currInstanceNo).get(0)),!Boolean.valueOf(this.currentMultipleFieldValue.getValue(this.currInstanceNo).get(0)));
+						
 					}
 				} else {//new instance
 					ArrayList<String> newValue = new ArrayList<String>();
 					//newValue.add(""+(this.currInstanceNo+1));
-					newValue.add("");
+					if (fieldView instanceof InputField){
+						newValue.add("");
+					} else if (fieldView instanceof BooleanField) {
+						newValue.add("");
+					}					
 					this.currentMultipleFieldValue.addValue(this.currInstanceNo,newValue);
 					if (fieldView instanceof TextField){
 						TextField tempTextField = (TextField)fieldView;
 						tempTextField.setValue(this.currInstanceNo, "");
+					} else if (fieldView instanceof NumberField){
+						NumberField tempNumberField = (NumberField)fieldView;
+						tempNumberField.setValue(this.currInstanceNo, this.currentMultipleFieldValue.getValue(this.currInstanceNo).get(0));
+					} else if (fieldView instanceof BooleanField){
+						BooleanField tempBooleanField = (BooleanField)fieldView;
+						tempBooleanField.setValue(this.currInstanceNo, null/*Boolean.valueOf(this.currentMultipleFieldValue.getValue(this.currInstanceNo).get(0))*/,null/*Boolean.valueOf(this.currentMultipleFieldValue.getValue(this.currInstanceNo).get(0))*/);
 					}
 					this.numberOfInstances++;
-				}		
+				}
+				
 			}
 		} else if (arg0 instanceof TextView){
 			//Log.e("summary","list row");
@@ -783,7 +953,7 @@ public class FormScreen extends BaseActivity implements OnClickListener, TextWat
 			ArrayList<String> currentValuesList = new ArrayList<String>();
 			currentValuesList.add(arg0.toString());
 			valuesLists.add(currentValuesList);
-			FieldValue tempValue = new FieldValue(13, "", valuesLists);
+			FieldValue tempValue = new FieldValue(FormScreen.currentFieldValue.getId(), "", valuesLists);
 			this.currentNode.addFieldValue(tempValue);
 		}
 	}

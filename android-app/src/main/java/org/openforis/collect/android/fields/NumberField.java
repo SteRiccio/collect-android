@@ -5,11 +5,12 @@ import java.util.List;
 import java.util.Map;
 
 import org.openforis.collect.android.R;
+import org.openforis.collect.android.data.FieldValue;
 import org.openforis.collect.android.management.ApplicationManager;
 import org.openforis.collect.android.messages.ToastMessage;
+import org.openforis.collect.android.screens.FormScreen;
 
 import android.content.Context;
-import android.text.Editable;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
@@ -23,7 +24,7 @@ public class NumberField extends InputField {
 	private String type;
 	
 	public NumberField(Context context, int id, String labelText, String initialText, String hintText,
-			String numberType, boolean isMultiple, boolean isRequired) {
+			String numberType, boolean isMultiple, boolean isRequired, FieldValue fieldValue) {
 		super(context, id, isMultiple, isRequired);
 		
 		this.values = new ArrayList<String>();
@@ -49,6 +50,7 @@ public class NumberField extends InputField {
 			this.makeReal();
 		}
 		
+		this.value = fieldValue;
 		//this.addView(this.scrollLeft);
 		this.addView(this.label);
 		this.addView(this.txtBox);
@@ -76,6 +78,8 @@ public class NumberField extends InputField {
 				    		Log.i(getResources().getString(R.string.app_name), "Setting numeric field is: " + valueForNum);
 				    		NumberField.this.setKeyboardType(null);
 				    	}
+				    	//Log.e("CHANGING","CURRENT FIELDVALUE"+NumberField.this.getElementId());
+				    	FormScreen.currentFieldValue = NumberField.this.value;
 			    	}
 		    	}
 		    }
@@ -111,7 +115,6 @@ public class NumberField extends InputField {
 	public void afterTextChanged(Editable s) {
 		NumberField.this.values.add(currentInstanceNo, s.toString());
 	}*/
-	
 	public String getValue(int index){
 		//return TextField.this.values.get(index);
 		return NumberField.this.value.getValue(index).get(0);

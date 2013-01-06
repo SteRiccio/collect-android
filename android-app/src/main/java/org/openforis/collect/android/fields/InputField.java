@@ -23,7 +23,7 @@ public class InputField extends Field implements TextWatcher {
 		this.txtBox.setKeyListener(keyListener);
 	}
 	
-	public String getValue()
+	/*public String getValue()
 	{
 		return this.txtBox.getText().toString();
 	}
@@ -31,7 +31,7 @@ public class InputField extends Field implements TextWatcher {
 	public void setValue(String value)
 	{
 		this.txtBox.setText(value);
-	}
+	}*/
 	
 	public String getHint()
 	{
@@ -71,5 +71,9 @@ public class InputField extends Field implements TextWatcher {
 	@Override
 	public void onTextChanged(CharSequence s, int start, int before, int count) {
 
+	}
+	
+	public void addTextChangedListener(TextWatcher textWatcher) {
+		this.txtBox.addTextChangedListener(textWatcher);
 	}
 }

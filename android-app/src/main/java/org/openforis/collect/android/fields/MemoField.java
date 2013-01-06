@@ -89,7 +89,7 @@ public class MemoField extends InputField {
 		//this.addView(this.scrollRight);
 	}
 	
-	@Override
+	/*@Override
 	public void scrollLeft(){
     	if (MemoField.this.currentInstanceNo>0){
     		MemoField.this.values.set(MemoField.this.currentInstanceNo, MemoField.this.txtBox.getText().toString());	        		
@@ -108,7 +108,7 @@ public class MemoField extends InputField {
 		if (MemoField.this.values.size()>=(MemoField.this.currentInstanceNo+1)){
 			MemoField.this.txtBox.setText(MemoField.this.values.get(MemoField.this.currentInstanceNo));
 		}
-	}
+	}*/
 	
 	public String getValue(int index){
 		return MemoField.this.values.get(index);

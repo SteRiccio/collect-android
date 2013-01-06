@@ -11,12 +11,9 @@ import org.openforis.collect.android.messages.ToastMessage;
 import org.openforis.collect.android.screens.FormScreen;
 
 import android.content.Context;
-import android.text.Editable;
 import android.text.InputFilter;
-import android.text.TextWatcher;
 import android.text.method.QwertyKeyListener;
 import android.text.method.TextKeyListener;
-import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
@@ -88,7 +85,7 @@ public class TextField extends InputField {
 				    	else {
 				    		TextField.this.setKeyboardType(null);
 				    	}
-				    	Log.e("CHANGING","CURRENT FIELDVALUE"+TextField.this.getElementId());
+				    	//Log.e("CHANGING","CURRENT FIELDVALUE"+TextField.this.getElementId());
 				    	FormScreen.currentFieldValue = TextField.this.value;
 			    	}
 		    	}
@@ -96,7 +93,7 @@ public class TextField extends InputField {
 	    });				
 	}
 	
-	@Override
+	/*@Override
 	public void scrollLeft(){
     	if (TextField.this.currentInstanceNo>0){
     		TextField.this.values.set(TextField.this.currentInstanceNo, TextField.this.txtBox.getText().toString());	        		
@@ -115,7 +112,7 @@ public class TextField extends InputField {
 		if (TextField.this.values.size()>=(TextField.this.currentInstanceNo+1)){
 			TextField.this.txtBox.setText(TextField.this.values.get(TextField.this.currentInstanceNo));
 		}
-	}
+	}*/
 	
 	public String getValue(int index){
 		//return TextField.this.values.get(index);
@@ -151,9 +148,5 @@ public class TextField extends InputField {
 	
 	public List<String> getValues(){
 		return this.values;
-	}
-
-	public void addTextChangedListener(TextWatcher textWatcher) {
-		this.txtBox.addTextChangedListener(textWatcher);
 	}
 }

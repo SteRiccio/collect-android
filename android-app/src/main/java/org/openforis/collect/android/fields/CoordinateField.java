@@ -107,7 +107,7 @@ public class CoordinateField extends InputField {
 	    });			
 	}
 	
-	@Override
+	//@Override
 	public String getValue()
 	{
 		return this.txtLatitude.getText().toString()+","+this.txtLongitude.getText().toString();
