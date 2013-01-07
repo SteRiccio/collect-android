@@ -611,7 +611,7 @@ public class FormScreen extends BaseActivity implements OnClickListener, TextWat
         				//textField.txtBox.addTextChangedListener(this);
         				booleanField.setValue(0, Boolean.valueOf(tempFieldValue.getValue(0).get(0)), Boolean.valueOf(tempFieldValue.getValue(0).get(1)));
         				FormScreen.currentFieldValue = this.currentNode.getFieldValue(nodeDef.getId());
-        				Log.e("FormScreen.currentFieldValue==null",nodeDef.getId()+"=="+(FormScreen.currentFieldValue==null));
+        				//Log.e("FormScreen.currentFieldValue==null",nodeDef.getId()+"=="+(FormScreen.currentFieldValue==null));
         				if (FormScreen.currentFieldValue==null){
         					ArrayList<String> initialValue = new ArrayList<String>();
         					initialValue.add(booleanField.getValue(0,0));
@@ -620,7 +620,7 @@ public class FormScreen extends BaseActivity implements OnClickListener, TextWat
         					FormScreen.currentFieldValue.addValue(initialValue);
         					this.currentNode.addFieldValue(FormScreen.currentFieldValue);        		
         				} else {
-        					Log.e("wczytanaWARTOSC",FormScreen.currentFieldValue.getId()+"=="+FormScreen.currentFieldValue.getValue(0).get(0));
+        					//Log.e("wczytanaWARTOSC",FormScreen.currentFieldValue.getId()+"=="+FormScreen.currentFieldValue.getValue(0).get(0));
         					booleanField.setValue(0, Boolean.valueOf(FormScreen.currentFieldValue.getValue(0).get(0)), Boolean.valueOf(FormScreen.currentFieldValue.getValue(0).get(1)));    
         				}
         				/*booleanField.addTextChangedListener(new TextWatcher(){
@@ -680,7 +680,6 @@ public class FormScreen extends BaseActivity implements OnClickListener, TextWat
         				booleanField.setOnClickListener(this);
         				booleanField.setId(nodeDef.getId());
         				//booleanField.txtBox.addTextChangedListener(this);
-        				//!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
         				//add onclick listener for multiple field
         				//Log.e("TEXTvalues.size",this.currInstanceNo+"=="+this.currentMultipleFieldValue.getValue(this.currInstanceNo).get(0));
         				if (this.currentMultipleFieldValue.size()>this.currInstanceNo){        					

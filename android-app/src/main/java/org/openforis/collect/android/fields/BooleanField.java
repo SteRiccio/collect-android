@@ -9,7 +9,6 @@ import org.openforis.collect.android.screens.FormScreen;
 
 import android.content.Context;
 import android.graphics.Color;
-import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CheckBox;
@@ -59,14 +58,12 @@ public class BooleanField extends Field {
 				ArrayList<String> value = new ArrayList<String>();
 				value.add(String.valueOf(chckBox1.isChecked()));
 				value.add(String.valueOf(!chckBox1.isChecked()));
-				Log.e("obecnaINSTANCJA","=="+BooleanField.form.currInstanceNo);
 				BooleanField.this.setValue(BooleanField.form.currInstanceNo, chckBox1.isChecked(), !chckBox1.isChecked());
 				FormScreen.currentFieldValue = BooleanField.this.value;
 				FormScreen.currentFieldValue.setValue(BooleanField.form.currInstanceNo, value);
 				if (BooleanField.form.currentNode!=null){
 					BooleanField.form.currentNode.addFieldValue(FormScreen.currentFieldValue);	
 				}
-	            Log.e("clicked1"+FormScreen.currentFieldValue.getId(),chckBox1.isChecked()+"=="+chckBox2.isChecked());
   			}
 	    });		
 		this.label1 = new TextView(context);
@@ -84,14 +81,12 @@ public class BooleanField extends Field {
 					ArrayList<String> value = new ArrayList<String>();
 					value.add(String.valueOf(!chckBox2.isChecked()));
 					value.add(String.valueOf(chckBox2.isChecked()));
-					Log.e("obecnaINSTANCJA","=="+BooleanField.form.currInstanceNo);
 					BooleanField.this.setValue(BooleanField.form.currInstanceNo, !chckBox2.isChecked(), chckBox2.isChecked());
 					FormScreen.currentFieldValue = BooleanField.this.value;
 					FormScreen.currentFieldValue.setValue(BooleanField.form.currInstanceNo, value);
 					if (BooleanField.form.currentNode!=null){
 						BooleanField.form.currentNode.addFieldValue(FormScreen.currentFieldValue);
 					}
-		            Log.e("clicked2"+FormScreen.currentFieldValue.getId(),chckBox1.isChecked()+"=="+chckBox2.isChecked());
 	          }
 	    });
 		this.label2 = new TextView(context);
@@ -160,7 +155,6 @@ public class BooleanField extends Field {
 			valueToAdd.add("");
 		}
 		BooleanField.this.value.setValue(position, valueToAdd);
-		Log.e("boolSET",value1+"=="+value2);
 	}
 	
 	/*@Override
