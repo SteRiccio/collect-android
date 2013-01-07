@@ -6,13 +6,14 @@ import java.util.Map;
 import java.util.Random;
 
 import org.openforis.collect.android.R;
+import org.openforis.collect.android.data.FieldValue;
 import org.openforis.collect.android.dialogs.DateSetDialog;
 import org.openforis.collect.android.management.ApplicationManager;
 import org.openforis.collect.android.messages.ToastMessage;
+import org.openforis.collect.android.screens.FormScreen;
 
 import android.content.Context;
 import android.content.Intent;
-import android.text.Editable;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
@@ -23,7 +24,7 @@ public class DateField extends InputField {
 	private List<String> values;
 	
 	public DateField(Context context, int id, String labelText, String initialText, String hintText,
-			boolean isMultiple, boolean isRequired) {
+			boolean isMultiple, boolean isRequired, FieldValue fieldValue) {
 		super(context, id, isMultiple, isRequired);
 		
 		this.values = new ArrayList<String>();
@@ -68,11 +69,13 @@ public class DateField extends InputField {
 				    	DateField.this.txtBox.setId(myRandom.nextInt());
 				    	//Show Date picker
 				    	showDatePickerDialog(DateField.this.elemId);
+				    	FormScreen.currentFieldValue = DateField.this.value;
 			    	}
 		    	}
 		    }
 	    });	
 		
+		this.value = fieldValue;		
 	}
 
 	private void showDatePickerDialog(int id) {  	
@@ -104,13 +107,25 @@ public class DateField extends InputField {
 		}
 	}*/
 	
-	public String getValue(int index){
+	/*public String getValue(int index){
 		return DateField.this.values.get(index);
 	}
 	
 	@Override
 	public void afterTextChanged(Editable s) {
 		DateField.this.values.add(currentInstanceNo, s.toString());
+	}*/
+	
+	public String getValue(int index){
+		return DateField.this.value.getValue(index).get(0);
+	}
+	
+	public void setValue(int position, String value)
+	{
+		this.txtBox.setText(value);
+		ArrayList<String> valueToAdd = new ArrayList<String>();
+		valueToAdd.add(value);
+		DateField.this.value.setValue(position, valueToAdd);
 	}
 	
 	@Override

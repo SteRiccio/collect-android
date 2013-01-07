@@ -37,6 +37,7 @@ import org.openforis.idm.metamodel.TaxonAttributeDefinition;
 import org.openforis.idm.metamodel.TextAttributeDefinition;
 import org.openforis.idm.metamodel.TimeAttributeDefinition;
 
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
@@ -728,7 +729,7 @@ public class FormScreen extends BaseActivity implements OnClickListener, TextWat
         				this.ll.addView(summaryTableView);
     				}
     			} else if (nodeDef instanceof DateAttributeDefinition){
-    				if (!nodeDef.isMultiple()||(this.intentType==getResources().getInteger(R.integer.multipleAttributeIntent))){
+    				/*if (!nodeDef.isMultiple()||(this.intentType==getResources().getInteger(R.integer.multipleAttributeIntent))){
     					DateAttributeDefinition dateAttrDef = (DateAttributeDefinition)nodeDef;
         				DateField dateField= new DateField(this, nodeDef.getId(), nodeDef.getLabel(Type.INSTANCE, null), null, null, dateAttrDef.isMultiple(), false);
         				dateField.setOnClickListener(this);
@@ -740,7 +741,100 @@ public class FormScreen extends BaseActivity implements OnClickListener, TextWat
     					summaryTableView.setOnClickListener(this);
         				summaryTableView.setId(nodeDef.getId());
         				this.ll.addView(summaryTableView);
-    				}
+    				}*/
+    				if (!nodeDef.isMultiple()){
+        				int numberOfInstances = startingIntent.getIntExtra(getResources().getString(R.string.numberOfInstances), -1);
+//        				Log.e("ILOSC INSTANCJI","=="+numberOfInstances);
+        				FieldValue tempFieldValue = new FieldValue(nodeDef.getId(),getFormScreenId(),null);
+        				if (numberOfInstances!=-1){
+        					ArrayList<String> instanceValues = new ArrayList<String>();
+            				//Log.e("numberOFinstances","=="+numberOfInstances);
+            				//for (int k=0;k<numberOfInstances;k++){
+        					instanceValues = startingIntent.getStringArrayListExtra(getResources().getString(R.string.instanceValues)+0);
+        					tempFieldValue.addValue(instanceValues);
+            				//Log.e("dodanowartosc","=="+instanceValues.get(1));
+            				//}	
+        				}
+        				else {
+        					ArrayList<String> instanceValues = new ArrayList<String>();
+        					instanceValues.add("");
+        					tempFieldValue.addValue(instanceValues);
+        				}
+        				
+        				DateField dateField = new DateField(this, nodeDef.getId(), nodeDef.getLabel(Type.INSTANCE, null), null, null, false, false, tempFieldValue);
+        				dateField.setOnClickListener(this);
+        				dateField.setId(nodeDef.getId());
+        				//textField.txtBox.addTextChangedListener(this);
+        				dateField.setValue(0, tempFieldValue.getValue(0).get(0));
+        				FormScreen.currentFieldValue = this.currentNode.getFieldValue(nodeDef.getId());
+        				//Log.e("FormScreen.currentFieldValue==null",nodeDef.getId()+"=="+(FormScreen.currentFieldValue==null));
+        				if (FormScreen.currentFieldValue==null){
+        					ArrayList<String> initialValue = new ArrayList<String>();
+        					initialValue.add(dateField.getValue(0));
+        					FormScreen.currentFieldValue = new FieldValue(nodeDef.getId(),getFormScreenId(),null);
+        					FormScreen.currentFieldValue.addValue(initialValue);
+        					this.currentNode.addFieldValue(FormScreen.currentFieldValue);        		
+        				} else {
+        					//Log.e("wczytanaWARTOSC","=="+FormScreen.currentFieldValue.getValue(0).get(0));
+        					dateField.setValue(0, FormScreen.currentFieldValue.getValue(0).get(0));       
+        				}
+        				dateField.addTextChangedListener(new TextWatcher(){
+        			        public void afterTextChanged(Editable s) {
+        			            //Log.e("s","=="+s.toString());
+        			            ArrayList<String> value = new ArrayList<String>();
+        			            value.add(s.toString());
+        			            FormScreen.currentFieldValue.setValue(0, value);
+        			            FormScreen.this.currentNode.addFieldValue(FormScreen.currentFieldValue);  
+        			            //Log.e("changed",FormScreen.currentFieldValue.getId()+"ValueOFsingleField=="+FormScreen.currentFieldValue.getValue(0).get(0));
+        			        }
+        			        public void beforeTextChanged(CharSequence s, int start, int count, int after){}
+        			        public void onTextChanged(CharSequence s, int start, int before, int count){}
+        			    });
+        				this.ll.addView(dateField);
+        				//this.currentNode.addFieldValue(tempFieldValue);
+        	    		//Log.e("iloscPOLzWARTOSCIA","=="+this.currentNode.getFieldsNo());       				
+    				} else if (this.intentType==getResources().getInteger(R.integer.multipleAttributeIntent)){    					
+        				int numberOfInstances = startingIntent.getIntExtra(getResources().getString(R.string.numberOfInstances), -1);
+        				this.currentMultipleFieldValue = new FieldValue(nodeDef.getId(), getFormScreenId(),null);
+        				ArrayList<String> instanceValues = new ArrayList<String>();
+        				//Log.e("numberOFinstances","=="+numberOfInstances);
+        				for (int k=0;k<numberOfInstances;k++){
+        					instanceValues = startingIntent.getStringArrayListExtra(getResources().getString(R.string.instanceValues)+k);
+        					this.currentMultipleFieldValue.addValue(instanceValues);
+        					//Log.e("dodanowartosc","=="+instanceValues.get(1));
+        				}
+
+        				DateField dateField= new DateField(this, nodeDef.getId(), nodeDef.getLabel(Type.INSTANCE, null), null, null, false, false, this.currentMultipleFieldValue);
+        				dateField.setOnClickListener(this);
+        				dateField.setId(nodeDef.getId());
+        				dateField.txtBox.addTextChangedListener(this);
+        				//Log.e("TEXTvalues.size",this.currInstanceNo+"=="+this.currentMultipleFieldValue.getValue(this.currInstanceNo).get(0));
+        				if (this.currentMultipleFieldValue.size()>this.currInstanceNo){
+        					dateField.setValue(this.currInstanceNo, this.currentMultipleFieldValue.getValue(this.currInstanceNo).get(0));	
+        				}			
+        				this.ll.addView(dateField);
+    				} else {
+    					FieldValue fieldValueToBeRestored = this.currentNode.getFieldValue(nodeDef.getId());
+    					//Log.e("fieldValueToBeRestored!=null",this.currentNode.getNodeValues().size()+"=="+(fieldValueToBeRestored!=null));
+    					if (fieldValueToBeRestored!=null){
+    						//Log.e("POWROT","z MULTIPLE FIELD");
+    						SummaryTable summaryTableView = new SummaryTable(this, nodeDef.getId(), nodeDef.getLabel(Type.INSTANCE, null), tableColHeaders, fieldValueToBeRestored.getValues(), this);
+        					summaryTableView.setOnClickListener(this);
+            				summaryTableView.setId(nodeDef.getId());
+            				this.ll.addView(summaryTableView);
+    					} else{
+    						//Log.e("PIERWSZE","OTWARCIE");
+    			    		ArrayList<List<String>> tableValuesLists = new ArrayList<List<String>>();
+    			    		ArrayList<String> valueRow1 = new ArrayList<String>();
+    			    		//row1.add("1");
+    			    		valueRow1.add("");
+    			    		tableValuesLists.add(valueRow1);
+    						SummaryTable summaryTableView = new SummaryTable(this, nodeDef.getId(), nodeDef.getLabel(Type.INSTANCE, null), tableColHeaders, tableValuesLists, this);
+        					summaryTableView.setOnClickListener(this);
+            				summaryTableView.setId(nodeDef.getId());
+            				this.ll.addView(summaryTableView);
+    					}			
+    				}	
     			} else if (nodeDef instanceof RangeAttributeDefinition){
     				if (!nodeDef.isMultiple()||(this.intentType==getResources().getInteger(R.integer.multipleAttributeIntent))){
     					RangeAttributeDefinition rangeAttrDef = (RangeAttributeDefinition)nodeDef;
@@ -863,6 +957,9 @@ public class FormScreen extends BaseActivity implements OnClickListener, TextWat
 					} else if (fieldView instanceof BooleanField){
 						BooleanField tempBooleanField = (BooleanField)fieldView;
 						currValue = tempBooleanField.getValue(this.currInstanceNo, 0);
+					} else if (fieldView instanceof DateField){
+						DateField tempDateField = (DateField)fieldView;
+						currValue = tempDateField.getValue(this.currInstanceNo);
 					}
 					this.currentMultipleFieldValue.getValue(this.currInstanceNo).set(0, currValue);
 					this.currInstanceNo--;
@@ -878,6 +975,9 @@ public class FormScreen extends BaseActivity implements OnClickListener, TextWat
 					} else if (fieldView instanceof BooleanField){
 						BooleanField tempBooleanField = (BooleanField)fieldView;
 						tempBooleanField.setValue(this.currInstanceNo, Boolean.valueOf(this.currentMultipleFieldValue.getValue(this.currInstanceNo).get(0)),!Boolean.valueOf(this.currentMultipleFieldValue.getValue(this.currInstanceNo).get(0)));
+					} else if (fieldView instanceof DateField){
+						DateField tempDateField = (DateField)fieldView;
+						tempDateField.setValue(this.currInstanceNo, this.currentMultipleFieldValue.getValue(this.currInstanceNo).get(0));
 					}
 				}
 			} else if (btn.getId()==getResources().getInteger(R.integer.rightButtonMultipleAttribute)){
@@ -895,7 +995,10 @@ public class FormScreen extends BaseActivity implements OnClickListener, TextWat
 				} else if (fieldView instanceof BooleanField){
 					BooleanField tempBooleanField = (BooleanField)fieldView;
 					currValue = tempBooleanField.getValue(this.currInstanceNo, 0);
-				}
+				} else if (fieldView instanceof DateField){
+					DateField tempDateField = (DateField)fieldView;
+					currValue = tempDateField.getValue(this.currInstanceNo);
+				} 
 				this.currentMultipleFieldValue.getValue(this.currInstanceNo).set(0, currValue);
 				this.currInstanceNo++;
 				if (this.currInstanceNo<this.numberOfInstances){
@@ -910,8 +1013,10 @@ public class FormScreen extends BaseActivity implements OnClickListener, TextWat
 						tempNumberField.setValue(this.currInstanceNo, this.currentMultipleFieldValue.getValue(this.currInstanceNo).get(0));
 					} else if (fieldView instanceof BooleanField){
 						BooleanField tempBooleanField = (BooleanField)fieldView;
-						tempBooleanField.setValue(this.currInstanceNo, Boolean.valueOf(this.currentMultipleFieldValue.getValue(this.currInstanceNo).get(0)),!Boolean.valueOf(this.currentMultipleFieldValue.getValue(this.currInstanceNo).get(0)));
-						
+						tempBooleanField.setValue(this.currInstanceNo, Boolean.valueOf(this.currentMultipleFieldValue.getValue(this.currInstanceNo).get(0)),!Boolean.valueOf(this.currentMultipleFieldValue.getValue(this.currInstanceNo).get(0)));						
+					} else if (fieldView instanceof DateField){
+						DateField tempDateField = (DateField)fieldView;
+						tempDateField.setValue(this.currInstanceNo, this.currentMultipleFieldValue.getValue(this.currInstanceNo).get(0));
 					}
 				} else {//new instance
 					ArrayList<String> newValue = new ArrayList<String>();
@@ -934,6 +1039,9 @@ public class FormScreen extends BaseActivity implements OnClickListener, TextWat
 					} else if (fieldView instanceof BooleanField){
 						BooleanField tempBooleanField = (BooleanField)fieldView;
 						tempBooleanField.setValue(this.currInstanceNo, null/*Boolean.valueOf(this.currentMultipleFieldValue.getValue(this.currInstanceNo).get(0))*/,null/*Boolean.valueOf(this.currentMultipleFieldValue.getValue(this.currInstanceNo).get(0))*/);
+					} else if (fieldView instanceof DateField){
+						DateField tempDateField = (DateField)fieldView;
+						tempDateField.setValue(this.currInstanceNo, this.currentMultipleFieldValue.getValue(this.currInstanceNo).get(0));
 					}
 					this.numberOfInstances++;
 				}
