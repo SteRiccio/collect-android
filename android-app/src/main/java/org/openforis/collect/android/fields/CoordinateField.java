@@ -131,7 +131,7 @@ public class CoordinateField extends InputField {
 		this.txtLongitude.setGravity(alignment);
 	}
 	
-	@Override
+	/*@Override
 	public void scrollLeft(){
     	if (CoordinateField.this.currentInstanceNo>0){
     		ArrayList<String> tempValue = new ArrayList<String>();
@@ -162,7 +162,7 @@ public class CoordinateField extends InputField {
 			CoordinateField.this.txtLatitude.setText(CoordinateField.this.values.get(CoordinateField.this.currentInstanceNo).get(0));
 			CoordinateField.this.txtLatitude.setText(CoordinateField.this.values.get(CoordinateField.this.currentInstanceNo).get(1));
 		}
-	}
+	}*/
 	
 	public ArrayList<String> getValue(int index){
 		return CoordinateField.this.values.get(index);

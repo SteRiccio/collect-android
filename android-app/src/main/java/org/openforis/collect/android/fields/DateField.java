@@ -83,7 +83,7 @@ public class DateField extends InputField {
     	super.getContext().startActivity(datePickerIntent);	
 	}
 	
-	@Override
+	/*@Override
 	public void scrollLeft(){
     	if (DateField.this.currentInstanceNo>0){
     		DateField.this.values.set(DateField.this.currentInstanceNo, DateField.this.txtBox.getText().toString());	        		
@@ -102,7 +102,7 @@ public class DateField extends InputField {
 		if (DateField.this.values.size()>=(DateField.this.currentInstanceNo+1)){
 			DateField.this.txtBox.setText(DateField.this.values.get(DateField.this.currentInstanceNo));
 		}
-	}
+	}*/
 	
 	public String getValue(int index){
 		return DateField.this.values.get(index);

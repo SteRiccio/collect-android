@@ -68,7 +68,7 @@ public class RangeField extends InputField {
 	    });			
 	}
 	
-	@Override
+	/*@Override
 	public void scrollLeft(){
     	if (RangeField.this.currentInstanceNo>0){
     		RangeField.this.values.set(RangeField.this.currentInstanceNo, RangeField.this.txtBox.getText().toString());	        		
@@ -87,7 +87,7 @@ public class RangeField extends InputField {
 		if (RangeField.this.values.size()>=(RangeField.this.currentInstanceNo+1)){
 			RangeField.this.txtBox.setText(RangeField.this.values.get(RangeField.this.currentInstanceNo));
 		}
-	}
+	}*/
 	
 	@Override
 	public int getInstancesNo(){

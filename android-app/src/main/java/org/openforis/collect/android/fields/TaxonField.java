@@ -145,7 +145,7 @@ public class TaxonField extends Field {
 		this.txtBox.setKeyListener(keyListener);
 	}
 
-	@Override
+	/*@Override
 	public void scrollLeft(){
     	if (TaxonField.this.currentInstanceNo>0){
     		ArrayList<String> tempValue = new ArrayList<String>();
@@ -176,7 +176,7 @@ public class TaxonField extends Field {
 			TaxonField.this.spinner.setSelection(Integer.valueOf(TaxonField.this.values.get(TaxonField.this.currentInstanceNo).get(0)));
 		}			
 		TaxonField.this.currentInstanceNo++;
-	}
+	}*/
 	
 	public String getHint()
 	{

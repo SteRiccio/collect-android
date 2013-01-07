@@ -74,7 +74,7 @@ public class Separator extends UIElement {
 		this.separator.setBackgroundColor(color);
 	}
 	
-	@Override
+	/*@Override
 	public void scrollLeft(){
 		Log.e("scrollLEFT","=="+this.currentInstanceNo);
     	if (Separator.this.currentInstanceNo>0){
@@ -100,7 +100,7 @@ public class Separator extends UIElement {
 		}
 		Separator.this.currentInstanceNo++;
 		Log.e("scrolledRIGHT","=="+this.currentInstanceNo);
-	}
+	}*/
 	
 	public EntityDefinition getEntityDefinition(){
 		return this.entity;

@@ -84,7 +84,7 @@ public class TimeField extends InputField implements TextWatcher {
     	super.getContext().startActivity(timePickerIntent);	
 	}	
 	
-	@Override
+	/*@Override
 	public void scrollLeft(){
     	if (TimeField.this.currentInstanceNo>0){
     		TimeField.this.values.set(TimeField.this.currentInstanceNo, TimeField.this.txtBox.getText().toString());	        		
@@ -103,7 +103,7 @@ public class TimeField extends InputField implements TextWatcher {
 		if (TimeField.this.values.size()>=(TimeField.this.currentInstanceNo+1)){
 			TimeField.this.txtBox.setText(TimeField.this.values.get(TimeField.this.currentInstanceNo));
 		}
-	}
+	}*/
 
 	public String getValue(int index){
 		return TimeField.this.values.get(index);

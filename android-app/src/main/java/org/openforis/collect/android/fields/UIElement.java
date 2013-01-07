@@ -59,13 +59,13 @@ public class UIElement extends LinearLayout{
 		}*/
 	}
 	
-	public void scrollLeft(){
+	/*public void scrollLeft(){
 		
 	}
 	
 	public void scrollRight(){
 		
-	}
+	}*/
 	
 	public int getElementId(){
 		return this.elemId;
