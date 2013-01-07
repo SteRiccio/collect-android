@@ -15,6 +15,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.text.method.QwertyKeyListener;
 import android.text.method.TextKeyListener;
+import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
@@ -79,7 +80,9 @@ public class MemoField extends InputField {
 			    	else {
 			    		input.setKeyListener(null);
 			    		dialog.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
-			    	}	            	
+			    	}
+			    	//Log.e("CHANGING","CURRENT FIELDVALUE"+TextField.this.getElementId());
+			    	FormScreen.currentFieldValue = MemoField.this.value;
 	            }
 	        }
 	    });
@@ -91,12 +94,13 @@ public class MemoField extends InputField {
 		this.addView(this.txtBox);
 		//this.addView(this.scrollRight);
 		
-		this.txtBox.setOnFocusChangeListener(new OnFocusChangeListener() {
+		/*this.txtBox.setOnFocusChangeListener(new OnFocusChangeListener() {
 		    @Override
 		    public void onFocusChange(View v, boolean hasFocus) {
 		    	// Get current settings about software keyboard for text fields
 		    	if(hasFocus){
 			    	if(this.getClass().toString().contains("MemoField")){
+			    		
 				    	Map<String, ?> settings = ApplicationManager.appPreferences.getAll();
 				    	Boolean valueForText = (Boolean)settings.get(getResources().getString(R.string.showSoftKeyboardOnText));
 				    	// Switch on or off Software keyboard depend of settings
@@ -111,7 +115,7 @@ public class MemoField extends InputField {
 			    	}
 		    	}
 		    }
-	    });	
+	    });	*/
 	}
 	
 	/*@Override
