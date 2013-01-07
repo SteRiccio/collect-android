@@ -48,7 +48,6 @@ public class MemoField extends InputField {
 	        @Override
 	        public void onFocusChange(View v, boolean hasFocus) {
 	            if (hasFocus) {
-	            	//First check software keyboard settings
 			    	Map<String, ?> settings = ApplicationManager.appPreferences.getAll();
 			    	Boolean valueForText = (Boolean)settings.get(getResources().getString(R.string.showSoftKeyboardOnText));
 	            	
@@ -71,7 +70,7 @@ public class MemoField extends InputField {
 	                        //do nothing.
 	                    }
 	                }).show();
-			    	// Switch on or off Software keyboard depend of settings
+
 			    	if(valueForText){
 			    		input.setKeyListener(new QwertyKeyListener(TextKeyListener.Capitalize.NONE, false));
 			    		dialog.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE);
@@ -80,7 +79,7 @@ public class MemoField extends InputField {
 			    		input.setKeyListener(null);
 			    		dialog.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
 			    	}
-			    	//Log.e("CHANGING","CURRENT FIELDVALUE"+TextField.this.getElementId());
+			    	
 			    	FormScreen.currentFieldValue = MemoField.this.value;
 	            }
 	        }
@@ -92,29 +91,6 @@ public class MemoField extends InputField {
 		this.addView(this.label);
 		this.addView(this.txtBox);
 		//this.addView(this.scrollRight);
-		
-		/*this.txtBox.setOnFocusChangeListener(new OnFocusChangeListener() {
-		    @Override
-		    public void onFocusChange(View v, boolean hasFocus) {
-		    	// Get current settings about software keyboard for text fields
-		    	if(hasFocus){
-			    	if(this.getClass().toString().contains("MemoField")){
-			    		
-				    	Map<String, ?> settings = ApplicationManager.appPreferences.getAll();
-				    	Boolean valueForText = (Boolean)settings.get(getResources().getString(R.string.showSoftKeyboardOnText));
-				    	// Switch on or off Software keyboard depend of settings
-				    	if(valueForText){
-				    		MemoField.this.setKeyboardType(new QwertyKeyListener(TextKeyListener.Capitalize.NONE, false));
-				        }
-				    	else {
-				    		MemoField.this.setKeyboardType(null);
-				    	}
-				    	//Log.e("CHANGING","CURRENT FIELDVALUE"+TextField.this.getElementId());
-				    	FormScreen.currentFieldValue = MemoField.this.value;
-			    	}
-		    	}
-		    }
-	    });	*/
 	}
 	
 	/*@Override
