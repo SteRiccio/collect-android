@@ -15,7 +15,6 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.text.method.QwertyKeyListener;
 import android.text.method.TextKeyListener;
-import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
