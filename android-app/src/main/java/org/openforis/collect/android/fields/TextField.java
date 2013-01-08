@@ -85,7 +85,6 @@ public class TextField extends InputField {
 				    	else {
 				    		TextField.this.setKeyboardType(null);
 				    	}
-				    	//Log.e("CHANGING","CURRENT FIELDVALUE"+TextField.this.getElementId());
 				    	FormScreen.currentFieldValue = TextField.this.value;
 			    	}
 		    	}
