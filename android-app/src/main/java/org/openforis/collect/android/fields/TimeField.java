@@ -14,7 +14,6 @@ import org.openforis.collect.android.messages.ToastMessage;
 import android.content.Context;
 import android.content.Intent;
 import android.text.TextWatcher;
-import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
@@ -70,7 +69,6 @@ public class TimeField extends InputField implements TextWatcher {
 				    	final Random myRandom = new Random();
 				    	TimeField.this.txtBox.setId(myRandom.nextInt());
 				    	//Show Time picker
-				    	Log.e("TIMEPicker","=="+TimeField.this.elemId);
 				    	showTimePickerDialog(TimeField.this.elemId);				    	
 			    	}
 		    	}
@@ -125,7 +123,6 @@ public class TimeField extends InputField implements TextWatcher {
 	public void setValue(int position, String value)
 	{
 		this.txtBox.setText(value);
-		Log.e("TimeValkuye","=="+value);
 		ArrayList<String> valueToAdd = new ArrayList<String>();
 		valueToAdd.add(value);
 		TimeField.this.value.setValue(position, valueToAdd);

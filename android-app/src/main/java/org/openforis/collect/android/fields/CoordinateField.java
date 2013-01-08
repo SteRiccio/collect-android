@@ -3,16 +3,16 @@ package org.openforis.collect.android.fields;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 import org.openforis.collect.android.R;
-import org.openforis.collect.android.management.ApplicationManager;
+import org.openforis.collect.android.data.FieldValue;
 import org.openforis.collect.android.messages.ToastMessage;
+import org.openforis.collect.android.screens.FormScreen;
 
 import android.content.Context;
 import android.text.Editable;
+import android.text.TextWatcher;
 import android.text.method.KeyListener;
-import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
@@ -23,15 +23,18 @@ public class CoordinateField extends InputField {
 	private EditText txtLatitude;
 	private EditText txtLongitude;
 	
+	private static FormScreen form;
 
 	private List<ArrayList<String>> values;
 	
 	public CoordinateField(Context context, int id, String labelText,
 			String initialTextLat, String initialTextLon,
 			String hintTextLat, String hintTextLon,
-			boolean isMultiple, boolean isRequired) {		
+			boolean isMultiple, boolean isRequired, FieldValue fieldValue) {		
 		super(context, id, isMultiple, isRequired);
 
+		this.form = (FormScreen)context;
+		
 		this.values = new ArrayList<ArrayList<String>>();
 		ArrayList<String> initialValue = new ArrayList<String>();
 		initialValue.add(initialTextLat);
@@ -69,6 +72,8 @@ public class CoordinateField extends InputField {
 			@Override
 			public void onFocusChange(View v, boolean hasFocus) {
 				Log.i(getResources().getString(R.string.app_name), "Lattitude field got focus");				
+		    	//Log.e("currentCOORDINATE","=="+CoordinateField.this.getElementId());
+		    	FormScreen.currentFieldValue = CoordinateField.this.value;
 			}
 		});
 //		this.setKeyboardType(new DigitsKeyListener(true,true));
@@ -85,9 +90,11 @@ public class CoordinateField extends InputField {
 			@Override
 			public void onFocusChange(View v, boolean hasFocus) {
 				Log.i(getResources().getString(R.string.app_name), "Longitude field got focus");
+		    	//Log.e("currentCOORDINATE","=="+CoordinateField.this.getElementId());
+		    	FormScreen.currentFieldValue = CoordinateField.this.value;
 			}
 		});		
-		// When NumberField got focus
+/*		// When NumberField got focus
 		this.txtBox.setOnFocusChangeListener(new OnFocusChangeListener() {
 		    @Override
 		    public void onFocusChange(View v, boolean hasFocus) {
@@ -104,10 +111,12 @@ public class CoordinateField extends InputField {
 			    	}
 		    	}
 		    }
-	    });			
+	    });*/
+		
+		this.value = fieldValue;
 	}
 	
-	//@Override
+	/*
 	public String getValue()
 	{
 		return this.txtLatitude.getText().toString()+","+this.txtLongitude.getText().toString();
@@ -117,6 +126,20 @@ public class CoordinateField extends InputField {
 	{
 		this.txtLatitude.setText(latitude);
 		this.txtLongitude.setText(longitude);
+	}*/
+	public List<String> getValue(int index){
+		//return TextField.this.values.get(index);
+		return CoordinateField.this.value.getValue(index);
+	}
+	
+	public void setValue(int position, String latitude, String longitude)
+	{
+		this.txtLatitude.setText(latitude);
+		this.txtLongitude.setText(longitude);
+		ArrayList<String> valueToAdd = new ArrayList<String>();
+		valueToAdd.add(latitude);
+		valueToAdd.add(longitude);
+		CoordinateField.this.value.setValue(position, valueToAdd);
 	}
 	
 	@Override
@@ -164,16 +187,22 @@ public class CoordinateField extends InputField {
 		}
 	}*/
 	
-	public ArrayList<String> getValue(int index){
+	/*public ArrayList<String> getValue(int index){
 		return CoordinateField.this.values.get(index);
-	}
+	}*/
 	
 	@Override
 	public void afterTextChanged(Editable s) {
     	ArrayList<String> tempValue = new ArrayList<String>();
 		tempValue.add(CoordinateField.this.txtLatitude.getText().toString());
 		tempValue.add(CoordinateField.this.txtLongitude.getText().toString());
-		CoordinateField.this.values.set(CoordinateField.this.currentInstanceNo, tempValue);   
+		CoordinateField.this.value.setValue(CoordinateField.form.currInstanceNo, tempValue);
+		FormScreen.currentFieldValue = CoordinateField.this.value;
+		FormScreen.currentFieldValue.setValue(CoordinateField.form.currInstanceNo, tempValue);
+		if (CoordinateField.form.currentNode!=null){
+			CoordinateField.form.currentNode.addFieldValue(FormScreen.currentFieldValue);
+		}
+		//CoordinateField.this.values.set(CoordinateField.this.currentInstanceNo, tempValue);   
 	}
 	
 	@Override
@@ -193,5 +222,11 @@ public class CoordinateField extends InputField {
 	
 	public List<ArrayList<String>> getValues(){
 		return this.values;
+	}
+	
+	@Override
+	public void addTextChangedListener(TextWatcher textWatcher) {
+		this.txtLatitude.addTextChangedListener(textWatcher);
+		this.txtLongitude.addTextChangedListener(textWatcher);
 	}
 }

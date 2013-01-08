@@ -14,7 +14,6 @@ import org.openforis.collect.android.screens.FormScreen;
 
 import android.content.Context;
 import android.content.Intent;
-import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
@@ -69,7 +68,6 @@ public class DateField extends InputField {
 				    	final Random myRandom = new Random();
 				    	DateField.this.txtBox.setId(myRandom.nextInt());
 				    	//Show Date picker
-				    	Log.e("DATEPicker","=="+DateField.this.elemId);
 				    	showDatePickerDialog(DateField.this.elemId);
 				    	FormScreen.currentFieldValue = DateField.this.value;
 			    	}
