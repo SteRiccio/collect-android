@@ -9,7 +9,6 @@ import org.openforis.collect.android.messages.ToastMessage;
 import org.openforis.collect.android.screens.FormScreen;
 
 import android.content.Context;
-import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
@@ -158,7 +157,6 @@ public class CodeField extends Field {
 	public void setValue(int position, int positionOnList)
 	{
 		this.spinner.setSelection(positionOnList);
-		Log.e("setVALUE"+this.getElementId(),position+"=="+positionOnList);
 		ArrayList<String> valueToAdd = new ArrayList<String>();	
 		valueToAdd.add(String.valueOf(positionOnList));
 		CodeField.this.value.setValue(position, valueToAdd);
