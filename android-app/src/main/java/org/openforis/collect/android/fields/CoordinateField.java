@@ -13,6 +13,7 @@ import android.content.Context;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.text.method.KeyListener;
+import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
@@ -33,7 +34,7 @@ public class CoordinateField extends InputField {
 			boolean isMultiple, boolean isRequired, FieldValue fieldValue) {		
 		super(context, id, isMultiple, isRequired);
 
-		this.form = (FormScreen)context;
+		CoordinateField.form = (FormScreen)context;
 		
 		this.values = new ArrayList<ArrayList<String>>();
 		ArrayList<String> initialValue = new ArrayList<String>();

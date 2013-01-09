@@ -26,6 +26,7 @@ import org.openforis.collect.android.management.BaseActivity;
 import org.openforis.collect.android.misc.RunnableHandler;
 import org.openforis.idm.metamodel.BooleanAttributeDefinition;
 import org.openforis.idm.metamodel.CodeAttributeDefinition;
+import org.openforis.idm.metamodel.CodeListItem;
 import org.openforis.idm.metamodel.CoordinateAttributeDefinition;
 import org.openforis.idm.metamodel.DateAttributeDefinition;
 import org.openforis.idm.metamodel.EntityDefinition;
@@ -37,7 +38,6 @@ import org.openforis.idm.metamodel.TaxonAttributeDefinition;
 import org.openforis.idm.metamodel.TextAttributeDefinition;
 import org.openforis.idm.metamodel.TimeAttributeDefinition;
 
-import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
@@ -558,7 +558,7 @@ public class FormScreen extends BaseActivity implements OnClickListener, TextWat
     					}			
     				}	
     			} else if (nodeDef instanceof CodeAttributeDefinition){
-    				if (!nodeDef.isMultiple()||(this.intentType==getResources().getInteger(R.integer.multipleAttributeIntent))){
+    				/*if (!nodeDef.isMultiple()||(this.intentType==getResources().getInteger(R.integer.multipleAttributeIntent))){
     					CodeAttributeDefinition codeAttrDef = (CodeAttributeDefinition)nodeDef;
         				CodeField codeField= new CodeField(this, nodeDef.getId(), nodeDef.getLabel(Type.INSTANCE, null), "select code", detail2, detail2, null, true, codeAttrDef.isMultiple(), false);
         				codeField.setOnClickListener(this);
@@ -569,6 +569,98 @@ public class FormScreen extends BaseActivity implements OnClickListener, TextWat
     					summaryTableView.setOnClickListener(this);
         				summaryTableView.setId(nodeDef.getId());
         				this.ll.addView(summaryTableView);
+    				}*/
+    				CodeAttributeDefinition codeAttrDef = (CodeAttributeDefinition)nodeDef;
+    				ArrayList<String> options = new ArrayList<String>();
+    				ArrayList<String> codes = new ArrayList<String>();
+    				
+    				List<CodeListItem> codeListItemsList = codeAttrDef.getList().getItems();
+    				for (CodeListItem codeListItem : codeListItemsList){
+    					codes.add(codeListItem.getCode());
+    					options.add(codeListItem.getLabel(null));
+    				}
+    				
+    				if (!nodeDef.isMultiple()){
+        				int numberOfInstances = startingIntent.getIntExtra(getResources().getString(R.string.numberOfInstances), -1);
+//        				Log.e("ILOSC INSTANCJI","=="+numberOfInstances);
+        				FieldValue tempFieldValue = new FieldValue(nodeDef.getId(),getFormScreenId(),null);
+        				if (numberOfInstances!=-1){
+        					ArrayList<String> instanceValues = new ArrayList<String>();
+            				//Log.e("numberOFinstances","=="+numberOfInstances);
+            				//for (int k=0;k<numberOfInstances;k++){
+        					instanceValues = startingIntent.getStringArrayListExtra(getResources().getString(R.string.instanceValues)+0);
+        					tempFieldValue.addValue(instanceValues);
+            				//Log.e("dodanowartosc","=="+instanceValues.get(1));
+            				//}	
+        				}
+        				else {
+        					ArrayList<String> instanceValues = new ArrayList<String>();
+        					instanceValues.add("0");
+        					tempFieldValue.addValue(instanceValues);
+        				}
+        				
+        				CodeField codeField= new CodeField(this, nodeDef.getId(), nodeDef.getLabel(Type.INSTANCE, null), nodeDef.getName(), codes, options, null, true, nodeDef.isMultiple(), false, tempFieldValue);
+        				codeField.setOnClickListener(this);
+        				codeField.setId(nodeDef.getId());
+        				//textField.txtBox.addTextChangedListener(this);
+        				codeField.setValue(0, Integer.valueOf(tempFieldValue.getValue(0).get(0)));
+        				FormScreen.currentFieldValue = this.currentNode.getFieldValue(nodeDef.getId());
+        				//Log.e("FormScreen.currentFieldValue==null",nodeDef.getId()+"=="+(FormScreen.currentFieldValue==null));
+        				if (FormScreen.currentFieldValue==null){
+        					ArrayList<String> initialValue = new ArrayList<String>();
+        					initialValue.add(codeField.getValue(0));
+        					FormScreen.currentFieldValue = new FieldValue(nodeDef.getId(),getFormScreenId(),null);
+        					FormScreen.currentFieldValue.addValue(initialValue);
+        					this.currentNode.addFieldValue(FormScreen.currentFieldValue);        		
+        				} else {
+        					//Log.e("wczytanaWARTOSC",FormScreen.currentFieldValue.getId()+"=="+FormScreen.currentFieldValue.getValue(0).get(0));
+        					codeField.setValue(0, Integer.valueOf(FormScreen.currentFieldValue.getValue(0).get(0)));    
+        				}
+        				this.ll.addView(codeField);
+        				//this.currentNode.addFieldValue(tempFieldValue);
+        	    		//Log.e("iloscPOLzWARTOSCIA","=="+this.currentNode.getFieldsNo());       				
+    				} else if (this.intentType==getResources().getInteger(R.integer.multipleAttributeIntent)){    					
+        				int numberOfInstances = startingIntent.getIntExtra(getResources().getString(R.string.numberOfInstances), -1);
+        				this.currentMultipleFieldValue = new FieldValue(nodeDef.getId(), getFormScreenId(),null);
+        				ArrayList<String> instanceValues = new ArrayList<String>();
+        				//Log.e("numberOFinstances","=="+numberOfInstances);
+        				for (int k=0;k<numberOfInstances;k++){
+        					instanceValues = startingIntent.getStringArrayListExtra(getResources().getString(R.string.instanceValues)+k);
+        					this.currentMultipleFieldValue.addValue(instanceValues);
+        					//Log.e("dodanowartosc","=="+instanceValues.get(1));
+        				}
+
+        				CodeField codeField= new CodeField(this, nodeDef.getId(), nodeDef.getLabel(Type.INSTANCE, null), nodeDef.getName(), codes, options, null, true, nodeDef.isMultiple(), false, this.currentMultipleFieldValue);
+        				codeField.setOnClickListener(this);
+        				codeField.setId(nodeDef.getId());
+        				//booleanField.txtBox.addTextChangedListener(this);
+        				//add onclick listener for multiple field
+        				//Log.e("TEXTvalues.size",this.currInstanceNo+"=="+this.currentMultipleFieldValue.getValue(this.currInstanceNo).get(0));
+        				if (this.currentMultipleFieldValue.size()>this.currInstanceNo){        					
+    						codeField.setValue(this.currInstanceNo, Integer.valueOf(this.currentMultipleFieldValue.getValue(this.currInstanceNo).get(0)));	    						
+        				}			
+        				this.ll.addView(codeField);
+    				} else {
+    					FieldValue fieldValueToBeRestored = this.currentNode.getFieldValue(nodeDef.getId());
+    					//Log.e("fieldValueToBeRestored!=null",this.currentNode.getNodeValues().size()+"=="+(fieldValueToBeRestored!=null));
+    					if (fieldValueToBeRestored!=null){
+    						//Log.e("POWROT","z MULTIPLE FIELD");
+    						SummaryTable summaryTableView = new SummaryTable(this, nodeDef.getId(), nodeDef.getLabel(Type.INSTANCE, null), tableColHeaders, fieldValueToBeRestored.getValues(), this);
+        					summaryTableView.setOnClickListener(this);
+            				summaryTableView.setId(nodeDef.getId());
+            				this.ll.addView(summaryTableView);
+    					} else{
+    						//Log.e("PIERWSZE","OTWARCIE");
+    			    		ArrayList<List<String>> tableValuesLists = new ArrayList<List<String>>();
+    			    		ArrayList<String> valueRow1 = new ArrayList<String>();
+    			    		//row1.add("1");
+    			    		valueRow1.add("0");
+    			    		tableValuesLists.add(valueRow1);
+    						SummaryTable summaryTableView = new SummaryTable(this, nodeDef.getId(), nodeDef.getLabel(Type.INSTANCE, null), tableColHeaders, tableValuesLists, this);
+        					summaryTableView.setOnClickListener(this);
+            				summaryTableView.setId(nodeDef.getId());
+            				this.ll.addView(summaryTableView);
+    					}			
     				}
     			} else if (nodeDef instanceof BooleanAttributeDefinition){
     				/*if (!nodeDef.isMultiple()||(this.intentType==getResources().getInteger(R.integer.multipleAttributeIntent))){
@@ -762,7 +854,7 @@ public class FormScreen extends BaseActivity implements OnClickListener, TextWat
         					FormScreen.currentFieldValue.addValue(initialValue);
         					this.currentNode.addFieldValue(FormScreen.currentFieldValue);        		
         				} else {
-        					Log.e("wczytanaWARTOSC",FormScreen.currentFieldValue.getValue(0).get(0)+"=="+FormScreen.currentFieldValue.getValue(0).get(1));
+        					//Log.e("wczytanaWARTOSC",FormScreen.currentFieldValue.getValue(0).get(0)+"=="+FormScreen.currentFieldValue.getValue(0).get(1));
         					coordinateField.setValue(0, FormScreen.currentFieldValue.getValue(0).get(0), FormScreen.currentFieldValue.getValue(0).get(1));
         				}
         				/*coordinateField.addTextChangedListener(new TextWatcher(){
@@ -1155,8 +1247,15 @@ public class FormScreen extends BaseActivity implements OnClickListener, TextWat
 					} else if (fieldView instanceof TimeField){
 						TimeField tempTimeField = (TimeField)fieldView;
 						currValue = tempTimeField.getValue(this.currInstanceNo);
+					} else if (fieldView instanceof CoordinateField){
+						CoordinateField tempCoordinateField = (CoordinateField)fieldView;
+						List<String> currCoordinateValue = tempCoordinateField.getValue(this.currInstanceNo);
+						this.currentMultipleFieldValue.getValue(this.currInstanceNo).set(0, currCoordinateValue.get(0));
+						this.currentMultipleFieldValue.getValue(this.currInstanceNo).set(1, currCoordinateValue.get(1));
 					}
-					this.currentMultipleFieldValue.getValue(this.currInstanceNo).set(0, currValue);
+					if (!(fieldView instanceof CoordinateField)){
+						this.currentMultipleFieldValue.getValue(this.currInstanceNo).set(0, currValue);	
+					}					
 					this.currInstanceNo--;
 					if (fieldView instanceof TextField){
 						TextField tempTextField = (TextField)fieldView;
@@ -1176,6 +1275,9 @@ public class FormScreen extends BaseActivity implements OnClickListener, TextWat
 					} else if (fieldView instanceof TimeField){
 						TimeField tempTimeField = (TimeField)fieldView;
 						tempTimeField.setValue(this.currInstanceNo, this.currentMultipleFieldValue.getValue(this.currInstanceNo).get(0));
+					} else if (fieldView instanceof CoordinateField){
+						CoordinateField tempCoordinateField = (CoordinateField)fieldView;
+						tempCoordinateField.setValue(this.currInstanceNo, this.currentMultipleFieldValue.getValue(this.currInstanceNo).get(0),this.currentMultipleFieldValue.getValue(this.currInstanceNo).get(1));
 					}
 				}
 			} else if (btn.getId()==getResources().getInteger(R.integer.rightButtonMultipleAttribute)){
@@ -1199,8 +1301,15 @@ public class FormScreen extends BaseActivity implements OnClickListener, TextWat
 				} else if (fieldView instanceof TimeField){
 					TimeField tempTimeField = (TimeField)fieldView;
 					currValue = tempTimeField.getValue(this.currInstanceNo);
-				} 
-				this.currentMultipleFieldValue.getValue(this.currInstanceNo).set(0, currValue);
+				} else if (fieldView instanceof CoordinateField){
+					CoordinateField tempCoordinateField = (CoordinateField)fieldView;
+					List<String> currCoordinateValue = tempCoordinateField.getValue(this.currInstanceNo);
+					this.currentMultipleFieldValue.getValue(this.currInstanceNo).set(0, currCoordinateValue.get(0));
+					this.currentMultipleFieldValue.getValue(this.currInstanceNo).set(1, currCoordinateValue.get(1));
+				}
+				if (!(fieldView instanceof CoordinateField)){
+					this.currentMultipleFieldValue.getValue(this.currInstanceNo).set(0, currValue);	
+				}				
 				this.currInstanceNo++;
 				if (this.currInstanceNo<this.numberOfInstances){
 					if (fieldView instanceof TextField){
@@ -1221,6 +1330,9 @@ public class FormScreen extends BaseActivity implements OnClickListener, TextWat
 					} else if (fieldView instanceof TimeField){
 						TimeField tempTimeField = (TimeField)fieldView;
 						tempTimeField.setValue(this.currInstanceNo, this.currentMultipleFieldValue.getValue(this.currInstanceNo).get(0));
+					} else if (fieldView instanceof CoordinateField){
+						CoordinateField tempCoordinateField = (CoordinateField)fieldView;
+						tempCoordinateField.setValue(this.currInstanceNo, this.currentMultipleFieldValue.getValue(this.currInstanceNo).get(0), this.currentMultipleFieldValue.getValue(this.currInstanceNo).get(1));
 					}
 				} else {//new instance
 					ArrayList<String> newValue = new ArrayList<String>();
@@ -1228,6 +1340,9 @@ public class FormScreen extends BaseActivity implements OnClickListener, TextWat
 					if (fieldView instanceof InputField){
 						newValue.add("");
 					} else if (fieldView instanceof BooleanField) {
+						newValue.add("");
+					} else if (fieldView instanceof BooleanField) {
+						newValue.add("");
 						newValue.add("");
 					}					
 					this.currentMultipleFieldValue.addValue(this.currInstanceNo,newValue);
@@ -1249,6 +1364,9 @@ public class FormScreen extends BaseActivity implements OnClickListener, TextWat
 					} else if (fieldView instanceof TimeField){
 						TimeField tempTimeField = (TimeField)fieldView;
 						tempTimeField.setValue(this.currInstanceNo, this.currentMultipleFieldValue.getValue(this.currInstanceNo).get(0));
+					} else if (fieldView instanceof CoordinateField){
+						CoordinateField tempCoordinateField = (CoordinateField)fieldView;
+						tempCoordinateField.setValue(this.currInstanceNo, this.currentMultipleFieldValue.getValue(this.currInstanceNo).get(0), this.currentMultipleFieldValue.getValue(this.currInstanceNo).get(1));
 					}
 					this.numberOfInstances++;
 				}

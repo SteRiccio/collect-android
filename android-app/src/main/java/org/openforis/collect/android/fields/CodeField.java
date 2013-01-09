@@ -4,7 +4,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.openforis.collect.android.R;
+import org.openforis.collect.android.data.FieldValue;
 import org.openforis.collect.android.messages.ToastMessage;
+import org.openforis.collect.android.screens.FormScreen;
 
 import android.content.Context;
 import android.util.Log;
@@ -14,7 +16,6 @@ import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemSelectedListener;
 import android.widget.ArrayAdapter;
 import android.widget.Spinner;
-import android.widget.TextView;
 import android.widget.Toast;
 
 
@@ -30,13 +31,17 @@ public class CodeField extends Field {
 	
 	private List<Integer> values;
 	
+	private static FormScreen form;
+	
 	public CodeField(Context context, int id, String labelText, String promptText, 
 			ArrayList<String> codes, ArrayList<String> options, 
 			String selectedItem, boolean isSearchable,
-			boolean isMultiple, boolean isRequired) {
+			boolean isMultiple, boolean isRequired, FieldValue fieldValue) {
 		super(context, id, isMultiple, isRequired);
 		this.searchable = isSearchable;
 
+		CodeField.form = (FormScreen)context;
+		
 		this.label.setText(labelText);
 		this.label.setLayoutParams(new LayoutParams(0, ViewGroup.LayoutParams.WRAP_CONTENT, (float) 1));
 		this.label.setOnLongClickListener(new OnLongClickListener() {
@@ -68,7 +73,16 @@ public class CodeField extends Field {
 		this.spinner.setOnItemSelectedListener(new OnItemSelectedListener() {
 		    @Override
 		    public void onItemSelected(AdapterView<?> parentView, View selectedItemView, int position, long id) {
-		    	CodeField.this.values.set(CodeField.this.currentInstanceNo, CodeField.this.spinner.getSelectedItemPosition());
+		    	//CodeField.this.values.set(CodeField.this.currentInstanceNo, CodeField.this.spinner.getSelectedItemPosition());
+		    	ArrayList<String> valueToAdd = new ArrayList<String>();
+		    	valueToAdd.add(String.valueOf(CodeField.this.spinner.getSelectedItemPosition()));
+		    	//CodeField.this.value.setValue(CodeField.this.currentInstanceNo, valueToAdd);
+		    	CodeField.this.setValue(CodeField.this.currentInstanceNo, position);
+				FormScreen.currentFieldValue = CodeField.this.value;
+				FormScreen.currentFieldValue.setValue(CodeField.form.currInstanceNo, valueToAdd);
+				if (CodeField.form.currentNode!=null){
+					CodeField.form.currentNode.addFieldValue(FormScreen.currentFieldValue);
+				}
 		    }
 
 		    @Override
@@ -99,9 +113,11 @@ public class CodeField extends Field {
 		this.addView(this.label);
 		this.addView(this.spinner);
 		//this.addView(this.scrollRight);
+		
+		this.value = fieldValue;
 	}
 	
-	public String getValue()
+	/*public String getValue()
 	{
 		return String.valueOf(this.codes.get((int)this.spinner.getSelectedItemId()));
 	}
@@ -132,7 +148,43 @@ public class CodeField extends Field {
 	public void setEmptyValue()
 	{
 		this.spinner.setSelection(0);
+	}*/
+	
+	public String getValue(int index){
+		//return TextField.this.values.get(index);
+		return CodeField.this.value.getValue(index).get(0);
 	}
+	
+	public void setValue(int position, int positionOnList)
+	{
+		this.spinner.setSelection(positionOnList);
+		Log.e("setVALUE"+this.getElementId(),position+"=="+positionOnList);
+		ArrayList<String> valueToAdd = new ArrayList<String>();	
+		valueToAdd.add(String.valueOf(positionOnList));
+		CodeField.this.value.setValue(position, valueToAdd);
+	}
+	/*public void setValue(int position, String code)
+	{
+		Log.e("setVALUE"+this.getElementId(),position+"=="+code);
+		ArrayList<String> valueToAdd = new ArrayList<String>();	
+		boolean isFound = false;
+		int counter = 0;
+		while (!isFound&&counter<this.codes.size()){
+			if (this.codes.get(counter).equals(code)){
+				isFound = true;
+			}
+			counter++;
+		}
+		if (isFound){
+			this.spinner.setSelection(counter-1);
+			valueToAdd.add(code);
+		}			
+		else{
+			this.spinner.setSelection(0);
+			valueToAdd.add("");
+		}
+		CodeField.this.value.setValue(position, valueToAdd);
+	}*/
 	
 	/*@Override
 	public void scrollLeft(){
@@ -157,13 +209,13 @@ public class CodeField extends Field {
 		}		
 	}*/
 	
-	public String getValue(int index){
+	/*public String getValue(int index){
 		//return CodeField.this.values.get(index);
 		if (this.codes.size()>0)
 			return this.codes.get(index);
 		else
 			return null;
-	}
+	}*/
 	
 	@Override
 	public int getInstancesNo(){
