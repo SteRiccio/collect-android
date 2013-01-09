@@ -1252,6 +1252,9 @@ public class FormScreen extends BaseActivity implements OnClickListener, TextWat
 						List<String> currCoordinateValue = tempCoordinateField.getValue(this.currInstanceNo);
 						this.currentMultipleFieldValue.getValue(this.currInstanceNo).set(0, currCoordinateValue.get(0));
 						this.currentMultipleFieldValue.getValue(this.currInstanceNo).set(1, currCoordinateValue.get(1));
+					} else if (fieldView instanceof CodeField){
+						CodeField tempCodeField = (CodeField)fieldView;
+						currValue = tempCodeField.getValue(this.currInstanceNo);
 					}
 					if (!(fieldView instanceof CoordinateField)){
 						this.currentMultipleFieldValue.getValue(this.currInstanceNo).set(0, currValue);	
@@ -1278,6 +1281,9 @@ public class FormScreen extends BaseActivity implements OnClickListener, TextWat
 					} else if (fieldView instanceof CoordinateField){
 						CoordinateField tempCoordinateField = (CoordinateField)fieldView;
 						tempCoordinateField.setValue(this.currInstanceNo, this.currentMultipleFieldValue.getValue(this.currInstanceNo).get(0),this.currentMultipleFieldValue.getValue(this.currInstanceNo).get(1));
+					} else if (fieldView instanceof CodeField){
+						CodeField tempCodeField = (CodeField)fieldView;
+						tempCodeField.setValue(this.currInstanceNo, Integer.valueOf(this.currentMultipleFieldValue.getValue(this.currInstanceNo).get(0)));
 					}
 				}
 			} else if (btn.getId()==getResources().getInteger(R.integer.rightButtonMultipleAttribute)){
@@ -1306,6 +1312,9 @@ public class FormScreen extends BaseActivity implements OnClickListener, TextWat
 					List<String> currCoordinateValue = tempCoordinateField.getValue(this.currInstanceNo);
 					this.currentMultipleFieldValue.getValue(this.currInstanceNo).set(0, currCoordinateValue.get(0));
 					this.currentMultipleFieldValue.getValue(this.currInstanceNo).set(1, currCoordinateValue.get(1));
+				} else if (fieldView instanceof CodeField){
+					CodeField tempCodeField = (CodeField)fieldView;
+					currValue = tempCodeField.getValue(this.currInstanceNo);
 				}
 				if (!(fieldView instanceof CoordinateField)){
 					this.currentMultipleFieldValue.getValue(this.currInstanceNo).set(0, currValue);	
@@ -1333,6 +1342,9 @@ public class FormScreen extends BaseActivity implements OnClickListener, TextWat
 					} else if (fieldView instanceof CoordinateField){
 						CoordinateField tempCoordinateField = (CoordinateField)fieldView;
 						tempCoordinateField.setValue(this.currInstanceNo, this.currentMultipleFieldValue.getValue(this.currInstanceNo).get(0), this.currentMultipleFieldValue.getValue(this.currInstanceNo).get(1));
+					} else if (fieldView instanceof CodeField){
+						CodeField tempCodeField = (CodeField)fieldView;
+						tempCodeField.setValue(this.currInstanceNo, Integer.valueOf(this.currentMultipleFieldValue.getValue(this.currInstanceNo).get(0)));
 					}
 				} else {//new instance
 					ArrayList<String> newValue = new ArrayList<String>();
@@ -1367,7 +1379,10 @@ public class FormScreen extends BaseActivity implements OnClickListener, TextWat
 					} else if (fieldView instanceof CoordinateField){
 						CoordinateField tempCoordinateField = (CoordinateField)fieldView;
 						tempCoordinateField.setValue(this.currInstanceNo, this.currentMultipleFieldValue.getValue(this.currInstanceNo).get(0), this.currentMultipleFieldValue.getValue(this.currInstanceNo).get(1));
-					}
+					} else if (fieldView instanceof CodeField){
+						CodeField tempCodeField = (CodeField)fieldView;
+						tempCodeField.setValue(this.currInstanceNo, Integer.valueOf(this.currentMultipleFieldValue.getValue(this.currInstanceNo).get(0)));
+					} 
 					this.numberOfInstances++;
 				}
 				
