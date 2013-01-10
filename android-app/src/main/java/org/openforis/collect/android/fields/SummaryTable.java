@@ -6,7 +6,6 @@ import org.openforis.collect.android.R;
 
 import android.content.Context;
 import android.graphics.Color;
-import android.util.Log;
 import android.view.Gravity;
 import android.view.ViewGroup;
 import android.widget.TableLayout;
@@ -20,7 +19,7 @@ public class SummaryTable extends UIElement {
 	private String title;
 	
 	private List<List<String>> values;
-
+	
 	public SummaryTable(Context context, int id, /*EntityDefinition entityDef,*/
 			String tableHeader, List<String> columnHeader, List<List<String>> rows,
 			OnClickListener listener) {
@@ -30,12 +29,12 @@ public class SummaryTable extends UIElement {
 		this.tableLayout.setStretchAllColumns(true);  
 	    this.tableLayout.setShrinkAllColumns(true);
 	    this.tableLayout.setPadding(5, 10, 5, 10);
-		
+	    
 	    this.title = tableHeader;
 	    this.values = rows;
 	    
 		int colNo = columnHeader.size();
-		int rowNo = rows.size();
+		int rowNo = rows.size();		
 		
 		TextView header = new TextView(context);
 		header.setText(tableHeader);

@@ -9,6 +9,7 @@ import org.openforis.collect.android.messages.ToastMessage;
 import org.openforis.collect.android.screens.FormScreen;
 
 import android.content.Context;
+import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
@@ -74,9 +75,10 @@ public class CodeField extends Field {
 		    public void onItemSelected(AdapterView<?> parentView, View selectedItemView, int position, long id) {
 		    	//CodeField.this.values.set(CodeField.this.currentInstanceNo, CodeField.this.spinner.getSelectedItemPosition());
 		    	ArrayList<String> valueToAdd = new ArrayList<String>();
-		    	valueToAdd.add(String.valueOf(CodeField.this.spinner.getSelectedItemPosition()));
-		    	//CodeField.this.value.setValue(CodeField.this.currentInstanceNo, valueToAdd);
-		    	CodeField.this.setValue(CodeField.this.currentInstanceNo, position);
+		    	valueToAdd.add(CodeField.this.codes.get((CodeField.this.spinner.getSelectedItemPosition())));
+
+		    	//CodeField.this.setValue(CodeField.this.currentInstanceNo, CodeField.this.codes.get(CodeField.this.spinner.getSelectedItemPosition()));
+		    	CodeField.this.setValue(CodeField.form.currInstanceNo, CodeField.this.codes.get(CodeField.this.spinner.getSelectedItemPosition()));
 				FormScreen.currentFieldValue = CodeField.this.value;
 				FormScreen.currentFieldValue.setValue(CodeField.form.currInstanceNo, valueToAdd);
 				if (CodeField.form.currentNode!=null){
@@ -154,14 +156,14 @@ public class CodeField extends Field {
 		return CodeField.this.value.getValue(index).get(0);
 	}
 	
-	public void setValue(int position, int positionOnList)
+	/*public void setValue(int position, int positionOnList)
 	{
 		this.spinner.setSelection(positionOnList);
 		ArrayList<String> valueToAdd = new ArrayList<String>();	
 		valueToAdd.add(String.valueOf(positionOnList));
 		CodeField.this.value.setValue(position, valueToAdd);
-	}
-	/*public void setValue(int position, String code)
+	}*/
+	public void setValue(int position, String code)
 	{
 		Log.e("setVALUE"+this.getElementId(),position+"=="+code);
 		ArrayList<String> valueToAdd = new ArrayList<String>();	
@@ -179,10 +181,10 @@ public class CodeField extends Field {
 		}			
 		else{
 			this.spinner.setSelection(0);
-			valueToAdd.add("");
+			valueToAdd.add("null");
 		}
-		CodeField.this.value.setValue(position, valueToAdd);
-	}*/
+		CodeField.this.value.setValue(position, valueToAdd);		
+	}
 	
 	/*@Override
 	public void scrollLeft(){
