@@ -115,7 +115,7 @@ public class FormScreen extends BaseActivity implements OnClickListener, TextWat
         		//tableColHeaders.add("ID");
         		tableColHeaders.add("Value");
         		ArrayList<List<String>> tableRowLists = new ArrayList<List<String>>();
-        		ArrayList<String> row1 = new ArrayList<String>();
+        		/*ArrayList<String> row1 = new ArrayList<String>();
         		//row1.add("1");
         		row1.add("value1");
         		tableRowLists.add(row1);
@@ -126,10 +126,9 @@ public class FormScreen extends BaseActivity implements OnClickListener, TextWat
         		ArrayList<String> row3 = new ArrayList<String>();
         		//row3.add("3");
         		row3.add("value3");
-        		tableRowLists.add(row3);
+        		tableRowLists.add(row3);*/
     			this.currentMultipleFieldValue = new FieldValue(this.idmlId, getFormScreenId(), tableRowLists);    			
-    		}
-    		
+    		}    		
     		ApplicationManager.formScreensMap.put(getFormScreenId(), this);
         } catch (Exception e){
     		RunnableHandler.reportException(e,getResources().getString(R.string.app_name),TAG+":onCreate",
@@ -258,7 +257,12 @@ public class FormScreen extends BaseActivity implements OnClickListener, TextWat
         				ArrayList<String> detailsList = new ArrayList<String>();
         				  				
         				for (NodeDefinition childDef : fieldsList){
-        					detailsList.add(childDef.getName());
+        					if (childDef instanceof EntityDefinition){
+        						detailsList.add(childDef.getName()+getResources().getString(R.string.entityMarker));
+        					} else {
+        						detailsList.add(childDef.getName());	
+        					}
+        					
         				}
         				detailsLists.add(detailsList);
     				}
