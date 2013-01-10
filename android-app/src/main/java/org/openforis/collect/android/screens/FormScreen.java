@@ -99,34 +99,17 @@ public class FormScreen extends BaseActivity implements OnClickListener, TextWat
     	
     		//ApplicationManager.valuesTree.printTree(ApplicationManager.valuesTree.getChild("0,0"));
     		if ((this.intentType==getResources().getInteger(R.integer.multipleEntityIntent))&&(!this.parentFormScreenId.equals(""))){
-    			//Log.e("TWORZENIE OBECNEGO WEZLA",getFormScreenId());
     			this.currentNode = ApplicationManager.valuesTree.getChild(getFormScreenId());
-    			//Log.e("this.currentNode==null","=="+(this.currentNode==null));
     			if (this.currentNode==null){
-    				//Log.e("WEZEL","NIE ISTNIAL W DRZEWIE");
     				this.currentNode = new DataTreeNode(this.idmlId, this.currInstanceNo, this.parentFormScreenId, ApplicationManager.valuesTree.getChild(this.parentFormScreenId) , new ArrayList<FieldValue>());
             		ApplicationManager.valuesTree.addChild(getFormScreenId(), this.currentNode);
     			}
         		this.currentMultipleFieldValue = null;
     		} else if (!this.parentFormScreenId.equals("")){//current screen isn't entity
-    			//Log.e("NIE INSTANCJA ENTITY",this.idmlId+"=============="+getFormScreenId());
     			this.currentNode=null;
     			ArrayList<String> tableColHeaders = new ArrayList<String>();
-        		//tableColHeaders.add("ID");
         		tableColHeaders.add("Value");
         		ArrayList<List<String>> tableRowLists = new ArrayList<List<String>>();
-        		/*ArrayList<String> row1 = new ArrayList<String>();
-        		//row1.add("1");
-        		row1.add("value1");
-        		tableRowLists.add(row1);
-        		ArrayList<String> row2 = new ArrayList<String>();
-        		//row2.add("2");
-        		row2.add("value2");
-        		tableRowLists.add(row2);
-        		ArrayList<String> row3 = new ArrayList<String>();
-        		//row3.add("3");
-        		row3.add("value3");
-        		tableRowLists.add(row3);*/
     			this.currentMultipleFieldValue = new FieldValue(this.idmlId, getFormScreenId(), tableRowLists);    			
     		}    		
     		ApplicationManager.formScreensMap.put(getFormScreenId(), this);
@@ -193,9 +176,8 @@ public class FormScreen extends BaseActivity implements OnClickListener, TextWat
     		detailsLists2.add(detail2);
     		
     		ArrayList<String> tableColHeaders = new ArrayList<String>();
-    		//tableColHeaders.add("ID");
     		tableColHeaders.add("Value");
-    		ArrayList<List<String>> tableRowLists = new ArrayList<List<String>>();
+    		/*ArrayList<List<String>> tableRowLists = new ArrayList<List<String>>();
     		ArrayList<String> row1 = new ArrayList<String>();
     		//row1.add("1");
     		row1.add("value1");
@@ -207,28 +189,13 @@ public class FormScreen extends BaseActivity implements OnClickListener, TextWat
     		ArrayList<String> row3 = new ArrayList<String>();
     		//row3.add("3");
     		row3.add("value3");
-    		tableRowLists.add(row3);
+    		tableRowLists.add(row3);*/
     		
     		this.sv = new ScrollView(this);
     		this.ll = new LinearLayout(this);
     		this.ll.setOrientation(android.widget.LinearLayout.VERTICAL);
     		this.sv.addView(ll);
-    		
-    		/*this.valuesNode = new DataTreeNode(this.idmlId, this.currInstanceNo, getFormScreenId(), ApplicationManager.valuesTree.getChild(this.parentFormScreenId), null);
-    		//ApplicationManager.valuesTree.printTree(ApplicationManager.valuesTree.getChild("0,0"));'
-    		DataTreeNode existingTreeNode = ApplicationManager.valuesTree.getChild(getFormScreenId());
-    		Log.e("existingTreeNode==null",getFormScreenId()+"=="+(existingTreeNode==null));
-    		if (existingTreeNode==null){
-    			ApplicationManager.valuesTree.addChild(getFormScreenId(), this.valuesNode);
-    			Log.e("added new node",this.idmlId+"=="+this.currInstanceNo);
-    		} else {//load data from node
-    			Log.e("adding data", "from node"+this.idmlId+"=="+this.currInstanceNo);
-    			this.valuesNode = existingTreeNode;    			
-    		}*/
-			
-			//Log.e("ROOOOT","=============================");
-			//ApplicationManager.valuesTree.printTree();
-			//Log.e("BRANCH","=============================");
+
     		TextView breadcrumb = new TextView(this);
     		breadcrumb.setText(this.breadcrumb);
     		breadcrumb.setTextSize(getResources().getInteger(R.integer.breadcrumbFontSize));
@@ -1057,7 +1024,7 @@ public class FormScreen extends BaseActivity implements OnClickListener, TextWat
     					}			
     				}	
     			} else if (nodeDef instanceof RangeAttributeDefinition){
-    				if (!nodeDef.isMultiple()||(this.intentType==getResources().getInteger(R.integer.multipleAttributeIntent))){
+    				/*if (!nodeDef.isMultiple()||(this.intentType==getResources().getInteger(R.integer.multipleAttributeIntent))){
     					RangeAttributeDefinition rangeAttrDef = (RangeAttributeDefinition)nodeDef;
         				RangeField rangeField= new RangeField(this, nodeDef.getId(), nodeDef.getLabel(Type.INSTANCE, null), null, null, rangeAttrDef.isMultiple(), false);
         				rangeField.setOnClickListener(this);
@@ -1068,9 +1035,9 @@ public class FormScreen extends BaseActivity implements OnClickListener, TextWat
     					summaryTableView.setOnClickListener(this);
         				summaryTableView.setId(nodeDef.getId());
         				this.ll.addView(summaryTableView);
-    				}
+    				}*/
     			} else if (nodeDef instanceof TaxonAttributeDefinition){
-    				if (!nodeDef.isMultiple()||(this.intentType==getResources().getInteger(R.integer.multipleAttributeIntent))){
+    				/*if (!nodeDef.isMultiple()||(this.intentType==getResources().getInteger(R.integer.multipleAttributeIntent))){
     					TaxonAttributeDefinition taxonAttrDef = (TaxonAttributeDefinition)nodeDef;
         				TaxonField taxonField= new TaxonField(this, nodeDef.getId(), nodeDef.getLabel(Type.INSTANCE, null), null, null, null, row3, row3, null, false, taxonAttrDef.isMultiple(), false);
         				taxonField.setOnClickListener(this);
@@ -1081,7 +1048,7 @@ public class FormScreen extends BaseActivity implements OnClickListener, TextWat
     					summaryTableView.setOnClickListener(this);
         				summaryTableView.setId(nodeDef.getId());
         				this.ll.addView(summaryTableView);
-    				}
+    				}*/
     			} else if (nodeDef instanceof TimeAttributeDefinition){
 /*    				if (!nodeDef.isMultiple()||(this.intentType==getResources().getInteger(R.integer.multipleAttributeIntent))){
     					TimeAttributeDefinition timeAttrDef = (TimeAttributeDefinition)nodeDef;

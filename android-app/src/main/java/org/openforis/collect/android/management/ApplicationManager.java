@@ -12,7 +12,6 @@ import java.util.UUID;
 
 import org.openforis.collect.android.R;
 import org.openforis.collect.android.data.DataTree;
-import org.openforis.collect.android.data.DataTreeNode;
 import org.openforis.collect.android.data.FieldValue;
 import org.openforis.collect.android.database.CollectDatabase;
 import org.openforis.collect.android.database.DatabaseWrapper;
@@ -126,7 +125,7 @@ public class ApplicationManager extends BaseActivity{
         	survey = surveyManager.getSurveyDao().load("Archenland NFI");
         	if (survey==null){
             	long startTime = System.currentTimeMillis();
-            	Log.e("PARSING","====================");    
+            	Log.e("PARSING","====================");   
             	FileInputStream fis = new FileInputStream(sdcardPath+getResources().getString(R.string.formDefinitionFile));        	
             	SurveyIdmlBinder binder = new SurveyIdmlBinder(collectSurveyContext);
         		binder.addApplicationOptionsBinder(new UIOptionsBinder());
@@ -204,7 +203,7 @@ public class ApplicationManager extends BaseActivity{
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {    	
 	    super.onActivityResult(requestCode, resultCode, data);
 	    try{
-	    	Log.e("request="+requestCode,/*data.getIntExtra(getResources().getString(R.string.recordId), -111)+*/"result="+resultCode);
+	    	//Log.e("request="+requestCode,/*data.getIntExtra(getResources().getString(R.string.recordId), -111)+*/"result="+resultCode);
 	 	    if (requestCode==getResources().getInteger(R.integer.clusterSelection)){	 	    	
 	 	    	if (resultCode==getResources().getInteger(R.integer.clusterChoiceSuccessful)){//record was selected
 	 	    		showFormRootScreen();
@@ -219,7 +218,7 @@ public class ApplicationManager extends BaseActivity{
 	 	    		ApplicationManager.this.finish();
 	 	    	}
 	 	    } else if (requestCode==getResources().getInteger(R.integer.startingFormScreen)){
-	 	    	Log.e("From FORM SCREEN","=======");
+	 	    	//Log.e("From FORM SCREEN","=======");
 	 	    	showRecordsListScreen();
 	 	    }
 	 	    /*if((requestCode==getResources().getInteger(R.integer.clusterSelection))&&(resultCode==getResources().getInteger(R.integer.clusterChoiceSuccessful))){
@@ -308,7 +307,6 @@ public class ApplicationManager extends BaseActivity{
 		for (int i=0;i<rootEntitiesDefsList.size();i++){
 			int id = rootEntitiesDefsList.get(i).getId();
 			intent.putExtra(getResources().getString(R.string.attributeId)+i, id);
-			//ApplicationManager.valuesTree.addChildToRoot(new DataTreeNode(id, 0, "", ApplicationManager.valuesTree.getChild(""), new ArrayList<FieldValue>()));
 		}
 		this.startActivityForResult(intent,getResources().getInteger(R.integer.startingFormScreen));		
 	}
