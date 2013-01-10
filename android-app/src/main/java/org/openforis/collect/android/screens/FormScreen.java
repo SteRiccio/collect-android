@@ -1286,7 +1286,6 @@ public class FormScreen extends BaseActivity implements OnClickListener, TextWat
 		} else if (arg0 instanceof Button){
 			Button btn = (Button)arg0;
 			if (btn.getId()==getResources().getInteger(R.integer.leftButtonMultipleAttribute)){
-				Log.e("LEFT","BUTTON");
 				if (this.currInstanceNo>0){
 					View fieldView = (View)this.ll.getChildAt(1);
 					String currValue = "";
@@ -1316,7 +1315,6 @@ public class FormScreen extends BaseActivity implements OnClickListener, TextWat
 					} else if (fieldView instanceof CodeField){
 						CodeField tempCodeField = (CodeField)fieldView;
 						currValue = tempCodeField.getValue(this.currInstanceNo);
-						Log.e("LEFT",this.currInstanceNo+"currValue=="+currValue);
 					}
 					if (!(fieldView instanceof CoordinateField)){
 						Log.e("setting current VALUE",this.currInstanceNo+"=="+currValue);
@@ -1347,13 +1345,11 @@ public class FormScreen extends BaseActivity implements OnClickListener, TextWat
 					} else if (fieldView instanceof CodeField){
 						CodeField tempCodeField = (CodeField)fieldView;
 						tempCodeField.setValue(this.currInstanceNo, this.currentMultipleFieldValue.getValue(this.currInstanceNo).get(0));
-						Log.e("LEFT",this.currInstanceNo+"=="+this.currentMultipleFieldValue.getValue(this.currInstanceNo).get(0));
 					}
 				}
 			} else if (btn.getId()==getResources().getInteger(R.integer.rightButtonMultipleAttribute)){
 				View fieldView = (View)this.ll.getChildAt(1);
 				String currValue = "";
-				Log.e("RIGHT","BUTTON");
 				if (fieldView instanceof TextField){
 					TextField tempTextField = (TextField)fieldView;
 					currValue = tempTextField.getValue(this.currInstanceNo);
@@ -1380,7 +1376,6 @@ public class FormScreen extends BaseActivity implements OnClickListener, TextWat
 				} else if (fieldView instanceof CodeField){
 					CodeField tempCodeField = (CodeField)fieldView;
 					currValue = tempCodeField.getValue(this.currInstanceNo);
-					Log.e("RIGHT","currValue=="+currValue);
 				}
 				if (!(fieldView instanceof CoordinateField)){
 					this.currentMultipleFieldValue.getValue(this.currInstanceNo).set(0, currValue);	
@@ -1411,7 +1406,6 @@ public class FormScreen extends BaseActivity implements OnClickListener, TextWat
 					} else if (fieldView instanceof CodeField){
 						CodeField tempCodeField = (CodeField)fieldView;
 						tempCodeField.setValue(this.currInstanceNo, this.currentMultipleFieldValue.getValue(this.currInstanceNo).get(0));
-						Log.e("RIGHT",this.currInstanceNo+"=="+this.currentMultipleFieldValue.getValue(this.currInstanceNo).get(0));
 					}
 				} else {//new instance
 					ArrayList<String> newValue = new ArrayList<String>();
@@ -1451,11 +1445,9 @@ public class FormScreen extends BaseActivity implements OnClickListener, TextWat
 					} else if (fieldView instanceof CodeField){
 						CodeField tempCodeField = (CodeField)fieldView;
 						tempCodeField.setValue(this.currInstanceNo, this.currentMultipleFieldValue.getValue(this.currInstanceNo).get(0));
-						Log.e("new instance",this.currInstanceNo+"=="+this.currentMultipleFieldValue.getValue(this.currInstanceNo).get(0));
 					}
 					this.numberOfInstances++;
-				}
-				
+				}				
 			}
 		} else if (arg0 instanceof TextView){
 			//Log.e("summary","list row");
