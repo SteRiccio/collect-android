@@ -9,7 +9,6 @@ import org.openforis.collect.android.messages.ToastMessage;
 import org.openforis.collect.android.screens.FormScreen;
 
 import android.content.Context;
-import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
@@ -165,7 +164,6 @@ public class CodeField extends Field {
 	}*/
 	public void setValue(int position, String code)
 	{
-		Log.e("setVALUE"+this.getElementId(),position+"=="+code);
 		ArrayList<String> valueToAdd = new ArrayList<String>();	
 		boolean isFound = false;
 		int counter = 0;
