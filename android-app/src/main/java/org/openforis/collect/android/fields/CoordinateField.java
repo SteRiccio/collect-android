@@ -13,6 +13,7 @@ import org.openforis.collect.android.screens.FormScreen;
 
 import android.content.Context;
 import android.text.Editable;
+import android.text.InputType;
 import android.text.TextWatcher;
 import android.text.method.KeyListener;
 import android.text.method.DigitsKeyListener;
@@ -88,7 +89,8 @@ public class CoordinateField extends InputField {
 			    		txtLatitude.setKeyListener(new DigitsKeyListener(true,true));
 			        }
 			    	else {
-			    		CoordinateField.this.setKeyboardType(null);
+			    		txtLatitude.setInputType(InputType.TYPE_NULL);
+//			    		CoordinateField.this.setKeyboardType(null);
 			    	}
 
 		    	}		    	
@@ -120,7 +122,8 @@ public class CoordinateField extends InputField {
 			    		txtLongitude.setKeyListener(new DigitsKeyListener(true,true));
 			        }
 			    	else {
-			    		CoordinateField.this.setKeyboardType(null);
+			    		txtLongitude.setInputType(InputType.TYPE_NULL);
+//			    		CoordinateField.this.setKeyboardType(null);
 			    	}
 
 		    	}		    	

@@ -11,6 +11,7 @@ import org.openforis.collect.android.messages.ToastMessage;
 import org.openforis.collect.android.screens.FormScreen;
 
 import android.content.Context;
+import android.text.InputType;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
@@ -44,11 +45,11 @@ public class NumberField extends InputField {
 		this.txtBox.setLayoutParams(new LayoutParams(0,ViewGroup.LayoutParams.WRAP_CONTENT,(float) 2));
 		
 		this.type = numberType;
-		if (this.type.toLowerCase().equals("integer")){
-			this.makeInteger();
-		} else{
-			this.makeReal();
-		}
+//		if (this.type.toLowerCase().equals("integer")){
+//			this.makeInteger();
+//		} else{
+//			this.makeReal();
+//		}
 		
 		this.value = fieldValue;
 		//this.addView(this.scrollLeft);
@@ -65,7 +66,7 @@ public class NumberField extends InputField {
 			    	if(this.getClass().toString().contains("NumberField")){
 				    	Map<String, ?> settings = ApplicationManager.appPreferences.getAll();
 				    	Boolean valueForNum = (Boolean)settings.get(getResources().getString(R.string.showSoftKeyboardOnNumericField));
-				    	Log.i(getResources().getString(R.string.app_name), "Boolean is: " + valueForNum);
+//				    	Log.i(getResources().getString(R.string.app_name), "Boolean is: " + valueForNum);
 				    	//Switch on or off Software keyboard depend of settings
 				    	if(valueForNum){
 				    		Log.i(getResources().getString(R.string.app_name), "Setting numeric field is: " + valueForNum);
@@ -77,7 +78,8 @@ public class NumberField extends InputField {
 				        }
 				    	else {
 				    		Log.i(getResources().getString(R.string.app_name), "Setting numeric field is: " + valueForNum);
-				    		NumberField.this.setKeyboardType(null);
+				    		NumberField.this.txtBox.setInputType(InputType.TYPE_NULL);
+//				    		NumberField.this.setKeyboardType(null);
 				    	}
 				    	//Log.e("CHANGING","CURRENT FIELDVALUE"+NumberField.this.getElementId());
 				    	FormScreen.currentFieldValue = NumberField.this.value;

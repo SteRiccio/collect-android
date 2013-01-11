@@ -14,6 +14,7 @@ import org.openforis.collect.android.screens.FormScreen;
 
 import android.content.Context;
 import android.content.Intent;
+import android.text.InputType;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
@@ -62,7 +63,8 @@ public class DateField extends InputField {
 				    		DateField.this.makeReal();			    		
 				        }
 				    	else {
-				    		DateField.this.setKeyboardType(null);
+				    		txtBox.setInputType(InputType.TYPE_NULL);
+//				    		DateField.this.setKeyboardType(null);
 				    	}
 				    	//Generate random id for text box
 				    	final Random myRandom = new Random();

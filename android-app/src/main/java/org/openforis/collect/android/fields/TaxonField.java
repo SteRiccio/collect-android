@@ -9,6 +9,7 @@ import org.openforis.collect.android.management.ApplicationManager;
 import org.openforis.collect.android.messages.ToastMessage;
 
 import android.content.Context;
+import android.text.InputType;
 import android.text.method.KeyListener;
 import android.text.method.QwertyKeyListener;
 import android.text.method.TextKeyListener;
@@ -79,7 +80,8 @@ public class TaxonField extends Field {
 				        }
 				    	else {
 				    		Log.i(getResources().getString(R.string.app_name), "Setting taxon field is: " + valueForText);
-				    		TaxonField.this.setKeyboardType(null);
+				    		txtBox.setInputType(InputType.TYPE_NULL);
+//				    		TaxonField.this.setKeyboardType(null);
 				    	}
 			    	}
 		    	}

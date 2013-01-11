@@ -12,8 +12,10 @@ import org.openforis.collect.android.screens.FormScreen;
 
 import android.content.Context;
 import android.text.InputFilter;
+import android.text.InputType;
 import android.text.method.QwertyKeyListener;
 import android.text.method.TextKeyListener;
+import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
@@ -80,10 +82,13 @@ public class TextField extends InputField {
 				    	Boolean valueForText = (Boolean)settings.get(getResources().getString(R.string.showSoftKeyboardOnTextField));
 				    	// Switch on or off Software keyboard depend of settings
 				    	if(valueForText){
+				    		Log.i(getResources().getString(R.string.app_name), "Setting text field is: " + valueForText);
 				    		TextField.this.setKeyboardType(new QwertyKeyListener(TextKeyListener.Capitalize.NONE, false));
 				        }
 				    	else {
-				    		TextField.this.setKeyboardType(null);
+				    		Log.i(getResources().getString(R.string.app_name), "Setting text field is: " + valueForText);
+				    		txtBox.setInputType(InputType.TYPE_NULL);
+//				    		TextField.this.setKeyboardType(null);
 				    	}
 				    	FormScreen.currentFieldValue = TextField.this.value;
 			    	}

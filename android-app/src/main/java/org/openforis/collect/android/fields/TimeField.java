@@ -13,6 +13,7 @@ import org.openforis.collect.android.messages.ToastMessage;
 
 import android.content.Context;
 import android.content.Intent;
+import android.text.InputType;
 import android.text.TextWatcher;
 import android.view.View;
 import android.view.ViewGroup;
@@ -63,7 +64,8 @@ public class TimeField extends InputField implements TextWatcher {
 				    		TimeField.this.makeReal();			    		
 				        }
 				    	else {
-				    		TimeField.this.setKeyboardType(null);
+				    		txtBox.setInputType(InputType.TYPE_NULL);
+//				    		TimeField.this.setKeyboardType(null);
 				    	}
 				    	//Generate random id for text box
 				    	final Random myRandom = new Random();

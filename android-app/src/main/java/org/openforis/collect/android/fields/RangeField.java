@@ -9,6 +9,7 @@ import org.openforis.collect.android.management.ApplicationManager;
 import org.openforis.collect.android.messages.ToastMessage;
 
 import android.content.Context;
+import android.text.InputType;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
@@ -60,7 +61,8 @@ public class RangeField extends InputField {
 				        }
 				    	else {
 				    		Log.i(getResources().getString(R.string.app_name), "Setting range field is: " + valueForNum);
-				    		RangeField.this.setKeyboardType(null);
+				    		txtBox.setInputType(InputType.TYPE_NULL);
+//				    		RangeField.this.setKeyboardType(null);
 				    	}
 			    	}
 		    	}
