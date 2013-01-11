@@ -84,9 +84,19 @@ public class ApplicationManager extends BaseActivity{
 			int backgroundColor = ApplicationManager.appPreferences.getInt(getResources().getString(R.string.backgroundColor), Color.WHITE);
 			SharedPreferences.Editor editor = ApplicationManager.appPreferences.edit();
 			editor.putInt(getResources().getString(R.string.backgroundColor), backgroundColor);
-			editor.commit();
+			//editor.commit();
             
-			ApplicationManager.fieldValueToPass = null;
+			//Set virtual keyboard to 'false' if it's NULL
+	    	Map<String, ?> settings = ApplicationManager.appPreferences.getAll();
+	    	Boolean valueForNum = (Boolean)settings.get(getResources().getString(R.string.showSoftKeyboardOnNumericField));			
+	    	Boolean valueForText = (Boolean)settings.get(getResources().getString(R.string.showSoftKeyboardOnTextField));
+	    	if(valueForNum == null)
+	    		editor.putBoolean(getResources().getString(R.string.showSoftKeyboardOnNumericField), false);
+	    	if(valueForText == null)
+	    		editor.putBoolean(getResources().getString(R.string.showSoftKeyboardOnTextField), false);	    	
+	    	editor.commit();
+			
+	    	ApplicationManager.fieldValueToPass = null;
 			
 			//creating file structure used by application
         	String sdcardPath = Environment.getExternalStorageDirectory().toString();

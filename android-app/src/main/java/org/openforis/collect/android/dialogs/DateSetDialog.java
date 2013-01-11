@@ -14,6 +14,8 @@ import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.FragmentActivity;
 import android.text.format.DateFormat;
+import android.util.Log;
+import android.view.KeyEvent;
 import android.view.View;
 import android.view.Window;
 import android.widget.DatePicker;
@@ -60,6 +62,15 @@ public class DateSetDialog extends FragmentActivity {
 		    //Finish activity
 		    finish();
 		}		
+		
+		public boolean onKeyDown(int keyCode, KeyEvent event) {
+		    if ((keyCode == KeyEvent.KEYCODE_BACK)) {
+		    	Log.i(getResources().getString(R.string.app_name), "Button BACK pressed form DateSettingsDialog");
+			    //Finish activity
+			    finish();	    	
+		    }
+		    return false;
+		}		
 	}
 	
 	//Main class
@@ -80,5 +91,15 @@ public class DateSetDialog extends FragmentActivity {
 	public void showDatePickerDialog(DateField dateField) {
 	    DialogFragment newFragment = new DatePickerFragment(dateField);
 	    newFragment.show(getSupportFragmentManager(), "datePicker");
+	}	
+	
+	@Override
+	public boolean onKeyDown(int keyCode, KeyEvent event) {
+	    if ((keyCode == KeyEvent.KEYCODE_BACK)) {
+	    	Log.i(getResources().getString(R.string.app_name), "Button BACK pressed form activity");
+		    //Finish activity
+		    finish();	    	
+	    }
+	    return super.onKeyDown(keyCode, event);
 	}	
 }

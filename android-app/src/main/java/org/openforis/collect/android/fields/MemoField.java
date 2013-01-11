@@ -49,7 +49,7 @@ public class MemoField extends InputField {
 	        public void onFocusChange(View v, boolean hasFocus) {
 	            if (hasFocus) {
 			    	Map<String, ?> settings = ApplicationManager.appPreferences.getAll();
-			    	Boolean valueForText = (Boolean)settings.get(getResources().getString(R.string.showSoftKeyboardOnText));
+			    	Boolean valueForText = (Boolean)settings.get(getResources().getString(R.string.showSoftKeyboardOnTextField));
 	            	
 	            	//Create dialog for Memo
 	            	final EditText input = new EditText(MemoField.this.getContext());

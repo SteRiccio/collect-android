@@ -64,7 +64,8 @@ public class NumberField extends InputField {
 		    	if(hasFocus){
 			    	if(this.getClass().toString().contains("NumberField")){
 				    	Map<String, ?> settings = ApplicationManager.appPreferences.getAll();
-				    	Boolean valueForNum = (Boolean)settings.get(getResources().getString(R.string.showSoftKeyboardOnNumeric));
+				    	Boolean valueForNum = (Boolean)settings.get(getResources().getString(R.string.showSoftKeyboardOnNumericField));
+				    	Log.i(getResources().getString(R.string.app_name), "Boolean is: " + valueForNum);
 				    	//Switch on or off Software keyboard depend of settings
 				    	if(valueForNum){
 				    		Log.i(getResources().getString(R.string.app_name), "Setting numeric field is: " + valueForNum);

@@ -40,7 +40,7 @@ public class SettingsScreen extends Activity{
     			@Override
     			public void onClick(View v) {
     				SharedPreferences.Editor editor = ApplicationManager.appPreferences.edit();
-    				editor.putBoolean(getResources().getString(R.string.showSoftKeyboardOnText), chckSoftKeyboardOnText.isChecked());
+    				editor.putBoolean(getResources().getString(R.string.showSoftKeyboardOnTextField), chckSoftKeyboardOnText.isChecked());
     				editor.commit();
       			}
     	    });
@@ -50,7 +50,7 @@ public class SettingsScreen extends Activity{
     			@Override
     			public void onClick(View v) {
     				SharedPreferences.Editor editor = ApplicationManager.appPreferences.edit();
-    				editor.putBoolean(getResources().getString(R.string.showSoftKeyboardOnNumeric), chckSoftKeyboardOnNumeric.isChecked());
+    				editor.putBoolean(getResources().getString(R.string.showSoftKeyboardOnNumericField), chckSoftKeyboardOnNumeric.isChecked());
     				editor.commit();
       			}
     	    });
@@ -67,8 +67,8 @@ public class SettingsScreen extends Activity{
       			}
     	    });
     		    	  	
-    		this.chckSoftKeyboardOnText.setChecked(ApplicationManager.appPreferences.getBoolean(getResources().getString(R.string.showSoftKeyboardOnText), false));
-    		this.chckSoftKeyboardOnNumeric.setChecked(ApplicationManager.appPreferences.getBoolean(getResources().getString(R.string.showSoftKeyboardOnNumeric), false));
+    		this.chckSoftKeyboardOnText.setChecked(ApplicationManager.appPreferences.getBoolean(getResources().getString(R.string.showSoftKeyboardOnTextField), false));
+    		this.chckSoftKeyboardOnNumeric.setChecked(ApplicationManager.appPreferences.getBoolean(getResources().getString(R.string.showSoftKeyboardOnNumericField), false));
     		
             
         } catch (Exception e){

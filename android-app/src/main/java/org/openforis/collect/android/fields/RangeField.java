@@ -52,7 +52,7 @@ public class RangeField extends InputField {
 		    	if(hasFocus){
 			    	if(this.getClass().toString().contains("RangeField")){
 				    	Map<String, ?> settings = ApplicationManager.appPreferences.getAll();
-				    	Boolean valueForNum = (Boolean)settings.get(getResources().getString(R.string.showSoftKeyboardOnNumeric));
+				    	Boolean valueForNum = (Boolean)settings.get(getResources().getString(R.string.showSoftKeyboardOnNumericField));
 				    	//Switch on or off Software keyboard depend of settings
 				    	if(valueForNum){
 				    		Log.i(getResources().getString(R.string.app_name), "Setting range field is: " + valueForNum);

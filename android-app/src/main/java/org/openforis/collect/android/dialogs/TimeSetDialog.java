@@ -13,6 +13,8 @@ import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.FragmentActivity;
 import android.text.format.DateFormat;
+import android.util.Log;
+import android.view.KeyEvent;
 import android.view.View;
 import android.view.Window;
 import android.widget.TimePicker;
@@ -24,7 +26,8 @@ public class TimeSetDialog extends FragmentActivity {
 		public TimePickerDialog timePicker;
 		
 		public TimePickerFragment(TimeField time_field){
-		    activity_edittext = time_field;			
+		    activity_edittext = time_field;
+//		    Log.i(getResources().getString(R.string.app_name), "Id of activity_edittext in constructor is: " + activity_edittext.getElementId());
 		}
 		
 		@Override
@@ -53,6 +56,7 @@ public class TimeSetDialog extends FragmentActivity {
 		    //Set time to the clicked TimeField
 			String strTime = pad(hourOfDay) + ":" + pad(minute);		
 			//activity_edittext.txtBox.setText(strTime);			
+			Log.i(getResources().getString(R.string.app_name), "Id of activity_edittext in time settings is: " + activity_edittext.getElementId());
 			activity_edittext.setValue(0, strTime);
 			//Finish activity
 		    finish();
@@ -64,6 +68,16 @@ public class TimeSetDialog extends FragmentActivity {
 		        return String.valueOf(c);
 		    else
 		        return "0" + String.valueOf(c);
+		}
+		
+		public boolean onKeyDown(int keyCode, KeyEvent event) {
+			Log.i(getResources().getString(R.string.app_name), "Some key pressed from TimeSettingsDialog");
+			if ((keyCode == KeyEvent.KEYCODE_BACK)) {
+		    	Log.i(getResources().getString(R.string.app_name), "Button BACK pressed from TimeSettingsDialog");
+			    //Finish activity
+			    finish();	    	
+		    }
+		    return true;
 		}		
 	}
 	
@@ -84,7 +98,18 @@ public class TimeSetDialog extends FragmentActivity {
 	}	
 	
 	public void showTimePickerDialog(TimeField timeField) {
+		Log.i(getResources().getString(R.string.app_name), "Id of TimeField is is: " + timeField.getId());
 	    DialogFragment newFragment = new TimePickerFragment(timeField);
 	    newFragment.show(getSupportFragmentManager(), "timePicker");
+	}	
+	
+	@Override
+	public boolean onKeyDown(int keyCode, KeyEvent event) {
+	    if ((keyCode == KeyEvent.KEYCODE_BACK)) {
+	    	Log.i(getResources().getString(R.string.app_name), "Button BACK pressed form activity");
+		    //Finish activity
+		    finish();	    	
+	    }
+	    return super.onKeyDown(keyCode, event);
 	}	
 }

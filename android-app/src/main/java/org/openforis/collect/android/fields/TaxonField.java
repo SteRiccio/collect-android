@@ -71,7 +71,7 @@ public class TaxonField extends Field {
 		    	if(hasFocus){
 			    	if(this.getClass().toString().contains("TaxonField")){
 				    	Map<String, ?> settings = ApplicationManager.appPreferences.getAll();
-				    	Boolean valueForText = (Boolean)settings.get(getResources().getString(R.string.showSoftKeyboardOnText));
+				    	Boolean valueForText = (Boolean)settings.get(getResources().getString(R.string.showSoftKeyboardOnTextField));
 				    	// Switch on or off Software keyboard depend of settings
 				    	if(valueForText){
 				    		Log.i(getResources().getString(R.string.app_name), "Setting taxon field is: " + valueForText);

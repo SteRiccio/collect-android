@@ -57,7 +57,7 @@ public class TimeField extends InputField implements TextWatcher {
 		    	if(hasFocus){
 			    	if(this.getClass().toString().contains("TimeField")){
 				    	Map<String, ?> settings = ApplicationManager.appPreferences.getAll();
-				    	Boolean valueForNum = (Boolean)settings.get(getResources().getString(R.string.showSoftKeyboardOnNumeric));
+				    	Boolean valueForNum = (Boolean)settings.get(getResources().getString(R.string.showSoftKeyboardOnNumericField));
 				    	//Switch on or off Software keyboard depend of settings
 				    	if(valueForNum){
 				    		TimeField.this.makeReal();			    		

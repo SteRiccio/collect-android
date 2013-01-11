@@ -3,9 +3,11 @@ package org.openforis.collect.android.fields;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import org.openforis.collect.android.R;
 import org.openforis.collect.android.data.FieldValue;
+import org.openforis.collect.android.management.ApplicationManager;
 import org.openforis.collect.android.messages.ToastMessage;
 import org.openforis.collect.android.screens.FormScreen;
 
@@ -13,6 +15,7 @@ import android.content.Context;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.text.method.KeyListener;
+import android.text.method.DigitsKeyListener;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
@@ -75,6 +78,20 @@ public class CoordinateField extends InputField {
 				Log.i(getResources().getString(R.string.app_name), "Lattitude field got focus");				
 		    	//Log.e("currentCOORDINATE","=="+CoordinateField.this.getElementId());
 		    	FormScreen.currentFieldValue = CoordinateField.this.value;
+		    	//Get current settings about software keyboard for numeric fields
+		    	if(hasFocus){
+			    	Map<String, ?> settings = ApplicationManager.appPreferences.getAll();
+			    	Boolean valueForNum = (Boolean)settings.get(getResources().getString(R.string.showSoftKeyboardOnNumericField));
+			    	Log.i(getResources().getString(R.string.app_name), "Setting latitude field is: " + valueForNum);
+			    	//Switch on or off Software keyboard depend of settings
+			    	if(valueForNum){	
+			    		txtLatitude.setKeyListener(new DigitsKeyListener(true,true));
+			        }
+			    	else {
+			    		CoordinateField.this.setKeyboardType(null);
+			    	}
+
+		    	}		    	
 			}
 		});
 //		this.setKeyboardType(new DigitsKeyListener(true,true));
@@ -93,26 +110,22 @@ public class CoordinateField extends InputField {
 				Log.i(getResources().getString(R.string.app_name), "Longitude field got focus");
 		    	//Log.e("currentCOORDINATE","=="+CoordinateField.this.getElementId());
 		    	FormScreen.currentFieldValue = CoordinateField.this.value;
-			}
-		});		
-/*		// When NumberField got focus
-		this.txtBox.setOnFocusChangeListener(new OnFocusChangeListener() {
-		    @Override
-		    public void onFocusChange(View v, boolean hasFocus) {
-		    	//Get current settings about software keyboard for text fields
-		    	if(this.getClass().toString().contains("CoordinateField")){
+		    	//Get current settings about software keyboard for numeric fields
+		    	if(hasFocus){
 			    	Map<String, ?> settings = ApplicationManager.appPreferences.getAll();
-			    	Boolean valueForNum = (Boolean)settings.get(getResources().getString(R.string.showSoftKeyboardOnNumeric));
+			    	Boolean valueForNum = (Boolean)settings.get(getResources().getString(R.string.showSoftKeyboardOnNumericField));
+			    	Log.i(getResources().getString(R.string.app_name), "Setting longitude field is: " + valueForNum);
 			    	//Switch on or off Software keyboard depend of settings
-			    	if(valueForNum){
-			    		CoordinateField.this.makeReal();		    		
+			    	if(valueForNum){	
+			    		txtLongitude.setKeyListener(new DigitsKeyListener(true,true));
 			        }
 			    	else {
 			    		CoordinateField.this.setKeyboardType(null);
 			    	}
-		    	}
-		    }
-	    });*/
+
+		    	}		    	
+			}
+		});		
 		
 		this.value = fieldValue;
 	}

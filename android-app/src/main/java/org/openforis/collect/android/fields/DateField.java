@@ -56,7 +56,7 @@ public class DateField extends InputField {
 		    	if(hasFocus){
 			    	if(this.getClass().toString().contains("DateField")){
 				    	Map<String, ?> settings = ApplicationManager.appPreferences.getAll();
-				    	Boolean valueForNum = (Boolean)settings.get(getResources().getString(R.string.showSoftKeyboardOnNumeric));
+				    	Boolean valueForNum = (Boolean)settings.get(getResources().getString(R.string.showSoftKeyboardOnNumericField));
 				    	//Switch on or off Software keyboard depend of settings
 				    	if(valueForNum){
 				    		DateField.this.makeReal();			    		
