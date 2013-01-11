@@ -52,7 +52,8 @@ public class TimeSetDialog extends FragmentActivity {
 		public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
 		    //Set time to the clicked TimeField
 			String strTime = pad(hourOfDay) + ":" + pad(minute);		
-			activity_edittext.txtBox.setText(strTime);			
+			//activity_edittext.txtBox.setText(strTime);			
+			activity_edittext.setValue(0, strTime);
 			//Finish activity
 		    finish();
 		}

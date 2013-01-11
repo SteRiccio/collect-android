@@ -36,7 +36,6 @@ public class DateSetDialog extends FragmentActivity {
 			int year = c.get(Calendar.YEAR);
 			int month = c.get(Calendar.MONTH);
 			int day = c.get(Calendar.DAY_OF_MONTH);
-			
 			// Create a new instance of DatePickerDialog and return it
 			this.datePicker = new DatePickerDialog(getActivity(), this, year, month, day);
 			
@@ -48,7 +47,7 @@ public class DateSetDialog extends FragmentActivity {
 			    	   finish();
 			       }
 			    }
-			});			
+			});
 			return this.datePicker;
 		}
 		
@@ -56,11 +55,11 @@ public class DateSetDialog extends FragmentActivity {
 			//Set date to the clicked DateField 
 			Calendar cal = new GregorianCalendar(year, month, day);
 			String strDate = DateFormat.getDateFormat(getActivity()).format(cal.getTime());
-			activity_edittext.txtBox.setText(strDate);	
+			//activity_edittext.txtBox.setText(strDate);
+			activity_edittext.setValue(0, strDate);
 		    //Finish activity
 		    finish();
-		}
-		
+		}		
 	}
 	
 	//Main class
@@ -75,8 +74,7 @@ public class DateSetDialog extends FragmentActivity {
 	    	  if (v != null){
 	    		  showDatePickerDialog((DateField)v);
 	    	  }
-	    }    
-	    
+	    }
 	}	
 	
 	public void showDatePickerDialog(DateField dateField) {
