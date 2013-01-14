@@ -7,6 +7,7 @@ import java.util.Map;
 import org.openforis.collect.android.R;
 import org.openforis.collect.android.management.ApplicationManager;
 import org.openforis.collect.android.messages.ToastMessage;
+import org.openforis.collect.android.screens.FormScreen;
 
 import android.content.Context;
 import android.text.InputType;
@@ -51,6 +52,7 @@ public class RangeField extends InputField {
 		    public void onFocusChange(View v, boolean hasFocus) {
 		    	//Get current settings about software keyboard for text fields
 		    	if(hasFocus){
+		    		FormScreen.currentFieldValue = RangeField.this.value;
 			    	if(this.getClass().toString().contains("RangeField")){
 				    	Map<String, ?> settings = ApplicationManager.appPreferences.getAll();
 				    	Boolean valueForNum = (Boolean)settings.get(getResources().getString(R.string.showSoftKeyboardOnNumericField));

@@ -77,6 +77,7 @@ public class TextField extends InputField {
 		    public void onFocusChange(View v, boolean hasFocus) {
 		    	// Get current settings about software keyboard for text fields
 		    	if(hasFocus){
+		    		FormScreen.currentFieldValue = TextField.this.value;
 			    	if(this.getClass().toString().contains("TextField")){
 				    	Map<String, ?> settings = ApplicationManager.appPreferences.getAll();
 				    	Boolean valueForText = (Boolean)settings.get(getResources().getString(R.string.showSoftKeyboardOnTextField));
@@ -90,7 +91,7 @@ public class TextField extends InputField {
 				    		txtBox.setInputType(InputType.TYPE_NULL);
 //				    		TextField.this.setKeyboardType(null);
 				    	}
-				    	FormScreen.currentFieldValue = TextField.this.value;
+				    	
 			    	}
 		    	}
 		    }

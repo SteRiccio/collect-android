@@ -31,7 +31,11 @@ public abstract class Field extends UIElement {
 	}
 	
 	public void setLabelText(String label){
-		this.label.setText(label);
+		if (this.isRequired){
+			this.label.setText(label+"*");	
+		} else {
+			this.label.setText(label);	
+		}		
 	}
 	
 	public void setLabelTextColor(int color){

@@ -48,6 +48,8 @@ public class MemoField extends InputField {
 	        @Override
 	        public void onFocusChange(View v, boolean hasFocus) {
 	            if (hasFocus) {
+	            	FormScreen.currentFieldValue = MemoField.this.value;
+	            	
 			    	Map<String, ?> settings = ApplicationManager.appPreferences.getAll();
 			    	Boolean valueForText = (Boolean)settings.get(getResources().getString(R.string.showSoftKeyboardOnTextField));
 	            	
@@ -79,8 +81,6 @@ public class MemoField extends InputField {
 			    		input.setKeyListener(null);
 			    		dialog.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
 			    	}
-			    	
-			    	FormScreen.currentFieldValue = MemoField.this.value;
 	            }
 	        }
 	    });

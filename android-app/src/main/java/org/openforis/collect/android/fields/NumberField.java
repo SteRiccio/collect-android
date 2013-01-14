@@ -63,6 +63,8 @@ public class NumberField extends InputField {
 		    public void onFocusChange(View v, boolean hasFocus) {
 		    	//Get current settings about software keyboard for text fields
 		    	if(hasFocus){
+		    		FormScreen.currentFieldValue = NumberField.this.value;
+		    		//Log.e("FOCUS ON",NumberField.this.value.getValue(0).get(0)+"=="+FormScreen.currentFieldValue.getId());
 			    	if(this.getClass().toString().contains("NumberField")){
 				    	Map<String, ?> settings = ApplicationManager.appPreferences.getAll();
 				    	Boolean valueForNum = (Boolean)settings.get(getResources().getString(R.string.showSoftKeyboardOnNumericField));
@@ -74,7 +76,7 @@ public class NumberField extends InputField {
 				    			NumberField.this.makeInteger();
 				    		} else{
 				    			NumberField.this.makeReal();
-				    		}			    		
+				    		}	    		
 				        }
 				    	else {
 				    		Log.i(getResources().getString(R.string.app_name), "Setting numeric field is: " + valueForNum);
@@ -82,7 +84,7 @@ public class NumberField extends InputField {
 //				    		NumberField.this.setKeyboardType(null);
 				    	}
 				    	//Log.e("CHANGING","CURRENT FIELDVALUE"+NumberField.this.getElementId());
-				    	FormScreen.currentFieldValue = NumberField.this.value;
+				    	//FormScreen.currentFieldValue = NumberField.this.value;
 			    	}
 		    	}
 		    }

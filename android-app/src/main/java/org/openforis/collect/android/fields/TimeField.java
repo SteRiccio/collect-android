@@ -10,6 +10,7 @@ import org.openforis.collect.android.data.FieldValue;
 import org.openforis.collect.android.dialogs.TimeSetDialog;
 import org.openforis.collect.android.management.ApplicationManager;
 import org.openforis.collect.android.messages.ToastMessage;
+import org.openforis.collect.android.screens.FormScreen;
 
 import android.content.Context;
 import android.content.Intent;
@@ -56,6 +57,7 @@ public class TimeField extends InputField implements TextWatcher {
 		    public void onFocusChange(View v, boolean hasFocus) {
 		    	//Get current settings about software keyboard for text fields
 		    	if(hasFocus){
+		    		FormScreen.currentFieldValue = TimeField.this.value;
 			    	if(this.getClass().toString().contains("TimeField")){
 				    	Map<String, ?> settings = ApplicationManager.appPreferences.getAll();
 				    	Boolean valueForNum = (Boolean)settings.get(getResources().getString(R.string.showSoftKeyboardOnNumericField));

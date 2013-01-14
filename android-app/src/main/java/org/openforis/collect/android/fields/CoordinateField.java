@@ -77,10 +77,10 @@ public class CoordinateField extends InputField {
 			@Override
 			public void onFocusChange(View v, boolean hasFocus) {
 				Log.i(getResources().getString(R.string.app_name), "Lattitude field got focus");				
-		    	//Log.e("currentCOORDINATE","=="+CoordinateField.this.getElementId());
-		    	FormScreen.currentFieldValue = CoordinateField.this.value;
+		    	//Log.e("currentCOORDINATE","=="+CoordinateField.this.getElementId());		    	
 		    	//Get current settings about software keyboard for numeric fields
 		    	if(hasFocus){
+		    		FormScreen.currentFieldValue = CoordinateField.this.value;
 			    	Map<String, ?> settings = ApplicationManager.appPreferences.getAll();
 			    	Boolean valueForNum = (Boolean)settings.get(getResources().getString(R.string.showSoftKeyboardOnNumericField));
 			    	Log.i(getResources().getString(R.string.app_name), "Setting latitude field is: " + valueForNum);

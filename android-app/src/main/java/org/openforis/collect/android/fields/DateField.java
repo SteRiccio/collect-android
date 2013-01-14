@@ -55,6 +55,7 @@ public class DateField extends InputField {
 		    public void onFocusChange(View v, boolean hasFocus) {
 		    	//Get current settings about software keyboard for text fields
 		    	if(hasFocus){
+		    		FormScreen.currentFieldValue = DateField.this.value;
 			    	if(this.getClass().toString().contains("DateField")){
 				    	Map<String, ?> settings = ApplicationManager.appPreferences.getAll();
 				    	Boolean valueForNum = (Boolean)settings.get(getResources().getString(R.string.showSoftKeyboardOnNumericField));
@@ -71,7 +72,6 @@ public class DateField extends InputField {
 				    	DateField.this.txtBox.setId(myRandom.nextInt());
 				    	//Show Date picker
 				    	showDatePickerDialog(DateField.this.elemId);
-				    	FormScreen.currentFieldValue = DateField.this.value;
 			    	}
 		    	}
 		    }
