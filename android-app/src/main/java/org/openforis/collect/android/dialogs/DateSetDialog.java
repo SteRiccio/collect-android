@@ -10,6 +10,7 @@ import org.openforis.collect.android.management.ApplicationManager;
 import android.app.DatePickerDialog;
 import android.app.Dialog;
 import android.content.DialogInterface;
+import android.content.DialogInterface.OnKeyListener;
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.FragmentActivity;
@@ -50,6 +51,21 @@ public class DateSetDialog extends FragmentActivity {
 			       }
 			    }
 			});
+			
+			this.datePicker.setOnKeyListener(new OnKeyListener(){
+				@Override
+				public boolean onKey( DialogInterface dialog , int keyCode , KeyEvent event ){
+					// disable search button action
+					if (keyCode == KeyEvent.KEYCODE_BACK){
+						Log.i(getResources().getString(R.string.app_name), "Button BACK pressed form DateSettingsDialog");
+					    //Finish activity
+					    finish();						
+						return true;
+					}
+					return false;
+				}
+			});
+			
 			return this.datePicker;
 		}
 		
@@ -63,14 +79,15 @@ public class DateSetDialog extends FragmentActivity {
 		    finish();
 		}		
 		
-		public boolean onKeyDown(int keyCode, KeyEvent event) {
-		    if ((keyCode == KeyEvent.KEYCODE_BACK)) {
-		    	Log.i(getResources().getString(R.string.app_name), "Button BACK pressed form DateSettingsDialog");
-			    //Finish activity
-			    finish();	    	
-		    }
-		    return false;
-		}		
+//		public boolean onKeyDown(int keyCode, KeyEvent event) {
+//		    if ((keyCode == KeyEvent.KEYCODE_BACK)) {
+//		    	Log.i(getResources().getString(R.string.app_name), "Button BACK pressed form DateSettingsDialog");
+//			    //Finish activity
+//			    finish();	    	
+//		    }
+//		    return false;
+//		}
+
 	}
 	
 	//Main class
@@ -90,16 +107,18 @@ public class DateSetDialog extends FragmentActivity {
 	
 	public void showDatePickerDialog(DateField dateField) {
 	    DialogFragment newFragment = new DatePickerFragment(dateField);
+	    newFragment.setCancelable(false);
+//	    newFragment.getFragmentManager().popBackStack();
 	    newFragment.show(getSupportFragmentManager(), "datePicker");
 	}	
 	
-	@Override
-	public boolean onKeyDown(int keyCode, KeyEvent event) {
-	    if ((keyCode == KeyEvent.KEYCODE_BACK)) {
-	    	Log.i(getResources().getString(R.string.app_name), "Button BACK pressed form activity");
-		    //Finish activity
-		    finish();	    	
-	    }
-	    return super.onKeyDown(keyCode, event);
-	}	
+//	@Override
+//	public boolean onKeyDown(int keyCode, KeyEvent event) {
+//	    if ((keyCode == KeyEvent.KEYCODE_BACK)) {
+//	    	Log.i(getResources().getString(R.string.app_name), "Button BACK pressed form DataSet activity");
+//		    //Finish activity
+//		    finish();	    	
+//	    }
+//	    return super.onKeyDown(keyCode, event);
+//	}	
 }

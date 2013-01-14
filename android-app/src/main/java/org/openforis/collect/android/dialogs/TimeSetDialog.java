@@ -9,6 +9,7 @@ import org.openforis.collect.android.management.ApplicationManager;
 import android.app.Dialog;
 import android.app.TimePickerDialog;
 import android.content.DialogInterface;
+import android.content.DialogInterface.OnKeyListener;
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.FragmentActivity;
@@ -48,7 +49,22 @@ public class TimeSetDialog extends FragmentActivity {
 			    	  finish();
 			       }
 			    }
-			});					
+			});	
+			
+			this.timePicker.setOnKeyListener(new OnKeyListener(){
+				@Override
+				public boolean onKey( DialogInterface dialog , int keyCode , KeyEvent event ){
+					// disable search button action
+					if (keyCode == KeyEvent.KEYCODE_BACK){
+						Log.i(getResources().getString(R.string.app_name), "Button BACK pressed form TimeSettingsDialog");
+					    //Finish activity
+					    finish();						
+						return true;
+					}
+					return false;
+				}
+			});
+			
 			return this.timePicker;
 		}
 
@@ -70,15 +86,15 @@ public class TimeSetDialog extends FragmentActivity {
 		        return "0" + String.valueOf(c);
 		}
 		
-		public boolean onKeyDown(int keyCode, KeyEvent event) {
-			Log.i(getResources().getString(R.string.app_name), "Some key pressed from TimeSettingsDialog");
-			if ((keyCode == KeyEvent.KEYCODE_BACK)) {
-		    	Log.i(getResources().getString(R.string.app_name), "Button BACK pressed from TimeSettingsDialog");
-			    //Finish activity
-			    finish();	    	
-		    }
-		    return true;
-		}		
+//		public boolean onKeyDown(int keyCode, KeyEvent event) {
+//			Log.i(getResources().getString(R.string.app_name), "Some key pressed from TimeSettingsDialog");
+//			if ((keyCode == KeyEvent.KEYCODE_BACK)) {
+//		    	Log.i(getResources().getString(R.string.app_name), "Button BACK pressed from TimeSettingsDialog");
+//			    //Finish activity
+//			    finish();	    	
+//		    }
+//		    return true;
+//		}		
 	}
 	
 	//Main class
@@ -100,6 +116,7 @@ public class TimeSetDialog extends FragmentActivity {
 	public void showTimePickerDialog(TimeField timeField) {
 		Log.i(getResources().getString(R.string.app_name), "Id of TimeField is is: " + timeField.getId());
 	    DialogFragment newFragment = new TimePickerFragment(timeField);
+	    newFragment.setCancelable(false);
 	    newFragment.show(getSupportFragmentManager(), "timePicker");
 	}	
 	
