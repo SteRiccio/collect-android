@@ -102,37 +102,14 @@ public class BooleanField extends Field {
 		
 		this.value = fieldValue;
 		
-		//this.addView(this.scrollLeft);
 		this.addView(this.label);
 		this.addView(this.chckBox1);
 		this.addView(this.label1);
 		this.addView(this.chckBox2);
 		this.addView(this.label2);
-		//this.addView(this.scrollRight);
 	}
-
-	/*public boolean getValue1()
-	{
-		return this.chckBox1.isChecked();
-	}
-	
-	public void setValue1(boolean isChecked)
-	{
-		this.chckBox1.setChecked(isChecked);
-	}
-	
-	public boolean getValue2()
-	{
-		return this.chckBox2.isChecked();
-	}
-	
-	public void setValue2(boolean isChecked)
-	{
-		this.chckBox2.setChecked(isChecked);
-	}*/
 	
 	public String getValue(int index, int tickedNo){
-		//return TextField.this.values.get(index);
 		return BooleanField.this.value.getValue(index).get(tickedNo);
 	}
 	
@@ -156,42 +133,6 @@ public class BooleanField extends Field {
 		}
 		BooleanField.this.value.setValue(position, valueToAdd);
 	}
-	
-	/*@Override
-	public void scrollLeft(){
-    	if (BooleanField.this.currentInstanceNo>0){
-    		ArrayList<Boolean> tempValue = new ArrayList<Boolean>();
-    		tempValue.add(BooleanField.this.chckBox1.isChecked());
-    		tempValue.add(BooleanField.this.chckBox2.isChecked());
-    		BooleanField.this.values.set(BooleanField.this.currentInstanceNo, tempValue);
-    		BooleanField.this.chckBox1.setChecked(BooleanField.this.values.get(BooleanField.this.currentInstanceNo-1).get(0));
-    		BooleanField.this.chckBox1.setChecked(BooleanField.this.values.get(BooleanField.this.currentInstanceNo-1).get(1));
-    		BooleanField.this.currentInstanceNo--;
-    	}
-	}
-	
-	@Override
-	public void scrollRight(){
-    	if (BooleanField.this.values.size()==(BooleanField.this.currentInstanceNo+1)){    		
-    		ArrayList<Boolean> tempValue = new ArrayList<Boolean>();
-    		tempValue.add(false);
-    		tempValue.add(false);
-    		BooleanField.this.values.add(BooleanField.this.currentInstanceNo+1, tempValue);
-    	}
-    	ArrayList<Boolean> tempValue = new ArrayList<Boolean>();
-		tempValue.add(BooleanField.this.chckBox1.isChecked());
-		tempValue.add(BooleanField.this.chckBox2.isChecked());
-    	BooleanField.this.values.set(BooleanField.this.currentInstanceNo, tempValue);
-    	BooleanField.this.currentInstanceNo++;
-		if (BooleanField.this.values.size()>=(BooleanField.this.currentInstanceNo+1)){
-			BooleanField.this.chckBox1.setChecked(BooleanField.this.values.get(BooleanField.this.currentInstanceNo).get(0));
-    		BooleanField.this.chckBox1.setChecked(BooleanField.this.values.get(BooleanField.this.currentInstanceNo).get(1));
-		}
-	}*/
-	
-	/*public List<Boolean> getValue(int index){
-		return BooleanField.this.values.get(index);
-	}*/
 	
 	@Override
 	public int getInstancesNo(){

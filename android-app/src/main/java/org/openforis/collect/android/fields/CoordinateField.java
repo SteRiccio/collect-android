@@ -62,8 +62,7 @@ public class CoordinateField extends InputField {
 	    			        	
 	        }
 	    });
-		
-		//this.addView(this.scrollLeft);
+
 		this.addView(this.label);
 		
 		this.txtLatitude = new EditText(context);
@@ -76,8 +75,7 @@ public class CoordinateField extends InputField {
 		this.txtLatitude.setOnFocusChangeListener(new OnFocusChangeListener(){
 			@Override
 			public void onFocusChange(View v, boolean hasFocus) {
-				Log.i(getResources().getString(R.string.app_name), "Lattitude field got focus");				
-		    	//Log.e("currentCOORDINATE","=="+CoordinateField.this.getElementId());		    	
+				Log.i(getResources().getString(R.string.app_name), "Lattitude field got focus");					    	
 		    	//Get current settings about software keyboard for numeric fields
 		    	if(hasFocus){
 		    		FormScreen.currentFieldValue = CoordinateField.this.value;
@@ -96,7 +94,6 @@ public class CoordinateField extends InputField {
 		    	}		    	
 			}
 		});
-//		this.setKeyboardType(new DigitsKeyListener(true,true));
 		
 		this.txtLongitude = new EditText(context);
 		this.txtLongitude.setLayoutParams(new LayoutParams(0,ViewGroup.LayoutParams.WRAP_CONTENT,(float) 2));
@@ -104,13 +101,11 @@ public class CoordinateField extends InputField {
 		this.txtLongitude.setHint(hintTextLon);
 		this.txtLongitude.addTextChangedListener(this);
 		this.addView(txtLongitude);
-		//this.addView(this.scrollRight);
 		
 		this.txtLongitude.setOnFocusChangeListener(new OnFocusChangeListener(){
 			@Override
 			public void onFocusChange(View v, boolean hasFocus) {
 				Log.i(getResources().getString(R.string.app_name), "Longitude field got focus");
-		    	//Log.e("currentCOORDINATE","=="+CoordinateField.this.getElementId());
 		    	FormScreen.currentFieldValue = CoordinateField.this.value;
 		    	//Get current settings about software keyboard for numeric fields
 		    	if(hasFocus){
@@ -132,20 +127,8 @@ public class CoordinateField extends InputField {
 		
 		this.value = fieldValue;
 	}
-	
-	/*
-	public String getValue()
-	{
-		return this.txtLatitude.getText().toString()+","+this.txtLongitude.getText().toString();
-	}
-	
-	public void setValue(String latitude, String longitude)
-	{
-		this.txtLatitude.setText(latitude);
-		this.txtLongitude.setText(longitude);
-	}*/
+
 	public List<String> getValue(int index){
-		//return TextField.this.values.get(index);
 		return CoordinateField.this.value.getValue(index);
 	}
 	
@@ -170,43 +153,6 @@ public class CoordinateField extends InputField {
 		this.txtLatitude.setGravity(alignment);
 		this.txtLongitude.setGravity(alignment);
 	}
-	
-	/*@Override
-	public void scrollLeft(){
-    	if (CoordinateField.this.currentInstanceNo>0){
-    		ArrayList<String> tempValue = new ArrayList<String>();
-    		tempValue.add(CoordinateField.this.txtLatitude.getText().toString());
-    		tempValue.add(CoordinateField.this.txtLongitude.getText().toString());
-    		CoordinateField.this.values.set(CoordinateField.this.currentInstanceNo, tempValue);
-    		CoordinateField.this.currentInstanceNo--;
-    		CoordinateField.this.txtLatitude.setText(CoordinateField.this.values.get(CoordinateField.this.currentInstanceNo-1).get(0));
-    		CoordinateField.this.txtLatitude.setText(CoordinateField.this.values.get(CoordinateField.this.currentInstanceNo-1).get(1));
-    		CoordinateField.this.currentInstanceNo--;
-    	}
-	}
-	
-	@Override
-	public void scrollRight(){
-    	if (CoordinateField.this.values.size()==(CoordinateField.this.currentInstanceNo+1)){
-    		ArrayList<String> tempValue = new ArrayList<String>();
-    		tempValue.add("");
-    		tempValue.add("");
-    		CoordinateField.this.values.add(CoordinateField.this.currentInstanceNo+1, tempValue);	        		
-    	}
-    	ArrayList<String> tempValue = new ArrayList<String>();
-		tempValue.add(CoordinateField.this.txtLatitude.getText().toString());
-		tempValue.add(CoordinateField.this.txtLongitude.getText().toString());
-		CoordinateField.this.values.set(CoordinateField.this.currentInstanceNo, tempValue);   
-		CoordinateField.this.currentInstanceNo++;
-		if (CoordinateField.this.values.size()>=(CoordinateField.this.currentInstanceNo+1)){
-			CoordinateField.this.txtLatitude.setText(CoordinateField.this.values.get(CoordinateField.this.currentInstanceNo).get(0));
-			CoordinateField.this.txtLatitude.setText(CoordinateField.this.values.get(CoordinateField.this.currentInstanceNo).get(1));
-		}
-	}*/
-	
-	/*public ArrayList<String> getValue(int index){
-		return CoordinateField.this.values.get(index);
-	}*/
 	
 	@Override
 	public void afterTextChanged(Editable s) {

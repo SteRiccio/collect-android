@@ -45,10 +45,9 @@ public class DateField extends InputField {
 		this.txtBox.setLayoutParams(new LayoutParams(0,ViewGroup.LayoutParams.WRAP_CONTENT,(float) 2));
 		this.txtBox.addTextChangedListener(this);
 		
-		//this.addView(this.scrollLeft);
 		this.addView(this.label);
 		this.addView(this.txtBox);
-		//this.addView(this.scrollRight);		
+	
 		// When text box in DateField got focus
 		this.txtBox.setOnFocusChangeListener(new OnFocusChangeListener() {
 		    @Override
@@ -80,43 +79,12 @@ public class DateField extends InputField {
 		this.value = fieldValue;		
 	}
 
-	private void showDatePickerDialog(int id) {  	
-//		Log.i(getResources().getString(R.string.app_name), "Id from date field was: " + id);
+	private void showDatePickerDialog(int id) {
 		Intent datePickerIntent = new Intent(DateField.this.getContext(), DateSetDialog.class);
     	datePickerIntent.putExtra("datefield_id", id);
     	datePickerIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
     	super.getContext().startActivity(datePickerIntent);	
 	}
-	
-	/*@Override
-	public void scrollLeft(){
-    	if (DateField.this.currentInstanceNo>0){
-    		DateField.this.values.set(DateField.this.currentInstanceNo, DateField.this.txtBox.getText().toString());	        		
-    		DateField.this.currentInstanceNo--;
-    		DateField.this.txtBox.setText(DateField.this.values.get(DateField.this.currentInstanceNo));    		
-    	}
-	}
-	
-	@Override
-	public void scrollRight(){
-    	if (DateField.this.values.size()==(DateField.this.currentInstanceNo+1)){
-    		DateField.this.values.add(DateField.this.currentInstanceNo+1, "");
-    	}
-    	DateField.this.values.set(DateField.this.currentInstanceNo, DateField.this.txtBox.getText().toString());
-    	DateField.this.currentInstanceNo++;
-		if (DateField.this.values.size()>=(DateField.this.currentInstanceNo+1)){
-			DateField.this.txtBox.setText(DateField.this.values.get(DateField.this.currentInstanceNo));
-		}
-	}*/
-	
-	/*public String getValue(int index){
-		return DateField.this.values.get(index);
-	}
-	
-	@Override
-	public void afterTextChanged(Editable s) {
-		DateField.this.values.add(currentInstanceNo, s.toString());
-	}*/
 	
 	public String getValue(int index){
 		return DateField.this.value.getValue(index).get(0);

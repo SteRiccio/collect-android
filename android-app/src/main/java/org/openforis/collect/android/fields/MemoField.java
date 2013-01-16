@@ -86,44 +86,12 @@ public class MemoField extends InputField {
 	    });
 		
 		this.value = fieldValue;
-		
-		//this.addView(this.scrollLeft);
+
 		this.addView(this.label);
 		this.addView(this.txtBox);
-		//this.addView(this.scrollRight);
 	}
 	
-	/*@Override
-	public void scrollLeft(){
-    	if (MemoField.this.currentInstanceNo>0){
-    		MemoField.this.values.set(MemoField.this.currentInstanceNo, MemoField.this.txtBox.getText().toString());	        		
-    		MemoField.this.currentInstanceNo--;
-    		MemoField.this.txtBox.setText(MemoField.this.values.get(MemoField.this.currentInstanceNo));    		
-    	}
-	}
-	
-	@Override
-	public void scrollRight(){
-    	if (MemoField.this.values.size()==(MemoField.this.currentInstanceNo+1)){
-    		MemoField.this.values.add(MemoField.this.currentInstanceNo+1, "");
-    	}
-    	MemoField.this.values.set(MemoField.this.currentInstanceNo, MemoField.this.txtBox.getText().toString());
-    	MemoField.this.currentInstanceNo++;
-		if (MemoField.this.values.size()>=(MemoField.this.currentInstanceNo+1)){
-			MemoField.this.txtBox.setText(MemoField.this.values.get(MemoField.this.currentInstanceNo));
-		}
-	}*/
-	
-	/*public String getValue(int index){
-		return MemoField.this.values.get(index);
-	}
-	
-	@Override
-	public void afterTextChanged(Editable s) {
-		MemoField.this.values.add(currentInstanceNo, s.toString());
-	}*/
 	public String getValue(int index){
-		//return TextField.this.values.get(index);
 		return MemoField.this.value.getValue(index).get(0);
 	}
 	

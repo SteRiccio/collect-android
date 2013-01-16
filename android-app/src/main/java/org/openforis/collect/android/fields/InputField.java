@@ -5,8 +5,6 @@ import android.text.Editable;
 import android.text.TextWatcher;
 import android.text.method.DigitsKeyListener;
 import android.text.method.KeyListener;
-import android.util.Log;
-import android.view.Gravity;
 import android.widget.EditText;
 
 public class InputField extends Field implements TextWatcher {
@@ -22,16 +20,6 @@ public class InputField extends Field implements TextWatcher {
 	public void setKeyboardType(KeyListener keyListener){
 		this.txtBox.setKeyListener(keyListener);
 	}
-	
-	/*public String getValue()
-	{
-		return this.txtBox.getText().toString();
-	}
-	
-	public void setValue(String value)
-	{
-		this.txtBox.setText(value);
-	}*/
 	
 	public String getHint()
 	{

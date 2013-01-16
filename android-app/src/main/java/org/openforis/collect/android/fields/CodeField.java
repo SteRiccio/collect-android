@@ -72,11 +72,9 @@ public class CodeField extends Field {
 		this.spinner.setOnItemSelectedListener(new OnItemSelectedListener() {
 		    @Override
 		    public void onItemSelected(AdapterView<?> parentView, View selectedItemView, int position, long id) {
-		    	//CodeField.this.values.set(CodeField.this.currentInstanceNo, CodeField.this.spinner.getSelectedItemPosition());
 		    	ArrayList<String> valueToAdd = new ArrayList<String>();
 		    	valueToAdd.add(CodeField.this.codes.get((CodeField.this.spinner.getSelectedItemPosition())));
 
-		    	//CodeField.this.setValue(CodeField.this.currentInstanceNo, CodeField.this.codes.get(CodeField.this.spinner.getSelectedItemPosition()));
 		    	CodeField.this.setValue(CodeField.form.currInstanceNo, CodeField.this.codes.get(CodeField.this.spinner.getSelectedItemPosition()));
 				FormScreen.currentFieldValue = CodeField.this.value;
 				FormScreen.currentFieldValue.setValue(CodeField.form.currInstanceNo, valueToAdd);
@@ -109,59 +107,17 @@ public class CodeField extends Field {
 		
 		this.values = new ArrayList<Integer>();
 		this.values.add(this.spinner.getSelectedItemPosition());
-		//this.addView(this.scrollLeft);
+
 		this.addView(this.label);
 		this.addView(this.spinner);
-		//this.addView(this.scrollRight);
 		
 		this.value = fieldValue;
 	}
 	
-	/*public String getValue()
-	{
-		return String.valueOf(this.codes.get((int)this.spinner.getSelectedItemId()));
-	}
-	
-	public void setValue(String code)
-	{
-		boolean isFound = false;
-		int position = 0;
-		while (!isFound&&position<this.codes.size()){
-			if (this.codes.get(position).equals(code)){
-				isFound = true;
-			}
-			position++;
-		}
-		if (isFound){
-			this.spinner.setSelection(position-1);
-		}			
-		else{
-			this.spinner.setSelection(0);
-		}			
-	}
-	
-	public void setValue(int position)
-	{
-		this.spinner.setSelection(position);
-	}
-	
-	public void setEmptyValue()
-	{
-		this.spinner.setSelection(0);
-	}*/
-	
 	public String getValue(int index){
-		//return TextField.this.values.get(index);
 		return CodeField.this.value.getValue(index).get(0);
 	}
 	
-	/*public void setValue(int position, int positionOnList)
-	{
-		this.spinner.setSelection(positionOnList);
-		ArrayList<String> valueToAdd = new ArrayList<String>();	
-		valueToAdd.add(String.valueOf(positionOnList));
-		CodeField.this.value.setValue(position, valueToAdd);
-	}*/
 	public void setValue(int position, String code)
 	{
 		ArrayList<String> valueToAdd = new ArrayList<String>();	
@@ -183,37 +139,6 @@ public class CodeField extends Field {
 		}
 		CodeField.this.value.setValue(position, valueToAdd);		
 	}
-	
-	/*@Override
-	public void scrollLeft(){
-		Log.e("scrollLEFT","=="+this.currentInstanceNo);
-    	if (CodeField.this.currentInstanceNo>0){
-    		CodeField.this.values.set(CodeField.this.currentInstanceNo, CodeField.this.spinner.getSelectedItemPosition());
-    		CodeField.this.currentInstanceNo--;
-    		CodeField.this.spinner.setSelection(CodeField.this.values.get(CodeField.this.currentInstanceNo));    		
-    	}
-	}
-	
-	@Override
-	public void scrollRight(){
-		Log.e("scrollRIGHT","=="+this.currentInstanceNo);
-    	if (CodeField.this.values.size()==(CodeField.this.currentInstanceNo+1)){
-    		CodeField.this.values.add(CodeField.this.currentInstanceNo+1, 0);
-    	}
-    	CodeField.this.values.set(CodeField.this.currentInstanceNo, CodeField.this.spinner.getSelectedItemPosition());
-    	CodeField.this.currentInstanceNo++;
-		if (CodeField.this.values.size()>=(CodeField.this.currentInstanceNo+1)){
-			CodeField.this.spinner.setSelection(CodeField.this.values.get(CodeField.this.currentInstanceNo));
-		}		
-	}*/
-	
-	/*public String getValue(int index){
-		//return CodeField.this.values.get(index);
-		if (this.codes.size()>0)
-			return this.codes.get(index);
-		else
-			return null;
-	}*/
 	
 	@Override
 	public int getInstancesNo(){
