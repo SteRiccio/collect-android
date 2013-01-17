@@ -9,9 +9,11 @@ import org.openforis.collect.android.messages.ToastMessage;
 import org.openforis.collect.android.screens.FormScreen;
 
 import android.content.Context;
+import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemClickListener;
 import android.widget.AdapterView.OnItemSelectedListener;
 import android.widget.ArrayAdapter;
 import android.widget.Spinner;
@@ -32,6 +34,8 @@ public class CodeField extends Field {
 	
 	private static FormScreen form;
 	
+	private boolean selectedForTheFirstTime;
+	
 	public CodeField(Context context, int id, String labelText, String promptText, 
 			ArrayList<String> codes, ArrayList<String> options, 
 			String selectedItem, boolean isSearchable,
@@ -40,6 +44,8 @@ public class CodeField extends Field {
 		this.searchable = isSearchable;
 
 		CodeField.form = (FormScreen)context;
+		
+		this.selectedForTheFirstTime = true;
 		
 		this.label.setText(labelText);
 		this.label.setLayoutParams(new LayoutParams(0, ViewGroup.LayoutParams.WRAP_CONTENT, (float) 1));
@@ -75,12 +81,18 @@ public class CodeField extends Field {
 		    	ArrayList<String> valueToAdd = new ArrayList<String>();
 		    	valueToAdd.add(CodeField.this.codes.get((CodeField.this.spinner.getSelectedItemPosition())));
 
+		    	FieldValue previousFocusedFieldValue = FormScreen.currentFieldValue;
 		    	CodeField.this.setValue(CodeField.form.currInstanceNo, CodeField.this.codes.get(CodeField.this.spinner.getSelectedItemPosition()));
-				FormScreen.currentFieldValue = CodeField.this.value;
-				FormScreen.currentFieldValue.setValue(CodeField.form.currInstanceNo, valueToAdd);
-				if (CodeField.form.currentNode!=null){
+		    	if (!CodeField.this.selectedForTheFirstTime){
+		    		FormScreen.currentFieldValue = CodeField.this.value;
+					FormScreen.currentFieldValue.setValue(CodeField.form.currInstanceNo, valueToAdd);					
+		    	} else {
+		    		CodeField.this.selectedForTheFirstTime = false;
+		    	}
+				if (CodeField.form.currentNode!=null&&FormScreen.currentFieldValue!=null){
 					CodeField.form.currentNode.addFieldValue(FormScreen.currentFieldValue);
 				}
+				FormScreen.currentFieldValue = previousFocusedFieldValue;
 		    }
 
 		    @Override
@@ -89,6 +101,34 @@ public class CodeField extends Field {
 		    }
 
 		});
+
+
+		/*this.spinner.setOnItemClickListener(new OnItemClickListener() {			
+		    public void onClick(View v) {
+		            Log.e("SPINNER"+CodeField.this.getElementId(), "onClick");
+			    	ArrayList<String> valueToAdd = new ArrayList<String>();
+			    	valueToAdd.add(CodeField.this.codes.get((CodeField.this.spinner.getSelectedItemPosition())));
+
+			    	CodeField.this.setValue(CodeField.form.currInstanceNo, CodeField.this.codes.get(CodeField.this.spinner.getSelectedItemPosition()));
+					FormScreen.currentFieldValue = CodeField.this.value;
+					FormScreen.currentFieldValue.setValue(CodeField.form.currInstanceNo, valueToAdd);
+		        }
+
+			@Override
+			public void onItemClick(AdapterView<?> arg0, View arg1, int arg2,
+					long arg3) {
+		        Log.e("SPINNER"+CodeField.this.getElementId(), "onItemClick");
+		    	ArrayList<String> valueToAdd = new ArrayList<String>();
+		    	valueToAdd.add(CodeField.this.codes.get((CodeField.this.spinner.getSelectedItemPosition())));
+
+		    	CodeField.this.setValue(CodeField.form.currInstanceNo, CodeField.this.codes.get(CodeField.this.spinner.getSelectedItemPosition()));
+				FormScreen.currentFieldValue = CodeField.this.value;
+				FormScreen.currentFieldValue.setValue(CodeField.form.currInstanceNo, valueToAdd);
+				if (CodeField.form.currentNode!=null&&FormScreen.currentFieldValue!=null){
+					CodeField.form.currentNode.addFieldValue(FormScreen.currentFieldValue);
+				}
+			}
+		});*/
 		
 		boolean isFound = false;
 		int position = 0;
