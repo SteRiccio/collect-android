@@ -97,13 +97,14 @@ public class ClusterChoiceActivity extends ListActivity{
 		CollectSurvey collectSurvey = (CollectSurvey)ApplicationManager.getSurvey();	        	
     	DataManager dataManager = new DataManager(collectSurvey,collectSurvey.getSchema().getRootEntityDefinitions().get(0).getName(),ApplicationManager.getLoggedInUser());
     	this.recordsList = dataManager.loadSummaries();
-		String[] clusterList = new String[recordsList.size()];
+		String[] clusterList = new String[recordsList.size()+1];
 		for (int i=0;i<recordsList.size();i++){
 			clusterList[i] = recordsList.get(i).getId()+" "+recordsList.get(i).getCreatedBy().getName()
 					+" "+recordsList.get(i).getCreationDate().toLocaleString();
 			Log.e("cluster","=="+recordsList.get(i).getId()+" "+recordsList.get(i).getCreatedBy().getName()
 					+" "+recordsList.get(i).getCreationDate().toLocaleString());
 		}
+		clusterList[recordsList.size()+1]="Add new record";
 		
 		/*clusterList = new String[5];
 		for (int i=0;i<4;i++){
