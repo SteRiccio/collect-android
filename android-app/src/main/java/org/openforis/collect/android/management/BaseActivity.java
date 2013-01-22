@@ -3,6 +3,7 @@ package org.openforis.collect.android.management;
 import org.openforis.collect.android.R;
 import org.openforis.collect.android.messages.AlertMessage;
 import org.openforis.collect.android.screens.SettingsScreen;
+import org.openforis.collect.model.CollectSurvey;
 
 import android.app.Activity;
 import android.content.DialogInterface;
@@ -54,11 +55,13 @@ public class BaseActivity extends Activity {
         switch (item.getItemId())
         {
 	        case R.id.menu_save:
-	        	return true;
+	        	CollectSurvey collectSurvey = (CollectSurvey)ApplicationManager.getSurvey();	        	
+	        	DataManager dataManager = new DataManager(collectSurvey,collectSurvey.getSchema().getRootEntityDefinitions().get(0).getName(),ApplicationManager.getLoggedInUser());
+	        	dataManager.save(ApplicationManager.valuesTree, this);
+	        	return true;	        	
 			case R.id.menu_settings:
 				startActivity(new Intent(BaseActivity.this,SettingsScreen.class));
-			    return true;
-			    
+			    return true;			    
 			case R.id.menu_about:
 				String versionName;
 				try {
