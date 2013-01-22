@@ -56,22 +56,15 @@ public class DataManager {
 		return 0;
 	}
 	
-	public int loadSummaries(){
+	public List<CollectRecord> loadSummaries(){
 		JdbcDaoSupport jdbcDao = new JdbcDaoSupport();
 		jdbcDao.getConnection();
 		//this.recordManager.loadSummaries(survey, rootEntity);
 		long startTime = System.currentTimeMillis();
 		List<CollectRecord> recordsList = this.recordManager.loadSummaries(survey, rootEntity);
-		Log.e("loadingSummaries","=="+(System.currentTimeMillis()-startTime)/1000);
-		String[] clusterList = new String[recordsList.size()];
-		for (int i=0;i<recordsList.size();i++){
-			clusterList[i] = recordsList.get(i).getId()+" "+recordsList.get(i).getCreatedBy().getName()
-					+" "+recordsList.get(i).getCreationDate().toLocaleString();
-			Log.e("cluster","=="+recordsList.get(i).getId()+" "+recordsList.get(i).getCreatedBy().getName()
-					+" "+recordsList.get(i).getCreationDate().toLocaleString());
-		}	
+		Log.e("loadingSummaries","=="+(System.currentTimeMillis()-startTime)/1000);	
 		JdbcDaoSupport.close();
-		return 0;
+		return recordsList;
 	}
 	
 	public int load(){
