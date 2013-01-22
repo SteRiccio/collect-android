@@ -104,7 +104,7 @@ public class ClusterChoiceActivity extends ListActivity{
 			Log.e("cluster","=="+recordsList.get(i).getId()+" "+recordsList.get(i).getCreatedBy().getName()
 					+" "+recordsList.get(i).getCreationDate().toLocaleString());
 		}
-		clusterList[recordsList.size()+1]="Add new record";
+		clusterList[recordsList.size()]="Add new record";
 		
 		/*clusterList = new String[5];
 		for (int i=0;i<4;i++){
