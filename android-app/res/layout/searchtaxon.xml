@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical" >
+
+	<TextView
+	    android:id="@+id/lblSearch"
+	    android:layout_width="match_parent"
+	    android:layout_height="wrap_content"
+	    android:text="Search data. Wait please.." >
+	</TextView>
+<!--  	
+    <EditText 
+        android:id="@+id/txtSearch"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" 
+        android:layout_below="@+id/lblSearch" >
+    </EditText>
+    
+	<Button 
+	    android:id="@+id/btnSearch"
+	    android:layout_width="match_parent"
+        android:layout_height="wrap_content" 
+        android:layout_below="@+id/txtSearch"
+        android:text="Search" >
+    </Button>
+-->
+	<ListView
+	    android:id="@+id/lstResult"
+	    android:layout_width="fill_parent"
+	    android:layout_height="fill_parent" 
+	     android:layout_below="@+id/lblSearch">
+	</ListView>
+</RelativeLayout>

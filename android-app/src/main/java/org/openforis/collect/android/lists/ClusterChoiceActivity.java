@@ -4,9 +4,11 @@ import java.util.List;
 
 import org.openforis.collect.android.R;
 import org.openforis.collect.android.management.ApplicationManager;
+import org.openforis.collect.android.management.DataManager;
 import org.openforis.collect.android.messages.AlertMessage;
 import org.openforis.collect.android.misc.RunnableHandler;
 import org.openforis.collect.model.CollectRecord;
+import org.openforis.collect.model.CollectSurvey;
 
 import android.app.ListActivity;
 import android.content.DialogInterface;
@@ -15,14 +17,12 @@ import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.os.Environment;
-import android.text.Html;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
 import android.widget.ArrayAdapter;
-import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 
@@ -50,7 +50,6 @@ public class ClusterChoiceActivity extends ListActivity{
         try{
         	this.activityLabel = (TextView)findViewById(R.id.lblList);
         	this.activityLabel.setText(getResources().getString(R.string.clusterChoiceListLabel));
-        	
         	
         	/*ProgressDialog pd = ProgressDialog.show(ClusterChoiceActivity.this, getResources().getString(R.string.workInProgress), getResources().getString(R.string.loading), true, false);
             //populating available cluster list
@@ -94,12 +93,25 @@ public class ClusterChoiceActivity extends ListActivity{
 		
 		int backgroundColor = ApplicationManager.appPreferences.getInt(getResources().getString(R.string.backgroundColor), Color.WHITE);	
 		changeBackgroundColor(backgroundColor);
-		clusterList = new String[5];
+		
+		CollectSurvey collectSurvey = (CollectSurvey)ApplicationManager.getSurvey();	        	
+    	DataManager dataManager = new DataManager(collectSurvey,collectSurvey.getSchema().getRootEntityDefinitions().get(0).getName(),ApplicationManager.getLoggedInUser());
+    	this.recordsList = dataManager.loadSummaries();
+		String[] clusterList = new String[recordsList.size()+1];
+		for (int i=0;i<recordsList.size();i++){
+			clusterList[i] = recordsList.get(i).getId()+" "+recordsList.get(i).getCreatedBy().getName()
+					+" "+recordsList.get(i).getCreationDate().toLocaleString();
+			Log.e("cluster","=="+recordsList.get(i).getId()+" "+recordsList.get(i).getCreatedBy().getName()
+					+" "+recordsList.get(i).getCreationDate().toLocaleString());
+		}
+		clusterList[recordsList.size()]="Add new record";
+		
+		/*clusterList = new String[5];
 		for (int i=0;i<4;i++){
 			clusterList[i] = "Record "+(i+1)+"\n";
 			clusterList[i] += "key1 key2 key3...";
 		}		
-		clusterList[4] = "Add new record";
+		clusterList[4] = "Add new record";*/
 		
 		int layout = (backgroundColor!=Color.WHITE)?R.layout.localclusterrow_white:R.layout.localclusterrow_black;
         this.adapter = new ArrayAdapter<String>(this, layout, R.id.plotlabel, clusterList);

@@ -1142,6 +1142,109 @@ public class FormScreen extends BaseActivity implements OnClickListener, TextWat
         				summaryTableView.setId(nodeDef.getId());
         				this.ll.addView(summaryTableView);
     				}*/
+    				ArrayList<String> taxonOptions = new ArrayList<String>();
+    				ArrayList<String> taxonCodes = new ArrayList<String>();
+    				taxonOptions.add("");
+    				taxonCodes.add("");
+    				
+    				if (!nodeDef.isMultiple()){
+        				int numberOfInstances = startingIntent.getIntExtra(getResources().getString(R.string.numberOfInstances), -1);
+//        				Log.e("ILOSC INSTANCJI","=="+numberOfInstances);
+        				Log.i("TAXON_FIELD","Not multiple");
+        				FieldValue tempFieldValue = new FieldValue(nodeDef.getId(),getFormScreenId(),null);
+        				if (numberOfInstances!=-1){
+        					ArrayList<String> instanceValues = new ArrayList<String>();
+            				//Log.e("numberOFinstances","=="+numberOfInstances);
+        					instanceValues = startingIntent.getStringArrayListExtra(getResources().getString(R.string.instanceValues)+0);
+        					tempFieldValue.addValue(instanceValues);
+        				}
+        				else {
+        					ArrayList<String> instanceValues = new ArrayList<String>();
+        					instanceValues.add("");
+        					instanceValues.add("");
+        					instanceValues.add("");
+        					instanceValues.add("");
+        					instanceValues.add("");
+        					tempFieldValue.addValue(instanceValues);
+        				}    
+        				Log.i("TAXON_FIELD","TempFieldValue is: " + tempFieldValue.getValues().toString());
+        				
+        				TaxonField taxonField = new TaxonField(this, nodeDef.getId(), nodeDef.getLabel(Type.INSTANCE, null), new String[5],"hintText","promptText", taxonCodes, taxonOptions, null, true, nodeDef.isMultiple(), false, tempFieldValue);
+        				taxonField.setOnClickListener(this);
+        				taxonField.setId(nodeDef.getId());
+        				Log.i("TAXON_FIELD","Setting TaxonField value by tempFieldValue");
+        				taxonField.setValue(0, tempFieldValue.getValue(0).get(0), tempFieldValue.getValue(0).get(1), tempFieldValue.getValue(0).get(2),tempFieldValue.getValue(0).get(3), tempFieldValue.getValue(0).get(4));
+
+        				FormScreen.currentFieldValue = this.currentNode.getFieldValue(nodeDef.getId());
+        				if (FormScreen.currentFieldValue==null){
+        					ArrayList<String> initialValue = new ArrayList<String>();
+        					initialValue.add(taxonField.getValue(0).get(0));
+        					initialValue.add(taxonField.getValue(0).get(1));
+        					initialValue.add(taxonField.getValue(0).get(2));
+        					initialValue.add(taxonField.getValue(0).get(3));
+        					initialValue.add(taxonField.getValue(0).get(4));
+        					
+        					FormScreen.currentFieldValue = new FieldValue(nodeDef.getId(),getFormScreenId(),null);
+        					FormScreen.currentFieldValue.addValue(initialValue);
+        					this.currentNode.addFieldValue(FormScreen.currentFieldValue);        		
+        				} else {
+        					//Log.e("wczytanaWARTOSC",FormScreen.currentFieldValue.getId()+"=="+FormScreen.currentFieldValue.getValue(0).get(0));
+        					Log.i("TAXON_FIELD","Setting TaxonField value by FormScreen.currentFieldValue");
+        					Log.i("TAXON_FIELD","FormScreen.currentFieldValue is: " + FormScreen.currentFieldValue.getValue(0).toString());
+        					taxonField.setValue(0, FormScreen.currentFieldValue.getValue(0).get(0), FormScreen.currentFieldValue.getValue(0).get(1), FormScreen.currentFieldValue.getValue(0).get(2), FormScreen.currentFieldValue.getValue(0).get(3), FormScreen.currentFieldValue.getValue(0).get(4));    
+        				}
+        				ApplicationManager.uiElementsMap.put(taxonField.getId(), taxonField);
+        				this.ll.addView(taxonField);       				
+    				}
+    				else if (this.intentType==getResources().getInteger(R.integer.multipleAttributeIntent)){    					
+    					Log.i("TAXON_FIELD","Is multiple. Intent type is multipleAttributeIntent");
+    					int numberOfInstances = startingIntent.getIntExtra(getResources().getString(R.string.numberOfInstances), -1);
+        				this.currentMultipleFieldValue = new FieldValue(nodeDef.getId(), getFormScreenId(),null);
+        				ArrayList<String> instanceValues = new ArrayList<String>();
+        				for (int k=0;k<numberOfInstances;k++){
+        					instanceValues = startingIntent.getStringArrayListExtra(getResources().getString(R.string.instanceValues)+k);
+        					this.currentMultipleFieldValue.addValue(instanceValues);
+        				}
+
+        				TaxonField taxonField = new TaxonField(this, nodeDef.getId(), nodeDef.getLabel(Type.INSTANCE, null), new String[5], "hintText","promptText", taxonCodes, taxonOptions, null, true, nodeDef.isMultiple(), false, this.currentMultipleFieldValue);
+        				taxonField.setOnClickListener(this);
+        				taxonField.setId(nodeDef.getId());
+        				Log.i("TAXON_FIELD","currentMultipleFieldValue size is: " + this.currentMultipleFieldValue.size());
+        				Log.i("TAXON_FIELD","this.currInstanceNo is: " + this.currInstanceNo);
+        				if (this.currentMultipleFieldValue.size()>this.currInstanceNo){        					
+//        					taxonField.setValue(this.currInstanceNo, this.currentMultipleFieldValue.getValue(this.currInstanceNo).get(0));	    						
+        					Log.i("TAXON_FIELD","Set TaxonField value by this.currentMultipleFieldValue: " + this.currentMultipleFieldValue.getValue(this.currInstanceNo).toString());
+        					taxonField.setValue(this.currInstanceNo, this.currentMultipleFieldValue.getValue(this.currInstanceNo).get(0), this.currentMultipleFieldValue.getValue(this.currInstanceNo).get(1), this.currentMultipleFieldValue.getValue(this.currInstanceNo).get(2), this.currentMultipleFieldValue.getValue(this.currInstanceNo).get(3), this.currentMultipleFieldValue.getValue(this.currInstanceNo).get(4));
+        				}
+        				ApplicationManager.uiElementsMap.put(taxonField.getId(), taxonField);
+        				this.ll.addView(taxonField);
+    				}
+    				else {
+    					Log.i("TAXON_FIELD","Is multiple. Intent type is NOT multipleAttributeIntent");
+    					FieldValue fieldValueToBeRestored = this.currentNode.getFieldValue(nodeDef.getId());    					
+    					if (fieldValueToBeRestored!=null){
+    						//Log.e("POWROT","z MULTIPLE FIELD");
+    						SummaryTable summaryTableView = new SummaryTable(this, nodeDef.getId(), nodeDef.getLabel(Type.INSTANCE, null), tableColHeaders, fieldValueToBeRestored.getValues(), this);
+        					summaryTableView.setOnClickListener(this);
+            				summaryTableView.setId(nodeDef.getId());
+            				this.ll.addView(summaryTableView);
+    					} else{
+    						//Log.e("PIERWSZE","OTWARCIE");
+    			    		ArrayList<List<String>> tableValuesLists = new ArrayList<List<String>>();
+    			    		ArrayList<String> valueRow1 = new ArrayList<String>();
+    			    		//row1.add("1");
+    			    		valueRow1.add("");
+    			    		valueRow1.add("");
+    			    		valueRow1.add("");
+    			    		valueRow1.add("");
+    			    		valueRow1.add("");
+    			    		tableValuesLists.add(valueRow1);
+    						SummaryTable summaryTableView = new SummaryTable(this, nodeDef.getId(), nodeDef.getLabel(Type.INSTANCE, null), tableColHeaders, tableValuesLists, this);
+        					summaryTableView.setOnClickListener(this);
+            				summaryTableView.setId(nodeDef.getId());
+            				this.ll.addView(summaryTableView);			
+    					} 
+    				}
     			} else if (nodeDef instanceof TimeAttributeDefinition){
 /*    				if (!nodeDef.isMultiple()||(this.intentType==getResources().getInteger(R.integer.multipleAttributeIntent))){
     					TimeAttributeDefinition timeAttrDef = (TimeAttributeDefinition)nodeDef;
@@ -1376,11 +1479,19 @@ public class FormScreen extends BaseActivity implements OnClickListener, TextWat
 						List<String> currCoordinateValue = tempCoordinateField.getValue(this.currInstanceNo);
 						this.currentMultipleFieldValue.getValue(this.currInstanceNo).set(0, currCoordinateValue.get(0));
 						this.currentMultipleFieldValue.getValue(this.currInstanceNo).set(1, currCoordinateValue.get(1));
+					}else if (fieldView instanceof TaxonField){
+						TaxonField tempTaxonField = (TaxonField)fieldView;
+						List<String> curTaxonValue = tempTaxonField.getValue(this.currInstanceNo);
+						this.currentMultipleFieldValue.getValue(this.currInstanceNo).set(0, curTaxonValue.get(0));
+						this.currentMultipleFieldValue.getValue(this.currInstanceNo).set(1, curTaxonValue.get(1));
+						this.currentMultipleFieldValue.getValue(this.currInstanceNo).set(2, curTaxonValue.get(2));
+						this.currentMultipleFieldValue.getValue(this.currInstanceNo).set(3, curTaxonValue.get(3));
+						this.currentMultipleFieldValue.getValue(this.currInstanceNo).set(4, curTaxonValue.get(4));
 					} else if (fieldView instanceof CodeField){
 						CodeField tempCodeField = (CodeField)fieldView;
 						currValue = tempCodeField.getValue(this.currInstanceNo);
 					}
-					if (!(fieldView instanceof CoordinateField)){
+					if (!((fieldView instanceof CoordinateField)||(fieldView instanceof TaxonField))){
 						Log.e("setting current VALUE",this.currInstanceNo+"=="+currValue);
 						this.currentMultipleFieldValue.getValue(this.currInstanceNo).set(0, currValue);	
 					}					
@@ -1406,6 +1517,9 @@ public class FormScreen extends BaseActivity implements OnClickListener, TextWat
 					} else if (fieldView instanceof CoordinateField){
 						CoordinateField tempCoordinateField = (CoordinateField)fieldView;
 						tempCoordinateField.setValue(this.currInstanceNo, this.currentMultipleFieldValue.getValue(this.currInstanceNo).get(0),this.currentMultipleFieldValue.getValue(this.currInstanceNo).get(1));
+					} else if (fieldView instanceof TaxonField){
+						TaxonField tempTaxonField = (TaxonField)fieldView;
+						tempTaxonField.setValue(this.currInstanceNo, this.currentMultipleFieldValue.getValue(this.currInstanceNo).get(0),this.currentMultipleFieldValue.getValue(this.currInstanceNo).get(1), this.currentMultipleFieldValue.getValue(this.currInstanceNo).get(2),this.currentMultipleFieldValue.getValue(this.currInstanceNo).get(3),this.currentMultipleFieldValue.getValue(this.currInstanceNo).get(4));
 					} else if (fieldView instanceof CodeField){
 						CodeField tempCodeField = (CodeField)fieldView;
 						tempCodeField.setValue(this.currInstanceNo, this.currentMultipleFieldValue.getValue(this.currInstanceNo).get(0));
@@ -1437,11 +1551,19 @@ public class FormScreen extends BaseActivity implements OnClickListener, TextWat
 					List<String> currCoordinateValue = tempCoordinateField.getValue(this.currInstanceNo);
 					this.currentMultipleFieldValue.getValue(this.currInstanceNo).set(0, currCoordinateValue.get(0));
 					this.currentMultipleFieldValue.getValue(this.currInstanceNo).set(1, currCoordinateValue.get(1));
+				} else if (fieldView instanceof TaxonField){
+					TaxonField tempTaxonField = (TaxonField)fieldView;
+					List<String> curTaxonValue = tempTaxonField.getValue(this.currInstanceNo);
+					this.currentMultipleFieldValue.getValue(this.currInstanceNo).set(0, curTaxonValue.get(0));
+					this.currentMultipleFieldValue.getValue(this.currInstanceNo).set(1, curTaxonValue.get(1));
+					this.currentMultipleFieldValue.getValue(this.currInstanceNo).set(2, curTaxonValue.get(2));
+					this.currentMultipleFieldValue.getValue(this.currInstanceNo).set(3, curTaxonValue.get(3));
+					this.currentMultipleFieldValue.getValue(this.currInstanceNo).set(4, curTaxonValue.get(4));
 				} else if (fieldView instanceof CodeField){
 					CodeField tempCodeField = (CodeField)fieldView;
 					currValue = tempCodeField.getValue(this.currInstanceNo);
 				}
-				if (!(fieldView instanceof CoordinateField)){
+				if (!((fieldView instanceof CoordinateField)||(fieldView instanceof TaxonField))){
 					this.currentMultipleFieldValue.getValue(this.currInstanceNo).set(0, currValue);	
 				}
 				this.currInstanceNo++;
@@ -1467,6 +1589,9 @@ public class FormScreen extends BaseActivity implements OnClickListener, TextWat
 					} else if (fieldView instanceof CoordinateField){
 						CoordinateField tempCoordinateField = (CoordinateField)fieldView;
 						tempCoordinateField.setValue(this.currInstanceNo, this.currentMultipleFieldValue.getValue(this.currInstanceNo).get(0), this.currentMultipleFieldValue.getValue(this.currInstanceNo).get(1));
+					} else if (fieldView instanceof TaxonField){
+						TaxonField tempTaxonField = (TaxonField)fieldView;
+						tempTaxonField.setValue(this.currInstanceNo, this.currentMultipleFieldValue.getValue(this.currInstanceNo).get(0),this.currentMultipleFieldValue.getValue(this.currInstanceNo).get(1), this.currentMultipleFieldValue.getValue(this.currInstanceNo).get(2),this.currentMultipleFieldValue.getValue(this.currInstanceNo).get(3),this.currentMultipleFieldValue.getValue(this.currInstanceNo).get(4));
 					} else if (fieldView instanceof CodeField){
 						CodeField tempCodeField = (CodeField)fieldView;
 						tempCodeField.setValue(this.currInstanceNo, this.currentMultipleFieldValue.getValue(this.currInstanceNo).get(0));
@@ -1506,6 +1631,9 @@ public class FormScreen extends BaseActivity implements OnClickListener, TextWat
 					} else if (fieldView instanceof CoordinateField){
 						CoordinateField tempCoordinateField = (CoordinateField)fieldView;
 						tempCoordinateField.setValue(this.currInstanceNo, this.currentMultipleFieldValue.getValue(this.currInstanceNo).get(0), this.currentMultipleFieldValue.getValue(this.currInstanceNo).get(1));
+					} else if (fieldView instanceof TaxonField){
+						TaxonField tempTaxonField = (TaxonField)fieldView;
+						tempTaxonField.setValue(this.currInstanceNo, this.currentMultipleFieldValue.getValue(this.currInstanceNo).get(0), this.currentMultipleFieldValue.getValue(this.currInstanceNo).get(1), this.currentMultipleFieldValue.getValue(this.currInstanceNo).get(2), this.currentMultipleFieldValue.getValue(this.currInstanceNo).get(3), this.currentMultipleFieldValue.getValue(this.currInstanceNo).get(4));
 					} else if (fieldView instanceof CodeField){
 						CodeField tempCodeField = (CodeField)fieldView;
 						tempCodeField.setValue(this.currInstanceNo, this.currentMultipleFieldValue.getValue(this.currInstanceNo).get(0));

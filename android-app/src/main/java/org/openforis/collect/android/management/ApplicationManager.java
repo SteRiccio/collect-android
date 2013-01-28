@@ -53,14 +53,15 @@ public class ApplicationManager extends BaseActivity{
 	
 	private static final String TAG = "ApplicationManager";
 	
-	private String sessionId;
+	private static String sessionId;
 
 	private static UserManager userManager;
 	private static SurveyManager surveyManager;
-	private static RecordManager recordManager;
+	//private static RecordManager recordManager;
 	
 	private static CollectSurvey survey;
 	private static Schema schema;
+	private static User loggedInUser;
 	
 	public static List<NodeDefinition> fieldsDefList;
 	
@@ -111,7 +112,7 @@ public class ApplicationManager extends BaseActivity{
 		    
 		    //creating database
 		    new DatabaseWrapper(this);
-		    CollectDatabase collectDB = new CollectDatabase(DatabaseWrapper.db);	
+		    //CollectDatabase collectDB = new CollectDatabase(DatabaseWrapper.db);	
 		    
 		    //instantiating managers
 		    ExpressionFactory expressionFactory = new ExpressionFactory();
@@ -163,9 +164,10 @@ public class ApplicationManager extends BaseActivity{
         	if (!userExists(defaultUser)){
         		userManager.insert(defaultUser);
         	}
+        	ApplicationManager.loggedInUser = defaultUser;
 
-        	recordManager = new RecordManager();
-    		recordManager.setRecordDao(new RecordDao());    	
+        	//recordManager = new RecordManager();
+    		//recordManager.setRecordDao(new RecordDao());    	
     		
             JdbcDaoSupport.close();
             
@@ -290,7 +292,7 @@ public class ApplicationManager extends BaseActivity{
     }
     
     private void initSession() {
-    	this.sessionId = UUID.randomUUID().toString();
+    	ApplicationManager.sessionId = UUID.randomUUID().toString();
 	}
     
 	private boolean userExists(User user){
@@ -303,6 +305,10 @@ public class ApplicationManager extends BaseActivity{
 	 		}
 	 	}
 		return userExists;
+	}
+	
+	public static User getLoggedInUser(){
+		return ApplicationManager.loggedInUser;
 	}
 	
 	private void showFormRootScreen(){
@@ -373,5 +379,9 @@ public class ApplicationManager extends BaseActivity{
 	
 	public static UIElement getUIElement(int elementId){
 		return ApplicationManager.uiElementsMap.get(elementId);
+	}
+	
+	public static String getSessionId(){
+		return ApplicationManager.sessionId;
 	}
 }
