@@ -17,13 +17,13 @@ import org.openforis.collect.android.fields.NumberField;
 import org.openforis.collect.android.fields.RangeField;
 import org.openforis.collect.android.fields.SummaryList;
 import org.openforis.collect.android.fields.SummaryTable;
-import org.openforis.collect.android.fields.TaxonField;
 import org.openforis.collect.android.fields.TextField;
 import org.openforis.collect.android.fields.TimeField;
 import org.openforis.collect.android.fields.UIElement;
 import org.openforis.collect.android.management.ApplicationManager;
 import org.openforis.collect.android.management.BaseActivity;
 import org.openforis.collect.android.misc.RunnableHandler;
+import org.openforis.idm.metamodel.AttributeDefinition;
 import org.openforis.idm.metamodel.BooleanAttributeDefinition;
 import org.openforis.idm.metamodel.CodeAttributeDefinition;
 import org.openforis.idm.metamodel.CodeListItem;
@@ -137,7 +137,6 @@ public class FormScreen extends BaseActivity implements OnClickListener, TextWat
 				this.currentNode.addFieldValue(ApplicationManager.fieldValueToPass);
 				ApplicationManager.fieldValueToPass = null;	
 			}
-			
     		ArrayList<List<String>> keysLists1 = new ArrayList<List<String>>();
     		ArrayList<String> key1 = new ArrayList<String>();
     		key1.add("task");
@@ -205,33 +204,54 @@ public class FormScreen extends BaseActivity implements OnClickListener, TextWat
     		for (int i=0;i<fieldsNo;i++){
     			NodeDefinition nodeDef = ApplicationManager.getNodeDefinition(startingIntent.getIntExtra(getResources().getString(R.string.attributeId)+i, -1));
     			if ((nodeDef instanceof EntityDefinition)&&(nodeDef.isMultiple())){
-    				EntityDefinition entityDef = (EntityDefinition)nodeDef;
-    				
+    				EntityDefinition entityDef = (EntityDefinition)nodeDef;    				
     				int entityCardinality = 1;
 					ArrayList<List<String>> keysLists = new ArrayList<List<String>>();
     				ArrayList<List<String>> detailsLists = new ArrayList<List<String>>();
     				for (int j=0;j<entityCardinality;j++){
         				ArrayList<String> keysList = new ArrayList<String>();
         				List<NodeDefinition> fieldsList = entityDef.getChildDefinitions();  
-        				/*List<AttributeDefinition> attrDefsList = entityDef.getKeyAttributeDefinitions();
-        				Log.e("#entityKeysNo","=="+attrDefsList.size());
-        				for (AttributeDefinition attrDef : attrDefsList){
-        					Log.e("keyAttr"+attrDef.getName(),"==");    					
-        					keysList.add(attrDef.getName());
-        				}
-        				keysLists.add(keysList);*/
-        				
-        				ArrayList<String> detailsList = new ArrayList<String>();
-        				  				
-        				for (NodeDefinition childDef : fieldsList){
-        					if (childDef instanceof EntityDefinition){
-        						detailsList.add(childDef.getName()+getResources().getString(R.string.entityMarker));
-        					} else {
-        						detailsList.add(childDef.getName());	
-        					}
-        					
-        				}
-        				detailsLists.add(detailsList);
+        				List<AttributeDefinition> attrDefsList = entityDef.getKeyAttributeDefinitions();
+        				//Log.e("#entityKeysNo","=="+attrDefsList.size());
+        				if (getFormScreenId()!=null){
+        					//Log.e("getFormScreenId()","=="+getFormScreenId());
+        					for (AttributeDefinition attrDef : attrDefsList){
+            					//Log.e("keyAttr"+attrDef.getName(),attrDef.getId()+"=="+attrDef.getName());
+            					DataTreeNode currTreeNode = ApplicationManager.valuesTree.getChild(getFormScreenId()+getResources().getString(R.string.valuesSeparator2)+entityDef.getId()+getResources().getString(R.string.valuesSeparator1)+j);
+                				//Log.e("currFormScreenId","=="+getFormScreenId()+getResources().getString(R.string.valuesSeparator2)+entityDef.getId()+getResources().getString(R.string.valuesSeparator1)+j);
+                				/*if (currTreeNode!=null)
+                					Log.e("currTreeeNode","=="+currTreeNode.getFieldsNo());*/
+            					if (currTreeNode!=null)
+            						keysList.add(attrDef.getName()+getResources().getString(R.string.valuesEqualTo)+currTreeNode.getFieldValue(attrDef.getId()).getValue(0).get(0));
+            					else 
+            						keysList.add(attrDef.getName()+"");
+            				}
+            				keysLists.add(keysList);
+            				
+            				ArrayList<String> detailsList = new ArrayList<String>();
+            				  				
+            				for (NodeDefinition childDef : fieldsList){
+            					if (childDef instanceof EntityDefinition){
+            						detailsList.add(childDef.getName()+getResources().getString(R.string.entityMarker));
+            					} else {
+            						DataTreeNode currTreeNode = ApplicationManager.valuesTree.getChild(getFormScreenId()+getResources().getString(R.string.valuesSeparator2)+entityDef.getId()+getResources().getString(R.string.valuesSeparator1)+j);
+            						//Log.e("child",childDef.getId()+"=="+childDef.getName());
+                					if (currTreeNode!=null){
+                						FieldValue tempFieldValue = currTreeNode.getFieldValue(childDef.getId());
+                						if (tempFieldValue!=null){
+                							detailsList.add(/*childDef.getName()+getResources().getString(R.string.valuesEqualTo)+*/tempFieldValue.getValue(0).get(0));
+                						} else {
+                							detailsList.add(""/*childDef.getName()+"EMPTY"*/);
+                						}
+                					}
+                					else 
+                						detailsList.add(""/*childDef.getName()+"EMPTY"*/);
+            						
+            					}
+            					
+            				}
+            				detailsLists.add(detailsList);
+        				}  				
     				}
     				String label = entityDef.getLabel(Type.INSTANCE, null);
     				if (label==null){
@@ -239,7 +259,7 @@ public class FormScreen extends BaseActivity implements OnClickListener, TextWat
     						label = entityDef.getLabels().get(0).getText();
     				}
     				SummaryList summaryListView = new SummaryList(this,entityDef.getId(), entityDef, calcNoOfCharsFitInOneLine(),
-    						label,keysLists2,detailsLists,
+    						label,keysLists,detailsLists,
     						this);
     				summaryListView.setOnClickListener(this);
     				summaryListView.setId(nodeDef.getId());
@@ -272,6 +292,7 @@ public class FormScreen extends BaseActivity implements OnClickListener, TextWat
             				textField.setValue(0, tempFieldValue.getValue(0).get(0));
             				FormScreen.currentFieldValue = this.currentNode.getFieldValue(nodeDef.getId());
             				//Log.e("FormScreen.currentFieldValue==null",nodeDef.getId()+"=="+(FormScreen.currentFieldValue==null));
+            				//ApplicationManager.valuesTree.printTree();
             				if (FormScreen.currentFieldValue==null){
             					ArrayList<String> initialValue = new ArrayList<String>();
             					initialValue.add(textField.getValue(0));
@@ -1117,7 +1138,6 @@ public class FormScreen extends BaseActivity implements OnClickListener, TextWat
             				summaryTableView.setId(nodeDef.getId());
             				this.ll.addView(summaryTableView);
     					} else{
-    						//Log.e("PIERWSZE","OTWARCIE");
     			    		ArrayList<List<String>> tableValuesLists = new ArrayList<List<String>>();
     			    		ArrayList<String> valueRow1 = new ArrayList<String>();
     			    		//row1.add("1");
@@ -1167,7 +1187,7 @@ public class FormScreen extends BaseActivity implements OnClickListener, TextWat
         					instanceValues = startingIntent.getStringArrayListExtra(getResources().getString(R.string.instanceValues)+0);
         					tempFieldValue.addValue(instanceValues);
             				//Log.e("dodanowartosc","=="+instanceValues.get(1));
-            				//}	
+            				//}
         				}
         				else {
         					ArrayList<String> instanceValues = new ArrayList<String>();
@@ -1277,12 +1297,13 @@ public class FormScreen extends BaseActivity implements OnClickListener, TextWat
     public void onPause(){    
 		Log.i(getResources().getString(R.string.app_name),TAG+":onPause");
 		if (this.currentMultipleFieldValue!=null){
-			Log.e("multipleFieldVALUESno","=="+this.currentMultipleFieldValue.size());
+			/*Log.e("multipleFieldVALUESno","=="+this.currentMultipleFieldValue.size());
 			for (int i=0;i<this.currentMultipleFieldValue.size();i++){
 				Log.e("multipleFieldVALUE"+i,"=="+this.currentMultipleFieldValue.getValue(i));
-			}	
+			}*/	
 			ApplicationManager.fieldValueToPass = this.currentMultipleFieldValue;
 		}
+		//Log.e("onPauseID",this.idmlId+"|"+this.currInstanceNo+"=="+getFormScreenId());
 		super.onPause();
     }
 	

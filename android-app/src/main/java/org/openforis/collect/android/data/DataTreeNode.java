@@ -3,8 +3,6 @@ package org.openforis.collect.android.data;
 import java.util.ArrayList;
 import java.util.List;
 
-import android.util.Log;
-
 public class DataTreeNode {
 
 	protected List<FieldValue> data;
@@ -142,5 +140,13 @@ public class DataTreeNode {
 	
 	public String getNodePath(){
 		return this.path;
+	}
+	
+	public List<DataTreeNode> getNodeChildren(){
+		return this.children;
+	}
+	
+	public int getNodeId(){
+		return this.idNo;
 	}
 }

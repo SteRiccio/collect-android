@@ -57,7 +57,7 @@ public class BaseActivity extends Activity {
 	        case R.id.menu_save:
 	        	CollectSurvey collectSurvey = (CollectSurvey)ApplicationManager.getSurvey();	        	
 	        	DataManager dataManager = new DataManager(collectSurvey,collectSurvey.getSchema().getRootEntityDefinitions().get(0).getName(),ApplicationManager.getLoggedInUser());
-	        	dataManager.save(ApplicationManager.valuesTree, this);
+	        	dataManager.saveRecord(ApplicationManager.valuesTree, this);
 	        	return true;	        	
 			case R.id.menu_settings:
 				startActivity(new Intent(BaseActivity.this,SettingsScreen.class));

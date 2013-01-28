@@ -199,7 +199,6 @@ public class ApplicationManager extends BaseActivity{
 		super.onResume();
 		Log.i(getResources().getString(R.string.app_name),TAG+":onResume");
 		try{
-			//restore data from database - TBI
 			
 		} catch (Exception e){
     		RunnableHandler.reportException(e,getResources().getString(R.string.app_name),TAG+":onResume",
@@ -218,14 +217,17 @@ public class ApplicationManager extends BaseActivity{
 	    	//Log.e("request="+requestCode,/*data.getIntExtra(getResources().getString(R.string.recordId), -111)+*/"result="+resultCode);
 	 	    if (requestCode==getResources().getInteger(R.integer.clusterSelection)){	 	    	
 	 	    	if (resultCode==getResources().getInteger(R.integer.clusterChoiceSuccessful)){//record was selected
-	 	    		showFormRootScreen();
 	 	    		
+		        	
 	 	    		int recordId = data.getIntExtra(getResources().getString(R.string.recordId), -1);
 	 	    		if (recordId==-1){//new record
 	 	    			
 	 	    		} else {//record from database
-	 	    			
+	 	    			CollectSurvey collectSurvey = (CollectSurvey)ApplicationManager.getSurvey();	        	
+			        	DataManager dataManager = new DataManager(collectSurvey,collectSurvey.getSchema().getRootEntityDefinitions().get(0).getName(),ApplicationManager.getLoggedInUser());
+			        	dataManager.loadRecord(recordId);
 	 	    		}
+	 	    		showFormRootScreen();
 	 	    	} else if (resultCode==getResources().getInteger(R.integer.backButtonPressed)){
 	 	    		ApplicationManager.this.finish();
 	 	    	}
