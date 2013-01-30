@@ -112,7 +112,7 @@ public class ApplicationManager extends BaseActivity{
 		    
 		    //creating database
 		    new DatabaseWrapper(this);
-		    //CollectDatabase collectDB = new CollectDatabase(DatabaseWrapper.db);	
+		    CollectDatabase collectDB = new CollectDatabase(DatabaseWrapper.db);	
 		    
 		    //instantiating managers
 		    ExpressionFactory expressionFactory = new ExpressionFactory();
