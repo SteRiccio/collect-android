@@ -38,7 +38,7 @@ public class BooleanField extends Field {
 		initialValue.add(isChecked2);
 		this.values.add(initialValue);
 		
-		BooleanField.form = form;
+		BooleanField.form = (FormScreen)context;
 		
 		this.label.setText(nodeDef.getLabel(Type.INSTANCE, null));
 		this.label.setLayoutParams(new LayoutParams(0,ViewGroup.LayoutParams.WRAP_CONTENT, (float) 2));

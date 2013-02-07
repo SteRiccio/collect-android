@@ -278,6 +278,10 @@ public class FormScreen extends BaseActivity implements OnClickListener, TextWat
     				summaryListView.setId(nodeDef.getId());
     				this.ll.addView(summaryListView);
     			} else if (nodeDef instanceof TextAttributeDefinition){
+    				String loadedValue = "";
+    				if (ApplicationManager.currentRecord!=null){
+    					
+    				}
     				if (((TextAttributeDefinition) nodeDef).getType().toString().toLowerCase().equals("short")){
     					if (!nodeDef.isMultiple()){
             				int numberOfInstances = startingIntent.getIntExtra(getResources().getString(R.string.numberOfInstances), -1);

@@ -187,8 +187,8 @@ public class SearchTaxonActivity extends Activity {
 			}
 			else if (this.criteria.equalsIgnoreCase("VernacularName")){
 				Log.i(getResources().getString(R.string.app_name), "Search by VernacularName");
-				lstTaxonOccurence = this.taxonManager.findByVernacularNameTmp(this.taxonomy, strSearch, 1000);
-				this.populateResultList(lstTaxonOccurence, parentTaxonFieldId);			
+				//lstTaxonOccurence = this.taxonManager.findByVernacularNameTmp(this.taxonomy, strSearch, 1000);
+				//this.populateResultList(lstTaxonOccurence, parentTaxonFieldId);			
 			}
 			else if (this.criteria.equalsIgnoreCase("LangVariant")){
 				Log.i(getResources().getString(R.string.app_name), "Search by Language Variant");

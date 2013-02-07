@@ -123,7 +123,7 @@ public class ClusterChoiceActivity extends ListActivity{
 		super.onListItemClick(l, v, position, id);
 		Log.i(getResources().getString(R.string.app_name),TAG+":onListItemClick");
 		Intent resultHolder = new Intent();
-		resultHolder.putExtra(getResources().getString(R.string.recordId), position/*this.recordsList.get(position).getId()*/);
+		resultHolder.putExtra(getResources().getString(R.string.recordId), 1/*this.recordsList.get(position).getId()*/);
 		setResult(getResources().getInteger(R.integer.clusterChoiceSuccessful),resultHolder);
 		ClusterChoiceActivity.this.finish();
 		/*

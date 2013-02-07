@@ -13,9 +13,12 @@ import org.openforis.collect.model.CollectSurvey;
 import org.openforis.collect.model.User;
 import org.openforis.collect.persistence.RecordDao;
 import org.openforis.collect.persistence.RecordPersistenceException;
+import org.openforis.idm.metamodel.NodeDefinition;
 import org.openforis.idm.metamodel.TextAttributeDefinition;
+import org.openforis.idm.model.Attribute;
 import org.openforis.idm.model.Entity;
 import org.openforis.idm.model.EntityBuilder;
+import org.openforis.idm.model.Node;
 import org.springframework.jdbc.core.support.JdbcDaoSupport;
 
 import android.content.Context;
@@ -34,13 +37,12 @@ public class DataManager {
 		this.survey = survey;
 		this.rootEntity = rootEntity;
 		this.user = loggedInUser;
-		Log.e("rootEntityToSave","=="+this.rootEntity);
 	}
 	
 	public int saveRecord(DataTree dataTree, Context ctx){
-		dataTree.printTree();
+//		dataTree.printTree();
+		long startTime = System.currentTimeMillis();
 		try {
-			long startTime = System.currentTimeMillis();
 			JdbcDaoSupport jdbcDao = new JdbcDaoSupport();
 			jdbcDao.getConnection();
 			CollectRecord recordToSave;
@@ -49,10 +51,6 @@ public class DataManager {
 			recordToSave.setCreatedBy(this.user);
 			recordToSave.setCreationDate(new Date());
 			recordToSave.setStep(Step.ENTRY);
-			//recordToSave.createRootEntity(1);
-			
-			//Entity cluster = recordToSave.createRootEntity(ApplicationManager.getSurvey().getSchema().getRootEntityDefinitions().get(0).getName());
-			//cluster.setId(ApplicationManager.getSurvey().getSchema().getRootEntityDefinitions().get(0).getId());
 			
 			DataTreeNode dataRoot = ApplicationManager.valuesTree.getRoot();
 			List<DataTreeNode> childNodesList = dataRoot.getNodeChildren();
@@ -61,24 +59,22 @@ public class DataManager {
 				Entity rootEntity = recordToSave.createRootEntity(ApplicationManager.getSurvey().getSchema().getRootEntityDefinitions().get(0).getName());
 				rootEntity.setId(ApplicationManager.getSurvey().getSchema().getRootEntityDefinitions().get(i).getId());
 				traverseNodeChildren(childNodesList.get(i), rootEntity, true);
-			}
-			
-			/*Entity ts = EntityBuilder.addEntity(cluster, "task");
-			EntityBuilder.addValue(ts, "type", new Code("2"));
-			EntityBuilder.addValue(ts, "person", "JANel");
-			EntityBuilder.addValue(ts, "date", new org.openforis.idm.model.Date(2010,2,15));			
-			EntityBuilder.addValue(cluster, "district", new Code("123"));*/			
+			}		
 
 			this.recordManager.save(recordToSave, ApplicationManager.getSessionId());
-			Log.e("record","SAVED IN "+(System.currentTimeMillis()-startTime)/1000+"s");
-		} catch (RecordPersistenceException e) {
-			return 1;
-		} catch (NullPointerException e){
 			
+		} catch (RecordPersistenceException e) {
+			Log.e("RecordPersistenceException","=="+e.getMessage());
+			//return 1;
+		} catch (NullPointerException e){
+			Log.e("NullPointerException","=="+e.getMessage());
+			//return 1;
 		} finally {
+			Log.e("FINALLY","==");
 			JdbcDaoSupport.close();
 		}
 		//this.recordManager.getRecordDao().insert(recordToSave);		
+		Log.e("record","SAVED IN "+(System.currentTimeMillis()-startTime)/1000+"s");
 		return 0;
 	}
 	
@@ -92,18 +88,46 @@ public class DataManager {
 		return recordsList;
 	}
 	
-	public int loadRecord(int recordId){
+	public CollectRecord loadRecord(int recordId){
+		long startTime = System.currentTimeMillis();
+		CollectRecord loadedRecord = null;
 		try {
-			long startTime = System.currentTimeMillis();
 			JdbcDaoSupport jdbcDao = new JdbcDaoSupport();
 			jdbcDao.getConnection();
-
-			JdbcDaoSupport.close();
-			Log.e("record"+recordId,"LOADED IN "+(System.currentTimeMillis()-startTime)/1000+"s");			
-		} catch (NullPointerException e){
+			Log.e("LOAD",recordId+"==");
+			loadedRecord = this.recordManager.load(survey, recordId, Step.ENTRY.getStepNumber());
+			//NodeDefinition node = (NodeDefinition)loadedRecord.getRootEntity().get("id", 0);
+			//TextAttributeDefinition text = (TextAttributeDefinition)node;
+			for (int j=0;j<loadedRecord.getRootEntity().getChildren().size();j++){
+				Node<? extends NodeDefinition> node = loadedRecord.getRootEntity().getChildren().get(j);
+				Log.e("node","=="+node.getName());
+				TextAttributeDefinition text = (TextAttributeDefinition)node.getDefinition();
+				/*FieldDefinition fieldDef = text.getFieldDe
+				Log.e("VALUE"+fieldDef.getName(),"=="+fieldDef.getValueType());*/
+				Attribute attr = (Attribute)node;
+				Log.e("iloscFieldow","=="+attr.getFieldCount());
+				for (int i=0;i<attr.getFieldCount();i++){
+					Log.e("fieldValue","=="+attr.getField(i).getValue());
+				}
+			}
 			
+			
+			/*Log.e("clusterNode",node.getId()+"=="+node.getName());
+			Log.e("loadedRecord==null","=="+(loadedRecord==null));
+			Log.e("owner","==="+loadedRecord.getCreatedBy());
+			Log.e("data","==="+loadedRecord.getCreationDate());
+			Log.e("entityiesNo","==="+loadedRecord.getEntityCounts().size());
+			Log.e("root","==="+loadedRecord.getRootEntity().getName());
+			Log.e("printRecord","=="+loadedRecord.toString());*/
+			
+			JdbcDaoSupport.close();
+		} catch (NullPointerException e){
+			Log.e("NullPointerException","=="+e.getMessage());
+		} catch (RecordPersistenceException e) {
+			Log.e("RecordPersistenceException","=="+e.getMessage());
 		}
-		return 0;
+		Log.e("record"+recordId,"LOADED IN "+(System.currentTimeMillis()-startTime)/1000+"s");
+		return loadedRecord;
 	}
 	
 	private void traverseNodeChildren(DataTreeNode node, Entity parentEntity, boolean isRoot){

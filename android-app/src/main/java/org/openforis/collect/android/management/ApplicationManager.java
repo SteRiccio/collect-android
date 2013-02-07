@@ -22,6 +22,7 @@ import org.openforis.collect.android.misc.RunnableHandler;
 import org.openforis.collect.android.screens.FormScreen;
 import org.openforis.collect.manager.SurveyManager;
 import org.openforis.collect.manager.UserManager;
+import org.openforis.collect.model.CollectRecord;
 import org.openforis.collect.model.CollectSurvey;
 import org.openforis.collect.model.CollectSurveyContext;
 import org.openforis.collect.model.User;
@@ -73,12 +74,16 @@ public class ApplicationManager extends BaseActivity{
 	
 	public static FieldValue fieldValueToPass;
 	
+	public static CollectRecord currentRecord;
+	
 	public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         try{
         	Log.i(getResources().getString(R.string.app_name),TAG+":onCreate");       
             //setContentView(R.layout.applicationwindow);
             initSession();
+            
+            ApplicationManager.currentRecord = null;
             
             ApplicationManager.appPreferences = getPreferences(MODE_PRIVATE);
 			int backgroundColor = ApplicationManager.appPreferences.getInt(getResources().getString(R.string.backgroundColor), Color.WHITE);
@@ -224,7 +229,7 @@ public class ApplicationManager extends BaseActivity{
 	 	    		} else {//record from database
 	 	    			CollectSurvey collectSurvey = (CollectSurvey)ApplicationManager.getSurvey();	        	
 			        	DataManager dataManager = new DataManager(collectSurvey,collectSurvey.getSchema().getRootEntityDefinitions().get(0).getName(),ApplicationManager.getLoggedInUser());
-			        	dataManager.loadRecord(recordId);
+			        	ApplicationManager.currentRecord = dataManager.loadRecord(recordId);
 	 	    		}
 	 	    		showFormRootScreen();
 	 	    	} else if (resultCode==getResources().getInteger(R.integer.backButtonPressed)){
