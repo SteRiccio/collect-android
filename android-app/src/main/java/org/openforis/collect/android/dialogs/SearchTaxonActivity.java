@@ -27,6 +27,8 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.View.OnFocusChangeListener;
 import android.view.Window;
+import android.widget.AbsListView;
+import android.widget.AbsListView.OnScrollListener;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ArrayAdapter;
@@ -167,30 +169,29 @@ public class SearchTaxonActivity extends Activity {
     	//Open connection with database
     	JdbcDaoSupport jdbcDao  = new JdbcDaoSupport();
     	jdbcDao.getConnection();    	
+    	//Search results 
     	List<TaxonOccurrence> lstTaxonOccurence = new ArrayList<TaxonOccurrence>();
-		
     	if(this.taxonManager != null){
     		Log.i(getResources().getString(R.string.app_name), "Search by: " + this.criteria);
-    		lstTaxonOccurence = this.taxonManager.findByCriteria(this.criteria, this.taxonomy, strSearch, 1000);
     		this.populateResultList(lstTaxonOccurence, parentTaxonFieldId);	    		
-//    		if(this.criteria.equalsIgnoreCase("Code")){
-//				Log.i(getResources().getString(R.string.app_name), "Search by Code");
-//				lstTaxonOccurence = this.taxonManager.findByCriteria(this.criteria, this.taxonomy, strSearch, 1000);
-//				this.populateResultList(lstTaxonOccurence, parentTaxonFieldId);				
-//			}
-//			else if (this.criteria.equalsIgnoreCase("SciName")){
-//				Log.i(getResources().getString(R.string.app_name), "Search by Scientific name");
-//				lstTaxonOccurence = this.taxonManager.findByCriteria(this.criteria, this.taxonomy, strSearch, 1000);
-//				this.populateResultList(lstTaxonOccurence, parentTaxonFieldId);			
-//			}
-//			else if (this.criteria.equalsIgnoreCase("VernacularName")){
-//				Log.i(getResources().getString(R.string.app_name), "Search by VernacularName");
-//				lstTaxonOccurence = this.taxonManager.findByCriteria(this.criteria, this.taxonomy, strSearch, 1000);
-//				this.populateResultList(lstTaxonOccurence, parentTaxonFieldId);			
-//			}    		
-//			else{
-//				Log.i(getResources().getString(R.string.app_name), "???Criteria is: " + this.criteria);
-//			}
+    		if(this.criteria.equalsIgnoreCase("Code")){
+				Log.i(getResources().getString(R.string.app_name), "Search by Code");
+				lstTaxonOccurence = this.taxonManager.findByCode(this.taxonomy, strSearch, 1000);
+				this.populateResultList(lstTaxonOccurence, parentTaxonFieldId);				
+			}
+			else if (this.criteria.equalsIgnoreCase("SciName")){
+				Log.i(getResources().getString(R.string.app_name), "Search by Scientific name");
+				lstTaxonOccurence = this.taxonManager.findByScientificName(this.taxonomy, strSearch, 1000);
+				this.populateResultList(lstTaxonOccurence, parentTaxonFieldId);			
+			}
+			else if (this.criteria.equalsIgnoreCase("VernacularName")){
+				Log.i(getResources().getString(R.string.app_name), "Search by VernacularName");
+				lstTaxonOccurence = this.taxonManager.findByVernacularName(this.taxonomy, strSearch, 1000);
+				this.populateResultList(lstTaxonOccurence, parentTaxonFieldId);			
+			}    		
+			else{
+				Log.i(getResources().getString(R.string.app_name), "Undefined criteria is: " + this.criteria);
+			}
 		}else{
 			Log.i(getResources().getString(R.string.app_name), "Species Manager is NULL!");
 		}   	
@@ -207,9 +208,12 @@ public class SearchTaxonActivity extends Activity {
 			arrResults[idx] = taxonOcc.getCode() + " ;\n" + taxonOcc.getScientificName() + " ;\n" 
 				+ taxonOcc.getVernacularName() + " ;\n" + taxonOcc.getLanguageCode() + " ;\n" 
 				+ taxonOcc.getLanguageVariety()+ " ;\n";
+			arrResults[idx] = arrResults[idx].replaceAll("null", "");
 			idx++;
 		}   
 		this.lstResult.setChoiceMode(ListView.CHOICE_MODE_SINGLE);
+		this.lstResult.setCacheColorHint(Color.TRANSPARENT);
+		this.lstResult.requestFocus(0);
 		//Create and set adapter for result list
 		int layout = (backgroundColor!=Color.WHITE)?R.layout.localclusterrow_white:R.layout.localclusterrow_black;	
         ArrayAdapter<String> adapter = new ArrayAdapter<String>(this.getApplicationContext(), layout, R.id.plotlabel, arrResults);

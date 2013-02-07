@@ -8,26 +8,23 @@ import org.openforis.collect.android.R;
 import org.openforis.collect.android.data.FieldValue;
 import org.openforis.collect.android.dialogs.SearchTaxonActivity;
 import org.openforis.collect.android.management.ApplicationManager;
-import org.openforis.collect.android.messages.ToastMessage;
 import org.openforis.collect.android.screens.FormScreen;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
-import android.text.Editable;
 import android.text.InputType;
 import android.text.method.QwertyKeyListener;
 import android.text.method.TextKeyListener;
 import android.util.Log;
 import android.view.View;
-import android.widget.ArrayAdapter;
+import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 public class TaxonField extends Field {
 	
-//	public EditText txtBox;
 	private TextView sciNameLabel;
 	private TextView venacNamesLabel;
 	private TextView venacLangLabel;
@@ -38,12 +35,14 @@ public class TaxonField extends Field {
 	private EditText txtVernacularName; //Vernacular names
 	private EditText txtVernacularLang; //List of vernacular languages
 	private EditText txtLangVariant; //Language variant
-	private Button btnSearch;
+	
+	private Button btnSearchByCode;
+	private Button btnSearchBySciName;
+	private Button btnSearchByVernName;
 	
 	boolean searchable;
 	private static FormScreen form;
 	private List<ArrayList<String>> values;
-	private String strCategory;
 	
 	public TaxonField(Context context, int id, String labelText, String[] initialText, String hintText, String promptText, 
 			ArrayList<String> codes, ArrayList<String> options, 
@@ -51,13 +50,9 @@ public class TaxonField extends Field {
 			boolean isMultiple, boolean isRequired, FieldValue fieldValue) {
 		super(context, id, isMultiple, isRequired);
 
-		this.strCategory = "";
-		this.setHint(hintText);
 		TaxonField.form = (FormScreen)context;
 		
-		Log.i(getResources().getString(R.string.app_name), "Size of field value is: " + fieldValue.size());
-		Log.i(getResources().getString(R.string.app_name), "Field value is: " + fieldValue.getValues().toString());
-		
+		//Set Taxon field value
 		this.values = new ArrayList<ArrayList<String>>();
 //		TaxonField.this.values.add(TaxonField.this.currentInstanceNo, "");
 		ArrayList<String> initialValue = new ArrayList<String>();
@@ -68,57 +63,20 @@ public class TaxonField extends Field {
 		initialValue.add(initialText[4]);
 		TaxonField.this.values.add(initialValue);
 		
+		//Create input field "Code"
+		//Label "Code"
 		this.label.setText("Code");
-//		this.label.setLayoutParams(new LayoutParams(0, ViewGroup.LayoutParams.WRAP_CONTENT, (float) 2));
-//		this.label.setOnLongClickListener(new OnLongClickListener() {
-//	        @Override
-//	        public boolean onLongClick(View v) {
-//	        	ToastMessage.displayToastMessage(TaxonField.this.getContext(), TaxonField.this.getLabelText(), Toast.LENGTH_LONG);
-//	            return true;
-//	        }
-//	    });
-		
-		//Create labels for textboxes
-		this.sciNameLabel = new TextView(context);
-		this.sciNameLabel.setMaxLines(1);
-		this.sciNameLabel.setTextColor(Color.BLACK);
-		this.sciNameLabel.setText("Scientific names");
-		
-		this.venacNamesLabel = new TextView(context);
-		this.venacNamesLabel.setMaxLines(1);
-		this.venacNamesLabel.setTextColor(Color.BLACK);
-		this.venacNamesLabel.setText("Vernacular names");
-		
-		this.venacLangLabel = new TextView(context);
-		this.venacLangLabel.setMaxLines(1);
-		this.venacLangLabel.setTextColor(Color.BLACK);
-		this.venacLangLabel.setText("Vernacular language");	
-		
-		this.langVariantLabel = new TextView(context);
-		this.langVariantLabel.setMaxLines(1);
-		this.langVariantLabel.setTextColor(Color.BLACK);
-		this.langVariantLabel.setText("Language variant");		
-		
-		if (this.searchable){
-			this.label.setOnClickListener(new OnClickListener() {
-				@Override
-				public void onClick(View v) {
-					
-				}});
-		}
-
-		this.searchable = isSearchable;
-		
+		this.label.setLayoutParams(new LayoutParams(0, ViewGroup.LayoutParams.WRAP_CONTENT, (float) 2));
 		//Add text field where user can type a code
 		this.txtCodes = new EditText(context);
-		this.txtCodes.setText(initialText[0]);	
+		this.txtCodes.setText(initialText[0]);
+		this.txtCodes.setLayoutParams(new LayoutParams(0, ViewGroup.LayoutParams.WRAP_CONTENT, (float) 3));
 		// When txtCode gets focus
 		this.txtCodes.setOnFocusChangeListener(new OnFocusChangeListener() {
 		    @Override
 		    public void onFocusChange(View v, boolean hasFocus) {
 		    	// Get current settings about software keyboard for text fields
 		    	if(hasFocus){
-		    		TaxonField.this.strCategory = "Code";
 			    	if(this.getClass().toString().contains("TaxonField")){
 				    	Map<String, ?> settings = ApplicationManager.appPreferences.getAll();
 				    	Boolean valueForText = (Boolean)settings.get(getResources().getString(R.string.showSoftKeyboardOnTextField));
@@ -134,18 +92,62 @@ public class TaxonField extends Field {
 			    	}
 		    	}
 		    }
-	    });			
-			
+	    });	
+		//Button "Search By Code"
+		this.btnSearchByCode = new Button(context);
+		this.btnSearchByCode.setText("Search");
+		this.btnSearchByCode.setLayoutParams(new LayoutParams(0, ViewGroup.LayoutParams.WRAP_CONTENT, (float) 1));
+		this.btnSearchByCode.setOnClickListener(new OnClickListener(){
+			@Override
+			public void onClick(View arg0) {
+				//Get category and value
+				String strValue = TaxonField.this.txtCodes.getText().toString();				
+				//Add current value to FormScreen.currentFieldValue
+		    	ArrayList<String> tempValue = new ArrayList<String>();
+				tempValue.add(TaxonField.this.txtCodes.getText().toString());
+				tempValue.add(TaxonField.this.txtSciName.getText().toString());
+				tempValue.add(TaxonField.this.txtVernacularName.getText().toString());
+				tempValue.add(TaxonField.this.txtVernacularLang.getText().toString());
+				tempValue.add(TaxonField.this.txtLangVariant.getText().toString());				
+				TaxonField.this.value.setValue(TaxonField.form.currInstanceNo, tempValue);
+				FormScreen.currentFieldValue = TaxonField.this.value;
+				FormScreen.currentFieldValue.setValue(TaxonField.form.currInstanceNo, tempValue);
+				if (TaxonField.form.currentNode!=null){
+					TaxonField.form.currentNode.addFieldValue(FormScreen.currentFieldValue);
+				}
+				//Check the value is not empty  and Run SearchTaxon activity
+				//TODO: in future validator should check it
+				if (!strValue.isEmpty())
+					TaxonField.this.startSearchScreen(strValue, "Code");
+				else
+					Log.i(getResources().getString(R.string.app_name), "Value of Code field is EMPTY!!!! ");
+			}
+		});		
+		
+		//Create layout and add input field "Code" into there
+		LinearLayout codeLL = new LinearLayout(context);		
+		codeLL.setOrientation(HORIZONTAL);
+		codeLL.addView(this.label);
+		codeLL.addView(this.txtCodes);
+		codeLL.addView(this.btnSearchByCode);		
+		
+		//Create input field "Scientific name"
+		//Create label "Scientific name"
+		this.sciNameLabel = new TextView(context);
+		this.sciNameLabel.setMaxLines(1);
+		this.sciNameLabel.setTextColor(Color.BLACK);
+		this.sciNameLabel.setText("Scientific names");
+		this.sciNameLabel.setLayoutParams(new LayoutParams(0, ViewGroup.LayoutParams.WRAP_CONTENT, (float) 2));
 		//Add text box for scientific names
 		this.txtSciName = new EditText(context);
-		this.txtSciName.setText(initialText[1]);		
+		this.txtSciName.setText(initialText[1]);	
+		this.txtSciName.setLayoutParams(new LayoutParams(0, ViewGroup.LayoutParams.WRAP_CONTENT, (float) 3));
 		// When txtSciName gets focus
 		this.txtSciName.setOnFocusChangeListener(new OnFocusChangeListener() {
 		    @Override
 		    public void onFocusChange(View v, boolean hasFocus) {
 		    	// Get current settings about software keyboard for text fields
 		    	if(hasFocus){
-		    		TaxonField.this.strCategory = "SciName";
 		    		if(this.getClass().toString().contains("TaxonField")){
 				    	Map<String, ?> settings = ApplicationManager.appPreferences.getAll();
 				    	Boolean valueForText = (Boolean)settings.get(getResources().getString(R.string.showSoftKeyboardOnTextField));
@@ -161,18 +163,62 @@ public class TaxonField extends Field {
 			    	}
 		    	}
 		    }
-	    });	
-			
+	    });		
+		//Button "Search By Scientific names"
+		this.btnSearchBySciName = new Button(context);
+		this.btnSearchBySciName.setText("Search");
+		this.btnSearchBySciName.setLayoutParams(new LayoutParams(0, ViewGroup.LayoutParams.WRAP_CONTENT, (float) 1));
+		this.btnSearchBySciName.setOnClickListener(new OnClickListener(){
+			@Override
+			public void onClick(View arg0) {
+				//Get category and value
+				String strValue = TaxonField.this.txtSciName.getText().toString();				
+				//Add current value to FormScreen.currentFieldValue
+		    	ArrayList<String> tempValue = new ArrayList<String>();
+				tempValue.add(TaxonField.this.txtCodes.getText().toString());
+				tempValue.add(TaxonField.this.txtSciName.getText().toString());
+				tempValue.add(TaxonField.this.txtVernacularName.getText().toString());
+				tempValue.add(TaxonField.this.txtVernacularLang.getText().toString());
+				tempValue.add(TaxonField.this.txtLangVariant.getText().toString());				
+				TaxonField.this.value.setValue(TaxonField.form.currInstanceNo, tempValue);
+				FormScreen.currentFieldValue = TaxonField.this.value;
+				FormScreen.currentFieldValue.setValue(TaxonField.form.currInstanceNo, tempValue);
+				if (TaxonField.form.currentNode!=null){
+					TaxonField.form.currentNode.addFieldValue(FormScreen.currentFieldValue);
+				}
+				//Check the value is not empty  and Run SearchTaxon activity
+				//TODO: in future validator should check it
+				if (!strValue.isEmpty())
+					TaxonField.this.startSearchScreen(strValue, "SciName");
+				else
+					Log.i(getResources().getString(R.string.app_name), "Value of SciName field is EMPTY!!!! ");
+			}
+		});		
+		
+		//Create layout and add input field "Scientific name" into there
+		LinearLayout sciNameLL = new LinearLayout(context);		
+		sciNameLL.setOrientation(HORIZONTAL);
+		sciNameLL.addView(this.sciNameLabel);
+		sciNameLL.addView(this.txtSciName);
+		sciNameLL.addView(this.btnSearchBySciName);			
+		
+		//Create input field "Vernacular name"
+		//Create label "Vernacular name"
+		this.venacNamesLabel = new TextView(context);
+		this.venacNamesLabel.setMaxLines(1);
+		this.venacNamesLabel.setTextColor(Color.BLACK);
+		this.venacNamesLabel.setText("Vernacular name");
+		this.venacNamesLabel.setLayoutParams(new LayoutParams(0, ViewGroup.LayoutParams.WRAP_CONTENT, (float) 2));
 		//Add textbox for vernacular names
 		this.txtVernacularName = new EditText(context);
 		this.txtVernacularName.setText(initialText[2]);		
+		this.txtVernacularName.setLayoutParams(new LayoutParams(0, ViewGroup.LayoutParams.WRAP_CONTENT, (float) 3));
 		// When txtVernacularName gets focus
 		this.txtVernacularName.setOnFocusChangeListener(new OnFocusChangeListener() {
 		    @Override
 		    public void onFocusChange(View v, boolean hasFocus) {
 		    	// Get current settings about software keyboard for text fields
 		    	if(hasFocus){
-		    		TaxonField.this.strCategory = "VernacularName";
 		    		if(this.getClass().toString().contains("TaxonField")){
 				    	Map<String, ?> settings = ApplicationManager.appPreferences.getAll();
 				    	Boolean valueForText = (Boolean)settings.get(getResources().getString(R.string.showSoftKeyboardOnTextField));
@@ -189,17 +235,60 @@ public class TaxonField extends Field {
 		    	}
 		    }
 	    });	
+		//Button "Search By Vernacular names"
+		this.btnSearchByVernName = new Button(context);
+		this.btnSearchByVernName.setText("Search");
+		this.btnSearchByVernName.setLayoutParams(new LayoutParams(0, ViewGroup.LayoutParams.WRAP_CONTENT, (float) 1));
+		this.btnSearchByVernName.setOnClickListener(new OnClickListener(){
+			@Override
+			public void onClick(View arg0) {
+				//Get category and value
+				String strValue = TaxonField.this.txtVernacularName.getText().toString();				
+				//Add current value to FormScreen.currentFieldValue
+		    	ArrayList<String> tempValue = new ArrayList<String>();
+				tempValue.add(TaxonField.this.txtCodes.getText().toString());
+				tempValue.add(TaxonField.this.txtSciName.getText().toString());
+				tempValue.add(TaxonField.this.txtVernacularName.getText().toString());
+				tempValue.add(TaxonField.this.txtVernacularLang.getText().toString());
+				tempValue.add(TaxonField.this.txtLangVariant.getText().toString());				
+				TaxonField.this.value.setValue(TaxonField.form.currInstanceNo, tempValue);
+				FormScreen.currentFieldValue = TaxonField.this.value;
+				FormScreen.currentFieldValue.setValue(TaxonField.form.currInstanceNo, tempValue);
+				if (TaxonField.form.currentNode!=null){
+					TaxonField.form.currentNode.addFieldValue(FormScreen.currentFieldValue);
+				}
+				//Check the value is not empty  and Run SearchTaxon activity
+				//TODO: in future validator should check it
+				if (!strValue.isEmpty())
+					TaxonField.this.startSearchScreen(strValue, "VernacularName");
+				else
+					Log.i(getResources().getString(R.string.app_name), "Value of VernName field is EMPTY!!!! ");
+			}
+		});			
+		//Create layout and add input field "Vernacular name" into there
+		LinearLayout vernNameLL = new LinearLayout(context);		
+		vernNameLL.setOrientation(HORIZONTAL);
+		vernNameLL.addView(this.venacNamesLabel);
+		vernNameLL.addView(this.txtVernacularName);
+		vernNameLL.addView(this.btnSearchByVernName);			
 		
+		//Create input field "Vernacular language"
+		//Create label "Vernacular language"
+		this.venacLangLabel = new TextView(context);
+		this.venacLangLabel.setMaxLines(1);
+		this.venacLangLabel.setTextColor(Color.BLACK);
+		this.venacLangLabel.setText("Vernacular language");			
+		this.venacLangLabel.setLayoutParams(new LayoutParams(0, ViewGroup.LayoutParams.WRAP_CONTENT, (float) 2));
 		//Add text box for vernacular languages
 		this.txtVernacularLang = new EditText(context);
 		this.txtVernacularLang.setText(initialText[3]);
+		this.txtVernacularLang.setLayoutParams(new LayoutParams(0, ViewGroup.LayoutParams.WRAP_CONTENT, (float) 2));
 		// When txtLangVariant gets focus
 		this.txtVernacularLang.setOnFocusChangeListener(new OnFocusChangeListener() {
 		    @Override
 		    public void onFocusChange(View v, boolean hasFocus) {
 		    	// Get current settings about software keyboard for text fields
 		    	if(hasFocus){
-		    		TaxonField.this.strCategory = "LangVariant";
 		    		if(this.getClass().toString().contains("TaxonField")){
 				    	Map<String, ?> settings = ApplicationManager.appPreferences.getAll();
 				    	Boolean valueForText = (Boolean)settings.get(getResources().getString(R.string.showSoftKeyboardOnTextField));
@@ -213,18 +302,30 @@ public class TaxonField extends Field {
 			    	}
 		    	}
 		    }
-	    });
+	    });		
+		//Create layout and add input field "Vernacular language" into there
+		LinearLayout vernLangLL = new LinearLayout(context);		
+		vernLangLL.setOrientation(HORIZONTAL);
+		vernLangLL.addView(this.venacLangLabel);
+		vernLangLL.addView(this.txtVernacularLang);		
 		
+		//Create input field "Language variant"
+		//Create label "Language variant"
+		this.langVariantLabel = new TextView(context);
+		this.langVariantLabel.setMaxLines(1);
+		this.langVariantLabel.setTextColor(Color.BLACK);
+		this.langVariantLabel.setText("Language variant");	
+		this.langVariantLabel.setLayoutParams(new LayoutParams(0, ViewGroup.LayoutParams.WRAP_CONTENT, (float) 2));
 		//Add textbox for language variants
 		this.txtLangVariant = new EditText(context);
-		this.txtLangVariant.setText(initialText[4]);		
+		this.txtLangVariant.setText(initialText[4]);	
+		this.txtLangVariant.setLayoutParams(new LayoutParams(0, ViewGroup.LayoutParams.WRAP_CONTENT, (float) 2));
 		// When txtLangVariant gets focus
 		this.txtLangVariant.setOnFocusChangeListener(new OnFocusChangeListener() {
 		    @Override
 		    public void onFocusChange(View v, boolean hasFocus) {
 		    	// Get current settings about software keyboard for text fields
 		    	if(hasFocus){
-		    		TaxonField.this.strCategory = "LangVariant";
 		    		if(this.getClass().toString().contains("TaxonField")){
 				    	Map<String, ?> settings = ApplicationManager.appPreferences.getAll();
 				    	Boolean valueForText = (Boolean)settings.get(getResources().getString(R.string.showSoftKeyboardOnTextField));
@@ -240,72 +341,31 @@ public class TaxonField extends Field {
 			    	}
 		    	}
 		    }
-	    });		
+	    });
 		
-		//Add button "Search"
-		this.btnSearch = new Button(context);
-		this.btnSearch.setText("Search");
-		this.btnSearch.setOnClickListener(new OnClickListener(){
-			@Override
-			public void onClick(View arg0) {
-				//Get category and value
-				String strValue = "";
-				if (TaxonField.this.strCategory.equalsIgnoreCase("Code")){
-					strValue = TaxonField.this.txtCodes.getText().toString();
-				}
-				else if (TaxonField.this.strCategory.equals("SciName")){
-					strValue = TaxonField.this.txtSciName.getText().toString();
-				}
-				else if (TaxonField.this.strCategory.equals("VernacularName")){
-					strValue = TaxonField.this.txtVernacularName.getText().toString();
-				}	
-				else if (TaxonField.this.strCategory.equals("LangVariant")){
-					strValue = TaxonField.this.txtLangVariant.getText().toString();
-				}
-				
-				//Add current value to FormScreen.currentFieldValue
-		    	ArrayList<String> tempValue = new ArrayList<String>();
-				tempValue.add(TaxonField.this.txtCodes.getText().toString());
-				tempValue.add(TaxonField.this.txtSciName.getText().toString());
-				tempValue.add(TaxonField.this.txtVernacularName.getText().toString());
-				tempValue.add(TaxonField.this.txtVernacularLang.getText().toString());
-				tempValue.add(TaxonField.this.txtLangVariant.getText().toString());				
-				TaxonField.this.value.setValue(TaxonField.form.currInstanceNo, tempValue);
-				FormScreen.currentFieldValue = TaxonField.this.value;
-				FormScreen.currentFieldValue.setValue(TaxonField.form.currInstanceNo, tempValue);
-				if (TaxonField.form.currentNode!=null){
-					TaxonField.form.currentNode.addFieldValue(FormScreen.currentFieldValue);
-				}
-				
-				//Check the value is not empty  and Run SearchTaxon activity
-				//TODO: in future validator should check it
-				if (!strValue.isEmpty())
-					TaxonField.this.startSearchScreen(strValue, TaxonField.this.strCategory);
-				else
-					Log.i(getResources().getString(R.string.app_name), "Value is EMPTY!!!! ");
-			}
-		});
+		//Create layout and add input field "Language variant" into there
+		LinearLayout langVariantLL = new LinearLayout(context);
+		langVariantLL.addView(this.langVariantLabel);
+		langVariantLL.addView(this.txtLangVariant);		
 		
-		//Add chosen values 
-//		this.values = new ArrayList<ArrayList<String>>();
-//		ArrayList<String> initialValue = new ArrayList<String>();
-//		initialValue.add(String.valueOf(this.spinner.getSelectedItemPosition()));
-//		initialValue.add(initialText);
-//		this.values.add(currentInstanceNo, initialValue);
-				
-		//Add child views to container
+		//Check "is Searchable" argument
+		if (this.searchable){
+			this.label.setOnClickListener(new OnClickListener() {
+				@Override
+				public void onClick(View v) {
+					
+				}});
+		}
+		this.searchable = isSearchable;			
+		
+		//Add child layouts to container
 		this.setOrientation(VERTICAL);
-		this.addView(this.label);
-		this.addView(this.txtCodes);
-		this.addView(this.sciNameLabel);
-		this.addView(this.txtSciName);
-		this.addView(this.venacNamesLabel);
-		this.addView(this.txtVernacularName);
-		this.addView(this.venacLangLabel);
-		this.addView(this.txtVernacularLang);
-		this.addView(this.langVariantLabel);
-		this.addView(this.txtLangVariant);
-		this.addView(this.btnSearch);
+		this.addView(codeLL);
+		this.addView(sciNameLL);
+		this.addView(vernNameLL);
+		this.addView(vernLangLL);
+		this.addView(langVariantLL);
+		
 		//this.addView(this.scrollLeft);
 		//this.addView(this.scrollRight);
 		

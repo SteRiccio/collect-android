@@ -135,7 +135,11 @@ public class FormScreen extends BaseActivity implements OnClickListener, TextWat
 				}
 				//Log.e("currentNode==null","=="+(this.currentNode==null));
 				this.currentNode.addFieldValue(ApplicationManager.fieldValueToPass);
+				Log.i("FormScreen onResume","fieldValueToPass is: " + ApplicationManager.fieldValueToPass);
 				ApplicationManager.fieldValueToPass = null;	
+			}
+			else{
+				Log.i("FormScreen onResume","fieldValueToPass is NULL");
 			}
 			
     		ArrayList<List<String>> keysLists1 = new ArrayList<List<String>>();
@@ -1385,6 +1389,9 @@ public class FormScreen extends BaseActivity implements OnClickListener, TextWat
 				Log.e("multipleFieldVALUE"+i,"=="+this.currentMultipleFieldValue.getValue(i));
 			}	
 			ApplicationManager.fieldValueToPass = this.currentMultipleFieldValue;
+		}
+		else{
+			Log.i("FormScreen onPause","currentMultipleFieldValue is NULL");
 		}
 		super.onPause();
     }
