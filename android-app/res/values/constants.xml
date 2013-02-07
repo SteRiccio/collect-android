@@ -62,6 +62,7 @@
     <string name="instanceValues">instanceValues</string>
     <integer name="multipleAttributeIntent">1</integer>
     <integer name="multipleEntityIntent">2</integer>
+    <integer name="singleEntityIntent">3</integer>
     <string name="rootScreen">ROOT</string>
     <integer name="breadcrumbFontSize">24</integer>
     
@@ -71,6 +72,7 @@
     
     <string name="valuesSeparator1">,</string>
     <string name="valuesSeparator2">;</string>
+    <string name="valuesEqualTo">=</string>
     <string name="valuesNotVisibleSign">...</string>
     
     
