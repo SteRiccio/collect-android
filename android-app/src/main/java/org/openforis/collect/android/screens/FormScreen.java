@@ -271,7 +271,7 @@ public class FormScreen extends BaseActivity implements OnClickListener, TextWat
     					if (entityDef.getLabels().size()>0)
     						label = entityDef.getLabels().get(0).getText();
     				}
-    				SummaryList summaryListView = new SummaryList(this,entityDef.getId(), entityDef, calcNoOfCharsFitInOneLine(),
+    				SummaryList summaryListView = new SummaryList(this, entityDef, calcNoOfCharsFitInOneLine(),
     						label,keysLists,detailsLists,
     						this);
     				summaryListView.setOnClickListener(this);
@@ -298,7 +298,7 @@ public class FormScreen extends BaseActivity implements OnClickListener, TextWat
             					tempFieldValue.addValue(instanceValues);
             				}
             				
-            				TextField textField= new TextField(this, nodeDef.getId(), nodeDef.getLabel(Type.INSTANCE, null), null, null, false, false, tempFieldValue);
+            				TextField textField= new TextField(this, nodeDef, tempFieldValue);
             				textField.setOnClickListener(this);
             				textField.setId(nodeDef.getId());
             				//textField.txtBox.addTextChangedListener(this);
@@ -342,7 +342,7 @@ public class FormScreen extends BaseActivity implements OnClickListener, TextWat
             					//Log.e("dodanowartosc","=="+instanceValues.get(1));
             				}
 
-            				TextField textField= new TextField(this, nodeDef.getId(), nodeDef.getLabel(Type.INSTANCE, null), null, null, false, false, this.currentMultipleFieldValue);
+            				TextField textField= new TextField(this, nodeDef, this.currentMultipleFieldValue);
             				textField.setOnClickListener(this);
             				textField.setId(nodeDef.getId());
             				textField.txtBox.addTextChangedListener(this);
@@ -356,7 +356,7 @@ public class FormScreen extends BaseActivity implements OnClickListener, TextWat
         					//Log.e("fieldValueToBeRestored!=null",this.currentNode.getNodeValues().size()+"=="+(fieldValueToBeRestored!=null));
         					if (fieldValueToBeRestored!=null){
         						//Log.e("POWROT","z MULTIPLE FIELD");
-        						SummaryTable summaryTableView = new SummaryTable(this, nodeDef.getId(), nodeDef.getLabel(Type.INSTANCE, null), tableColHeaders, fieldValueToBeRestored.getValues(), this);
+        						SummaryTable summaryTableView = new SummaryTable(this, nodeDef, tableColHeaders, fieldValueToBeRestored.getValues(), this);
             					summaryTableView.setOnClickListener(this);
                 				summaryTableView.setId(nodeDef.getId());
                 				this.ll.addView(summaryTableView);
@@ -367,7 +367,7 @@ public class FormScreen extends BaseActivity implements OnClickListener, TextWat
         			    		//row1.add("1");
         			    		valueRow1.add("");
         			    		tableValuesLists.add(valueRow1);
-        						SummaryTable summaryTableView = new SummaryTable(this, nodeDef.getId(), nodeDef.getLabel(Type.INSTANCE, null), tableColHeaders, tableValuesLists, this);
+        						SummaryTable summaryTableView = new SummaryTable(this, nodeDef, tableColHeaders, tableValuesLists, this);
             					summaryTableView.setOnClickListener(this);
                 				summaryTableView.setId(nodeDef.getId());
                 				this.ll.addView(summaryTableView);
@@ -393,7 +393,7 @@ public class FormScreen extends BaseActivity implements OnClickListener, TextWat
             					tempFieldValue.addValue(instanceValues);
             				}
             				
-            				MemoField memoField= new MemoField(this, nodeDef.getId(), nodeDef.getLabel(Type.INSTANCE, null), null, null, false, false, tempFieldValue);
+            				MemoField memoField= new MemoField(this, nodeDef, tempFieldValue);
             				memoField.setOnClickListener(this);
             				memoField.setId(nodeDef.getId());
             				//textField.txtBox.addTextChangedListener(this);
@@ -436,7 +436,7 @@ public class FormScreen extends BaseActivity implements OnClickListener, TextWat
             					//Log.e("dodanowartosc","=="+instanceValues.get(1));
             				}
 
-            				MemoField memoField= new MemoField(this, nodeDef.getId(), nodeDef.getLabel(Type.INSTANCE, null), null, null, false, false, this.currentMultipleFieldValue);
+            				MemoField memoField= new MemoField(this, nodeDef, this.currentMultipleFieldValue);
             				memoField.setOnClickListener(this);
             				memoField.setId(nodeDef.getId());
             				memoField.txtBox.addTextChangedListener(this);
@@ -450,7 +450,7 @@ public class FormScreen extends BaseActivity implements OnClickListener, TextWat
         					//Log.e("fieldValueToBeRestored!=null",this.currentNode.getNodeValues().size()+"=="+(fieldValueToBeRestored!=null));
         					if (fieldValueToBeRestored!=null){
         						//Log.e("POWROT","z MULTIPLE FIELD");
-        						SummaryTable summaryTableView = new SummaryTable(this, nodeDef.getId(), nodeDef.getLabel(Type.INSTANCE, null), tableColHeaders, fieldValueToBeRestored.getValues(), this);
+        						SummaryTable summaryTableView = new SummaryTable(this, nodeDef, tableColHeaders, fieldValueToBeRestored.getValues(), this);
             					summaryTableView.setOnClickListener(this);
                 				summaryTableView.setId(nodeDef.getId());
                 				this.ll.addView(summaryTableView);
@@ -461,7 +461,7 @@ public class FormScreen extends BaseActivity implements OnClickListener, TextWat
         			    		//row1.add("1");
         			    		valueRow1.add("");
         			    		tableValuesLists.add(valueRow1);
-        						SummaryTable summaryTableView = new SummaryTable(this, nodeDef.getId(), nodeDef.getLabel(Type.INSTANCE, null), tableColHeaders, tableValuesLists, this);
+        						SummaryTable summaryTableView = new SummaryTable(this, nodeDef, tableColHeaders, tableValuesLists, this);
             					summaryTableView.setOnClickListener(this);
                 				summaryTableView.setId(nodeDef.getId());
                 				this.ll.addView(summaryTableView);
@@ -488,7 +488,7 @@ public class FormScreen extends BaseActivity implements OnClickListener, TextWat
         					tempFieldValue.addValue(instanceValues);
         				}
         				
-        				NumberField numberField= new NumberField(this, nodeDef.getId(), nodeDef.getLabel(Type.INSTANCE, null), null, null, "real", false, false, tempFieldValue);
+        				NumberField numberField= new NumberField(this, nodeDef, tempFieldValue);
         				numberField.setOnClickListener(this);
         				numberField.setId(nodeDef.getId());
         				//textField.txtBox.addTextChangedListener(this);
@@ -531,7 +531,7 @@ public class FormScreen extends BaseActivity implements OnClickListener, TextWat
         					//Log.e("dodanowartosc","=="+instanceValues.get(1));
         				}
 
-        				NumberField numberField= new NumberField(this, nodeDef.getId(), nodeDef.getLabel(Type.INSTANCE, null), null, null, "real", false, false, this.currentMultipleFieldValue);
+        				NumberField numberField= new NumberField(this, nodeDef, this.currentMultipleFieldValue);
         				numberField.setOnClickListener(this);
         				numberField.setId(nodeDef.getId());
         				numberField.txtBox.addTextChangedListener(this);
@@ -545,7 +545,7 @@ public class FormScreen extends BaseActivity implements OnClickListener, TextWat
     					//Log.e("fieldValueToBeRestored!=null",this.currentNode.getNodeValues().size()+"=="+(fieldValueToBeRestored!=null));
     					if (fieldValueToBeRestored!=null){
     						//Log.e("POWROT","z MULTIPLE FIELD");
-    						SummaryTable summaryTableView = new SummaryTable(this, nodeDef.getId(), nodeDef.getLabel(Type.INSTANCE, null), tableColHeaders, fieldValueToBeRestored.getValues(), this);
+    						SummaryTable summaryTableView = new SummaryTable(this, nodeDef, tableColHeaders, fieldValueToBeRestored.getValues(), this);
         					summaryTableView.setOnClickListener(this);
             				summaryTableView.setId(nodeDef.getId());
             				this.ll.addView(summaryTableView);
@@ -556,7 +556,7 @@ public class FormScreen extends BaseActivity implements OnClickListener, TextWat
     			    		//row1.add("1");
     			    		valueRow1.add("");
     			    		tableValuesLists.add(valueRow1);
-    						SummaryTable summaryTableView = new SummaryTable(this, nodeDef.getId(), nodeDef.getLabel(Type.INSTANCE, null), tableColHeaders, tableValuesLists, this);
+    						SummaryTable summaryTableView = new SummaryTable(this, nodeDef, tableColHeaders, tableValuesLists, this);
         					summaryTableView.setOnClickListener(this);
             				summaryTableView.setId(nodeDef.getId());
             				this.ll.addView(summaryTableView);
@@ -605,7 +605,7 @@ public class FormScreen extends BaseActivity implements OnClickListener, TextWat
         					tempFieldValue.addValue(instanceValues);
         				}
         				
-        				CodeField codeField= new CodeField(this, nodeDef.getId(), nodeDef.getLabel(Type.INSTANCE, null), nodeDef.getName(), codes, options, null, true, nodeDef.isMultiple(), false, tempFieldValue);
+        				CodeField codeField= new CodeField(this, nodeDef, codes, options, null, tempFieldValue);
         				codeField.setOnClickListener(this);
         				codeField.setId(nodeDef.getId());
         				//textField.txtBox.addTextChangedListener(this);
@@ -640,7 +640,7 @@ public class FormScreen extends BaseActivity implements OnClickListener, TextWat
         					//Log.e("dodanowartosc","=="+instanceValues.get(0));
         				}
 
-        				CodeField codeField= new CodeField(this, nodeDef.getId(), nodeDef.getLabel(Type.INSTANCE, null), nodeDef.getName(), codes, options, null, true, nodeDef.isMultiple(), false, this.currentMultipleFieldValue);
+        				CodeField codeField= new CodeField(this, nodeDef, codes, options, null, this.currentMultipleFieldValue);
         				codeField.setOnClickListener(this);
         				codeField.setId(nodeDef.getId());
         				//booleanField.txtBox.addTextChangedListener(this);
@@ -668,7 +668,7 @@ public class FormScreen extends BaseActivity implements OnClickListener, TextWat
     			    			 tableCodeLabelsLists.add(codeLabelsRow1);
     			    		}            				
     			    		
-    						SummaryTable summaryTableView = new SummaryTable(this, nodeDef.getId(), nodeDef.getLabel(Type.INSTANCE, null), tableColHeaders, tableCodeLabelsLists, this);
+    						SummaryTable summaryTableView = new SummaryTable(this, nodeDef, tableColHeaders, tableCodeLabelsLists, this);
         					summaryTableView.setOnClickListener(this);
             				summaryTableView.setId(nodeDef.getId());
             				this.ll.addView(summaryTableView);
@@ -689,7 +689,7 @@ public class FormScreen extends BaseActivity implements OnClickListener, TextWat
     			    		}
     			    		tableCodeLabelsLists.add(codeLabelsRow1);
     			    		
-    						SummaryTable summaryTableView = new SummaryTable(this, nodeDef.getId(), nodeDef.getLabel(Type.INSTANCE, null), tableColHeaders, tableCodeLabelsLists, this);
+    						SummaryTable summaryTableView = new SummaryTable(this, nodeDef, tableColHeaders, tableCodeLabelsLists, this);
         					summaryTableView.setOnClickListener(this);
             				summaryTableView.setId(nodeDef.getId());
             				this.ll.addView(summaryTableView);
@@ -728,9 +728,10 @@ public class FormScreen extends BaseActivity implements OnClickListener, TextWat
         					tempFieldValue.addValue(instanceValues);
         				}
         				
-        				BooleanField booleanField= new BooleanField(this, this, nodeDef.getId(), nodeDef.getLabel(Type.INSTANCE, null), 
-        						false, false, getResources().getString(R.string.yes), getResources().getString(R.string.no),
-        						false, ((BooleanAttributeDefinition) nodeDef).isAffirmativeOnly(), false, tempFieldValue);
+        				BooleanField booleanField= new BooleanField(this, nodeDef, 
+        						false, false, 
+        						getResources().getString(R.string.yes), 
+        						getResources().getString(R.string.no), tempFieldValue);
         				booleanField.setOnClickListener(this);
         				booleanField.setId(nodeDef.getId());
         				//textField.txtBox.addTextChangedListener(this);
@@ -799,9 +800,9 @@ public class FormScreen extends BaseActivity implements OnClickListener, TextWat
         					//Log.e("dodanowartosc","=="+instanceValues.get(1));
         				}
 
-        				BooleanField booleanField = new BooleanField(this, this, nodeDef.getId(), nodeDef.getLabel(Type.INSTANCE, null), 
+        				BooleanField booleanField = new BooleanField(this, nodeDef, 
         						false, false, getResources().getString(R.string.yes), getResources().getString(R.string.no),
-        						false, ((BooleanAttributeDefinition) nodeDef).isAffirmativeOnly(), false, this.currentMultipleFieldValue);
+        						this.currentMultipleFieldValue);
         				booleanField.setOnClickListener(this);
         				booleanField.setId(nodeDef.getId());
         				//booleanField.txtBox.addTextChangedListener(this);
@@ -821,7 +822,7 @@ public class FormScreen extends BaseActivity implements OnClickListener, TextWat
     					//Log.e("fieldValueToBeRestored!=null",this.currentNode.getNodeValues().size()+"=="+(fieldValueToBeRestored!=null));
     					if (fieldValueToBeRestored!=null){
     						//Log.e("POWROT","z MULTIPLE FIELD");
-    						SummaryTable summaryTableView = new SummaryTable(this, nodeDef.getId(), nodeDef.getLabel(Type.INSTANCE, null), tableColHeaders, fieldValueToBeRestored.getValues(), this);
+    						SummaryTable summaryTableView = new SummaryTable(this, nodeDef, tableColHeaders, fieldValueToBeRestored.getValues(), this);
         					summaryTableView.setOnClickListener(this);
             				summaryTableView.setId(nodeDef.getId());
             				this.ll.addView(summaryTableView);
@@ -833,7 +834,7 @@ public class FormScreen extends BaseActivity implements OnClickListener, TextWat
     			    		valueRow1.add("");
     			    		valueRow1.add("");
     			    		tableValuesLists.add(valueRow1);
-    						SummaryTable summaryTableView = new SummaryTable(this, nodeDef.getId(), nodeDef.getLabel(Type.INSTANCE, null), tableColHeaders, tableValuesLists, this);
+    						SummaryTable summaryTableView = new SummaryTable(this, nodeDef, tableColHeaders, tableValuesLists, this);
         					summaryTableView.setOnClickListener(this);
             				summaryTableView.setId(nodeDef.getId());
             				this.ll.addView(summaryTableView);
@@ -872,7 +873,7 @@ public class FormScreen extends BaseActivity implements OnClickListener, TextWat
         					tempFieldValue.addValue(instanceValues);
         				}
         				
-        				CoordinateField coordinateField= new CoordinateField(this, nodeDef.getId(), nodeDef.getLabel(Type.INSTANCE, null), null, null, null, null, false, false, tempFieldValue);
+        				CoordinateField coordinateField= new CoordinateField(this, nodeDef, tempFieldValue);
         				coordinateField.setOnClickListener(this);
         				coordinateField.setId(nodeDef.getId());
         				//textField.txtBox.addTextChangedListener(this);
@@ -916,7 +917,7 @@ public class FormScreen extends BaseActivity implements OnClickListener, TextWat
         					//Log.e("dodanowartosc","=="+instanceValues.get(1));
         				}
 
-        				CoordinateField coordinateField= new CoordinateField(this, nodeDef.getId(), nodeDef.getLabel(Type.INSTANCE, null), null, null, null, null, false, false, this.currentMultipleFieldValue);
+        				CoordinateField coordinateField= new CoordinateField(this, nodeDef, this.currentMultipleFieldValue);
         				coordinateField.setOnClickListener(this);
         				coordinateField.setId(nodeDef.getId());
         				//coordinateField.txtBox.addTextChangedListener(this);
@@ -930,7 +931,7 @@ public class FormScreen extends BaseActivity implements OnClickListener, TextWat
     					//Log.e("fieldValueToBeRestored!=null",this.currentNode.getNodeValues().size()+"=="+(fieldValueToBeRestored!=null));
     					if (fieldValueToBeRestored!=null){
     						//Log.e("POWROT","z MULTIPLE FIELD");
-    						SummaryTable summaryTableView = new SummaryTable(this, nodeDef.getId(), nodeDef.getLabel(Type.INSTANCE, null), tableColHeaders, fieldValueToBeRestored.getValues(), this);
+    						SummaryTable summaryTableView = new SummaryTable(this, nodeDef, tableColHeaders, fieldValueToBeRestored.getValues(), this);
         					summaryTableView.setOnClickListener(this);
             				summaryTableView.setId(nodeDef.getId());
             				this.ll.addView(summaryTableView);
@@ -942,7 +943,7 @@ public class FormScreen extends BaseActivity implements OnClickListener, TextWat
     			    		valueRow1.add("");
     			    		valueRow1.add("");
     			    		tableValuesLists.add(valueRow1);
-    						SummaryTable summaryTableView = new SummaryTable(this, nodeDef.getId(), nodeDef.getLabel(Type.INSTANCE, null), tableColHeaders, tableValuesLists, this);
+    						SummaryTable summaryTableView = new SummaryTable(this, nodeDef, tableColHeaders, tableValuesLists, this);
         					summaryTableView.setOnClickListener(this);
             				summaryTableView.setId(nodeDef.getId());
             				this.ll.addView(summaryTableView);
@@ -981,7 +982,7 @@ public class FormScreen extends BaseActivity implements OnClickListener, TextWat
         					tempFieldValue.addValue(instanceValues);
         				}
         				
-        				DateField dateField = new DateField(this, nodeDef.getId(), nodeDef.getLabel(Type.INSTANCE, null), null, null, false, false, tempFieldValue);
+        				DateField dateField = new DateField(this, nodeDef, tempFieldValue);
         				dateField.setOnClickListener(this);
         				dateField.setId(nodeDef.getId());
         				//textField.txtBox.addTextChangedListener(this);
@@ -1025,7 +1026,7 @@ public class FormScreen extends BaseActivity implements OnClickListener, TextWat
         					//Log.e("dodanowartosc","=="+instanceValues.get(1));
         				}
 
-        				DateField dateField= new DateField(this, nodeDef.getId(), nodeDef.getLabel(Type.INSTANCE, null), null, null, false, false, this.currentMultipleFieldValue);
+        				DateField dateField= new DateField(this, nodeDef, this.currentMultipleFieldValue);
         				dateField.setOnClickListener(this);
         				dateField.setId(nodeDef.getId());
         				dateField.txtBox.addTextChangedListener(this);
@@ -1040,7 +1041,7 @@ public class FormScreen extends BaseActivity implements OnClickListener, TextWat
     					//Log.e("fieldValueToBeRestored!=null",this.currentNode.getNodeValues().size()+"=="+(fieldValueToBeRestored!=null));
     					if (fieldValueToBeRestored!=null){
     						//Log.e("POWROT","z MULTIPLE FIELD");
-    						SummaryTable summaryTableView = new SummaryTable(this, nodeDef.getId(), nodeDef.getLabel(Type.INSTANCE, null), tableColHeaders, fieldValueToBeRestored.getValues(), this);
+    						SummaryTable summaryTableView = new SummaryTable(this, nodeDef, tableColHeaders, fieldValueToBeRestored.getValues(), this);
         					summaryTableView.setOnClickListener(this);
             				summaryTableView.setId(nodeDef.getId());
             				this.ll.addView(summaryTableView);
@@ -1051,7 +1052,7 @@ public class FormScreen extends BaseActivity implements OnClickListener, TextWat
     			    		//row1.add("1");
     			    		valueRow1.add("");
     			    		tableValuesLists.add(valueRow1);
-    						SummaryTable summaryTableView = new SummaryTable(this, nodeDef.getId(), nodeDef.getLabel(Type.INSTANCE, null), tableColHeaders, tableValuesLists, this);
+    						SummaryTable summaryTableView = new SummaryTable(this, nodeDef, tableColHeaders, tableValuesLists, this);
         					summaryTableView.setOnClickListener(this);
             				summaryTableView.setId(nodeDef.getId());
             				this.ll.addView(summaryTableView);
@@ -1089,7 +1090,7 @@ public class FormScreen extends BaseActivity implements OnClickListener, TextWat
         					tempFieldValue.addValue(instanceValues);
         				}
         				
-        				RangeField rangeField= new RangeField(this, nodeDef.getId(), nodeDef.getLabel(Type.INSTANCE, null), null, null, false, false, tempFieldValue);
+        				RangeField rangeField= new RangeField(this, nodeDef, tempFieldValue);
         				rangeField.setOnClickListener(this);
         				rangeField.setId(nodeDef.getId());
         				//textField.txtBox.addTextChangedListener(this);
@@ -1132,7 +1133,7 @@ public class FormScreen extends BaseActivity implements OnClickListener, TextWat
         					//Log.e("dodanowartosc","=="+instanceValues.get(1));
         				}
 
-        				RangeField rangeField= new RangeField(this, nodeDef.getId(), nodeDef.getLabel(Type.INSTANCE, null), null, null,  false, false, this.currentMultipleFieldValue);
+        				RangeField rangeField= new RangeField(this, nodeDef, this.currentMultipleFieldValue);
         				rangeField.setOnClickListener(this);
         				rangeField.setId(nodeDef.getId());
         				rangeField.txtBox.addTextChangedListener(this);
@@ -1146,7 +1147,7 @@ public class FormScreen extends BaseActivity implements OnClickListener, TextWat
     					//Log.e("fieldValueToBeRestored!=null",this.currentNode.getNodeValues().size()+"=="+(fieldValueToBeRestored!=null));
     					if (fieldValueToBeRestored!=null){
     						//Log.e("POWROT","z MULTIPLE FIELD");
-    						SummaryTable summaryTableView = new SummaryTable(this, nodeDef.getId(), nodeDef.getLabel(Type.INSTANCE, null), tableColHeaders, fieldValueToBeRestored.getValues(), this);
+    						SummaryTable summaryTableView = new SummaryTable(this, nodeDef, tableColHeaders, fieldValueToBeRestored.getValues(), this);
         					summaryTableView.setOnClickListener(this);
             				summaryTableView.setId(nodeDef.getId());
             				this.ll.addView(summaryTableView);
@@ -1156,7 +1157,7 @@ public class FormScreen extends BaseActivity implements OnClickListener, TextWat
     			    		//row1.add("1");
     			    		valueRow1.add("");
     			    		tableValuesLists.add(valueRow1);
-    						SummaryTable summaryTableView = new SummaryTable(this, nodeDef.getId(), nodeDef.getLabel(Type.INSTANCE, null), tableColHeaders, tableValuesLists, this);
+    						SummaryTable summaryTableView = new SummaryTable(this, nodeDef, tableColHeaders, tableValuesLists, this);
         					summaryTableView.setOnClickListener(this);
             				summaryTableView.setId(nodeDef.getId());
             				this.ll.addView(summaryTableView);
@@ -1202,7 +1203,7 @@ public class FormScreen extends BaseActivity implements OnClickListener, TextWat
         				}
         				Log.i("TAXON_FIELD","TempFieldValue is: " + tempFieldValue.getValues().toString());
         				
-        				TaxonField taxonField = new TaxonField(this, nodeDef.getId(), nodeDef.getLabel(Type.INSTANCE, null), new String[5],"hintText","promptText", taxonCodes, taxonOptions, null, true, nodeDef.isMultiple(), false, tempFieldValue);
+        				TaxonField taxonField = new TaxonField(this, nodeDef, taxonCodes, taxonOptions, null, tempFieldValue);
         				taxonField.setOnClickListener(this);
         				taxonField.setId(nodeDef.getId());
         				Log.i("TAXON_FIELD","Setting TaxonField value by tempFieldValue");
@@ -1239,7 +1240,7 @@ public class FormScreen extends BaseActivity implements OnClickListener, TextWat
         					this.currentMultipleFieldValue.addValue(instanceValues);
         				}
 
-        				TaxonField taxonField = new TaxonField(this, nodeDef.getId(), nodeDef.getLabel(Type.INSTANCE, null), new String[5], "hintText","promptText", taxonCodes, taxonOptions, null, true, nodeDef.isMultiple(), false, this.currentMultipleFieldValue);
+        				TaxonField taxonField = new TaxonField(this, nodeDef, taxonCodes, taxonOptions, null, this.currentMultipleFieldValue);
         				taxonField.setOnClickListener(this);
         				taxonField.setId(nodeDef.getId());
         				Log.i("TAXON_FIELD","currentMultipleFieldValue size is: " + this.currentMultipleFieldValue.size());
@@ -1257,7 +1258,7 @@ public class FormScreen extends BaseActivity implements OnClickListener, TextWat
     					FieldValue fieldValueToBeRestored = this.currentNode.getFieldValue(nodeDef.getId());    					
     					if (fieldValueToBeRestored!=null){
     						//Log.e("POWROT","z MULTIPLE FIELD");
-    						SummaryTable summaryTableView = new SummaryTable(this, nodeDef.getId(), nodeDef.getLabel(Type.INSTANCE, null), tableColHeaders, fieldValueToBeRestored.getValues(), this);
+    						SummaryTable summaryTableView = new SummaryTable(this, nodeDef, tableColHeaders, fieldValueToBeRestored.getValues(), this);
         					summaryTableView.setOnClickListener(this);
             				summaryTableView.setId(nodeDef.getId());
             				this.ll.addView(summaryTableView);
@@ -1272,7 +1273,7 @@ public class FormScreen extends BaseActivity implements OnClickListener, TextWat
     			    		valueRow1.add("");
     			    		valueRow1.add("");
     			    		tableValuesLists.add(valueRow1);
-    						SummaryTable summaryTableView = new SummaryTable(this, nodeDef.getId(), nodeDef.getLabel(Type.INSTANCE, null), tableColHeaders, tableValuesLists, this);
+    						SummaryTable summaryTableView = new SummaryTable(this, nodeDef, tableColHeaders, tableValuesLists, this);
         					summaryTableView.setOnClickListener(this);
             				summaryTableView.setId(nodeDef.getId());
             				this.ll.addView(summaryTableView);			
@@ -1311,7 +1312,7 @@ public class FormScreen extends BaseActivity implements OnClickListener, TextWat
         					tempFieldValue.addValue(instanceValues);
         				}
         				
-        				TimeField timeField = new TimeField(this, nodeDef.getId(), nodeDef.getLabel(Type.INSTANCE, null), null, null, false, false, tempFieldValue);
+        				TimeField timeField = new TimeField(this, nodeDef, tempFieldValue);
         				timeField.setOnClickListener(this);
         				timeField.setId(nodeDef.getId());
         				//textField.txtBox.addTextChangedListener(this);
@@ -1355,7 +1356,7 @@ public class FormScreen extends BaseActivity implements OnClickListener, TextWat
         					//Log.e("dodanowartosc","=="+instanceValues.get(1));
         				}
 
-        				TimeField timeField= new TimeField(this, nodeDef.getId(), nodeDef.getLabel(Type.INSTANCE, null), null, null, false, false, this.currentMultipleFieldValue);
+        				TimeField timeField= new TimeField(this, nodeDef, this.currentMultipleFieldValue);
         				timeField.setOnClickListener(this);
         				timeField.setId(nodeDef.getId());
         				timeField.txtBox.addTextChangedListener(this);
@@ -1370,7 +1371,7 @@ public class FormScreen extends BaseActivity implements OnClickListener, TextWat
     					//Log.e("fieldValueToBeRestored!=null",this.currentNode.getNodeValues().size()+"=="+(fieldValueToBeRestored!=null));
     					if (fieldValueToBeRestored!=null){
     						//Log.e("POWROT","z MULTIPLE FIELD");
-    						SummaryTable summaryTableView = new SummaryTable(this, nodeDef.getId(), nodeDef.getLabel(Type.INSTANCE, null), tableColHeaders, fieldValueToBeRestored.getValues(), this);
+    						SummaryTable summaryTableView = new SummaryTable(this, nodeDef, tableColHeaders, fieldValueToBeRestored.getValues(), this);
         					summaryTableView.setOnClickListener(this);
             				summaryTableView.setId(nodeDef.getId());
             				this.ll.addView(summaryTableView);
@@ -1381,7 +1382,7 @@ public class FormScreen extends BaseActivity implements OnClickListener, TextWat
     			    		//row1.add("1");
     			    		valueRow1.add("");
     			    		tableValuesLists.add(valueRow1);
-    						SummaryTable summaryTableView = new SummaryTable(this, nodeDef.getId(), nodeDef.getLabel(Type.INSTANCE, null), tableColHeaders, tableValuesLists, this);
+    						SummaryTable summaryTableView = new SummaryTable(this, nodeDef, tableColHeaders, tableValuesLists, this);
         					summaryTableView.setOnClickListener(this);
             				summaryTableView.setId(nodeDef.getId());
             				this.ll.addView(summaryTableView);
