@@ -9,6 +9,9 @@ import org.openforis.collect.android.data.FieldValue;
 import org.openforis.collect.android.management.ApplicationManager;
 import org.openforis.collect.android.messages.ToastMessage;
 import org.openforis.collect.android.screens.FormScreen;
+import org.openforis.idm.metamodel.NodeDefinition;
+import org.openforis.idm.metamodel.NodeLabel.Type;
+import org.openforis.idm.metamodel.NumericAttributeDefinition;
 
 import android.content.Context;
 import android.text.InputType;
@@ -24,14 +27,13 @@ public class NumberField extends InputField {
 
 	private String type;
 	
-	public NumberField(Context context, int id, String labelText, String initialText, String hintText,
-			String numberType, boolean isMultiple, boolean isRequired, FieldValue fieldValue) {
-		super(context, id, isMultiple, isRequired);
+	public NumberField(Context context, NodeDefinition nodeDef, FieldValue fieldValue) {
+		super(context, nodeDef);
 		
 		this.values = new ArrayList<String>();
 		NumberField.this.values.add(NumberField.this.currentInstanceNo, "");
 
-		this.label.setText(labelText);
+		this.label.setText(nodeDef.getLabel(Type.INSTANCE, null));
 		this.label.setLayoutParams(new LayoutParams(0, ViewGroup.LayoutParams.WRAP_CONTENT, (float) 2));
 		this.label.setOnLongClickListener(new OnLongClickListener() {
 	        @Override
@@ -41,10 +43,10 @@ public class NumberField extends InputField {
 	        }
 	    });
 		this.txtBox = new EditText(context);
-		this.setHint(hintText);
+		//this.setHint(hintText);
 		this.txtBox.setLayoutParams(new LayoutParams(0,ViewGroup.LayoutParams.WRAP_CONTENT,(float) 2));
-		
-		this.type = numberType;
+		NumericAttributeDefinition numericNodeDef = (NumericAttributeDefinition)nodeDef;
+		this.type = numericNodeDef.getType().toString();
 		
 		this.value = fieldValue;
 

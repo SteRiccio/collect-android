@@ -1,6 +1,7 @@
 package org.openforis.collect.android.fields;
 
 import org.openforis.collect.android.R;
+import org.openforis.idm.metamodel.NodeDefinition;
 
 import android.content.Context;
 import android.view.ViewGroup;
@@ -14,10 +15,10 @@ public class UIElement extends LinearLayout{
 	
 	protected int elemId;	
 	
-	public UIElement(Context context, int id, boolean hasScrollingArrows){
+	public UIElement(Context context, NodeDefinition nodeDef/*, int id, boolean hasScrollingArrows*/){
 		super(context);
 		
-		this.elemId = id;
+		this.elemId = nodeDef.getId();
 		
 		this.container = new LinearLayout(context);
 		this.container.setLayoutParams(new LayoutParams(ViewGroup.LayoutParams.FILL_PARENT, getResources().getInteger(R.integer.field_height)));

@@ -6,6 +6,9 @@ import java.util.List;
 import org.openforis.collect.android.data.FieldValue;
 import org.openforis.collect.android.messages.ToastMessage;
 import org.openforis.collect.android.screens.FormScreen;
+import org.openforis.idm.metamodel.BooleanAttributeDefinition;
+import org.openforis.idm.metamodel.NodeDefinition;
+import org.openforis.idm.metamodel.NodeLabel.Type;
 
 import android.content.Context;
 import android.graphics.Color;
@@ -26,10 +29,8 @@ public class BooleanField extends Field {
 	
 	private static FormScreen form;
 	
-	public BooleanField(Context context, FormScreen form, int id, String labelText, boolean isChecked1, boolean isChecked2,
-			String label1Text, String label2Text,
-			boolean isMultiple, boolean isAffirmativeOnly, boolean isRequired, FieldValue fieldValue) {
-		super(context, id, isMultiple, isRequired);
+	public BooleanField(Context context, NodeDefinition nodeDef, boolean isChecked1, boolean isChecked2, String label1Text, String label2Text, FieldValue fieldValue) {
+		super(context, nodeDef);
 
 		this.values = new ArrayList<ArrayList<Boolean>>();
 		ArrayList<Boolean> initialValue = new ArrayList<Boolean>();
@@ -39,7 +40,7 @@ public class BooleanField extends Field {
 		
 		BooleanField.form = form;
 		
-		this.label.setText(labelText);
+		this.label.setText(nodeDef.getLabel(Type.INSTANCE, null));
 		this.label.setLayoutParams(new LayoutParams(0,ViewGroup.LayoutParams.WRAP_CONTENT, (float) 2));
 		this.label.setOnLongClickListener(new OnLongClickListener() {
 	        @Override
@@ -94,7 +95,7 @@ public class BooleanField extends Field {
 		this.label2.setLayoutParams(new LayoutParams(0,ViewGroup.LayoutParams.WRAP_CONTENT, (float) 1));
 		this.label2.setTextColor(Color.BLACK);
 		
-		if (isAffirmativeOnly){
+		if (((BooleanAttributeDefinition) nodeDef).isAffirmativeOnly()){
 			this.chckBox2.setVisibility(View.GONE);
 			this.label2.setVisibility(View.GONE);
 			this.label1.setVisibility(View.GONE);

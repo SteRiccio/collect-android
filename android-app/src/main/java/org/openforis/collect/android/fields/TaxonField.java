@@ -8,16 +8,12 @@ import org.openforis.collect.android.R;
 import org.openforis.collect.android.data.FieldValue;
 import org.openforis.collect.android.dialogs.SearchTaxonActivity;
 import org.openforis.collect.android.management.ApplicationManager;
-import org.openforis.collect.android.messages.ToastMessage;
 import org.openforis.collect.android.screens.FormScreen;
-import org.openforis.collect.manager.SpeciesManager;
-import org.openforis.collect.persistence.TaxonDao;
-import org.openforis.collect.persistence.TaxonVernacularNameDao;
-import org.openforis.collect.persistence.TaxonomyDao;
+import org.openforis.idm.metamodel.NodeDefinition;
+
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
-import android.text.Editable;
 import android.text.InputType;
 import android.text.method.QwertyKeyListener;
 import android.text.method.TextKeyListener;
@@ -30,7 +26,6 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.TextView;
-import android.widget.Toast;
 
 public class TaxonField extends Field {
 	
@@ -57,14 +52,13 @@ public class TaxonField extends Field {
 	private List<ArrayList<String>> values;
 	private String strCategory;
 	
-	public TaxonField(Context context, int id, String labelText, String[] initialText, String hintText, String promptText, 
+	public TaxonField(Context context, NodeDefinition nodeDef, 
 			ArrayList<String> codes, ArrayList<String> options, 
-			String selectedItem, boolean isSearchable,
-			boolean isMultiple, boolean isRequired, FieldValue fieldValue) {
-		super(context, id, isMultiple, isRequired);
+			String selectedItem, FieldValue fieldValue) {
+		super(context, nodeDef);
 
 		this.strCategory = "";
-		this.setHint(hintText);
+		//this.setHint(hintText);
 		TaxonField.form = (FormScreen)context;
 		
 		Log.i(getResources().getString(R.string.app_name), "Size of field value is: " + fieldValue.size());
@@ -73,11 +67,16 @@ public class TaxonField extends Field {
 		this.values = new ArrayList<ArrayList<String>>();
 //		TaxonField.this.values.add(TaxonField.this.currentInstanceNo, "");
 		ArrayList<String> initialValue = new ArrayList<String>();
-		initialValue.add(initialText[0]);
+		/*initialValue.add(initialText[0]);
 		initialValue.add(initialText[1]);
 		initialValue.add(initialText[2]);
 		initialValue.add(initialText[3]);
-		initialValue.add(initialText[4]);
+		initialValue.add(initialText[4]);*/
+		initialValue.add("");
+		initialValue.add("");
+		initialValue.add("");
+		initialValue.add("");
+		initialValue.add("");
 		TaxonField.this.values.add(initialValue);
 		
 		this.label.setText("Code");
@@ -125,11 +124,11 @@ public class TaxonField extends Field {
 				}});
 		}
 
-		this.searchable = isSearchable;
+		this.searchable = true;//isSearchable;
 		
 		//Add text field where user can type a code
 		this.txtCodes = new EditText(context);
-		this.txtCodes.setText(initialText[0]);
+		this.txtCodes.setText(""/*initialText[0]*/);
 
 //		this.txtCodes.setLayoutParams(new LayoutParams(0,ViewGroup.LayoutParams.WRAP_CONTENT,(float) 2));
 		
@@ -160,7 +159,7 @@ public class TaxonField extends Field {
 			
 		//Add text box for scientific names
 		this.txtSciName = new EditText(context);
-		this.txtSciName.setText(initialText[1]);
+		this.txtSciName.setText(""/*initialText[1]*/);
 
 //		this.txtSciName.setLayoutParams(new LayoutParams(0,ViewGroup.LayoutParams.WRAP_CONTENT,(float) 2));
 		
@@ -191,7 +190,7 @@ public class TaxonField extends Field {
 			
 		//Add textbox for vernacular names
 		this.txtVernacularName = new EditText(context);
-		this.txtVernacularName.setText(initialText[2]);
+		this.txtVernacularName.setText(""/*initialText[2]*/);
 //		this.txtVernacularName.setLayoutParams(new LayoutParams(0,ViewGroup.LayoutParams.WRAP_CONTENT,(float) 2));
 		
 		// When txtVernacularName gets focus
@@ -242,7 +241,7 @@ public class TaxonField extends Field {
 		
 		//Add textbox for language variants
 		this.txtLangVariant = new EditText(context);
-		this.txtLangVariant.setText(initialText[4]);
+		this.txtLangVariant.setText(""/*initialText[4]*/);
 //		this.txtLangVariant.setLayoutParams(new LayoutParams(0,ViewGroup.LayoutParams.WRAP_CONTENT,(float) 2));
 		
 		// When txtLangVariant gets focus

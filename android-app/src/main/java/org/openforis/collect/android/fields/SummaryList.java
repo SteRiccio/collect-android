@@ -20,10 +20,10 @@ public class SummaryList extends UIElement {
 	private String title;
 	private EntityDefinition entityDefinition;
 
-	public SummaryList(Context context, int id, EntityDefinition entityDef, int threshold,
+	public SummaryList(Context context, EntityDefinition entityDef, int threshold,
 			String title, List<List<String>> keysList, List<List<String>> detailsList,
 			OnClickListener listener) {
-		super(context, id, false);
+		super(context, entityDef);
 		
 		this.tableLayout  = new TableLayout(context);  
 		this.tableLayout.setStretchAllColumns(true);  

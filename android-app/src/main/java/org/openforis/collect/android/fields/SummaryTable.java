@@ -3,6 +3,8 @@ package org.openforis.collect.android.fields;
 import java.util.List;
 
 import org.openforis.collect.android.R;
+import org.openforis.idm.metamodel.NodeDefinition;
+import org.openforis.idm.metamodel.NodeLabel.Type;
 
 import android.content.Context;
 import android.graphics.Color;
@@ -20,24 +22,23 @@ public class SummaryTable extends UIElement {
 	
 	private List<List<String>> values;
 	
-	public SummaryTable(Context context, int id, /*EntityDefinition entityDef,*/
-			String tableHeader, List<String> columnHeader, List<List<String>> rows,
+	public SummaryTable(Context context, NodeDefinition nodeDef, List<String> columnHeader, List<List<String>> rows,
 			OnClickListener listener) {
-		super(context, id, false);
+		super(context, nodeDef);
 		
 		this.tableLayout  = new TableLayout(context);
 		this.tableLayout.setStretchAllColumns(true);  
 	    this.tableLayout.setShrinkAllColumns(true);
 	    this.tableLayout.setPadding(5, 10, 5, 10);
 	    
-	    this.title = tableHeader;
+	    this.title = nodeDef.getLabel(Type.INSTANCE, null);
 	    this.values = rows;
 	    
 		int colNo = columnHeader.size();
 		int rowNo = rows.size();		
 		
 		TextView header = new TextView(context);
-		header.setText(tableHeader);
+		header.setText(this.title);
 		//TableRow tr1 = new TableRow(context);
 		//TableRow.LayoutParams params = new TableRow.LayoutParams();  
 	    //params.span = colNo;

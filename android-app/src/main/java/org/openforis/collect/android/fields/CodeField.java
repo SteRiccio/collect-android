@@ -7,6 +7,8 @@ import org.openforis.collect.android.R;
 import org.openforis.collect.android.data.FieldValue;
 import org.openforis.collect.android.messages.ToastMessage;
 import org.openforis.collect.android.screens.FormScreen;
+import org.openforis.idm.metamodel.NodeDefinition;
+import org.openforis.idm.metamodel.NodeLabel.Type;
 
 import android.content.Context;
 import android.view.View;
@@ -34,18 +36,17 @@ public class CodeField extends Field {
 	
 	private boolean selectedForTheFirstTime;
 	
-	public CodeField(Context context, int id, String labelText, String promptText, 
+	public CodeField(Context context, NodeDefinition nodeDef, 
 			ArrayList<String> codes, ArrayList<String> options, 
-			String selectedItem, boolean isSearchable,
-			boolean isMultiple, boolean isRequired, FieldValue fieldValue) {
-		super(context, id, isMultiple, isRequired);
-		this.searchable = isSearchable;
+			String selectedItem, FieldValue fieldValue) {
+		super(context, nodeDef);
+		this.searchable = true;
 
 		CodeField.form = (FormScreen)context;
 		
 		this.selectedForTheFirstTime = true;
 		
-		this.label.setText(labelText);
+		this.label.setText(nodeDef.getLabel(Type.INSTANCE, null));
 		this.label.setLayoutParams(new LayoutParams(0, ViewGroup.LayoutParams.WRAP_CONTENT, (float) 1));
 		this.label.setOnLongClickListener(new OnLongClickListener() {
 	        @Override
@@ -63,7 +64,7 @@ public class CodeField extends Field {
 		}
 		
 		this.spinner = new Spinner(context);
-		this.spinner.setPrompt(promptText);
+		this.spinner.setPrompt(nodeDef.getName());
 		
 		this.codes = codes;
 		this.options = options;

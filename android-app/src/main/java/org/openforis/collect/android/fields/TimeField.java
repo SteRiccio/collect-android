@@ -11,6 +11,8 @@ import org.openforis.collect.android.dialogs.TimeSetDialog;
 import org.openforis.collect.android.management.ApplicationManager;
 import org.openforis.collect.android.messages.ToastMessage;
 import org.openforis.collect.android.screens.FormScreen;
+import org.openforis.idm.metamodel.NodeDefinition;
+import org.openforis.idm.metamodel.NodeLabel.Type;
 
 import android.content.Context;
 import android.content.Intent;
@@ -25,14 +27,13 @@ public class TimeField extends InputField implements TextWatcher {
 	
 	private List<String> values;
 	
-	public TimeField(Context context, int id, String labelText, String initialText, String hintText,
-			boolean isMultiple, boolean isRequired, FieldValue fieldValue) {
-		super(context, id, isMultiple, isRequired);
+	public TimeField(Context context, NodeDefinition nodeDef, FieldValue fieldValue) {
+		super(context, nodeDef);
 		
 		this.values = new ArrayList<String>();
 		TimeField.this.values.add(TimeField.this.currentInstanceNo, "");
 		
-		this.label.setText(labelText);
+		this.label.setText(nodeDef.getLabel(Type.INSTANCE, null));
 		this.label.setLayoutParams(new LayoutParams(0, ViewGroup.LayoutParams.WRAP_CONTENT, (float) 2));
 		this.label.setOnLongClickListener(new OnLongClickListener() {
 	        @Override
@@ -42,7 +43,7 @@ public class TimeField extends InputField implements TextWatcher {
 	        }
 	    });
 		this.txtBox = new EditText(context);
-		this.setHint(hintText);
+		//this.setHint(hintText);
 		this.txtBox.setLayoutParams(new LayoutParams(0,ViewGroup.LayoutParams.WRAP_CONTENT,(float) 2));
 		this.txtBox.addTextChangedListener(this);
 		

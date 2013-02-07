@@ -10,13 +10,15 @@ import org.openforis.collect.android.data.FieldValue;
 import org.openforis.collect.android.management.ApplicationManager;
 import org.openforis.collect.android.messages.ToastMessage;
 import org.openforis.collect.android.screens.FormScreen;
+import org.openforis.idm.metamodel.NodeDefinition;
+import org.openforis.idm.metamodel.NodeLabel.Type;
 
 import android.content.Context;
 import android.text.Editable;
 import android.text.InputType;
 import android.text.TextWatcher;
-import android.text.method.KeyListener;
 import android.text.method.DigitsKeyListener;
+import android.text.method.KeyListener;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
@@ -32,22 +34,21 @@ public class CoordinateField extends InputField {
 
 	private List<ArrayList<String>> values;
 	
-	public CoordinateField(Context context, int id, String labelText,
-			String initialTextLat, String initialTextLon,
-			String hintTextLat, String hintTextLon,
-			boolean isMultiple, boolean isRequired, FieldValue fieldValue) {		
-		super(context, id, isMultiple, isRequired);
+	public CoordinateField(Context context, NodeDefinition nodeDef, FieldValue fieldValue) {		
+		super(context, nodeDef);
 
 		CoordinateField.form = (FormScreen)context;
 		
 		this.values = new ArrayList<ArrayList<String>>();
 		ArrayList<String> initialValue = new ArrayList<String>();
-		initialValue.add(initialTextLat);
-		initialValue.add(initialTextLon);
+		//initialValue.add(initialTextLat);
+		//initialValue.add(initialTextLon);
+		initialValue.add("");
+		initialValue.add("");
 		this.values.add(initialValue);
 		
 		this.label.setMaxLines(1);
-		this.label.setText(labelText);
+		this.label.setText(nodeDef.getLabel(Type.INSTANCE, null));
 		this.label.setLayoutParams(new LayoutParams(0, ViewGroup.LayoutParams.WRAP_CONTENT, (float) 1));
 		this.label.setOnLongClickListener(new OnLongClickListener() {
 	        @Override
@@ -67,8 +68,8 @@ public class CoordinateField extends InputField {
 		
 		this.txtLatitude = new EditText(context);
 		this.txtLatitude.setLayoutParams(new LayoutParams(0,ViewGroup.LayoutParams.WRAP_CONTENT,(float) 2));
-		this.txtLatitude.setText(initialTextLat);
-		this.txtLatitude.setHint(hintTextLat);
+		//this.txtLatitude.setText(initialTextLat);
+		//this.txtLatitude.setHint(hintTextLat);
 		this.txtLatitude.addTextChangedListener(this);
 		this.addView(txtLatitude);
 
@@ -97,8 +98,8 @@ public class CoordinateField extends InputField {
 		
 		this.txtLongitude = new EditText(context);
 		this.txtLongitude.setLayoutParams(new LayoutParams(0,ViewGroup.LayoutParams.WRAP_CONTENT,(float) 2));
-		this.txtLongitude.setText(initialTextLon);
-		this.txtLongitude.setHint(hintTextLon);
+		//this.txtLongitude.setText(initialTextLon);
+		//this.txtLongitude.setHint(hintTextLon);
 		this.txtLongitude.addTextChangedListener(this);
 		this.addView(txtLongitude);
 		

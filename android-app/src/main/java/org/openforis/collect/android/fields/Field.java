@@ -1,6 +1,7 @@
 package org.openforis.collect.android.fields;
 
 import org.openforis.collect.android.data.FieldValue;
+import org.openforis.idm.metamodel.NodeDefinition;
 
 import android.content.Context;
 import android.graphics.Color;
@@ -16,14 +17,14 @@ public abstract class Field extends UIElement {
 	
 	public FieldValue value;
 	
-	public Field(Context context, int id, boolean isMultiple, boolean required) {
-		super(context, id, isMultiple);
+	public Field(Context context, NodeDefinition nodeDef /*int id, boolean isMultiple, boolean required*/) {
+		super(context, nodeDef);
 		
 		this.label = new TextView(context);
 		this.label.setMaxLines(1);
 		this.label.setTextColor(Color.BLACK);
 		
-		this.isRequired = required;
+		//this.isRequired = required;
 	}
 
 	public String getLabelText(){

@@ -1,5 +1,7 @@
 package org.openforis.collect.android.fields;
 
+import org.openforis.idm.metamodel.NodeDefinition;
+
 import android.content.Context;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -11,8 +13,8 @@ public class InputField extends Field implements TextWatcher {
 	
 	public EditText txtBox;
 	
-	public InputField(Context context, int id, boolean isMultiple, boolean isRequired) {
-		super(context, id, isMultiple, isRequired);
+	public InputField(Context context, NodeDefinition nodeDef) {
+		super(context, nodeDef);
 		this.txtBox = new EditText(context);
 		this.txtBox.addTextChangedListener(this);
 	}
