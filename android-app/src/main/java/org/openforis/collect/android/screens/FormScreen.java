@@ -17,6 +17,7 @@ import org.openforis.collect.android.fields.NumberField;
 import org.openforis.collect.android.fields.RangeField;
 import org.openforis.collect.android.fields.SummaryList;
 import org.openforis.collect.android.fields.SummaryTable;
+import org.openforis.collect.android.fields.TaxonField;
 import org.openforis.collect.android.fields.TextField;
 import org.openforis.collect.android.fields.TimeField;
 import org.openforis.collect.android.fields.UIElement;
@@ -105,6 +106,13 @@ public class FormScreen extends BaseActivity implements OnClickListener, TextWat
             		ApplicationManager.valuesTree.addChild(getFormScreenId(), this.currentNode);
     			}
         		this.currentMultipleFieldValue = null;
+    		} else if ((this.intentType==getResources().getInteger(R.integer.singleEntityIntent))&&(!this.parentFormScreenId.equals(""))){
+    			this.currentNode = ApplicationManager.valuesTree.getChild(getFormScreenId());
+    			if (this.currentNode==null){
+    				this.currentNode = new DataTreeNode(this.idmlId, this.currInstanceNo, this.parentFormScreenId, ApplicationManager.valuesTree.getChild(this.parentFormScreenId) , new ArrayList<FieldValue>());
+            		ApplicationManager.valuesTree.addChild(getFormScreenId(), this.currentNode);
+    			}
+        		this.currentMultipleFieldValue = null;
     		} else if (!this.parentFormScreenId.equals("")){//current screen isn't entity
     			this.currentNode=null;
     			ArrayList<String> tableColHeaders = new ArrayList<String>();
@@ -137,7 +145,7 @@ public class FormScreen extends BaseActivity implements OnClickListener, TextWat
 				this.currentNode.addFieldValue(ApplicationManager.fieldValueToPass);
 				ApplicationManager.fieldValueToPass = null;	
 			}
-    		ArrayList<List<String>> keysLists1 = new ArrayList<List<String>>();
+    		/*ArrayList<List<String>> keysLists1 = new ArrayList<List<String>>();
     		ArrayList<String> key1 = new ArrayList<String>();
     		key1.add("task");
     		key1.add("id");
@@ -172,7 +180,7 @@ public class FormScreen extends BaseActivity implements OnClickListener, TextWat
     		detail2.add("person");
     		detail2.add("status");
     		detail2.add("actor");
-    		detailsLists2.add(detail2);
+    		detailsLists2.add(detail2);*/
     		
     		ArrayList<String> tableColHeaders = new ArrayList<String>();
     		tableColHeaders.add("Value");
@@ -203,7 +211,12 @@ public class FormScreen extends BaseActivity implements OnClickListener, TextWat
     		int fieldsNo = startingIntent.getExtras().size()-1;
     		for (int i=0;i<fieldsNo;i++){
     			NodeDefinition nodeDef = ApplicationManager.getNodeDefinition(startingIntent.getIntExtra(getResources().getString(R.string.attributeId)+i, -1));
-    			if ((nodeDef instanceof EntityDefinition)&&(nodeDef.isMultiple())){
+    			if ((nodeDef instanceof EntityDefinition)/*&&(nodeDef.isMultiple())*/){
+    				if (nodeDef.isMultiple()){
+    					
+    				} else {
+    					
+    				}
     				EntityDefinition entityDef = (EntityDefinition)nodeDef;    				
     				int entityCardinality = 1;
 					ArrayList<List<String>> keysLists = new ArrayList<List<String>>();
@@ -1186,7 +1199,7 @@ public class FormScreen extends BaseActivity implements OnClickListener, TextWat
         					instanceValues.add("");
         					instanceValues.add("");
         					tempFieldValue.addValue(instanceValues);
-        				}    
+        				}
         				Log.i("TAXON_FIELD","TempFieldValue is: " + tempFieldValue.getValues().toString());
         				
         				TaxonField taxonField = new TaxonField(this, nodeDef.getId(), nodeDef.getLabel(Type.INSTANCE, null), new String[5],"hintText","promptText", taxonCodes, taxonOptions, null, true, nodeDef.isMultiple(), false, tempFieldValue);
@@ -1379,8 +1392,9 @@ public class FormScreen extends BaseActivity implements OnClickListener, TextWat
 			if (this.intentType==getResources().getInteger(R.integer.multipleAttributeIntent)){
 				//Log.e("multiple","ATTRIBUTE");
 				this.ll.addView(arrangeButtonsInLine(new Button(this),getResources().getString(R.string.previousInstanceButton),new Button(this),getResources().getString(R.string.nextInstanceButton),this));
-			} else {
-				//Log.e("multiple","ENTITY");
+			} else if (this.intentType==getResources().getInteger(R.integer.multipleEntityIntent)){ 
+				Log.e("multiple","ENTITY");
+				this.ll.addView(arrangeButtonsInLine(new Button(this),getResources().getString(R.string.previousInstanceButton),new Button(this),getResources().getString(R.string.nextInstanceButton),this));
 			}
     		setContentView(this.sv);
 			
@@ -1683,7 +1697,11 @@ public class FormScreen extends BaseActivity implements OnClickListener, TextWat
 	private Intent prepareIntentForNewScreen(SummaryList summaryList){
 		Intent intent = new Intent(this,FormScreen.class);
 		intent.putExtra(getResources().getString(R.string.breadcrumb), this.breadcrumb+getResources().getString(R.string.breadcrumbSeparator)+summaryList.getTitle());
-		intent.putExtra(getResources().getString(R.string.intentType), getResources().getInteger(R.integer.multipleEntityIntent));
+		if (summaryList.getEntityDefinition().isMultiple()){
+			intent.putExtra(getResources().getString(R.string.intentType), getResources().getInteger(R.integer.multipleEntityIntent));	
+		} else {
+			intent.putExtra(getResources().getString(R.string.intentType), getResources().getInteger(R.integer.singleEntityIntent));
+		}		
 		intent.putExtra(getResources().getString(R.string.idmlId), summaryList.getId());
 		intent.putExtra(getResources().getString(R.string.instanceNo), 0);
 		intent.putExtra(getResources().getString(R.string.parentFormScreenId), this.getFormScreenId());

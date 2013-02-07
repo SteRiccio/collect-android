@@ -20,7 +20,6 @@ import org.openforis.collect.android.lists.ClusterChoiceActivity;
 import org.openforis.collect.android.messages.AlertMessage;
 import org.openforis.collect.android.misc.RunnableHandler;
 import org.openforis.collect.android.screens.FormScreen;
-import org.openforis.collect.manager.RecordManager;
 import org.openforis.collect.manager.SurveyManager;
 import org.openforis.collect.manager.UserManager;
 import org.openforis.collect.model.CollectSurvey;
@@ -112,7 +111,7 @@ public class ApplicationManager extends BaseActivity{
 		    
 		    //creating database
 		    new DatabaseWrapper(this);
-		    //CollectDatabase collectDB = new CollectDatabase(DatabaseWrapper.db);	
+		    CollectDatabase collectDB = new CollectDatabase(DatabaseWrapper.db);	
 		    
 		    //instantiating managers
 		    ExpressionFactory expressionFactory = new ExpressionFactory();
@@ -318,7 +317,7 @@ public class ApplicationManager extends BaseActivity{
 		List<EntityDefinition> rootEntitiesDefsList = schema.getRootEntityDefinitions();		
 		Intent intent = new Intent(this,FormScreen.class);
 		intent.putExtra(getResources().getString(R.string.breadcrumb), getResources().getString(R.string.rootScreen));
-		intent.putExtra(getResources().getString(R.string.intentType), getResources().getInteger(R.integer.multipleEntityIntent));
+		intent.putExtra(getResources().getString(R.string.intentType), getResources().getInteger(R.integer.singleEntityIntent));
 		intent.putExtra(getResources().getString(R.string.parentFormScreenId), "");
         intent.putExtra(getResources().getString(R.string.idmlId), 0);
         intent.putExtra(getResources().getString(R.string.instanceNo), 0);
