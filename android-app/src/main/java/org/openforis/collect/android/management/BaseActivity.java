@@ -2,6 +2,7 @@ package org.openforis.collect.android.management;
 
 import org.openforis.collect.android.R;
 import org.openforis.collect.android.messages.AlertMessage;
+import org.openforis.collect.android.misc.RunnableHandler;
 import org.openforis.collect.android.screens.SettingsScreen;
 import org.openforis.collect.model.CollectSurvey;
 
@@ -11,6 +12,7 @@ import android.content.Intent;
 import android.content.pm.PackageManager.NameNotFoundException;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.os.Environment;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -38,6 +40,13 @@ public class BaseActivity extends Activity {
 		super.onResume();
 		Log.i(getResources().getString(R.string.app_name),TAG+":onResume");
 		this.backgroundColor = ApplicationManager.appPreferences.getInt(getResources().getString(R.string.backgroundColor), Color.WHITE);
+		Thread thread = new Thread(new RunnableHandler(0, Environment.getExternalStorageDirectory().toString()
+				+getResources().getString(R.string.logs_folder)
+				+getResources().getString(R.string.logs_file_name)
+				+"DEBUG_LOG_SAFETY"
+				+System.currentTimeMillis()
+				+getResources().getString(R.string.log_file_extension)));
+		thread.start();
 	}
 	
     @Override
