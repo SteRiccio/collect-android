@@ -102,4 +102,8 @@ public class DataTree {
 			}
 		}
 	}
+	
+	public DataTreeNode getRoot(){
+		return this.root;
+	}	
 }

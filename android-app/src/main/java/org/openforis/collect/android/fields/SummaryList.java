@@ -53,7 +53,9 @@ public class SummaryList extends UIElement {
 			if (keysLine.length()>threshold){
 				keysLine = keysLine.substring(0,threshold-3)+"...";
 			} else {
-				keysLine = keysLine.substring(0,keysLine.length()-1);
+				if (!keysLine.equals("")){
+					keysLine = keysLine.substring(0,keysLine.length()-1);	
+				}				
 			}
 			
 			String detailsLine = "";
