@@ -66,7 +66,7 @@ public class TaxonField extends Field {
 		//Create input field "Code"
 		//Label "Code"
 		this.label.setText("Code");
-		this.label.setLayoutParams(new LayoutParams(0, ViewGroup.LayoutParams.WRAP_CONTENT, (float) 2));
+		this.label.setLayoutParams(new LayoutParams(0, ViewGroup.LayoutParams.WRAP_CONTENT, (float) 1));
 		//Add text field where user can type a code
 		this.txtCodes = new EditText(context);
 		this.txtCodes.setText(initialText[0]);
@@ -137,7 +137,7 @@ public class TaxonField extends Field {
 		this.sciNameLabel.setMaxLines(1);
 		this.sciNameLabel.setTextColor(Color.BLACK);
 		this.sciNameLabel.setText("Scientific names");
-		this.sciNameLabel.setLayoutParams(new LayoutParams(0, ViewGroup.LayoutParams.WRAP_CONTENT, (float) 2));
+		this.sciNameLabel.setLayoutParams(new LayoutParams(0, ViewGroup.LayoutParams.WRAP_CONTENT, (float) 1));
 		//Add text box for scientific names
 		this.txtSciName = new EditText(context);
 		this.txtSciName.setText(initialText[1]);	
@@ -208,7 +208,7 @@ public class TaxonField extends Field {
 		this.venacNamesLabel.setMaxLines(1);
 		this.venacNamesLabel.setTextColor(Color.BLACK);
 		this.venacNamesLabel.setText("Vernacular name");
-		this.venacNamesLabel.setLayoutParams(new LayoutParams(0, ViewGroup.LayoutParams.WRAP_CONTENT, (float) 2));
+		this.venacNamesLabel.setLayoutParams(new LayoutParams(0, ViewGroup.LayoutParams.WRAP_CONTENT, (float) 1));
 		//Add textbox for vernacular names
 		this.txtVernacularName = new EditText(context);
 		this.txtVernacularName.setText(initialText[2]);		
@@ -282,7 +282,7 @@ public class TaxonField extends Field {
 		//Add text box for vernacular languages
 		this.txtVernacularLang = new EditText(context);
 		this.txtVernacularLang.setText(initialText[3]);
-		this.txtVernacularLang.setLayoutParams(new LayoutParams(0, ViewGroup.LayoutParams.WRAP_CONTENT, (float) 2));
+		this.txtVernacularLang.setLayoutParams(new LayoutParams(0, ViewGroup.LayoutParams.WRAP_CONTENT, (float) 3));
 		// When txtLangVariant gets focus
 		this.txtVernacularLang.setOnFocusChangeListener(new OnFocusChangeListener() {
 		    @Override
@@ -319,7 +319,7 @@ public class TaxonField extends Field {
 		//Add textbox for language variants
 		this.txtLangVariant = new EditText(context);
 		this.txtLangVariant.setText(initialText[4]);	
-		this.txtLangVariant.setLayoutParams(new LayoutParams(0, ViewGroup.LayoutParams.WRAP_CONTENT, (float) 2));
+		this.txtLangVariant.setLayoutParams(new LayoutParams(0, ViewGroup.LayoutParams.WRAP_CONTENT, (float) 3));
 		// When txtLangVariant gets focus
 		this.txtLangVariant.setOnFocusChangeListener(new OnFocusChangeListener() {
 		    @Override
