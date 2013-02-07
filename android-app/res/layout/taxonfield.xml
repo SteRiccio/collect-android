@@ -1,0 +1,138 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical" >
+
+    <TextView
+        android:id="@+id/lblSpeciesCode"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBaseline="@+id/txtSpeciesCode"
+        android:layout_alignBottom="@+id/txtSpeciesCode"
+        android:layout_alignParentLeft="true"
+        android:text="Code" >
+    </TextView>
+    
+    <EditText
+        android:id="@+id/txtSpeciesCode"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@+id/txtSciName"
+        android:layout_alignParentTop="true"
+        android:layout_toLeftOf="@+id/btnSearchByCode" >
+
+    </EditText>
+    
+    <Button
+        android:id="@+id/btnSearchByCode"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBaseline="@+id/txtSpeciesCode"
+        android:layout_alignBottom="@+id/txtSpeciesCode"
+        android:layout_alignParentRight="true"
+        android:text="Search" >
+    </Button>
+
+    <TextView
+        android:id="@+id/lblSciName"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBaseline="@+id/txtSciName"
+        android:layout_alignBottom="@+id/txtSciName"
+        android:layout_alignParentLeft="true"
+        android:layout_below="@+id/txtSpeciesCode"
+        android:text="Scientific name" >
+    </TextView>
+       
+    <EditText
+        android:id="@+id/txtSciName"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/txtSpeciesCode"
+        android:layout_toLeftOf="@+id/btnSearchBySciName"
+        android:layout_toRightOf="@+id/lblVernacularName" >
+
+    </EditText>  
+    
+    <Button
+        android:id="@+id/btnSearchBySciName"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBaseline="@+id/txtSciName"
+        android:layout_alignBottom="@+id/txtSciName"
+        android:layout_alignParentRight="true"
+        android:text="Search" >
+    </Button>
+
+    <TextView
+        android:id="@+id/lblVernacularName"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBaseline="@+id/txtVernacularName"
+        android:layout_alignBottom="@+id/txtVernacularName"
+        android:layout_alignParentLeft="true"
+        android:layout_below="@+id/txtSciName"
+        android:text="Vernacular name" >
+
+    </TextView>
+
+    <EditText
+        android:id="@+id/txtVernacularName"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/txtSciName"
+        android:layout_toLeftOf="@+id/btnSearchByVernName"
+        android:layout_toRightOf="@+id/lblVernacularName" >
+
+    </EditText>  
+
+    <Button
+        android:id="@+id/btnSearchByVernName"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBaseline="@+id/txtVernacularName"
+        android:layout_alignBottom="@+id/txtVernacularName"
+        android:layout_alignParentRight="true"
+        android:text="Search" >
+    </Button>
+    
+    <TextView
+        android:id="@+id/lblVernacularLang"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_alignBaseline="@+id/txtVernacularLang"
+        android:layout_below="@+id/lblVernacularName"
+        android:text="Vernacular lang." >
+    </TextView>>  
+         
+    <EditText
+        android:id="@+id/txtVernacularLang"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignRight="@+id/txtVernacularName"
+        android:layout_below="@+id/txtVernacularName"
+        android:layout_toRightOf="@+id/lblVernacularName" >
+    </EditText>
+
+    <TextView
+        android:id="@+id/lblLangVariant"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_alignBaseline="@+id/txtLangVariant"
+        android:layout_below="@+id/lblVernacularName"
+        android:text="Lang. variant" >
+    </TextView>>  
+         
+    <EditText
+        android:id="@+id/txtLangVariant"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@+id/txtVernacularLang"
+        android:layout_alignRight="@+id/txtVernacularName"
+        android:layout_below="@+id/txtVernacularLang" >
+    </EditText>
+    
+</RelativeLayout>
