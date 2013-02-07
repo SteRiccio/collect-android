@@ -110,8 +110,6 @@ public class DataManager {
 					Log.e("fieldValue","=="+attr.getField(i).getValue());
 				}
 			}
-			
-			
 			/*Log.e("clusterNode",node.getId()+"=="+node.getName());
 			Log.e("loadedRecord==null","=="+(loadedRecord==null));
 			Log.e("owner","==="+loadedRecord.getCreatedBy());
@@ -119,7 +117,6 @@ public class DataManager {
 			Log.e("entityiesNo","==="+loadedRecord.getEntityCounts().size());
 			Log.e("root","==="+loadedRecord.getRootEntity().getName());
 			Log.e("printRecord","=="+loadedRecord.toString());*/
-			
 			JdbcDaoSupport.close();
 		} catch (NullPointerException e){
 			Log.e("NullPointerException","=="+e.getMessage());

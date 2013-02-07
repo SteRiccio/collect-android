@@ -38,6 +38,9 @@ import org.openforis.idm.metamodel.RangeAttributeDefinition;
 import org.openforis.idm.metamodel.TaxonAttributeDefinition;
 import org.openforis.idm.metamodel.TextAttributeDefinition;
 import org.openforis.idm.metamodel.TimeAttributeDefinition;
+import org.openforis.idm.model.Entity;
+import org.openforis.idm.model.NumberValue;
+import org.openforis.idm.model.TextValue;
 
 import android.content.Intent;
 import android.graphics.Color;
@@ -137,6 +140,7 @@ public class FormScreen extends BaseActivity implements OnClickListener, TextWat
 		super.onResume();
 		Log.i(getResources().getString(R.string.app_name),TAG+":onResume");
 		try{
+			String loadedValue = "";
 			if (ApplicationManager.fieldValueToPass!=null){
 				for (int i=0;i<ApplicationManager.fieldValueToPass.size();i++){
 					Log.e("savedFieldVALUE"+i,"=="+ApplicationManager.fieldValueToPass.getValue(i));					
@@ -148,59 +152,9 @@ public class FormScreen extends BaseActivity implements OnClickListener, TextWat
 			else{
 				Log.i("FormScreen onResume","fieldValueToPass is NULL");
 			}
-			
-    		/*ArrayList<List<String>> keysLists1 = new ArrayList<List<String>>();
-    		ArrayList<String> key1 = new ArrayList<String>();
-    		key1.add("task");
-    		key1.add("id");
-    		keysLists1.add(key1);
-    		
-    		ArrayList<List<String>> keysLists2 = new ArrayList<List<String>>();
-    		ArrayList<String> key2 = new ArrayList<String>();
-    		key2.add("type2");
-    		key2.add("hs_general2");
-    		ArrayList<String> key3 = new ArrayList<String>();
-    		key3.add("type3");
-    		key3.add("hs_general3");
-    		keysLists2.add(key2);
-    		keysLists2.add(key3);
-    		
-    		ArrayList<List<String>> detailsLists1 = new ArrayList<List<String>>();
-    		ArrayList<String> detail1 = new ArrayList<String>();
-    		detail1.add("task");
-    		detail1.add("person");
-    		detail1.add("date");
-    		detail1.add("id");
-    		detail1.add("region");
-    		detail1.add("district");
-    		detail1.add("crew_no");
-    		detail1.add("map_sheet");
-    		detailsLists1.add(detail1);
-    		
-    		ArrayList<List<String>> detailsLists2 = new ArrayList<List<String>>();
-    		ArrayList<String> detail2 = new ArrayList<String>();
-    		detail2.add("type");
-    		detail2.add("date");
-    		detail2.add("person");
-    		detail2.add("status");
-    		detail2.add("actor");
-    		detailsLists2.add(detail2);*/
-    		
+
     		ArrayList<String> tableColHeaders = new ArrayList<String>();
     		tableColHeaders.add("Value");
-    		/*ArrayList<List<String>> tableRowLists = new ArrayList<List<String>>();
-    		ArrayList<String> row1 = new ArrayList<String>();
-    		//row1.add("1");
-    		row1.add("value1");
-    		tableRowLists.add(row1);
-    		ArrayList<String> row2 = new ArrayList<String>();
-    		//row2.add("2");
-    		row2.add("value2");
-    		tableRowLists.add(row2);
-    		ArrayList<String> row3 = new ArrayList<String>();
-    		//row3.add("3");
-    		row3.add("value3");
-    		tableRowLists.add(row3);*/
     		
     		this.sv = new ScrollView(this);
     		this.ll = new LinearLayout(this);
@@ -282,9 +236,14 @@ public class FormScreen extends BaseActivity implements OnClickListener, TextWat
     				summaryListView.setId(nodeDef.getId());
     				this.ll.addView(summaryListView);
     			} else if (nodeDef instanceof TextAttributeDefinition){
-    				String loadedValue = "";
+    				loadedValue = "";
     				if (ApplicationManager.currentRecord!=null){
-    					
+    					Entity rootEntity = ApplicationManager.currentRecord.getRootEntity();
+    					TextValue textValue = (TextValue)rootEntity.getValue(nodeDef.getName(), this.currInstanceNo);
+    					if (textValue!=null){
+    						loadedValue = textValue.getValue();
+    						Log.e(nodeDef.getName()+"value",this.currInstanceNo+"=="+textValue.getValue());
+    					}    						
     				}
     				if (((TextAttributeDefinition) nodeDef).getType().toString().toLowerCase().equals("short")){
     					if (!nodeDef.isMultiple()){
@@ -302,7 +261,7 @@ public class FormScreen extends BaseActivity implements OnClickListener, TextWat
             				}
             				else {
             					ArrayList<String> instanceValues = new ArrayList<String>();
-            					instanceValues.add("");
+            					instanceValues.add(loadedValue);
             					tempFieldValue.addValue(instanceValues);
             				}
             				
@@ -382,6 +341,15 @@ public class FormScreen extends BaseActivity implements OnClickListener, TextWat
         					}			
         				}
     				} else {//memo field
+        				loadedValue = "";
+        				if (ApplicationManager.currentRecord!=null){
+        					Entity rootEntity = ApplicationManager.currentRecord.getRootEntity();
+        					TextValue textValue = (TextValue)rootEntity.getValue(nodeDef.getName(), this.currInstanceNo);
+        					if (textValue!=null){
+        						loadedValue = textValue.getValue();
+        						Log.e(nodeDef.getName()+"value",this.currInstanceNo+"=="+textValue.getValue());
+        					}    						
+        				}
     					if (!nodeDef.isMultiple()){
             				int numberOfInstances = startingIntent.getIntExtra(getResources().getString(R.string.numberOfInstances), -1);
 //            				Log.e("ILOSC INSTANCJI","=="+numberOfInstances);
@@ -397,7 +365,7 @@ public class FormScreen extends BaseActivity implements OnClickListener, TextWat
             				}
             				else {
             					ArrayList<String> instanceValues = new ArrayList<String>();
-            					instanceValues.add("");
+            					instanceValues.add(loadedValue);
             					tempFieldValue.addValue(instanceValues);
             				}
             				
@@ -477,6 +445,15 @@ public class FormScreen extends BaseActivity implements OnClickListener, TextWat
         				}
     				}    				
     			} else if (nodeDef instanceof NumberAttributeDefinition){
+    				loadedValue = "";
+    				if (ApplicationManager.currentRecord!=null){
+    					Entity rootEntity = ApplicationManager.currentRecord.getRootEntity();
+    					NumberValue numberValue = (NumberValue)rootEntity.getValue(nodeDef.getName(), this.currInstanceNo);
+    					if (numberValue!=null){
+    						loadedValue = numberValue.getValue().toString();
+    						Log.e(nodeDef.getName()+"value",this.currInstanceNo+"=="+numberValue.getValue().toString());
+    					}    						
+    				}
     				if (!nodeDef.isMultiple()){
         				int numberOfInstances = startingIntent.getIntExtra(getResources().getString(R.string.numberOfInstances), -1);
 //        				Log.e("ILOSC INSTANCJI","=="+numberOfInstances);
@@ -492,7 +469,7 @@ public class FormScreen extends BaseActivity implements OnClickListener, TextWat
         				}
         				else {
         					ArrayList<String> instanceValues = new ArrayList<String>();
-        					instanceValues.add("");
+        					instanceValues.add(loadedValue);
         					tempFieldValue.addValue(instanceValues);
         				}
         				
@@ -571,18 +548,6 @@ public class FormScreen extends BaseActivity implements OnClickListener, TextWat
     					}			
     				}	
     			} else if (nodeDef instanceof CodeAttributeDefinition){
-    				/*if (!nodeDef.isMultiple()||(this.intentType==getResources().getInteger(R.integer.multipleAttributeIntent))){
-    					CodeAttributeDefinition codeAttrDef = (CodeAttributeDefinition)nodeDef;
-        				CodeField codeField= new CodeField(this, nodeDef.getId(), nodeDef.getLabel(Type.INSTANCE, null), "select code", detail2, detail2, null, true, codeAttrDef.isMultiple(), false);
-        				codeField.setOnClickListener(this);
-        				codeField.setId(nodeDef.getId());
-        				this.ll.addView(codeField);
-    				} else {
-    					SummaryTable summaryTableView = new SummaryTable(this, nodeDef.getId(), nodeDef.getLabel(Type.INSTANCE, null), tableColHeaders, tableRowLists, this);
-    					summaryTableView.setOnClickListener(this);
-        				summaryTableView.setId(nodeDef.getId());
-        				this.ll.addView(summaryTableView);
-    				}*/
     				CodeAttributeDefinition codeAttrDef = (CodeAttributeDefinition)nodeDef;
     				ArrayList<String> options = new ArrayList<String>();
     				ArrayList<String> codes = new ArrayList<String>();
