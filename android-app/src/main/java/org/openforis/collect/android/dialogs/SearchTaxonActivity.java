@@ -7,7 +7,7 @@ import java.util.Map;
 import org.openforis.collect.android.R;
 import org.openforis.collect.android.fields.TaxonField;
 import org.openforis.collect.android.management.ApplicationManager;
-import org.openforis.collect.manager.SpeciesManager;
+import org.openforis.collect.android.management.TaxonManager;
 import org.openforis.collect.persistence.TaxonDao;
 import org.openforis.collect.persistence.TaxonVernacularNameDao;
 import org.openforis.collect.persistence.TaxonomyDao;
@@ -27,8 +27,6 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.View.OnFocusChangeListener;
 import android.view.Window;
-import android.widget.AbsListView;
-import android.widget.AbsListView.OnScrollListener;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ArrayAdapter;
@@ -42,7 +40,7 @@ public class SearchTaxonActivity extends Activity {
 	private String content;
 	private String criteria;
 	private int taxonFieldId;
-	private SpeciesManager taxonManager;
+	private TaxonManager taxonManager;
 	private String taxonomy;
 	private int backgroundColor;
 	//UI elements
@@ -70,7 +68,7 @@ public class SearchTaxonActivity extends Activity {
 	    	this.criteria = extras.getString("criteria");  
 	    	this.taxonFieldId = extras.getInt("taxonId");
 	    	//Set up species manager
-			this.taxonManager = new SpeciesManager();
+			this.taxonManager = new TaxonManager();
 			this.taxonManager.setTaxonomyDao(new TaxonomyDao());
 			this.taxonManager.setTaxonDao(new TaxonDao());
 			this.taxonManager.setTaxonVernacularNameDao(new TaxonVernacularNameDao());
