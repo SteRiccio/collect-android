@@ -237,14 +237,14 @@ public class FormScreen extends BaseActivity implements OnClickListener, TextWat
     				this.ll.addView(summaryListView);
     			} else if (nodeDef instanceof TextAttributeDefinition){
     				loadedValue = "";
-    				if (ApplicationManager.currentRecord!=null){
+    				/*if (ApplicationManager.currentRecord!=null){
     					Entity rootEntity = ApplicationManager.currentRecord.getRootEntity();
     					TextValue textValue = (TextValue)rootEntity.getValue(nodeDef.getName(), this.currInstanceNo);
     					if (textValue!=null){
     						loadedValue = textValue.getValue();
     						Log.e(nodeDef.getName()+"value",this.currInstanceNo+"=="+textValue.getValue());
     					}    						
-    				}
+    				}*/
     				if (((TextAttributeDefinition) nodeDef).getType().toString().toLowerCase().equals("short")){
     					if (!nodeDef.isMultiple()){
             				int numberOfInstances = startingIntent.getIntExtra(getResources().getString(R.string.numberOfInstances), -1);
@@ -342,14 +342,14 @@ public class FormScreen extends BaseActivity implements OnClickListener, TextWat
         				}
     				} else {//memo field
         				loadedValue = "";
-        				if (ApplicationManager.currentRecord!=null){
+        				/*if (ApplicationManager.currentRecord!=null){
         					Entity rootEntity = ApplicationManager.currentRecord.getRootEntity();
         					TextValue textValue = (TextValue)rootEntity.getValue(nodeDef.getName(), this.currInstanceNo);
         					if (textValue!=null){
         						loadedValue = textValue.getValue();
         						Log.e(nodeDef.getName()+"value",this.currInstanceNo+"=="+textValue.getValue());
         					}    						
-        				}
+        				}*/
     					if (!nodeDef.isMultiple()){
             				int numberOfInstances = startingIntent.getIntExtra(getResources().getString(R.string.numberOfInstances), -1);
 //            				Log.e("ILOSC INSTANCJI","=="+numberOfInstances);
@@ -446,14 +446,14 @@ public class FormScreen extends BaseActivity implements OnClickListener, TextWat
     				}    				
     			} else if (nodeDef instanceof NumberAttributeDefinition){
     				loadedValue = "";
-    				if (ApplicationManager.currentRecord!=null){
+    				/*if (ApplicationManager.currentRecord!=null){
     					Entity rootEntity = ApplicationManager.currentRecord.getRootEntity();
     					NumberValue numberValue = (NumberValue)rootEntity.getValue(nodeDef.getName(), this.currInstanceNo);
     					if (numberValue!=null){
     						loadedValue = numberValue.getValue().toString();
     						Log.e(nodeDef.getName()+"value",this.currInstanceNo+"=="+numberValue.getValue().toString());
     					}    						
-    				}
+    				}*/
     				if (!nodeDef.isMultiple()){
         				int numberOfInstances = startingIntent.getIntExtra(getResources().getString(R.string.numberOfInstances), -1);
 //        				Log.e("ILOSC INSTANCJI","=="+numberOfInstances);

@@ -12,7 +12,7 @@ public class CollectDatabase{
 		this.createTables();
 		//For test issues
 //		Log.i("COLLECT DATABASE", "INSERT DATA TO DATABASE");
-		//this.insertTaxonDataForTest();
+		//this.insertTaxonomyDataForTest();
 //		this.insertVernacularNamesDataForTest();
 	}
 	
