@@ -101,14 +101,17 @@ public class DataManager {
 			for (int j=0;j<loadedRecord.getRootEntity().getChildren().size();j++){
 				Node<? extends NodeDefinition> node = loadedRecord.getRootEntity().getChildren().get(j);
 				Log.e("node","=="+node.getName());
-				TextAttributeDefinition text = (TextAttributeDefinition)node.getDefinition();
+				//TextAttributeDefinition text = (TextAttributeDefinition)node.getDefinition();
 				/*FieldDefinition fieldDef = text.getFieldDe
 				Log.e("VALUE"+fieldDef.getName(),"=="+fieldDef.getValueType());*/
-				Attribute attr = (Attribute)node;
-				Log.e("iloscFieldow","=="+attr.getFieldCount());
-				for (int i=0;i<attr.getFieldCount();i++){
-					Log.e("fieldValue","=="+attr.getField(i).getValue());
+				if (!(node instanceof Entity)){
+					Attribute attr = (Attribute)node;
+					Log.e("iloscFieldow","=="+attr.getFieldCount());
+					for (int i=0;i<attr.getFieldCount();i++){
+						Log.e("fieldValue","=="+attr.getField(i).getValue());
+					}
 				}
+				
 			}
 			/*Log.e("clusterNode",node.getId()+"=="+node.getName());
 			Log.e("loadedRecord==null","=="+(loadedRecord==null));
