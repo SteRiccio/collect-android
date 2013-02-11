@@ -39,7 +39,7 @@ import org.openforis.idm.metamodel.TaxonAttributeDefinition;
 import org.openforis.idm.metamodel.TextAttributeDefinition;
 import org.openforis.idm.metamodel.TimeAttributeDefinition;
 import org.openforis.idm.model.Entity;
-import org.openforis.idm.model.NumberValue;
+import org.openforis.idm.model.Node;
 import org.openforis.idm.model.TextValue;
 
 import android.content.Intent;
@@ -238,12 +238,27 @@ public class FormScreen extends BaseActivity implements OnClickListener, TextWat
     			} else if (nodeDef instanceof TextAttributeDefinition){
     				loadedValue = "";
     				if (ApplicationManager.currentRecord!=null){
+    					//Log.e("breadcrumb","=="+this.getFormScreenId());
     					Entity rootEntity = ApplicationManager.currentRecord.getRootEntity();
-    					TextValue textValue = (TextValue)rootEntity.getValue(nodeDef.getName(), this.currInstanceNo);
-    					if (textValue!=null){
-    						loadedValue = textValue.getValue();
-    						Log.e(nodeDef.getName()+"value",this.currInstanceNo+"=="+textValue.getValue());
-    					}    						
+    					String[] path = this.getFormScreenId().split(";");
+    					Entity currentEntity = rootEntity;
+    					for (int p=2;p<path.length;p++){
+    						String[] elementId = path[p].split(",");
+    						int elementIdmlId = Integer.valueOf(elementId[0]);
+    						int elementInstanceNo = Integer.valueOf(elementId[1]);
+    						//Log.e("getEntityparams",ApplicationManager.getSurvey().getSchema().getDefinitionById(elementIdmlId).getName()+"=="+elementInstanceNo);
+    						currentEntity = (Entity) currentEntity.get(ApplicationManager.getSurvey().getSchema().getDefinitionById(elementIdmlId).getName(), elementInstanceNo);
+    						//Log.e("p=="+p,"currentEntity==Null"+(currentEntity==null));
+    						/*if (currentEntity!=null)
+    							Log.e("currentEntity"+path[p],currentEntity.getName()+"=="+currentEntity.getValue(nodeDef.getName(), this.currInstanceNo));*/
+    					}
+    					if (currentEntity!=null){
+    						TextValue textValue = (TextValue)currentEntity.getValue(nodeDef.getName(), this.currInstanceNo);
+        					if (textValue!=null){
+        						loadedValue = textValue.getValue();
+        						//Log.e(nodeDef.getName()+"value",this.currInstanceNo+"=="+textValue.getValue());
+        					}   	
+    					}    					 						
     				}
     				if (((TextAttributeDefinition) nodeDef).getType().toString().toLowerCase().equals("short")){
     					if (!nodeDef.isMultiple()){
@@ -342,14 +357,14 @@ public class FormScreen extends BaseActivity implements OnClickListener, TextWat
         				}
     				} else {//memo field
         				loadedValue = "";
-        				if (ApplicationManager.currentRecord!=null){
+        				/*if (ApplicationManager.currentRecord!=null){
         					Entity rootEntity = ApplicationManager.currentRecord.getRootEntity();
         					TextValue textValue = (TextValue)rootEntity.getValue(nodeDef.getName(), this.currInstanceNo);
         					if (textValue!=null){
         						loadedValue = textValue.getValue();
         						Log.e(nodeDef.getName()+"value",this.currInstanceNo+"=="+textValue.getValue());
         					}    						
-        				}
+        				}*/
     					if (!nodeDef.isMultiple()){
             				int numberOfInstances = startingIntent.getIntExtra(getResources().getString(R.string.numberOfInstances), -1);
 //            				Log.e("ILOSC INSTANCJI","=="+numberOfInstances);
@@ -446,14 +461,14 @@ public class FormScreen extends BaseActivity implements OnClickListener, TextWat
     				}    				
     			} else if (nodeDef instanceof NumberAttributeDefinition){
     				loadedValue = "";
-    				if (ApplicationManager.currentRecord!=null){
+    				/*if (ApplicationManager.currentRecord!=null){
     					Entity rootEntity = ApplicationManager.currentRecord.getRootEntity();
     					NumberValue numberValue = (NumberValue)rootEntity.getValue(nodeDef.getName(), this.currInstanceNo);
     					if (numberValue!=null){
     						loadedValue = numberValue.getValue().toString();
     						Log.e(nodeDef.getName()+"value",this.currInstanceNo+"=="+numberValue.getValue().toString());
     					}    						
-    				}
+    				}*/
     				if (!nodeDef.isMultiple()){
         				int numberOfInstances = startingIntent.getIntExtra(getResources().getString(R.string.numberOfInstances), -1);
 //        				Log.e("ILOSC INSTANCJI","=="+numberOfInstances);
