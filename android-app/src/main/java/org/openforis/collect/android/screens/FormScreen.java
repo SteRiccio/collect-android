@@ -39,7 +39,6 @@ import org.openforis.idm.metamodel.TaxonAttributeDefinition;
 import org.openforis.idm.metamodel.TextAttributeDefinition;
 import org.openforis.idm.metamodel.TimeAttributeDefinition;
 import org.openforis.idm.model.Entity;
-import org.openforis.idm.model.Node;
 import org.openforis.idm.model.TextValue;
 
 import android.content.Intent;
@@ -247,7 +246,8 @@ public class FormScreen extends BaseActivity implements OnClickListener, TextWat
     						int elementIdmlId = Integer.valueOf(elementId[0]);
     						int elementInstanceNo = Integer.valueOf(elementId[1]);
     						//Log.e("getEntityparams",ApplicationManager.getSurvey().getSchema().getDefinitionById(elementIdmlId).getName()+"=="+elementInstanceNo);
-    						currentEntity = (Entity) currentEntity.get(ApplicationManager.getSurvey().getSchema().getDefinitionById(elementIdmlId).getName(), elementInstanceNo);
+    						if (currentEntity!=null)
+    							currentEntity = (Entity) currentEntity.get(ApplicationManager.getSurvey().getSchema().getDefinitionById(elementIdmlId).getName(), elementInstanceNo);
     						//Log.e("p=="+p,"currentEntity==Null"+(currentEntity==null));
     						/*if (currentEntity!=null)
     							Log.e("currentEntity"+path[p],currentEntity.getName()+"=="+currentEntity.getValue(nodeDef.getName(), this.currInstanceNo));*/
