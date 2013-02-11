@@ -225,7 +225,7 @@ public class ApplicationManager extends BaseActivity{
 		        	
 	 	    		int recordId = data.getIntExtra(getResources().getString(R.string.recordId), -1);
 	 	    		if (recordId==-1){//new record
-	 	    			
+	 	    			ApplicationManager.currentRecord = null;
 	 	    		} else {//record from database
 	 	    			CollectSurvey collectSurvey = (CollectSurvey)ApplicationManager.getSurvey();	        	
 			        	DataManager dataManager = new DataManager(collectSurvey,collectSurvey.getSchema().getRootEntityDefinitions().get(0).getName(),ApplicationManager.getLoggedInUser());
