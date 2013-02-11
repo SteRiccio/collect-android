@@ -686,7 +686,7 @@ public class CollectDatabase{
 		db.execSQL("INSERT OR IGNORE INTO ofc_taxon(id, taxon_id, code, scientific_name, taxon_rank, taxonomy_id, step, parent_id) VALUES(551, 551, 'CRT/STU', 'Crotalaria stuhlmannii', 'Species', 1, 9, 547);");
 		db.execSQL("INSERT OR IGNORE INTO ofc_taxon(id, taxon_id, code, scientific_name, taxon_rank, taxonomy_id, step, parent_id) VALUES(552, 552, 'CRO', 'Croton sp.', 'Genus', 1, 9, NULL);");
 		db.execSQL("INSERT OR IGNORE INTO ofc_taxon(id, taxon_id, code, scientific_name, taxon_rank, taxonomy_id, step, parent_id) VALUES(553, 553, 'CRO/DIC', 'Croton dichogamus', 'Species', 1, 9, 552);");
-		//db.execSQL("INSERT OR IGNORE INTO ofc_taxon(id, taxon_id, code, scientific_name, taxon_rank, taxonomy_id, step, parent_id) VALUES(554, 554, 'CRO/DCT', 'Croton dictyophlebodea', 'Species', 1, 9, 552;");
+		db.execSQL("INSERT OR IGNORE INTO ofc_taxon(id, taxon_id, code, scientific_name, taxon_rank, taxonomy_id, step, parent_id) VALUES(554, 554, 'CRO/DCT', 'Croton dictyophlebodea', 'Species', 1, 9, 552);");
 		db.execSQL("INSERT OR IGNORE INTO ofc_taxon(id, taxon_id, code, scientific_name, taxon_rank, taxonomy_id, step, parent_id) VALUES(555, 555, 'CRO/GYN', 'Croton gynopsis', 'Species', 1, 9, 552);");
 		db.execSQL("INSERT OR IGNORE INTO ofc_taxon(id, taxon_id, code, scientific_name, taxon_rank, taxonomy_id, step, parent_id) VALUES(556, 556, 'CRO/JAT', 'Croton jatrophoides', 'Species', 1, 9, 552);");
 		db.execSQL("INSERT OR IGNORE INTO ofc_taxon(id, taxon_id, code, scientific_name, taxon_rank, taxonomy_id, step, parent_id) VALUES(557, 557, 'CRO/LON', 'Croton longipedicellata', 'Species', 1, 9, 552);");
