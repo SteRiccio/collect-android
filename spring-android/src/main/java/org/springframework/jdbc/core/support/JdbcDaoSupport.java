@@ -37,6 +37,8 @@ public class JdbcDaoSupport {
 			connection.close();
 		} catch (SQLException e) {
 			
+		} catch (NullPointerException e){
+			
 		}
 	}
 	
