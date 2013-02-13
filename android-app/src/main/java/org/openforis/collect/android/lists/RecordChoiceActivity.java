@@ -4,10 +4,13 @@ import java.util.List;
 
 import org.openforis.collect.android.R;
 import org.openforis.collect.android.management.ApplicationManager;
+import org.openforis.collect.android.management.DataManager;
 import org.openforis.collect.android.messages.AlertMessage;
 import org.openforis.collect.android.misc.RunnableHandler;
+import org.openforis.collect.model.CollectRecord;
 import org.openforis.collect.model.CollectSurvey;
 import org.openforis.idm.metamodel.EntityDefinition;
+import org.openforis.idm.metamodel.NodeLabel.Type;
 
 import android.app.ListActivity;
 import android.content.DialogInterface;
@@ -25,14 +28,16 @@ import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
 
-public class RootEntityChoiceActivity extends ListActivity{
+public class RecordChoiceActivity extends ListActivity{
 	
 	private static final String TAG = "ClusterChoiceActivity";
 
 	private TextView activityLabel;
 	
-	private List<EntityDefinition> rootEntitiesList;
+	private List<CollectRecord> recordsList;
 	private ArrayAdapter<String> adapter;
+	
+	private EntityDefinition rootEntityDef;
 	
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -46,31 +51,7 @@ public class RootEntityChoiceActivity extends ListActivity{
         	this.activityLabel.setText(getResources().getString(R.string.clusterChoiceListLabel));
         	
         	/*ProgressDialog pd = ProgressDialog.show(ClusterChoiceActivity.this, getResources().getString(R.string.workInProgress), getResources().getString(R.string.loading), true, false);
-            //populating available cluster list
-			JdbcDaoSupport jdbcDao = new JdbcDaoSupport();
-			jdbcDao.getConnection();
-			
-			long startTime = System.currentTimeMillis();
-			recordsList = TabManager.getRecordManager().loadSummaries(TabManager.getSurvey(), "cluster");
-			Log.e("loadingSummaries","=="+(System.currentTimeMillis()-startTime)/1000);
-			clusterList = new String[recordsList.size()];
-			for (int i=0;i<recordsList.size();i++){
-				clusterList[i] = recordsList.get(i).getId()+" "+recordsList.get(i).getCreatedBy().getName()
-						+" "+recordsList.get(i).getCreationDate().toLocaleString();
-			}			
-			JdbcDaoSupport.close();
-			
-            this.adapter = new ArrayAdapter<String>(this, R.layout.localclusterrow, R.id.plotlabel, clusterList);
-    		this.setListAdapter(this.adapter);
-    		this.isFirstClick = false;
-    		this.firstClickPosition = -1;
-    		this.firstClickTime = 0;
-    		pd.dismiss();
-    		if (recordsList.size()==0){
-    			//no data saved in database
-    			setResult(getResources().getInteger(R.integer.clusterChoiceFailed), new Intent());
-    			ClusterChoiceActivity.this.finish();
-    		}*/
+    		pd.dismiss();*/
         } catch (Exception e){
     		RunnableHandler.reportException(e,getResources().getString(R.string.app_name),TAG+":onCreate",
     				Environment.getExternalStorageDirectory().toString()
@@ -88,13 +69,24 @@ public class RootEntityChoiceActivity extends ListActivity{
 		int backgroundColor = ApplicationManager.appPreferences.getInt(getResources().getString(R.string.backgroundColor), Color.WHITE);	
 		changeBackgroundColor(backgroundColor);
 		
+		this.rootEntityDef = ApplicationManager.getSurvey().getSchema().getRootEntityDefinition(getIntent().getIntExtra(getResources().getString(R.string.rootEntityId),1));
+		
 		CollectSurvey collectSurvey = (CollectSurvey)ApplicationManager.getSurvey();	        	
-		this.rootEntitiesList = collectSurvey.getSchema().getRootEntityDefinitions();
-		String[] clusterList = new String[rootEntitiesList.size()];
-		for (int i=0;i<rootEntitiesList.size();i++){
-			EntityDefinition rootEntity = rootEntitiesList.get(i);
-			clusterList[i] = rootEntity.getId()+" "+rootEntity.getName();
+    	DataManager dataManager = new DataManager(collectSurvey,this.rootEntityDef.getName(),ApplicationManager.getLoggedInUser());
+    	this.recordsList = dataManager.loadSummaries();
+		String[] clusterList = new String[recordsList.size()+1];
+		for (int i=0;i<recordsList.size();i++){
+			clusterList[i] = recordsList.get(i).getId()+" "+recordsList.get(i).getCreatedBy().getName()
+					+" "+recordsList.get(i).getCreationDate().toLocaleString();
 		}
+		clusterList[recordsList.size()]="Add new "+this.rootEntityDef.getLabel(Type.INSTANCE, null);
+		
+		/*clusterList = new String[5];
+		for (int i=0;i<4;i++){
+			clusterList[i] = "Record "+(i+1)+"\n";
+			clusterList[i] += "key1 key2 key3...";
+		}		
+		clusterList[4] = "Add new record";*/
 		
 		int layout = (backgroundColor!=Color.WHITE)?R.layout.localclusterrow_white:R.layout.localclusterrow_black;
         this.adapter = new ArrayAdapter<String>(this, layout, R.id.plotlabel, clusterList);
@@ -106,9 +98,26 @@ public class RootEntityChoiceActivity extends ListActivity{
 		super.onListItemClick(l, v, position, id);
 		Log.i(getResources().getString(R.string.app_name),TAG+":onListItemClick");
 		Intent resultHolder = new Intent();
-		resultHolder.putExtra(getResources().getString(R.string.rootEntityId), this.rootEntitiesList.get(position).getId());		
-		setResult(getResources().getInteger(R.integer.rootEntityChoiceSuccessful),resultHolder);
-		RootEntityChoiceActivity.this.finish();
+		if (position<recordsList.size()){
+			resultHolder.putExtra(getResources().getString(R.string.recordId), this.recordsList.get(position).getId());	
+		} else {
+			resultHolder.putExtra(getResources().getString(R.string.recordId), -1);	
+		}			
+		setResult(getResources().getInteger(R.integer.clusterChoiceSuccessful),resultHolder);
+		RecordChoiceActivity.this.finish();
+		/*
+		if (!this.isFirstClick){
+			this.isFirstClick = true;
+			this.firstClickPosition = position;
+			this.firstClickTime = System.currentTimeMillis();
+		} else {
+			if ((position==this.firstClickPosition)&&(System.currentTimeMillis()-this.firstClickTime<getResources().getInteger(R.integer.timeDifference4DoubleClick))){//double click on the item
+				Intent resultHolder = new Intent();
+				resultHolder.putExtra("clusterId", this.recordsList.get(position).getId());
+				setResult(getResources().getInteger(R.integer.clusterChoice),resultHolder);
+				ClusterChoiceActivity.this.finish();
+			}
+		}*/
 	}
     
 	@Override
@@ -122,15 +131,21 @@ public class RootEntityChoiceActivity extends ListActivity{
     }
 	
 	@Override
-	public void onBackPressed() {
-		AlertMessage.createPositiveNegativeDialog(RootEntityChoiceActivity.this, false, getResources().getDrawable(R.drawable.warningsign),
+	public void onBackPressed() { 
+		setResult(getResources().getInteger(R.integer.backButtonPressed), new Intent());
+		RecordChoiceActivity.this.finish();
+		//Log.e("parent==null","=="+(this.getParent()==null));
+		//this.getParent().onBackPressed();
+//		setResult(getResources().getInteger(R.integer.backButtonPressed), new Intent());
+//		ClusterChoiceActivity.this.finish();
+		/*AlertMessage.createPositiveNegativeDialog(ClusterChoiceActivity.this, false, getResources().getDrawable(R.drawable.warningsign),
 				getResources().getString(R.string.exitAppTitle), getResources().getString(R.string.exitAppMessage),
 				getResources().getString(R.string.yes), getResources().getString(R.string.no),
 	    		new DialogInterface.OnClickListener() {
 					@Override
 					public void onClick(DialogInterface dialog, int which) {
 						setResult(getResources().getInteger(R.integer.backButtonPressed), new Intent());
-						RootEntityChoiceActivity.this.finish();
+						ClusterChoiceActivity.this.finish();
 					}
 				},
 	    		new DialogInterface.OnClickListener() {
@@ -139,7 +154,7 @@ public class RootEntityChoiceActivity extends ListActivity{
 						
 					}
 				},
-				null).show();
+				null).show();*/
 	}
 	
     private void changeBackgroundColor(int backgroundColor){

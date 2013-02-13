@@ -42,7 +42,6 @@ import org.openforis.idm.model.BooleanValue;
 import org.openforis.idm.model.Coordinate;
 import org.openforis.idm.model.Date;
 import org.openforis.idm.model.Entity;
-import org.openforis.idm.model.Node;
 import org.openforis.idm.model.NumberValue;
 import org.openforis.idm.model.TextValue;
 import org.openforis.idm.model.Time;
