@@ -46,7 +46,7 @@ public class DataManager {
 			jdbcDao.getConnection();
 			CollectRecord recordToSave = ApplicationManager.currentRecord;
 			
-			if (recordToSave==null){
+			if (recordToSave.getId()==null){
 				recordToSave = new CollectRecord(this.survey, this.survey.getVersions().get(this.survey.getVersions().size()-1).getName());
 				recordToSave.setCreatedBy(this.user);
 				recordToSave.setCreationDate(new Date());

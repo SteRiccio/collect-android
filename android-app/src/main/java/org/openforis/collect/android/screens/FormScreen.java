@@ -42,6 +42,7 @@ import org.openforis.idm.model.BooleanValue;
 import org.openforis.idm.model.Coordinate;
 import org.openforis.idm.model.Date;
 import org.openforis.idm.model.Entity;
+import org.openforis.idm.model.Node;
 import org.openforis.idm.model.NumberValue;
 import org.openforis.idm.model.TextValue;
 import org.openforis.idm.model.Time;
@@ -173,7 +174,20 @@ public class FormScreen extends BaseActivity implements OnClickListener, TextWat
     		int fieldsNo = startingIntent.getExtras().size()-1;
     		for (int i=0;i<fieldsNo;i++){
     			NodeDefinition nodeDef = ApplicationManager.getNodeDefinition(startingIntent.getIntExtra(getResources().getString(R.string.attributeId)+i, -1));
-    			if ((nodeDef instanceof EntityDefinition)/*&&(nodeDef.isMultiple())*/){    				
+    			if ((nodeDef instanceof EntityDefinition)/*&&(nodeDef.isMultiple())*/){
+
+    				/*if (rootEntity.getId()!=nodeDef.getId()){
+    					Log.e("search params",nodeDef.getName()+"=="+this.currInstanceNo);
+        				Node<?> otrzymanyNode = ApplicationManager.currentRecord.getRootEntity().get(nodeDef.getName(), this.currInstanceNo);
+        				Log.e("ENTITY FOUND?","=="+(otrzymanyNode!=null));
+        				if (otrzymanyNode!=null){
+        					Log.e("nazwaOtrzymana","=="+otrzymanyNode.getName());
+        				} else {
+        					Log.e("adding entity", nodeDef.getName()+"to record"+ApplicationManager.currentRecord.getId());
+        					
+        				}	
+    				}*/
+    				
     				if (nodeDef.isMultiple()){
     					
     				} else {
@@ -226,7 +240,7 @@ public class FormScreen extends BaseActivity implements OnClickListener, TextWat
             					
             				}
             				detailsLists.add(detailsList);
-        				}  				
+        				}
     				}
     				String label = entityDef.getLabel(Type.INSTANCE, null);
     				if (label==null){
@@ -241,7 +255,7 @@ public class FormScreen extends BaseActivity implements OnClickListener, TextWat
     				this.ll.addView(summaryListView);
     			} else if (nodeDef instanceof TextAttributeDefinition){
     				loadedValue = "";
-    				if (ApplicationManager.currentRecord!=null){
+    				if (ApplicationManager.currentRecord.getId()!=null){
     					//Log.e("breadcrumb","=="+this.getFormScreenId());
     					Entity rootEntity = ApplicationManager.currentRecord.getRootEntity();
     					String[] path = this.getFormScreenId().split(";");
@@ -362,7 +376,7 @@ public class FormScreen extends BaseActivity implements OnClickListener, TextWat
         				}
     				} else {//memo field
     					loadedValue = "";
-        				if (ApplicationManager.currentRecord!=null){
+        				if (ApplicationManager.currentRecord.getId()!=null){
         					//Log.e("breadcrumb","=="+this.getFormScreenId());
         					Entity rootEntity = ApplicationManager.currentRecord.getRootEntity();
         					String[] path = this.getFormScreenId().split(";");
@@ -482,7 +496,7 @@ public class FormScreen extends BaseActivity implements OnClickListener, TextWat
     				}    				
     			} else if (nodeDef instanceof NumberAttributeDefinition){
     				loadedValue = "";
-    				if (ApplicationManager.currentRecord!=null){
+    				if (ApplicationManager.currentRecord.getId()!=null){
     					//Log.e("breadcrumb","=="+this.getFormScreenId());
     					Entity rootEntity = ApplicationManager.currentRecord.getRootEntity();
     					String[] path = this.getFormScreenId().split(";");
@@ -725,7 +739,7 @@ public class FormScreen extends BaseActivity implements OnClickListener, TextWat
     				}
     			} else if (nodeDef instanceof BooleanAttributeDefinition){
     				loadedValue = "";
-    				if (ApplicationManager.currentRecord!=null){
+    				if (ApplicationManager.currentRecord.getId()!=null){
     					//Log.e("breadcrumb","=="+this.getFormScreenId());
     					Entity rootEntity = ApplicationManager.currentRecord.getRootEntity();
     					String[] path = this.getFormScreenId().split(";");
@@ -884,7 +898,7 @@ public class FormScreen extends BaseActivity implements OnClickListener, TextWat
     			} else if (nodeDef instanceof CoordinateAttributeDefinition){
     				String latitude = "";
     				String longitude = "";
-    				if (ApplicationManager.currentRecord!=null){
+    				if (ApplicationManager.currentRecord.getId()!=null){
     					//Log.e("breadcrumb","=="+this.getFormScreenId());
     					Entity rootEntity = ApplicationManager.currentRecord.getRootEntity();
     					String[] path = this.getFormScreenId().split(";");
@@ -1006,7 +1020,7 @@ public class FormScreen extends BaseActivity implements OnClickListener, TextWat
     				}	
     			} else if (nodeDef instanceof DateAttributeDefinition){
     				loadedValue = "";
-    				if (ApplicationManager.currentRecord!=null){
+    				if (ApplicationManager.currentRecord.getId()!=null){
     					//Log.e("breadcrumb","=="+this.getFormScreenId());
     					Entity rootEntity = ApplicationManager.currentRecord.getRootEntity();
     					String[] path = this.getFormScreenId().split(";");
@@ -1347,7 +1361,7 @@ public class FormScreen extends BaseActivity implements OnClickListener, TextWat
     				}
     			} else if (nodeDef instanceof TimeAttributeDefinition){
     				loadedValue = "";
-    				if (ApplicationManager.currentRecord!=null){
+    				if (ApplicationManager.currentRecord.getId()!=null){
     					//Log.e("breadcrumb","=="+this.getFormScreenId());
     					Entity rootEntity = ApplicationManager.currentRecord.getRootEntity();
     					String[] path = this.getFormScreenId().split(";");

@@ -16,6 +16,7 @@ import org.openforis.collect.android.database.CollectDatabase;
 import org.openforis.collect.android.database.DatabaseWrapper;
 import org.openforis.collect.android.fields.UIElement;
 import org.openforis.collect.android.lists.ClusterChoiceActivity;
+import org.openforis.collect.android.lists.RootEntityChoiceActivity;
 import org.openforis.collect.android.messages.AlertMessage;
 import org.openforis.collect.android.misc.RunnableHandler;
 import org.openforis.collect.android.screens.FormScreen;
@@ -170,14 +171,11 @@ public class ApplicationManager extends BaseActivity{
         		userManager.insert(defaultUser);
         	}
         	ApplicationManager.loggedInUser = defaultUser;
-
-        	//recordManager = new RecordManager();
-    		//recordManager.setRecordDao(new RecordDao());    	
     		
             JdbcDaoSupport.close();
             
-            //this.startActivityForResult(new Intent(this, ClusterChoiceActivity.class),getResources().getInteger(R.integer.clusterSelection));
-            showRecordsListScreen();
+            //showRecordsListScreen();
+            showRootEntitiesListScreen();
             
             //ApplicationManager.valuesTree = new DataTree(this, null);
             
@@ -227,20 +225,34 @@ public class ApplicationManager extends BaseActivity{
 	 	    		int recordId = data.getIntExtra(getResources().getString(R.string.recordId), -1);
 	 	    		
 	 	    		if (recordId==-1){//new record
-	 	    			ApplicationManager.currentRecord = null;
+	 	    			ApplicationManager.currentRecord = new CollectRecord(this.survey, this.survey.getVersions().get(this.survey.getVersions().size()-1).getName());//null;
+	 					Entity rootEntity = ApplicationManager.currentRecord.createRootEntity(ApplicationManager.getSurvey().getSchema().getRootEntityDefinitions().get(0).getName());
+	 					rootEntity.setId(ApplicationManager.getSurvey().getSchema().getRootEntityDefinitions().get(0).getId());
+	    				Log.e("rootEntity",rootEntity.getId()+"=="+rootEntity.getName());
 	 	    		} else {//record from database
 	 	    			CollectSurvey collectSurvey = (CollectSurvey)ApplicationManager.getSurvey();	        	
 			        	DataManager dataManager = new DataManager(collectSurvey,collectSurvey.getSchema().getRootEntityDefinitions().get(0).getName(),ApplicationManager.getLoggedInUser());
 			        	ApplicationManager.currentRecord = dataManager.loadRecord(recordId);
+			        	Entity rootEntity = ApplicationManager.currentRecord.getRootEntity();
+	    				rootEntity.setId(ApplicationManager.getSurvey().getSchema().getRootEntityDefinitions().get(0).getId());
+			        	Log.e("rootEntity",rootEntity.getId()+"=="+rootEntity.getName());
 			        	printRecord(ApplicationManager.currentRecord);
 	 	    		}
 	 	    		showFormRootScreen();
 	 	    	} else if (resultCode==getResources().getInteger(R.integer.backButtonPressed)){
 	 	    		ApplicationManager.this.finish();
 	 	    	}
-	 	    } else if (requestCode==getResources().getInteger(R.integer.startingFormScreen)){
-	 	    	showRecordsListScreen();
+	 	    } else if (requestCode==getResources().getInteger(R.integer.rootEntitySelection)){
+	 	    	if (resultCode==getResources().getInteger(R.integer.clusterChoiceSuccessful)){//root entity was selected
+	 	    		int routeEntityId = data.getIntExtra(getResources().getString(R.string.rootEntityId), -1);
+	 	    		Log.e("rootEntity","selected=="+routeEntityId);
+	 	    		showRecordsListScreen(routeEntityId);	
+	 	    	}
 	 	    }
+	 	    
+	 	    /*else if (requestCode==getResources().getInteger(R.integer.startingFormScreen)){
+	 	    	showRecordsListScreen();
+	 	    }*/
 	 	    /*if((requestCode==getResources().getInteger(R.integer.clusterSelection))&&(resultCode==getResources().getInteger(R.integer.clusterChoiceSuccessful))){
 	 	    	int recordId = data.getIntExtra("clusterId", -1);
 	 	    	if (recordId!=-1){
@@ -357,8 +369,12 @@ public class ApplicationManager extends BaseActivity{
 		this.startActivityForResult(intent,getResources().getInteger(R.integer.startingFormScreen));		
 	}
 	
-	public void showRecordsListScreen(){
+	public void showRecordsListScreen(int rootEntityId){		
 		this.startActivityForResult(new Intent(this, ClusterChoiceActivity.class),getResources().getInteger(R.integer.clusterSelection));
+	}
+	
+	public void showRootEntitiesListScreen(){
+		this.startActivityForResult(new Intent(this, RootEntityChoiceActivity.class),getResources().getInteger(R.integer.rootEntityChoiceSuccessful));
 	}
 	
 	public static NodeDefinition getNodeDefinition(int nodeId){
