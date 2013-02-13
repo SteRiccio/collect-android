@@ -30,7 +30,7 @@ public class DatabaseWrapper{
 		catch (IllegalStateException e){
 			
 		}
-	}	
+	}
 	
 	public SQLiteDatabase openDataBase(){
         String myPath = DB_PATH + DATABASE_NAME;

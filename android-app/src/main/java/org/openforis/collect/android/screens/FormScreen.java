@@ -38,8 +38,13 @@ import org.openforis.idm.metamodel.RangeAttributeDefinition;
 import org.openforis.idm.metamodel.TaxonAttributeDefinition;
 import org.openforis.idm.metamodel.TextAttributeDefinition;
 import org.openforis.idm.metamodel.TimeAttributeDefinition;
+import org.openforis.idm.model.BooleanValue;
+import org.openforis.idm.model.Coordinate;
+import org.openforis.idm.model.Date;
 import org.openforis.idm.model.Entity;
+import org.openforis.idm.model.NumberValue;
 import org.openforis.idm.model.TextValue;
+import org.openforis.idm.model.Time;
 
 import android.content.Intent;
 import android.graphics.Color;
@@ -99,7 +104,7 @@ public class FormScreen extends BaseActivity implements OnClickListener, TextWat
     		this.currInstanceNo = startingIntent.getIntExtra(getResources().getString(R.string.instanceNo),-1);
     		this.numberOfInstances = startingIntent.getIntExtra(getResources().getString(R.string.numberOfInstances),-1);
     		this.parentFormScreenId = startingIntent.getStringExtra(getResources().getString(R.string.parentFormScreenId));;
-    	
+    		
     		//ApplicationManager.valuesTree.printTree(ApplicationManager.valuesTree.getChild("0,0"));
     		if ((this.intentType==getResources().getInteger(R.integer.multipleEntityIntent))&&(!this.parentFormScreenId.equals(""))){
     			this.currentNode = ApplicationManager.valuesTree.getChild(getFormScreenId());
@@ -168,7 +173,7 @@ public class FormScreen extends BaseActivity implements OnClickListener, TextWat
     		int fieldsNo = startingIntent.getExtras().size()-1;
     		for (int i=0;i<fieldsNo;i++){
     			NodeDefinition nodeDef = ApplicationManager.getNodeDefinition(startingIntent.getIntExtra(getResources().getString(R.string.attributeId)+i, -1));
-    			if ((nodeDef instanceof EntityDefinition)/*&&(nodeDef.isMultiple())*/){
+    			if ((nodeDef instanceof EntityDefinition)/*&&(nodeDef.isMultiple())*/){    				
     				if (nodeDef.isMultiple()){
     					
     				} else {
@@ -356,15 +361,31 @@ public class FormScreen extends BaseActivity implements OnClickListener, TextWat
         					}			
         				}
     				} else {//memo field
-        				loadedValue = "";
-        				/*if (ApplicationManager.currentRecord!=null){
+    					loadedValue = "";
+        				if (ApplicationManager.currentRecord!=null){
+        					//Log.e("breadcrumb","=="+this.getFormScreenId());
         					Entity rootEntity = ApplicationManager.currentRecord.getRootEntity();
-        					TextValue textValue = (TextValue)rootEntity.getValue(nodeDef.getName(), this.currInstanceNo);
-        					if (textValue!=null){
-        						loadedValue = textValue.getValue();
-        						Log.e(nodeDef.getName()+"value",this.currInstanceNo+"=="+textValue.getValue());
-        					}    						
-        				}*/
+        					String[] path = this.getFormScreenId().split(";");
+        					Entity currentEntity = rootEntity;
+        					for (int p=2;p<path.length;p++){
+        						String[] elementId = path[p].split(",");
+        						int elementIdmlId = Integer.valueOf(elementId[0]);
+        						int elementInstanceNo = Integer.valueOf(elementId[1]);
+        						//Log.e("getEntityparams",ApplicationManager.getSurvey().getSchema().getDefinitionById(elementIdmlId).getName()+"=="+elementInstanceNo);
+        						if (currentEntity!=null)
+        							currentEntity = (Entity) currentEntity.get(ApplicationManager.getSurvey().getSchema().getDefinitionById(elementIdmlId).getName(), elementInstanceNo);
+        						//Log.e("p=="+p,"currentEntity==Null"+(currentEntity==null));
+        						/*if (currentEntity!=null)
+        							Log.e("currentEntity"+path[p],currentEntity.getName()+"=="+currentEntity.getValue(nodeDef.getName(), this.currInstanceNo));*/
+        					}
+        					if (currentEntity!=null){
+        						TextValue textValue = (TextValue)currentEntity.getValue(nodeDef.getName(), this.currInstanceNo);
+            					if (textValue!=null){
+            						loadedValue = textValue.getValue();
+            						//Log.e(nodeDef.getName()+"value",this.currInstanceNo+"=="+textValue.getValue());
+            					}   	
+        					}    					 						
+        				}
     					if (!nodeDef.isMultiple()){
             				int numberOfInstances = startingIntent.getIntExtra(getResources().getString(R.string.numberOfInstances), -1);
 //            				Log.e("ILOSC INSTANCJI","=="+numberOfInstances);
@@ -461,14 +482,33 @@ public class FormScreen extends BaseActivity implements OnClickListener, TextWat
     				}    				
     			} else if (nodeDef instanceof NumberAttributeDefinition){
     				loadedValue = "";
-    				/*if (ApplicationManager.currentRecord!=null){
+    				if (ApplicationManager.currentRecord!=null){
+    					//Log.e("breadcrumb","=="+this.getFormScreenId());
     					Entity rootEntity = ApplicationManager.currentRecord.getRootEntity();
-    					NumberValue numberValue = (NumberValue)rootEntity.getValue(nodeDef.getName(), this.currInstanceNo);
-    					if (numberValue!=null){
-    						loadedValue = numberValue.getValue().toString();
-    						Log.e(nodeDef.getName()+"value",this.currInstanceNo+"=="+numberValue.getValue().toString());
-    					}    						
-    				}*/
+    					String[] path = this.getFormScreenId().split(";");
+    					Entity currentEntity = rootEntity;
+    					for (int p=2;p<path.length;p++){
+    						String[] elementId = path[p].split(",");
+    						int elementIdmlId = Integer.valueOf(elementId[0]);
+    						int elementInstanceNo = Integer.valueOf(elementId[1]);
+    						//Log.e("getEntityparams",ApplicationManager.getSurvey().getSchema().getDefinitionById(elementIdmlId).getName()+"=="+elementInstanceNo);
+    						if (currentEntity!=null)
+    							currentEntity = (Entity) currentEntity.get(ApplicationManager.getSurvey().getSchema().getDefinitionById(elementIdmlId).getName(), elementInstanceNo);
+    						//Log.e("p=="+p,"currentEntity==Null"+(currentEntity==null));
+    						/*if (currentEntity!=null)
+    							Log.e("currentEntity"+path[p],currentEntity.getName()+"=="+currentEntity.getValue(nodeDef.getName(), this.currInstanceNo));*/
+    					}
+    					if (currentEntity!=null){    						
+    						NumberValue numberValue = (NumberValue)currentEntity.getValue(nodeDef.getName(), this.currInstanceNo);
+        					if (numberValue!=null){
+        						if (((NumberAttributeDefinition) nodeDef).isInteger()){
+        							loadedValue = String.valueOf(numberValue.getValue().intValue());	
+        						} else {
+        							loadedValue = String.valueOf(numberValue.getValue().doubleValue());
+        						}
+        					}   	
+    					} 					 						
+    				}
     				if (!nodeDef.isMultiple()){
         				int numberOfInstances = startingIntent.getIntExtra(getResources().getString(R.string.numberOfInstances), -1);
 //        				Log.e("ILOSC INSTANCJI","=="+numberOfInstances);
@@ -684,18 +724,30 @@ public class FormScreen extends BaseActivity implements OnClickListener, TextWat
     					}			
     				}
     			} else if (nodeDef instanceof BooleanAttributeDefinition){
-    				/*if (!nodeDef.isMultiple()||(this.intentType==getResources().getInteger(R.integer.multipleAttributeIntent))){
-    					BooleanAttributeDefinition booleanAttrDef = (BooleanAttributeDefinition)nodeDef;
-        				BooleanField booleanField= new BooleanField(this, nodeDef.getId(), nodeDef.getLabel(Type.INSTANCE, null), false, false, null, null, booleanAttrDef.isMultiple(), booleanAttrDef.isAffirmativeOnly(), false);
-        				booleanField.setOnClickListener(this);
-        				booleanField.setId(nodeDef.getId());
-        				this.ll.addView(booleanField);
-    				} else {
-    					SummaryTable summaryTableView = new SummaryTable(this, nodeDef.getId(), nodeDef.getLabel(Type.INSTANCE, null), tableColHeaders, tableRowLists, this);
-    					summaryTableView.setOnClickListener(this);
-        				summaryTableView.setId(nodeDef.getId());
-        				this.ll.addView(summaryTableView);
-    				}*/
+    				loadedValue = "";
+    				if (ApplicationManager.currentRecord!=null){
+    					//Log.e("breadcrumb","=="+this.getFormScreenId());
+    					Entity rootEntity = ApplicationManager.currentRecord.getRootEntity();
+    					String[] path = this.getFormScreenId().split(";");
+    					Entity currentEntity = rootEntity;
+    					for (int p=2;p<path.length;p++){
+    						String[] elementId = path[p].split(",");
+    						int elementIdmlId = Integer.valueOf(elementId[0]);
+    						int elementInstanceNo = Integer.valueOf(elementId[1]);
+    						//Log.e("getEntityparams",ApplicationManager.getSurvey().getSchema().getDefinitionById(elementIdmlId).getName()+"=="+elementInstanceNo);
+    						if (currentEntity!=null)
+    							currentEntity = (Entity) currentEntity.get(ApplicationManager.getSurvey().getSchema().getDefinitionById(elementIdmlId).getName(), elementInstanceNo);
+    						//Log.e("p=="+p,"currentEntity==Null"+(currentEntity==null));
+    						/*if (currentEntity!=null)
+    							Log.e("currentEntity"+path[p],currentEntity.getName()+"=="+currentEntity.getValue(nodeDef.getName(), this.currInstanceNo));*/
+    					}
+    					if (currentEntity!=null){    						
+    						BooleanValue booleanValue = (BooleanValue)currentEntity.getValue(nodeDef.getName(), this.currInstanceNo);
+        					if (booleanValue!=null){
+        							loadedValue = String.valueOf(booleanValue.getValue());
+        					}   	
+    					} 					 						
+    				}
     				if (!nodeDef.isMultiple()){
         				int numberOfInstances = startingIntent.getIntExtra(getResources().getString(R.string.numberOfInstances), -1);
 //        				Log.e("ILOSC INSTANCJI","=="+numberOfInstances);
@@ -711,8 +763,9 @@ public class FormScreen extends BaseActivity implements OnClickListener, TextWat
         				}
         				else {
         					ArrayList<String> instanceValues = new ArrayList<String>();
-        					instanceValues.add("false");
-        					instanceValues.add("false");
+        					instanceValues.add(loadedValue);
+        					String otherValue = "";
+        					instanceValues.add(otherValue);
         					tempFieldValue.addValue(instanceValues);
         				}
         				
@@ -829,18 +882,32 @@ public class FormScreen extends BaseActivity implements OnClickListener, TextWat
     					}			
     				}
     			} else if (nodeDef instanceof CoordinateAttributeDefinition){
-    				/*if (!nodeDef.isMultiple()||(this.intentType==getResources().getInteger(R.integer.multipleAttributeIntent))){
-    					CoordinateAttributeDefinition coordAttrDef = (CoordinateAttributeDefinition)nodeDef;
-        				CoordinateField coordinateField= new CoordinateField(this, nodeDef.getId(), nodeDef.getLabel(Type.INSTANCE, null), null, null, null, null, coordAttrDef.isMultiple(), false);
-        				coordinateField.setOnClickListener(this);
-        				coordinateField.setId(nodeDef.getId());
-        				this.ll.addView(coordinateField);
-    				} else {
-    					SummaryTable summaryTableView = new SummaryTable(this, nodeDef.getId(), nodeDef.getLabel(Type.INSTANCE, null), tableColHeaders, tableRowLists, this);
-    					summaryTableView.setOnClickListener(this);
-        				summaryTableView.setId(nodeDef.getId());
-        				this.ll.addView(summaryTableView);
-    				}*/
+    				String latitude = "";
+    				String longitude = "";
+    				if (ApplicationManager.currentRecord!=null){
+    					//Log.e("breadcrumb","=="+this.getFormScreenId());
+    					Entity rootEntity = ApplicationManager.currentRecord.getRootEntity();
+    					String[] path = this.getFormScreenId().split(";");
+    					Entity currentEntity = rootEntity;
+    					for (int p=2;p<path.length;p++){
+    						String[] elementId = path[p].split(",");
+    						int elementIdmlId = Integer.valueOf(elementId[0]);
+    						int elementInstanceNo = Integer.valueOf(elementId[1]);
+    						//Log.e("getEntityparams",ApplicationManager.getSurvey().getSchema().getDefinitionById(elementIdmlId).getName()+"=="+elementInstanceNo);
+    						if (currentEntity!=null)
+    							currentEntity = (Entity) currentEntity.get(ApplicationManager.getSurvey().getSchema().getDefinitionById(elementIdmlId).getName(), elementInstanceNo);
+    						//Log.e("p=="+p,"currentEntity==Null"+(currentEntity==null));
+    						/*if (currentEntity!=null)
+    							Log.e("currentEntity"+path[p],currentEntity.getName()+"=="+currentEntity.getValue(nodeDef.getName(), this.currInstanceNo));*/
+    					}
+    					if (currentEntity!=null){    						
+    						Coordinate coordinateValue = (Coordinate)currentEntity.getValue(nodeDef.getName(), this.currInstanceNo);
+        					if (coordinateValue!=null){
+        							latitude = String.valueOf(coordinateValue.getY());
+        							longitude = String.valueOf(coordinateValue.getX());
+        					}   	
+    					} 					 						
+    				}
     				if (!nodeDef.isMultiple()){
         				int numberOfInstances = startingIntent.getIntExtra(getResources().getString(R.string.numberOfInstances), -1);
 //        				Log.e("ILOSC INSTANCJI","=="+numberOfInstances);
@@ -856,8 +923,8 @@ public class FormScreen extends BaseActivity implements OnClickListener, TextWat
         				}
         				else {
         					ArrayList<String> instanceValues = new ArrayList<String>();
-        					instanceValues.add("");
-        					instanceValues.add("");
+        					instanceValues.add(longitude);
+        					instanceValues.add(latitude);
         					tempFieldValue.addValue(instanceValues);
         				}
         				
@@ -938,19 +1005,30 @@ public class FormScreen extends BaseActivity implements OnClickListener, TextWat
     					}			
     				}	
     			} else if (nodeDef instanceof DateAttributeDefinition){
-    				/*if (!nodeDef.isMultiple()||(this.intentType==getResources().getInteger(R.integer.multipleAttributeIntent))){
-    					DateAttributeDefinition dateAttrDef = (DateAttributeDefinition)nodeDef;
-        				DateField dateField= new DateField(this, nodeDef.getId(), nodeDef.getLabel(Type.INSTANCE, null), null, null, dateAttrDef.isMultiple(), false);
-        				dateField.setOnClickListener(this);
-        				dateField.setId(nodeDef.getId());
-        				ApplicationManager.uiElementsMap.put(dateField.getId(), dateField);
-        				this.ll.addView(dateField);
-    				} else {
-    					SummaryTable summaryTableView = new SummaryTable(this, nodeDef.getId(), nodeDef.getLabel(Type.INSTANCE, null), tableColHeaders, tableRowLists, this);
-    					summaryTableView.setOnClickListener(this);
-        				summaryTableView.setId(nodeDef.getId());
-        				this.ll.addView(summaryTableView);
-    				}*/
+    				loadedValue = "";
+    				if (ApplicationManager.currentRecord!=null){
+    					//Log.e("breadcrumb","=="+this.getFormScreenId());
+    					Entity rootEntity = ApplicationManager.currentRecord.getRootEntity();
+    					String[] path = this.getFormScreenId().split(";");
+    					Entity currentEntity = rootEntity;
+    					for (int p=2;p<path.length;p++){
+    						String[] elementId = path[p].split(",");
+    						int elementIdmlId = Integer.valueOf(elementId[0]);
+    						int elementInstanceNo = Integer.valueOf(elementId[1]);
+    						//Log.e("getEntityparams",ApplicationManager.getSurvey().getSchema().getDefinitionById(elementIdmlId).getName()+"=="+elementInstanceNo);
+    						if (currentEntity!=null)
+    							currentEntity = (Entity) currentEntity.get(ApplicationManager.getSurvey().getSchema().getDefinitionById(elementIdmlId).getName(), elementInstanceNo);
+    						//Log.e("p=="+p,"currentEntity==Null"+(currentEntity==null));
+    						/*if (currentEntity!=null)
+    							Log.e("currentEntity"+path[p],currentEntity.getName()+"=="+currentEntity.getValue(nodeDef.getName(), this.currInstanceNo));*/
+    					}
+    					if (currentEntity!=null){    						
+    						Date dateValue = (Date)currentEntity.getValue(nodeDef.getName(), this.currInstanceNo);
+        					if (dateValue!=null){
+        							loadedValue = dateValue.getMonth()+"/"+dateValue.getDay()+"/"+dateValue.getYear();
+        					}   	
+    					} 					 						
+    				}
     				if (!nodeDef.isMultiple()){
         				int numberOfInstances = startingIntent.getIntExtra(getResources().getString(R.string.numberOfInstances), -1);
 //        				Log.e("ILOSC INSTANCJI","=="+numberOfInstances);
@@ -966,7 +1044,7 @@ public class FormScreen extends BaseActivity implements OnClickListener, TextWat
         				}
         				else {
         					ArrayList<String> instanceValues = new ArrayList<String>();
-        					instanceValues.add("");
+        					instanceValues.add(loadedValue);
         					tempFieldValue.addValue(instanceValues);
         				}
         				
@@ -1268,19 +1346,30 @@ public class FormScreen extends BaseActivity implements OnClickListener, TextWat
     					} 
     				}
     			} else if (nodeDef instanceof TimeAttributeDefinition){
-/*    				if (!nodeDef.isMultiple()||(this.intentType==getResources().getInteger(R.integer.multipleAttributeIntent))){
-    					TimeAttributeDefinition timeAttrDef = (TimeAttributeDefinition)nodeDef;
-        				TimeField timeField= new TimeField(this, nodeDef.getId(), nodeDef.getLabel(Type.INSTANCE, null), null, null, timeAttrDef.isMultiple(), false, tempFieldValue);
-        				timeField.setOnClickListener(this);
-        				timeField.setId(nodeDef.getId());
-           				ApplicationManager.uiElementsMap.put(timeField.getId(), timeField);
-        				this.ll.addView(timeField);
-    				} else {
-    					SummaryTable summaryTableView = new SummaryTable(this, nodeDef.getId(), nodeDef.getLabel(Type.INSTANCE, null), tableColHeaders, tableRowLists, this);
-    					summaryTableView.setOnClickListener(this);
-        				summaryTableView.setId(nodeDef.getId());
-        				this.ll.addView(summaryTableView);
-    				}*/
+    				loadedValue = "";
+    				if (ApplicationManager.currentRecord!=null){
+    					//Log.e("breadcrumb","=="+this.getFormScreenId());
+    					Entity rootEntity = ApplicationManager.currentRecord.getRootEntity();
+    					String[] path = this.getFormScreenId().split(";");
+    					Entity currentEntity = rootEntity;
+    					for (int p=2;p<path.length;p++){
+    						String[] elementId = path[p].split(",");
+    						int elementIdmlId = Integer.valueOf(elementId[0]);
+    						int elementInstanceNo = Integer.valueOf(elementId[1]);
+    						//Log.e("getEntityparams",ApplicationManager.getSurvey().getSchema().getDefinitionById(elementIdmlId).getName()+"=="+elementInstanceNo);
+    						if (currentEntity!=null)
+    							currentEntity = (Entity) currentEntity.get(ApplicationManager.getSurvey().getSchema().getDefinitionById(elementIdmlId).getName(), elementInstanceNo);
+    						//Log.e("p=="+p,"currentEntity==Null"+(currentEntity==null));
+    						/*if (currentEntity!=null)
+    							Log.e("currentEntity"+path[p],currentEntity.getName()+"=="+currentEntity.getValue(nodeDef.getName(), this.currInstanceNo));*/
+    					}
+    					if (currentEntity!=null){    						
+    						Time timeValue = (Time)currentEntity.getValue(nodeDef.getName(), this.currInstanceNo);
+        					if (timeValue!=null){
+        							loadedValue = timeValue.getHour()+":"+timeValue.getMinute();
+        					}   	
+    					} 					 						
+    				}
     				if (!nodeDef.isMultiple()){
         				int numberOfInstances = startingIntent.getIntExtra(getResources().getString(R.string.numberOfInstances), -1);
 //        				Log.e("ILOSC INSTANCJI","=="+numberOfInstances);
@@ -1296,7 +1385,7 @@ public class FormScreen extends BaseActivity implements OnClickListener, TextWat
         				}
         				else {
         					ArrayList<String> instanceValues = new ArrayList<String>();
-        					instanceValues.add("");
+        					instanceValues.add(loadedValue);
         					tempFieldValue.addValue(instanceValues);
         				}
         				
@@ -1382,8 +1471,8 @@ public class FormScreen extends BaseActivity implements OnClickListener, TextWat
 				//Log.e("multiple","ATTRIBUTE");
 				this.ll.addView(arrangeButtonsInLine(new Button(this),getResources().getString(R.string.previousInstanceButton),new Button(this),getResources().getString(R.string.nextInstanceButton),this));
 			} else if (this.intentType==getResources().getInteger(R.integer.multipleEntityIntent)){ 
-				Log.e("multiple","ENTITY");
-				this.ll.addView(arrangeButtonsInLine(new Button(this),getResources().getString(R.string.previousInstanceButton),new Button(this),getResources().getString(R.string.nextInstanceButton),this));
+				//Log.e("multiple","ENTITY");
+				//this.ll.addView(arrangeButtonsInLine(new Button(this),getResources().getString(R.string.previousInstanceButton),new Button(this),getResources().getString(R.string.nextInstanceButton),this));
 			}
     		setContentView(this.sv);
 			

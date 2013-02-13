@@ -8,7 +8,6 @@ import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.UUID;
 
 import org.openforis.collect.android.R;
 import org.openforis.collect.android.data.DataTree;
@@ -37,6 +36,8 @@ import org.openforis.idm.metamodel.Schema;
 import org.openforis.idm.metamodel.Survey;
 import org.openforis.idm.metamodel.validation.Validator;
 import org.openforis.idm.metamodel.xml.SurveyIdmlBinder;
+import org.openforis.idm.model.Entity;
+import org.openforis.idm.model.Node;
 import org.openforis.idm.model.expression.ExpressionFactory;
 import org.springframework.jdbc.core.support.JdbcDaoSupport;
 
@@ -224,19 +225,20 @@ public class ApplicationManager extends BaseActivity{
 	 	    		
 		        	
 	 	    		int recordId = data.getIntExtra(getResources().getString(R.string.recordId), -1);
+	 	    		
 	 	    		if (recordId==-1){//new record
 	 	    			ApplicationManager.currentRecord = null;
 	 	    		} else {//record from database
 	 	    			CollectSurvey collectSurvey = (CollectSurvey)ApplicationManager.getSurvey();	        	
 			        	DataManager dataManager = new DataManager(collectSurvey,collectSurvey.getSchema().getRootEntityDefinitions().get(0).getName(),ApplicationManager.getLoggedInUser());
 			        	ApplicationManager.currentRecord = dataManager.loadRecord(recordId);
+			        	printRecord(ApplicationManager.currentRecord);
 	 	    		}
 	 	    		showFormRootScreen();
 	 	    	} else if (resultCode==getResources().getInteger(R.integer.backButtonPressed)){
 	 	    		ApplicationManager.this.finish();
 	 	    	}
 	 	    } else if (requestCode==getResources().getInteger(R.integer.startingFormScreen)){
-	 	    	//Log.e("From FORM SCREEN","=======");
 	 	    	showRecordsListScreen();
 	 	    }
 	 	    /*if((requestCode==getResources().getInteger(R.integer.clusterSelection))&&(resultCode==getResources().getInteger(R.integer.clusterChoiceSuccessful))){
@@ -257,6 +259,28 @@ public class ApplicationManager extends BaseActivity{
     	}	   
     }
 	
+    private void printRecord(CollectRecord record){
+    	if (record!=null){
+    		Log.e("id","=="+record.getId());
+    		Log.e("creationDate","=="+record.getCreationDate());
+    		Log.e("modificationDate","=="+record.getModifiedDate());
+    		Entity rootEntity = ApplicationManager.currentRecord.getRootEntity();
+    		printRecordNodes(rootEntity, rootEntity.getChildren());
+    	} else {
+    		Log.e("record","is null");
+    	}    	
+    }
+    
+    private void printRecordNodes(Entity parent, List<Node<? extends NodeDefinition>> children){
+		for (int p=0;p<children.size();p++){
+			Node<? extends NodeDefinition> child = children.get(p);
+			Log.e("child"+" of "+parent.getName(),child.getName()+"=="+child.getClass());
+			if (child instanceof Entity){
+				printRecordNodes((Entity)child, ((Entity) child).getChildren());
+			}
+		}
+    }
+    
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event)  {
         if (android.os.Build.VERSION.SDK_INT < android.os.Build.VERSION_CODES.ECLAIR
@@ -298,7 +322,7 @@ public class ApplicationManager extends BaseActivity{
     }
     
     private void initSession() {
-    	ApplicationManager.sessionId = UUID.randomUUID().toString();
+    	ApplicationManager.sessionId = "1";//UUID.randomUUID().toString();
 	}
     
 	private boolean userExists(User user){
