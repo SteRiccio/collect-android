@@ -5,6 +5,7 @@ import java.io.FileInputStream;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -26,6 +27,7 @@ import org.openforis.collect.model.CollectRecord;
 import org.openforis.collect.model.CollectSurvey;
 import org.openforis.collect.model.CollectSurveyContext;
 import org.openforis.collect.model.User;
+import org.openforis.collect.model.CollectRecord.Step;
 import org.openforis.collect.persistence.RecordDao;
 import org.openforis.collect.persistence.SurveyDao;
 import org.openforis.collect.persistence.SurveyWorkDao;
@@ -221,25 +223,25 @@ public class ApplicationManager extends BaseActivity{
 	    try{
 	    	//Log.e("request="+requestCode,"result="+resultCode);
 	 	    if (requestCode==getResources().getInteger(R.integer.clusterSelection)){
-	 	    	Log.e("record","selection");
 	 	    	if (resultCode==getResources().getInteger(R.integer.clusterChoiceSuccessful)){//record was selected	 	    		
 	 	    		
 	 	    		int recordId = data.getIntExtra(getResources().getString(R.string.recordId), -1);
 	 	    		
 	 	    		if (recordId==-1){//new record
-	 	    			ApplicationManager.currentRecord = new CollectRecord(this.survey, this.survey.getVersions().get(this.survey.getVersions().size()-1).getName());//null;
+	 	    			ApplicationManager.currentRecord = new CollectRecord(this.survey, this.survey.getVersions().get(this.survey.getVersions().size()-1).getName());//null;	 	    			
 	 					Entity rootEntity = ApplicationManager.currentRecord.createRootEntity(ApplicationManager.getSurvey().getSchema().getRootEntityDefinition(ApplicationManager.currRootEntityId).getName());
 	 					rootEntity.setId(ApplicationManager.getSurvey().getSchema().getRootEntityDefinitions().get(0).getId());
-	    				Log.e("rootEntity",rootEntity.getId()+"=="+rootEntity.getName());
+	    				Log.e("rootEntityNewRecord",rootEntity.getId()+"=="+rootEntity.getName());
 	 	    		} else {//record from database
 	 	    			CollectSurvey collectSurvey = (CollectSurvey)ApplicationManager.getSurvey();	        	
 			        	DataManager dataManager = new DataManager(collectSurvey,collectSurvey.getSchema().getRootEntityDefinitions().get(0).getName(),ApplicationManager.getLoggedInUser());
 			        	ApplicationManager.currentRecord = dataManager.loadRecord(recordId);
 			        	Entity rootEntity = ApplicationManager.currentRecord.getRootEntity();
 	    				rootEntity.setId(ApplicationManager.getSurvey().getSchema().getRootEntityDefinitions().get(0).getId());
-			        	Log.e("rootEntity",rootEntity.getId()+"=="+rootEntity.getName());
+			        	Log.e("rootEntityLoaded",rootEntity.getId()+"=="+rootEntity.getName());
 			        	printRecord(ApplicationManager.currentRecord);
 	 	    		}
+	 	    		
 	 	    		showFormRootScreen();
 	 	    	} else if (resultCode==getResources().getInteger(R.integer.backButtonPressed)){
 	 	    		showRootEntitiesListScreen();
@@ -254,14 +256,6 @@ public class ApplicationManager extends BaseActivity{
 	 	    } else if (requestCode==getResources().getInteger(R.integer.startingFormScreen)){
 	 	    	showRecordsListScreen(ApplicationManager.currRootEntityId);
 	 	    }
-	 	    /*if((requestCode==getResources().getInteger(R.integer.clusterSelection))&&(resultCode==getResources().getInteger(R.integer.clusterChoiceSuccessful))){
-	 	    	int recordId = data.getIntExtra("clusterId", -1);
-	 	    	if (recordId!=-1){
-	 	    		loadData(TabManager.survey, recordId, 1);
-	 	    	}
-	 	    } else if((requestCode==getResources().getInteger(R.integer.clusterSelection))&&(resultCode==getResources().getInteger(R.integer.clusterChoiceFailed))){
-	 	    	ToastMessage.displayToastMessage(this, getResources().getString(R.string.clusterChoiceFailedBecauseNoDataSaved), Toast.LENGTH_LONG);
-	 	    }*/
 	    }catch (Exception e){
     		RunnableHandler.reportException(e,getResources().getString(R.string.app_name),TAG+":onActivityResult",
     				Environment.getExternalStorageDirectory().toString()
@@ -281,7 +275,7 @@ public class ApplicationManager extends BaseActivity{
     		printRecordNodes(rootEntity, rootEntity.getChildren());
     	} else {
     		Log.e("record","is null");
-    	}    	
+    	}
     }
     
     private void printRecordNodes(Entity parent, List<Node<? extends NodeDefinition>> children){

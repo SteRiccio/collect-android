@@ -11,6 +11,10 @@ import org.openforis.collect.android.messages.ToastMessage;
 import org.openforis.collect.android.screens.FormScreen;
 import org.openforis.idm.metamodel.NodeDefinition;
 import org.openforis.idm.metamodel.NodeLabel.Type;
+import org.openforis.idm.model.Entity;
+import org.openforis.idm.model.EntityBuilder;
+import org.openforis.idm.model.Node;
+import org.openforis.idm.model.TextAttribute;
 
 import android.content.Context;
 import android.text.InputFilter;
@@ -125,12 +129,26 @@ public class TextField extends InputField {
 		return TextField.this.value.getValue(index).get(0);
 	}
 	
-	public void setValue(int position, String value)
+	public void setValue(int position, String value, String path)
 	{
 		this.txtBox.setText(value);
 		ArrayList<String> valueToAdd = new ArrayList<String>();
 		valueToAdd.add(value);
 		TextField.this.value.setValue(position, valueToAdd);
+		
+		Entity parentEntity = ApplicationManager.currentRecord.getRootEntity();
+		String screenPath = path;
+		String[] entityPath = screenPath.split(getResources().getString(R.string.valuesSeparator2));
+		
+		for (int m=2;m<entityPath.length;m++){
+			String[] instancePath = entityPath[m].split(getResources().getString(R.string.valuesSeparator1));
+			int id = Integer.valueOf(instancePath[0]);
+			int instanceNo = Integer.valueOf(instancePath[1]);
+			parentEntity = (Entity) parentEntity.get(ApplicationManager.getSurvey().getSchema().getDefinitionById(id).getName(), instanceNo);    						
+		}
+		Log.e("VALUEsetTO",parentEntity.getName()+"==="+this.nodeDefinition.getName());
+		Log.e("VALUEset","P"+value+"==="+position);
+		EntityBuilder.addValue(parentEntity, this.nodeDefinition.getName(), value, position);
 	}
 	
 	/*@Override

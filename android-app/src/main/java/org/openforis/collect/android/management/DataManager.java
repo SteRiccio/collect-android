@@ -47,12 +47,13 @@ public class DataManager {
 			CollectRecord recordToSave = ApplicationManager.currentRecord;
 			
 			if (recordToSave.getId()==null){
-				recordToSave = new CollectRecord(this.survey, this.survey.getVersions().get(this.survey.getVersions().size()-1).getName());
+				//Log.e("SAVING", "NEW RECORD");
+				//recordToSave = new CollectRecord(this.survey, this.survey.getVersions().get(this.survey.getVersions().size()-1).getName());
 				recordToSave.setCreatedBy(this.user);
 				recordToSave.setCreationDate(new Date());
 				recordToSave.setStep(Step.ENTRY);
-				Entity rootEntity = recordToSave.createRootEntity(ApplicationManager.getSurvey().getSchema().getRootEntityDefinitions().get(0).getName());
-				rootEntity.setId(ApplicationManager.getSurvey().getSchema().getRootEntityDefinitions().get(0).getId());
+				//Entity rootEntity = recordToSave.createRootEntity(ApplicationManager.getSurvey().getSchema().getRootEntityDefinitions().get(0).getName());
+				//rootEntity.setId(ApplicationManager.getSurvey().getSchema().getRootEntityDefinitions().get(0).getId());
 				/*DataTreeNode dataRoot = ApplicationManager.valuesTree.getRoot();
 				List<DataTreeNode> childNodesList = dataRoot.getNodeChildren();
 				int childrenNo = childNodesList.size();
@@ -60,9 +61,9 @@ public class DataManager {
 					Entity rootEntity = recordToSave.createRootEntity(ApplicationManager.getSurvey().getSchema().getRootEntityDefinitions().get(0).getName());
 					rootEntity.setId(ApplicationManager.getSurvey().getSchema().getRootEntityDefinitions().get(i).getId());
 					traverseNodeChildren(childNodesList.get(i), rootEntity, true);
-				}*/
-				
+				}*/				
 			} else {
+				//Log.e("updating", "existing RECORD");
 				recordToSave.setModifiedDate(new Date());
 				/*DataTreeNode dataRoot = ApplicationManager.valuesTree.getRoot();
 				List<DataTreeNode> childNodesList = dataRoot.getNodeChildren();

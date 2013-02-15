@@ -5,7 +5,6 @@ import java.util.List;
 import org.openforis.collect.android.R;
 import org.openforis.collect.android.management.ApplicationManager;
 import org.openforis.collect.android.management.DataManager;
-import org.openforis.collect.android.messages.AlertMessage;
 import org.openforis.collect.android.misc.RunnableHandler;
 import org.openforis.collect.model.CollectRecord;
 import org.openforis.collect.model.CollectSurvey;
@@ -13,7 +12,7 @@ import org.openforis.idm.metamodel.EntityDefinition;
 import org.openforis.idm.metamodel.NodeLabel.Type;
 
 import android.app.ListActivity;
-import android.content.DialogInterface;
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
@@ -65,7 +64,7 @@ public class RecordChoiceActivity extends ListActivity{
     protected void onResume(){
 		super.onResume();
 		Log.i(getResources().getString(R.string.app_name),TAG+":onResume");
-		
+
 		int backgroundColor = ApplicationManager.appPreferences.getInt(getResources().getString(R.string.backgroundColor), Color.WHITE);	
 		changeBackgroundColor(backgroundColor);
 		
@@ -76,17 +75,14 @@ public class RecordChoiceActivity extends ListActivity{
     	this.recordsList = dataManager.loadSummaries();
 		String[] clusterList = new String[recordsList.size()+1];
 		for (int i=0;i<recordsList.size();i++){
-			clusterList[i] = recordsList.get(i).getId()+" "+recordsList.get(i).getCreatedBy().getName()
-					+" "+recordsList.get(i).getCreationDate().toLocaleString();
+			CollectRecord record = recordsList.get(i);
+			clusterList[i] = record.getId()+" "+record.getCreatedBy().getName()
+					+"\n"+record.getCreationDate();
+			if (record.getModifiedDate()!=null){
+				clusterList[i] += "\n"+record.getModifiedDate();
+			}
 		}
 		clusterList[recordsList.size()]="Add new "+this.rootEntityDef.getLabel(Type.INSTANCE, null);
-		
-		/*clusterList = new String[5];
-		for (int i=0;i<4;i++){
-			clusterList[i] = "Record "+(i+1)+"\n";
-			clusterList[i] += "key1 key2 key3...";
-		}		
-		clusterList[4] = "Add new record";*/
 		
 		int layout = (backgroundColor!=Color.WHITE)?R.layout.localclusterrow_white:R.layout.localclusterrow_black;
         this.adapter = new ArrayAdapter<String>(this, layout, R.id.plotlabel, clusterList);

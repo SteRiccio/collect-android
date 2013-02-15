@@ -15,10 +15,13 @@ public class UIElement extends LinearLayout{
 	
 	protected int elemId;	
 	
+	protected NodeDefinition nodeDefinition;
+	
 	public UIElement(Context context, NodeDefinition nodeDef/*, int id, boolean hasScrollingArrows*/){
 		super(context);
 		
 		this.elemId = nodeDef.getId();
+		this.nodeDefinition = nodeDef;
 		
 		this.container = new LinearLayout(context);
 		this.container.setLayoutParams(new LayoutParams(ViewGroup.LayoutParams.FILL_PARENT, getResources().getInteger(R.integer.field_height)));
