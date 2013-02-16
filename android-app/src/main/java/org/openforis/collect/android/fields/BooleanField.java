@@ -9,6 +9,7 @@ import org.openforis.collect.android.screens.FormScreen;
 import org.openforis.idm.metamodel.BooleanAttributeDefinition;
 import org.openforis.idm.metamodel.NodeDefinition;
 import org.openforis.idm.metamodel.NodeLabel.Type;
+import org.openforis.idm.model.EntityBuilder;
 
 import android.content.Context;
 import android.graphics.Color;
@@ -37,6 +38,11 @@ public class BooleanField extends Field {
 		initialValue.add(isChecked1);
 		initialValue.add(isChecked2);
 		this.values.add(initialValue);
+		/*if (fieldValue.getValue(0)!=null && fieldValue.getValue(0).get(0)!=null){
+			initialValue.add(Boolean.valueOf(fieldValue.getValue(0).get(0)));
+			initialValue.add(Boolean.valueOf(fieldValue.getValue(0).get(1)));	
+			this.values.add(initialValue);
+		}*/
 		
 		BooleanField.form = (FormScreen)context;
 		
@@ -55,11 +61,12 @@ public class BooleanField extends Field {
 		this.chckBox1.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View v) {
+				//Log.e("onClick1","=="+chckBox1.isChecked());
 				chckBox2.setChecked(!chckBox1.isChecked());
 				ArrayList<String> value = new ArrayList<String>();
 				value.add(String.valueOf(chckBox1.isChecked()));
 				value.add(String.valueOf(!chckBox1.isChecked()));
-				BooleanField.this.setValue(BooleanField.form.currInstanceNo, chckBox1.isChecked(), !chckBox1.isChecked());
+				BooleanField.this.setValue(BooleanField.form.currInstanceNo, chckBox1.isChecked(), BooleanField.this.form.getFormScreenId(),true);
 				FormScreen.currentFieldValue = BooleanField.this.value;
 				FormScreen.currentFieldValue.setValue(BooleanField.form.currInstanceNo, value);
 				if (BooleanField.form.currentNode!=null){
@@ -78,11 +85,12 @@ public class BooleanField extends Field {
 		this.chckBox2.setOnClickListener(new OnClickListener() {
 	          @Override
 	          public void onClick(View v) {
+					//Log.e("onClick2","=="+chckBox2.isChecked());
 	        	  	chckBox1.setChecked(!chckBox2.isChecked());		
 					ArrayList<String> value = new ArrayList<String>();
 					value.add(String.valueOf(!chckBox2.isChecked()));
 					value.add(String.valueOf(chckBox2.isChecked()));
-					BooleanField.this.setValue(BooleanField.form.currInstanceNo, !chckBox2.isChecked(), chckBox2.isChecked());
+					BooleanField.this.setValue(BooleanField.form.currInstanceNo, !chckBox2.isChecked(), BooleanField.this.form.getFormScreenId(), true);
 					FormScreen.currentFieldValue = BooleanField.this.value;
 					FormScreen.currentFieldValue.setValue(BooleanField.form.currInstanceNo, value);
 					if (BooleanField.form.currentNode!=null){
@@ -114,25 +122,52 @@ public class BooleanField extends Field {
 		return BooleanField.this.value.getValue(index).get(tickedNo);
 	}
 	
-	public void setValue(int position, Boolean value1, Boolean value2)
+	public void setValue(int position, Boolean boolValue, String path, boolean isSelectionChanged)
 	{
-		ArrayList<String> valueToAdd = new ArrayList<String>();
+/*		ArrayList<String> valueToAdd = new ArrayList<String>();
 		if (value1!=null){
-			this.chckBox1.setChecked(value1);
+			if (!isSelectionChanged)
+				this.chckBox1.setChecked(value1);
 			valueToAdd.add(String.valueOf(value1));	
 		} else {
-			this.chckBox1.setChecked(false);
+			if (!isSelectionChanged)
+				this.chckBox1.setChecked(false);
 			valueToAdd.add("");
 		}
 		
 		if (value2!=null){
-			this.chckBox2.setChecked(value2);
+			if (!isSelectionChanged)
+				this.chckBox2.setChecked(value2);
 			valueToAdd.add(String.valueOf(value2));	
 		} else {
-			this.chckBox2.setChecked(false);
+			if (!isSelectionChanged)
+				this.chckBox2.setChecked(false);
 			valueToAdd.add("");
 		}
+		BooleanField.this.value.setValue(position, valueToAdd);*/
+		ArrayList<String> valueToAdd = new ArrayList<String>();
+		if (boolValue==null){
+			if (!isSelectionChanged)
+				this.chckBox1.setChecked(false);
+			valueToAdd.add(null);
+			if (!isSelectionChanged)
+				this.chckBox2.setChecked(false);
+			valueToAdd.add(null);
+		} else {
+			if (!isSelectionChanged)
+				this.chckBox1.setChecked(boolValue);
+			if (!isSelectionChanged)
+				this.chckBox2.setChecked(!boolValue);
+			valueToAdd.add(String.valueOf(boolValue));
+			valueToAdd.add(String.valueOf(!boolValue));
+		}
 		BooleanField.this.value.setValue(position, valueToAdd);
+		
+		try{
+			EntityBuilder.addValue(this.findParentEntity(path), this.nodeDefinition.getName(), boolValue, 0);
+		} catch (Exception e){
+
+		}		
 	}
 	
 	@Override

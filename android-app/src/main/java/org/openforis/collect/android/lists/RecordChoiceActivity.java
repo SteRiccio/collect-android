@@ -29,7 +29,7 @@ import android.widget.TextView;
 
 public class RecordChoiceActivity extends ListActivity{
 	
-	private static final String TAG = "ClusterChoiceActivity";
+	private static final String TAG = "RecordChoiceActivity";
 
 	private TextView activityLabel;
 	

@@ -10,8 +10,10 @@ import org.openforis.collect.android.management.ApplicationManager;
 import org.openforis.collect.android.messages.ToastMessage;
 import org.openforis.collect.android.screens.FormScreen;
 import org.openforis.idm.metamodel.NodeDefinition;
+import org.openforis.idm.metamodel.NumberAttributeDefinition;
 import org.openforis.idm.metamodel.NodeLabel.Type;
 import org.openforis.idm.metamodel.NumericAttributeDefinition;
+import org.openforis.idm.model.EntityBuilder;
 
 import android.content.Context;
 import android.text.InputType;
@@ -86,12 +88,30 @@ public class NumberField extends InputField {
 		return NumberField.this.value.getValue(index).get(0);
 	}
 	
-	public void setValue(int position, String value)
+	/*public void setValue(int position, String value)
 	{
 		this.txtBox.setText(value);
 		ArrayList<String> valueToAdd = new ArrayList<String>();
 		valueToAdd.add(value);
 		NumberField.this.value.setValue(position, valueToAdd);
+	}*/
+	public void setValue(int position, String value, String path, boolean isTextChanged)
+	{
+		if (!isTextChanged)
+			this.txtBox.setText(value);
+		ArrayList<String> valueToAdd = new ArrayList<String>();
+		valueToAdd.add(value);
+		NumberField.this.value.setValue(position, valueToAdd);
+		
+		try{			
+			if (((NumberAttributeDefinition) this.nodeDefinition).isInteger()){
+				EntityBuilder.addValue(this.findParentEntity(path), this.nodeDefinition.getName(), Integer.valueOf(value), position);	
+			} else {
+				EntityBuilder.addValue(this.findParentEntity(path), this.nodeDefinition.getName(), Double.valueOf(value), position);
+			}	
+		} catch (Exception e){
+			
+		}
 	}
 	
 	public String getType(){

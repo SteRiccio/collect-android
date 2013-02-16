@@ -1,7 +1,9 @@
 package org.openforis.collect.android.fields;
 
 import org.openforis.collect.android.R;
+import org.openforis.collect.android.management.ApplicationManager;
 import org.openforis.idm.metamodel.NodeDefinition;
+import org.openforis.idm.model.Entity;
 
 import android.content.Context;
 import android.view.ViewGroup;
@@ -39,5 +41,25 @@ public class UIElement extends LinearLayout{
 	
 	public void setCurrentInstanceNo(int value){
 		this.currentInstanceNo = value;
+	}
+	
+	public Entity findParentEntity(String path){
+		Entity parentEntity = ApplicationManager.currentRecord.getRootEntity();
+		String screenPath = path;
+		String[] entityPath = screenPath.split(getResources().getString(R.string.valuesSeparator2));
+		try{
+			for (int m=2;m<entityPath.length;m++){
+				String[] instancePath = entityPath[m].split(getResources().getString(R.string.valuesSeparator1));
+				
+				int id = Integer.valueOf(instancePath[0]);
+				int instanceNo = Integer.valueOf(instancePath[1]);
+				parentEntity = (Entity) parentEntity.get(ApplicationManager.getSurvey().getSchema().getDefinitionById(id).getName(), instanceNo);
+			}			
+		} catch (ClassCastException e){
+			
+		}
+		return parentEntity;
+		//Log.e("VALUEsetTO",parentEntity.getName()+"==="+this.nodeDefinition.getName());
+		//Log.e("VALUEset","P"+value+"==="+position);
 	}
 }

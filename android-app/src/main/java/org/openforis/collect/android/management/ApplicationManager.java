@@ -5,7 +5,6 @@ import java.io.FileInputStream;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -27,7 +26,6 @@ import org.openforis.collect.model.CollectRecord;
 import org.openforis.collect.model.CollectSurvey;
 import org.openforis.collect.model.CollectSurveyContext;
 import org.openforis.collect.model.User;
-import org.openforis.collect.model.CollectRecord.Step;
 import org.openforis.collect.persistence.RecordDao;
 import org.openforis.collect.persistence.SurveyDao;
 import org.openforis.collect.persistence.SurveyWorkDao;
@@ -40,7 +38,6 @@ import org.openforis.idm.metamodel.Survey;
 import org.openforis.idm.metamodel.validation.Validator;
 import org.openforis.idm.metamodel.xml.SurveyIdmlBinder;
 import org.openforis.idm.model.Entity;
-import org.openforis.idm.model.Node;
 import org.openforis.idm.model.expression.ExpressionFactory;
 import org.springframework.jdbc.core.support.JdbcDaoSupport;
 
@@ -239,9 +236,8 @@ public class ApplicationManager extends BaseActivity{
 			        	Entity rootEntity = ApplicationManager.currentRecord.getRootEntity();
 	    				rootEntity.setId(ApplicationManager.getSurvey().getSchema().getRootEntityDefinitions().get(0).getId());
 			        	Log.e("rootEntityLoaded",rootEntity.getId()+"=="+rootEntity.getName());
-			        	printRecord(ApplicationManager.currentRecord);
-	 	    		}
-	 	    		
+			        	//printRecord(ApplicationManager.currentRecord);
+	 	    		}	 	    		
 	 	    		showFormRootScreen();
 	 	    	} else if (resultCode==getResources().getInteger(R.integer.backButtonPressed)){
 	 	    		showRootEntitiesListScreen();
@@ -254,9 +250,24 @@ public class ApplicationManager extends BaseActivity{
 	 	    		ApplicationManager.this.finish();
 	 	    	}
 	 	    } else if (requestCode==getResources().getInteger(R.integer.startingFormScreen)){
-	 	    	showRecordsListScreen(ApplicationManager.currRootEntityId);
+	 			AlertMessage.createPositiveNegativeDialog(ApplicationManager.this, false, getResources().getDrawable(R.drawable.warningsign),
+	 					getResources().getString(R.string.selectRecordTitle), getResources().getString(R.string.selectRecordMessage),
+	 					getResources().getString(R.string.yes), getResources().getString(R.string.no),
+	 		    		new DialogInterface.OnClickListener() {
+	 						@Override
+	 						public void onClick(DialogInterface dialog, int which) {
+	 							showRecordsListScreen(ApplicationManager.currRootEntityId);
+	 						}
+	 					},
+	 		    		new DialogInterface.OnClickListener() {
+	 						@Override
+	 						public void onClick(DialogInterface dialog, int which) {
+	 							showFormRootScreen();
+	 						}
+	 					},
+	 					null).show(); 	    	
 	 	    }
-	    }catch (Exception e){
+	    } catch (Exception e){
     		RunnableHandler.reportException(e,getResources().getString(R.string.app_name),TAG+":onActivityResult",
     				Environment.getExternalStorageDirectory().toString()
     				+getResources().getString(R.string.logs_folder)
@@ -266,7 +277,7 @@ public class ApplicationManager extends BaseActivity{
     	}	   
     }
 	
-    private void printRecord(CollectRecord record){
+    /*private void printRecord(CollectRecord record){
     	if (record!=null){
     		Log.e("id","=="+record.getId());
     		Log.e("creationDate","=="+record.getCreationDate());
@@ -286,7 +297,7 @@ public class ApplicationManager extends BaseActivity{
 				printRecordNodes((Entity)child, ((Entity) child).getChildren());
 			}
 		}
-    }
+    }*/
     
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event)  {

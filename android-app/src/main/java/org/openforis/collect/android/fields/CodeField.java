@@ -9,6 +9,8 @@ import org.openforis.collect.android.messages.ToastMessage;
 import org.openforis.collect.android.screens.FormScreen;
 import org.openforis.idm.metamodel.NodeDefinition;
 import org.openforis.idm.metamodel.NodeLabel.Type;
+import org.openforis.idm.model.Code;
+import org.openforis.idm.model.EntityBuilder;
 
 import android.content.Context;
 import android.view.View;
@@ -81,7 +83,7 @@ public class CodeField extends Field {
 		    	valueToAdd.add(CodeField.this.codes.get((CodeField.this.spinner.getSelectedItemPosition())));
 
 		    	FieldValue previousFocusedFieldValue = FormScreen.currentFieldValue;
-		    	CodeField.this.setValue(CodeField.form.currInstanceNo, CodeField.this.codes.get(CodeField.this.spinner.getSelectedItemPosition()));
+		    	CodeField.this.setValue(CodeField.form.currInstanceNo, CodeField.this.codes.get(CodeField.this.spinner.getSelectedItemPosition()),CodeField.form.getFormScreenId(),true);
 		    	if (!CodeField.this.selectedForTheFirstTime){
 		    		FormScreen.currentFieldValue = CodeField.this.value;
 					FormScreen.currentFieldValue.setValue(CodeField.form.currInstanceNo, valueToAdd);					
@@ -157,7 +159,7 @@ public class CodeField extends Field {
 		return CodeField.this.value.getValue(index).get(0);
 	}
 	
-	public void setValue(int position, String code)
+	public void setValue(int position, String code, String path, boolean isSelectionChanged)
 	{
 		ArrayList<String> valueToAdd = new ArrayList<String>();	
 		boolean isFound = false;
@@ -169,14 +171,25 @@ public class CodeField extends Field {
 			counter++;
 		}
 		if (isFound){
-			this.spinner.setSelection(counter-1);
+			if (!isSelectionChanged)
+				this.spinner.setSelection(counter-1);
 			valueToAdd.add(code);
 		}			
 		else{
-			this.spinner.setSelection(0);
+			if (!isSelectionChanged)
+				this.spinner.setSelection(0);
 			valueToAdd.add("null");
 		}
-		CodeField.this.value.setValue(position, valueToAdd);		
+		CodeField.this.value.setValue(position, valueToAdd);
+		
+		try{
+			//Log.e("node"+this.nodeDefinition.getName(),path+"=="+this.findParentEntity(path).getName());
+			EntityBuilder.addValue(this.findParentEntity(path), this.nodeDefinition.getName(), new Code(code), 0);
+			//Log.e("addedCODEvalue",this.nodeDefinition.getName()+"=="+code);
+		} catch (Exception e){
+			//Log.e("exception","=="+e.getMessage());
+		}
+		//Log.e("setCODEvalue",this.nodeDefinition.getName()+"=="+code);
 	}
 	
 	@Override

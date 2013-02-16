@@ -11,6 +11,7 @@ import org.openforis.collect.android.messages.ToastMessage;
 import org.openforis.collect.android.screens.FormScreen;
 import org.openforis.idm.metamodel.NodeDefinition;
 import org.openforis.idm.metamodel.NodeLabel.Type;
+import org.openforis.idm.model.EntityBuilder;
 
 import android.app.AlertDialog;
 import android.content.Context;
@@ -96,12 +97,23 @@ public class MemoField extends InputField {
 		return MemoField.this.value.getValue(index).get(0);
 	}
 	
-	public void setValue(int position, String value)
+	/*public void setValue(int position, String value)
 	{
 		this.txtBox.setText(value);
 		ArrayList<String> valueToAdd = new ArrayList<String>();
 		valueToAdd.add(value);
 		MemoField.this.value.setValue(position, valueToAdd);
+	}*/
+	
+	public void setValue(int position, String value, String path, boolean isTextChanged)
+	{
+		if (!isTextChanged)
+			this.txtBox.setText(value);
+		ArrayList<String> valueToAdd = new ArrayList<String>();
+		valueToAdd.add(value);
+		MemoField.this.value.setValue(position, valueToAdd);
+		
+		EntityBuilder.addValue(this.findParentEntity(path), this.nodeDefinition.getName(), value, position);
 	}
 	
 	@Override
