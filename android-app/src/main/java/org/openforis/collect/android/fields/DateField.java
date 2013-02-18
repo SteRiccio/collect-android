@@ -13,10 +13,13 @@ import org.openforis.collect.android.messages.ToastMessage;
 import org.openforis.collect.android.screens.FormScreen;
 import org.openforis.idm.metamodel.NodeDefinition;
 import org.openforis.idm.metamodel.NodeLabel.Type;
+import org.openforis.idm.model.Date;
+import org.openforis.idm.model.EntityBuilder;
 
 import android.content.Context;
 import android.content.Intent;
 import android.text.InputType;
+import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
@@ -83,6 +86,7 @@ public class DateField extends InputField {
 	private void showDatePickerDialog(int id) {
 		Intent datePickerIntent = new Intent(DateField.this.getContext(), DateSetDialog.class);
     	datePickerIntent.putExtra("datefield_id", id);
+    	datePickerIntent.putExtra("dateFieldPath", DateField.this.form.getFormScreenId());
     	datePickerIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
     	super.getContext().startActivity(datePickerIntent);	
 	}
@@ -91,12 +95,21 @@ public class DateField extends InputField {
 		return DateField.this.value.getValue(index).get(0);
 	}
 	
-	public void setValue(int position, String value)
+	public void setValue(int position, String value, String path, boolean isTextChanged)
 	{
-		this.txtBox.setText(value);
+		if (!isTextChanged)
+			this.txtBox.setText(value);
 		ArrayList<String> valueToAdd = new ArrayList<String>();
 		valueToAdd.add(value);
 		DateField.this.value.setValue(position, valueToAdd);
+		
+		try{
+			EntityBuilder.addValue(this.findParentEntity(path), this.nodeDefinition.getName(), Date.parseDate(value), position);
+			Log.e("data sparsowana","=="+value);
+		} catch (Exception e){
+			Log.e("DATA NIE SPARSOWANA","=="+value);
+		}
+		
 	}
 	
 	@Override

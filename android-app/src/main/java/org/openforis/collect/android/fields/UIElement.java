@@ -2,6 +2,7 @@ package org.openforis.collect.android.fields;
 
 import org.openforis.collect.android.R;
 import org.openforis.collect.android.management.ApplicationManager;
+import org.openforis.collect.android.screens.FormScreen;
 import org.openforis.idm.metamodel.NodeDefinition;
 import org.openforis.idm.model.Entity;
 
@@ -19,11 +20,15 @@ public class UIElement extends LinearLayout{
 	
 	protected NodeDefinition nodeDefinition;
 	
+	protected FormScreen form;
+	
 	public UIElement(Context context, NodeDefinition nodeDef/*, int id, boolean hasScrollingArrows*/){
 		super(context);
 		
 		this.elemId = nodeDef.getId();
 		this.nodeDefinition = nodeDef;
+		
+		this.form = (FormScreen)context;
 		
 		this.container = new LinearLayout(context);
 		this.container.setLayoutParams(new LayoutParams(ViewGroup.LayoutParams.FILL_PARENT, getResources().getInteger(R.integer.field_height)));

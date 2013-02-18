@@ -7,9 +7,16 @@ import org.openforis.collect.android.R;
 import org.openforis.collect.android.management.ApplicationManager;
 import org.openforis.collect.android.screens.FormScreen;
 import org.openforis.idm.metamodel.AttributeDefinition;
+import org.openforis.idm.metamodel.CodeAttributeDefinition;
 import org.openforis.idm.metamodel.EntityDefinition;
+import org.openforis.idm.metamodel.NodeDefinition;
 import org.openforis.idm.metamodel.NodeLabel.Type;
+import org.openforis.idm.metamodel.NumberAttributeDefinition;
+import org.openforis.idm.model.BooleanValue;
+import org.openforis.idm.model.Code;
+import org.openforis.idm.model.Coordinate;
 import org.openforis.idm.model.Entity;
+import org.openforis.idm.model.NumberValue;
 import org.openforis.idm.model.TextValue;
 import org.openforis.idm.model.Value;
 
@@ -55,22 +62,21 @@ public class SummaryList extends UIElement {
 		this.tableLayout.addView(titleView);
 		
 		ArrayList<List<String>> keysList = new ArrayList<List<String>>();
-		ArrayList<String> detailsList = new ArrayList<String>();
-		
-		List<AttributeDefinition> keyAttrDefsList = entityDef.getKeyAttributeDefinitions();
-		Log.e("#entityKeysNo","=="+keyAttrDefsList.size());
+		ArrayList<List<String>> detailsList = new ArrayList<List<String>>();
 		
 		Entity parentEntity = this.findParentEntity(this.context.getFormScreenId());
 		Entity currentEntity = null;
 		if (parentEntity.equals(ApplicationManager.currentRecord.getRootEntity())){
 			currentEntity = parentEntity;
-			//parentEntity = null;
+			parentEntity = null;
 		} else {
 			currentEntity = (Entity)parentEntity.get(entityDef.getName(), entityInstanceNo);
 		}
-		//Log.e("parentEntity"+parentEntity.getName(),"currentEntity="+currentEntity.getName());
 
-		if (this.context.getFormScreenId()!=null){			
+		if (this.context.getFormScreenId()!=null){
+			
+			//fetching keys and their values
+			List<AttributeDefinition> keyAttrDefsList = entityDef.getKeyAttributeDefinitions();
 			for (AttributeDefinition attrDef : keyAttrDefsList){
 				List<String> key = new ArrayList<String>();
 				Value attrValue = null;
@@ -78,23 +84,10 @@ public class SummaryList extends UIElement {
 					attrValue = (Value)currentEntity.getValue(attrDef.getName(),0);	
 				}				
 				key.add(attrDef.getName());
-				if (attrValue!=null){
-					if (attrValue instanceof TextValue){
-						TextValue textValue = (TextValue)attrValue;
-						key.add(textValue.getValue());
-					}	
-				}
-				/*try {
-					Log.e("attrDef"+key.get(0),"value=="+key.get(1));
-				}catch (Exception e){
-					Log.e("attrDef"+key.get(0),"==");
-				}*/
+				String stringValue = convertValueToString(attrValue, (NodeDefinition)attrDef);
+				if (stringValue!=null)
+					key.add(stringValue);	
 				keysList.add(key);
-				/*DataTreeNode currTreeNode = ApplicationManager.valuesTree.getChild(this.context.getFormScreenId()+getResources().getString(R.string.valuesSeparator2)+entityDef.getId()+getResources().getString(R.string.valuesSeparator1)+entityInstanceNo);
-				if (currTreeNode!=null)
-					keysList.add(attrDef.getName()+getResources().getString(R.string.valuesEqualTo)+currTreeNode.getFieldValue(attrDef.getId()).getValue(0).get(0));
-				else 
-					keysList.add(attrDef.getName()+"");*/
 			}
 			
 			String keysLine = "";
@@ -102,7 +95,7 @@ public class SummaryList extends UIElement {
 				if (key.size()==1){
 					keysLine += key.get(0) + getResources().getString(R.string.valuesSeparator1);
 				} else {
-					keysLine += key.get(0) + "=" + key.get(1) + getResources().getString(R.string.valuesSeparator1);	
+					keysLine += key.get(0) + getResources().getString(R.string.valuesEqualsTo) + key.get(1) + getResources().getString(R.string.valuesSeparator1);	
 				}
 				
 				if (keysLine.length()>threshold){
@@ -118,8 +111,54 @@ public class SummaryList extends UIElement {
 				}				
 			}
 			
+			//fetching details and their values
+			List<NodeDefinition> detailNodeDefsList = entityDef.getChildDefinitions();
+			for (NodeDefinition nodeDef : detailNodeDefsList){
+				List<String> detail = new ArrayList<String>();
+				Value attrValue = null;
+				if (entityDef.getId()==currentEntity.getId()){//entityDef isn't yet in currentRecord
+					if (nodeDef instanceof EntityDefinition){
+						attrValue = new TextValue("entitydefinitionnode");
+					} else {
+						attrValue = (Value)currentEntity.getValue(nodeDef.getName(),0);	
+					}						
+				}
+				detail.add(nodeDef.getName());
+				String stringValue = convertValueToString(attrValue, nodeDef);
+				if (stringValue!=null)
+					detail.add(stringValue);				
+				detailsList.add(detail);
+			}
+			
+			String detailsLine = "";
+			for (List<String> detail : detailsList){
+				if (detail.size()==1){
+					detailsLine += detail.get(0) + getResources().getString(R.string.valuesSeparator1);
+				} else {
+					if (detail.get(1).equals("entitydefinitionnode")){
+						detailsLine += "["+detail.get(0)+"]" + getResources().getString(R.string.valuesSeparator1);
+					} else {
+						detailsLine += detail.get(0) + getResources().getString(R.string.valuesEqualsTo) + detail.get(1) + getResources().getString(R.string.valuesSeparator1);	
+					}						
+				}
+				
+				if (detailsLine.length()>threshold){
+					break;
+				}
+			}
+			if (detailsLine.length()>threshold){
+				String visibleDetails = detailsLine.substring(0,threshold-3);
+				if (visibleDetails.substring(visibleDetails.length()-1, visibleDetails.length()).equals(getResources().getString(R.string.valuesSeparator1))){
+					visibleDetails = visibleDetails.substring(0,visibleDetails.length()-1);
+				}
+				detailsLine = visibleDetails;
+				detailsLine += getResources().getString(R.string.valuesNotVisibleSign);
+			} else {
+				detailsLine = detailsLine.substring(0,detailsLine.length()-1);
+			}
+			
 			TextView tv = new TextView(context);
-			tv.setText(Html.fromHtml("<font size=\"32px\"><b>"+keysLine+"</b></font>")+"\n"+"detailsLine");
+			tv.setText(Html.fromHtml("<font size=\"32px\"><b>"+keysLine+"</b></font>")+"\n"+detailsLine);
 			//tv.setBackgroundDrawable(getResources().getDrawable(R.drawable.cellshape));
 			tv.setId(entityInstanceNo);
 			tv.setOnClickListener(listener);
@@ -211,5 +250,35 @@ public class SummaryList extends UIElement {
 	
 	public void setTitle(EntityDefinition entityDef){
 		this.entityDefinition = entityDef;
-	}	
+	}
+	
+	private String convertValueToString(Value value, NodeDefinition nodeDef){
+		String valueToReturn = null;
+		if (value!=null){
+			if (value instanceof TextValue){
+				TextValue textValue = (TextValue)value;
+				valueToReturn = textValue.getValue();
+			} else if (value instanceof NumberValue){
+				NumberValue numberValue = (NumberValue)value;
+				if (((NumberAttributeDefinition) nodeDef).isInteger()){
+					valueToReturn = String.valueOf(numberValue.getValue().intValue());	
+				} else {
+					valueToReturn = String.valueOf(numberValue.getValue().doubleValue());
+				}
+			} else if (value instanceof BooleanValue){
+				BooleanValue booleanValue = (BooleanValue)value;
+				valueToReturn = String.valueOf(booleanValue.getValue());
+			} else if (value instanceof Code){
+				Code codeValue = (Code)value;
+				CodeAttributeDefinition codeDef = (CodeAttributeDefinition)nodeDef;
+				if (codeValue.getCode()!=null && !codeValue.getCode().equals("null")){
+					valueToReturn = ApplicationManager.getSurvey().getCodeList(codeDef.getList().getName()).findItem(codeValue.getCode()).getLabel(null);//codeValue.getCode();	
+				}
+			} else if (value instanceof Coordinate){
+				Coordinate coordinateValue = (Coordinate)value;
+				valueToReturn = coordinateValue.getX()+","+coordinateValue.getY();
+			}
+		}
+		return valueToReturn;
+	}
 }

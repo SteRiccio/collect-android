@@ -14,7 +14,6 @@ import android.content.DialogInterface.OnKeyListener;
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.FragmentActivity;
-import android.text.format.DateFormat;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
@@ -22,14 +21,15 @@ import android.view.Window;
 import android.widget.DatePicker;
 
 public class DateSetDialog extends FragmentActivity {
-	
+	private String path;
 	//Subclass which creates DatePicker
 	public class DatePickerFragment extends DialogFragment implements DatePickerDialog.OnDateSetListener {
 		public DateField activity_edittext;
 		public DatePickerDialog datePicker;
-		
-		public DatePickerFragment(DateField date_field) {
+		private String pathToParentScreen;
+		public DatePickerFragment(DateField date_field, String path) {
 		    activity_edittext = date_field;
+		    pathToParentScreen = path;
 		}	    
 		
 		@Override
@@ -72,9 +72,11 @@ public class DateSetDialog extends FragmentActivity {
 		public void onDateSet(DatePicker view, int year, int month, int day) {
 			//Set date to the clicked DateField 
 			Calendar cal = new GregorianCalendar(year, month, day);
-			String strDate = DateFormat.getDateFormat(getActivity()).format(cal.getTime());
+			//String strDate = DateFormat.getDateFormat(getActivity()).format(cal.getTime());
+			//String strDate = (String) DateFormat.format("yyyy"+getResources().getString(R.string.dateSeparator)+"MM"+getResources().getString(R.string.dateSeparator)+"dd", cal);
+			String strDate = cal.get(Calendar.YEAR)+getResources().getString(R.string.dateSeparator)+(cal.get(Calendar.MONTH)+1)+getResources().getString(R.string.dateSeparator)+cal.get(Calendar.DAY_OF_MONTH);
 			//activity_edittext.txtBox.setText(strDate);
-			activity_edittext.setValue(0, strDate);
+			activity_edittext.setValue(0, strDate, this.pathToParentScreen, false);
 		    //Finish activity
 		    finish();
 		}		
@@ -103,10 +105,11 @@ public class DateSetDialog extends FragmentActivity {
 	    		  showDatePickerDialog((DateField)v);
 	    	  }
 	    }
+	    this.path = extras.getString("dateFieldPath");
 	}	
 	
 	public void showDatePickerDialog(DateField dateField) {
-	    DialogFragment newFragment = new DatePickerFragment(dateField);
+	    DialogFragment newFragment = new DatePickerFragment(dateField, this.path);
 	    newFragment.setCancelable(false);
 //	    newFragment.getFragmentManager().popBackStack();
 	    newFragment.show(getSupportFragmentManager(), "datePicker");

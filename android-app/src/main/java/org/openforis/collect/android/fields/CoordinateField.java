@@ -12,6 +12,8 @@ import org.openforis.collect.android.messages.ToastMessage;
 import org.openforis.collect.android.screens.FormScreen;
 import org.openforis.idm.metamodel.NodeDefinition;
 import org.openforis.idm.metamodel.NodeLabel.Type;
+import org.openforis.idm.model.Coordinate;
+import org.openforis.idm.model.EntityBuilder;
 
 import android.content.Context;
 import android.text.Editable;
@@ -133,14 +135,23 @@ public class CoordinateField extends InputField {
 		return CoordinateField.this.value.getValue(index);
 	}
 	
-	public void setValue(int position, String latitude, String longitude)
+	public void setValue(int position, String latitude, String longitude, String path, boolean isTextChanged)
 	{
-		this.txtLatitude.setText(latitude);
-		this.txtLongitude.setText(longitude);
+		if (!isTextChanged){
+			this.txtLatitude.setText(latitude);
+			this.txtLongitude.setText(longitude);	
+		}		
 		ArrayList<String> valueToAdd = new ArrayList<String>();
 		valueToAdd.add(latitude);
 		valueToAdd.add(longitude);
-		CoordinateField.this.value.setValue(position, valueToAdd);
+		CoordinateField.this.value.setValue(position, valueToAdd);		
+		
+		try{
+			//Log.e("coordinateAddedVALUE",latitude+"=="+longitude);
+			EntityBuilder.addValue(this.findParentEntity(path), this.nodeDefinition.getName(), new Coordinate(Double.valueOf(latitude),Double.valueOf(longitude),null), position);	
+		} catch (Exception e) {
+			//Log.e("EXCEPTION","WHILE ADDING COORD VALUE");
+		}		
 	}
 	
 	@Override
@@ -166,7 +177,8 @@ public class CoordinateField extends InputField {
 		if (CoordinateField.form.currentNode!=null){
 			CoordinateField.form.currentNode.addFieldValue(FormScreen.currentFieldValue);
 		}
-		//CoordinateField.this.values.set(CoordinateField.this.currentInstanceNo, tempValue);   
+		//CoordinateField.this.values.set(CoordinateField.this.currentInstanceNo, tempValue);
+		this.setValue(0, CoordinateField.this.txtLatitude.getText().toString(), CoordinateField.this.txtLongitude.getText().toString(), CoordinateField.form.getFormScreenId(),true);
 	}
 	
 	@Override

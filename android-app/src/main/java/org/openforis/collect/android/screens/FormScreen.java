@@ -59,8 +59,6 @@ import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
-import android.view.Window;
-import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
@@ -221,7 +219,7 @@ public class FormScreen extends BaseActivity implements OnClickListener, TextWat
                 				/*if (currTreeNode!=null)
                 					Log.e("currTreeeNode","=="+currTreeNode.getFieldsNo());*/
             					if (currTreeNode!=null)
-            						keysList.add(attrDef.getName()+getResources().getString(R.string.valuesEqualTo)+currTreeNode.getFieldValue(attrDef.getId()).getValue(0).get(0));
+            						keysList.add(attrDef.getName()+getResources().getString(R.string.valuesEqualsTo)+currTreeNode.getFieldValue(attrDef.getId()).getValue(0).get(0));
             					else 
             						keysList.add(attrDef.getName()+"");
             				}
@@ -234,17 +232,16 @@ public class FormScreen extends BaseActivity implements OnClickListener, TextWat
             						detailsList.add(childDef.getName()+getResources().getString(R.string.entityMarker));
             					} else {
             						DataTreeNode currTreeNode = ApplicationManager.valuesTree.getChild(getFormScreenId()+getResources().getString(R.string.valuesSeparator2)+entityDef.getId()+getResources().getString(R.string.valuesSeparator1)+j);
-            						//Log.e("child",childDef.getId()+"=="+childDef.getName());
                 					if (currTreeNode!=null){
                 						FieldValue tempFieldValue = currTreeNode.getFieldValue(childDef.getId());
                 						if (tempFieldValue!=null){
-                							detailsList.add(/*childDef.getName()+getResources().getString(R.string.valuesEqualTo)+*/tempFieldValue.getValue(0).get(0));
+                							detailsList.add(tempFieldValue.getValue(0).get(0));
                 						} else {
-                							detailsList.add(""/*childDef.getName()+"EMPTY"*/);
+                							detailsList.add("");
                 						}
                 					}
                 					else 
-                						detailsList.add(""/*childDef.getName()+"EMPTY"*/);
+                						detailsList.add("");
             						
             					}
             					
@@ -1019,31 +1016,34 @@ public class FormScreen extends BaseActivity implements OnClickListener, TextWat
 	    					}			*/
 	    				}
 	    			} else if (nodeDef instanceof CoordinateAttributeDefinition){
-	    				String latitude = "";
-	    				String longitude = "";
-	    				if (ApplicationManager.currentRecord.getId()!=null){
-	    					//Log.e("breadcrumb","=="+this.getFormScreenId());
-	    					Entity rootEntity = ApplicationManager.currentRecord.getRootEntity();
-	    					String[] path = this.getFormScreenId().split(";");
-	    					Entity currentEntity = rootEntity;
-	    					for (int p=2;p<path.length;p++){
-	    						String[] elementId = path[p].split(",");
-	    						int elementIdmlId = Integer.valueOf(elementId[0]);
-	    						int elementInstanceNo = Integer.valueOf(elementId[1]);
-	    						//Log.e("getEntityparams",ApplicationManager.getSurvey().getSchema().getDefinitionById(elementIdmlId).getName()+"=="+elementInstanceNo);
-	    						if (currentEntity!=null)
-	    							currentEntity = (Entity) currentEntity.get(ApplicationManager.getSurvey().getSchema().getDefinitionById(elementIdmlId).getName(), elementInstanceNo);
-	    						//Log.e("p=="+p,"currentEntity==Null"+(currentEntity==null));
-	    						/*if (currentEntity!=null)
-	    							Log.e("currentEntity"+path[p],currentEntity.getName()+"=="+currentEntity.getValue(nodeDef.getName(), this.currInstanceNo));*/
-	    					}
-	    					if (currentEntity!=null){    						
-	    						Coordinate coordinateValue = (Coordinate)currentEntity.getValue(nodeDef.getName(), this.currInstanceNo);
-	        					if (coordinateValue!=null){
-	        							latitude = String.valueOf(coordinateValue.getY());
-	        							longitude = String.valueOf(coordinateValue.getX());
-	        					}   	
-	    					} 					 						
+	    				String loadedValueLatitude = null;
+	    				String loadedValueLongitude = null;
+						//Log.e("PARENTentityBOOL",nodeDef.getName()+"=="+parentEntity.getName());
+	    				Node<?> foundNode = parentEntity.get(nodeDef.getName(), this.currInstanceNo);
+	    				//Log.e("TEXT NODE FOUNDbool?",nodeDef.getName()+"=="+(foundNode!=null));
+	    				if (foundNode!=null){
+	    					Coordinate coordinateValue = (Coordinate)parentEntity.getValue(nodeDef.getName(), this.currInstanceNo);
+	    					//Log.e("codeValue!=null","=="+(booleanValue!=null));
+        					if (coordinateValue!=null){
+        						loadedValueLatitude = coordinateValue.getX().toString();
+        						loadedValueLongitude = coordinateValue.getY().toString();
+        						//Log.e("wczytanaWARTOSClogiczna",nodeDef.getName()+"=="+loadedValue);
+        					}
+	    					//Log.e("wczytanaWARTOSC",nodeDef.getName()+"=="+loadedValue);
+        					try{
+        						//Log.e("dodanaWARTOSClogiczna",nodeDef.getName()+"=="+loadedValue);
+    	    					EntityBuilder.addValue(parentEntity, nodeDef.getName(), coordinateValue, 0);	
+        					} catch (Exception e){
+        						
+        					}
+	    				} else {
+	    					//Log.e("adding entity", nodeDef.getName()+"to record"+ApplicationManager.currentRecord.getId());
+	    					//parentEntity.add(EntityBuilder.addEntity(parentEntity, ApplicationManager.getSurvey().getSchema().getDefinitionById(nodeDef.getId()).getName()));
+    						/*if (((NumberAttributeDefinition) nodeDef).isInteger()){
+	    						EntityBuilder.addValue(parentEntity, nodeDef.getName(), new Integer(""), 0);
+	    					} else {
+	    						EntityBuilder.addValue(parentEntity, nodeDef.getName(), new Double(""), 0);	
+	    					}*/
 	    				}
 	    				if (!nodeDef.isMultiple()){
 	        				int numberOfInstances = startingIntent.getIntExtra(getResources().getString(R.string.numberOfInstances), -1);
@@ -1060,19 +1060,22 @@ public class FormScreen extends BaseActivity implements OnClickListener, TextWat
 	        				}
 	        				else {
 	        					ArrayList<String> instanceValues = new ArrayList<String>();
-	        					instanceValues.add(longitude);
-	        					instanceValues.add(latitude);
+	        					instanceValues.add(loadedValueLatitude);
+	        					instanceValues.add(loadedValueLongitude);
 	        					tempFieldValue.addValue(instanceValues);
 	        				}
+	        				//Log.e("LOADEDVALUE",loadedValueLatitude+"=="+loadedValueLongitude);
 	        				
 	        				CoordinateField coordinateField= new CoordinateField(this, nodeDef, tempFieldValue);
 	        				coordinateField.setOnClickListener(this);
 	        				coordinateField.setId(nodeDef.getId());
 	        				//textField.txtBox.addTextChangedListener(this);
 	        				//coordinateField.setValue(0, tempFieldValue.getValue(0).get(0), tempFieldValue.getValue(0).get(1));
+	        				coordinateField.setValue(0, tempFieldValue.getValue(0).get(0), tempFieldValue.getValue(0).get(1), this.getFormScreenId(), false);
 	        				FormScreen.currentFieldValue = this.currentNode.getFieldValue(nodeDef.getId());
 	        				//Log.e("FormScreen.currentFieldValue==null",nodeDef.getId()+"=="+(FormScreen.currentFieldValue==null));
 	        				if (FormScreen.currentFieldValue==null){
+	        					//Log.e("intiialVALUE",coordinateField.getValue(0).get(0)+"=="+coordinateField.getValue(0).get(1));
 	        					ArrayList<String> initialValue = new ArrayList<String>();
 	        					initialValue.add(coordinateField.getValue(0).get(0));
 	        					initialValue.add(coordinateField.getValue(0).get(1));
@@ -1081,7 +1084,7 @@ public class FormScreen extends BaseActivity implements OnClickListener, TextWat
 	        					this.currentNode.addFieldValue(FormScreen.currentFieldValue);        		
 	        				} else {
 	        					//Log.e("wczytanaWARTOSC",FormScreen.currentFieldValue.getValue(0).get(0)+"=="+FormScreen.currentFieldValue.getValue(0).get(1));
-	        					coordinateField.setValue(0, FormScreen.currentFieldValue.getValue(0).get(0), FormScreen.currentFieldValue.getValue(0).get(1));
+	        					coordinateField.setValue(0, FormScreen.currentFieldValue.getValue(0).get(0), FormScreen.currentFieldValue.getValue(0).get(1), this.getFormScreenId(), false);
 	        				}
 	        				/*coordinateField.addTextChangedListener(new TextWatcher(){
 	        			        public void afterTextChanged(Editable s) {
@@ -1115,7 +1118,7 @@ public class FormScreen extends BaseActivity implements OnClickListener, TextWat
 	        				//coordinateField.txtBox.addTextChangedListener(this);
 	        				//Log.e("TEXTvalues.size",this.currInstanceNo+"=="+this.currentMultipleFieldValue.getValue(this.currInstanceNo).get(0));
 	        				if (this.currentMultipleFieldValue.size()>this.currInstanceNo){
-	        					coordinateField.setValue(this.currInstanceNo, this.currentMultipleFieldValue.getValue(this.currInstanceNo).get(0), this.currentMultipleFieldValue.getValue(this.currInstanceNo).get(1));	
+	        					coordinateField.setValue(this.currInstanceNo, this.currentMultipleFieldValue.getValue(this.currInstanceNo).get(0), this.currentMultipleFieldValue.getValue(this.currInstanceNo).get(1), this.getFormScreenId(), false);	
 	        				}
 	        				this.ll.addView(coordinateField);
 	    				} else {/*
@@ -1143,28 +1146,18 @@ public class FormScreen extends BaseActivity implements OnClickListener, TextWat
 	    				}	
 	    			} else if (nodeDef instanceof DateAttributeDefinition){
 	    				loadedValue = "";
-	    				if (ApplicationManager.currentRecord.getId()!=null){
-	    					//Log.e("breadcrumb","=="+this.getFormScreenId());
-	    					Entity rootEntity = ApplicationManager.currentRecord.getRootEntity();
-	    					String[] path = this.getFormScreenId().split(";");
-	    					Entity currentEntity = rootEntity;
-	    					for (int p=2;p<path.length;p++){
-	    						String[] elementId = path[p].split(",");
-	    						int elementIdmlId = Integer.valueOf(elementId[0]);
-	    						int elementInstanceNo = Integer.valueOf(elementId[1]);
-	    						//Log.e("getEntityparams",ApplicationManager.getSurvey().getSchema().getDefinitionById(elementIdmlId).getName()+"=="+elementInstanceNo);
-	    						if (currentEntity!=null)
-	    							currentEntity = (Entity) currentEntity.get(ApplicationManager.getSurvey().getSchema().getDefinitionById(elementIdmlId).getName(), elementInstanceNo);
-	    						//Log.e("p=="+p,"currentEntity==Null"+(currentEntity==null));
-	    						/*if (currentEntity!=null)
-	    							Log.e("currentEntity"+path[p],currentEntity.getName()+"=="+currentEntity.getValue(nodeDef.getName(), this.currInstanceNo));*/
-	    					}
-	    					if (currentEntity!=null){    						
-	    						Date dateValue = (Date)currentEntity.getValue(nodeDef.getName(), this.currInstanceNo);
-	        					if (dateValue!=null){
-	        							loadedValue = dateValue.getMonth()+"/"+dateValue.getDay()+"/"+dateValue.getYear();
-	        					}   	
-	    					} 					 						
+						//Log.e("PARENTentity","=="+parentEntity.getName());
+	    				Node<?> foundNode = parentEntity.get(nodeDef.getName(), this.currInstanceNo);
+	    				//Log.e("TEXT NODE FOUND?","=="+(foundNode!=null));
+	    				if (foundNode!=null){
+	    					Date dateValue = (Date)parentEntity.getValue(nodeDef.getName(), this.currInstanceNo);
+	    					loadedValue = dateValue.getMonth()+getResources().getString(R.string.dateSeparator)+dateValue.getDay()+getResources().getString(R.string.dateSeparator)+dateValue.getYear();
+	    					Log.e("wczytanaWARTOSC",nodeDef.getName()+"=="+loadedValue);
+	    					EntityBuilder.addValue(parentEntity, nodeDef.getName(), Date.parseDate(loadedValue), 0);
+	    				} else {
+	    					//Log.e("adding entity", nodeDef.getName()+"to record"+ApplicationManager.currentRecord.getId());
+	    					//parentEntity.add(EntityBuilder.addEntity(parentEntity, ApplicationManager.getSurvey().getSchema().getDefinitionById(nodeDef.getId()).getName()));
+	    					//EntityBuilder.addValue(parentEntity, nodeDef.getName(), loadedValue, 0);
 	    				}
 	    				if (!nodeDef.isMultiple()){
 	        				int numberOfInstances = startingIntent.getIntExtra(getResources().getString(R.string.numberOfInstances), -1);
@@ -1185,11 +1178,11 @@ public class FormScreen extends BaseActivity implements OnClickListener, TextWat
 	        					tempFieldValue.addValue(instanceValues);
 	        				}
 	        				
-	        				DateField dateField = new DateField(this, nodeDef, tempFieldValue);
+	        				final DateField dateField = new DateField(this, nodeDef, tempFieldValue);
 	        				dateField.setOnClickListener(this);
 	        				dateField.setId(nodeDef.getId());
 	        				//textField.txtBox.addTextChangedListener(this);
-	        				dateField.setValue(0, tempFieldValue.getValue(0).get(0));
+	        				dateField.setValue(0, tempFieldValue.getValue(0).get(0), FormScreen.this.getFormScreenId(), false);
 	        				FormScreen.currentFieldValue = this.currentNode.getFieldValue(nodeDef.getId());
 	        				//Log.e("FormScreen.currentFieldValue==null",nodeDef.getId()+"=="+(FormScreen.currentFieldValue==null));
 	        				if (FormScreen.currentFieldValue==null){
@@ -1197,10 +1190,13 @@ public class FormScreen extends BaseActivity implements OnClickListener, TextWat
 	        					initialValue.add(dateField.getValue(0));
 	        					FormScreen.currentFieldValue = new FieldValue(nodeDef.getId(),getFormScreenId(),null);
 	        					FormScreen.currentFieldValue.addValue(initialValue);
+	        					
+        			            
+        			            
 	        					this.currentNode.addFieldValue(FormScreen.currentFieldValue);        		
 	        				} else {
 	        					//Log.e("wczytanaWARTOSC","=="+FormScreen.currentFieldValue.getValue(0).get(0));
-	        					dateField.setValue(0, FormScreen.currentFieldValue.getValue(0).get(0));       
+	        					dateField.setValue(0, FormScreen.currentFieldValue.getValue(0).get(0), FormScreen.this.getFormScreenId(), false);       
 	        				}
 	        				dateField.addTextChangedListener(new TextWatcher(){
 	        			        public void afterTextChanged(Editable s) {
@@ -1210,6 +1206,7 @@ public class FormScreen extends BaseActivity implements OnClickListener, TextWat
 	        			            FormScreen.currentFieldValue.setValue(0, value);
 	        			            FormScreen.this.currentNode.addFieldValue(FormScreen.currentFieldValue);  
 	        			            //Log.e("changed",FormScreen.currentFieldValue.getId()+"ValueOFsingleField=="+FormScreen.currentFieldValue.getValue(0).get(0));
+	        			            dateField.setValue(0, s.toString(), FormScreen.this.getFormScreenId(),true);
 	        			        }
 	        			        public void beforeTextChanged(CharSequence s, int start, int count, int after){}
 	        			        public void onTextChanged(CharSequence s, int start, int before, int count){}
@@ -1235,7 +1232,7 @@ public class FormScreen extends BaseActivity implements OnClickListener, TextWat
 	        				dateField.txtBox.addTextChangedListener(this);
 	        				//Log.e("TEXTvalues.size",this.currInstanceNo+"=="+this.currentMultipleFieldValue.getValue(this.currInstanceNo).get(0));
 	        				if (this.currentMultipleFieldValue.size()>this.currInstanceNo){
-	        					dateField.setValue(this.currInstanceNo, this.currentMultipleFieldValue.getValue(this.currInstanceNo).get(0));	
+	        					dateField.setValue(this.currInstanceNo, this.currentMultipleFieldValue.getValue(this.currInstanceNo).get(0), FormScreen.this.getFormScreenId(), false);	
 	        				}
 	        				ApplicationManager.uiElementsMap.put(dateField.getId(), dateField);
 	        				this.ll.addView(dateField);
@@ -1766,13 +1763,13 @@ public class FormScreen extends BaseActivity implements OnClickListener, TextWat
 						tempBooleanField.setValue(this.currInstanceNo, Boolean.valueOf(this.currentMultipleFieldValue.getValue(this.currInstanceNo).get(0)),this.getFormScreenId(),false);
 					} else if (fieldView instanceof DateField){
 						DateField tempDateField = (DateField)fieldView;
-						tempDateField.setValue(this.currInstanceNo, this.currentMultipleFieldValue.getValue(this.currInstanceNo).get(0));
+						tempDateField.setValue(this.currInstanceNo, this.currentMultipleFieldValue.getValue(this.currInstanceNo).get(0), FormScreen.this.getFormScreenId(), false);
 					} else if (fieldView instanceof TimeField){
 						TimeField tempTimeField = (TimeField)fieldView;
 						tempTimeField.setValue(this.currInstanceNo, this.currentMultipleFieldValue.getValue(this.currInstanceNo).get(0));
 					} else if (fieldView instanceof CoordinateField){
 						CoordinateField tempCoordinateField = (CoordinateField)fieldView;
-						tempCoordinateField.setValue(this.currInstanceNo, this.currentMultipleFieldValue.getValue(this.currInstanceNo).get(0),this.currentMultipleFieldValue.getValue(this.currInstanceNo).get(1));
+						tempCoordinateField.setValue(this.currInstanceNo, this.currentMultipleFieldValue.getValue(this.currInstanceNo).get(0),this.currentMultipleFieldValue.getValue(this.currInstanceNo).get(1), this.getFormScreenId(), false);
 					} else if (fieldView instanceof TaxonField){
 						TaxonField tempTaxonField = (TaxonField)fieldView;
 						tempTaxonField.setValue(this.currInstanceNo, this.currentMultipleFieldValue.getValue(this.currInstanceNo).get(0),this.currentMultipleFieldValue.getValue(this.currInstanceNo).get(1), this.currentMultipleFieldValue.getValue(this.currInstanceNo).get(2),this.currentMultipleFieldValue.getValue(this.currInstanceNo).get(3),this.currentMultipleFieldValue.getValue(this.currInstanceNo).get(4));
@@ -1838,13 +1835,13 @@ public class FormScreen extends BaseActivity implements OnClickListener, TextWat
 						tempBooleanField.setValue(this.currInstanceNo, Boolean.valueOf(this.currentMultipleFieldValue.getValue(this.currInstanceNo).get(0)),this.getFormScreenId(),false);						
 					} else if (fieldView instanceof DateField){
 						DateField tempDateField = (DateField)fieldView;
-						tempDateField.setValue(this.currInstanceNo, this.currentMultipleFieldValue.getValue(this.currInstanceNo).get(0));
+						tempDateField.setValue(this.currInstanceNo, this.currentMultipleFieldValue.getValue(this.currInstanceNo).get(0), FormScreen.this.getFormScreenId(), false);
 					} else if (fieldView instanceof TimeField){
 						TimeField tempTimeField = (TimeField)fieldView;
 						tempTimeField.setValue(this.currInstanceNo, this.currentMultipleFieldValue.getValue(this.currInstanceNo).get(0));
 					} else if (fieldView instanceof CoordinateField){
 						CoordinateField tempCoordinateField = (CoordinateField)fieldView;
-						tempCoordinateField.setValue(this.currInstanceNo, this.currentMultipleFieldValue.getValue(this.currInstanceNo).get(0), this.currentMultipleFieldValue.getValue(this.currInstanceNo).get(1));
+						tempCoordinateField.setValue(this.currInstanceNo, this.currentMultipleFieldValue.getValue(this.currInstanceNo).get(0), this.currentMultipleFieldValue.getValue(this.currInstanceNo).get(1), this.getFormScreenId(), false);
 					} else if (fieldView instanceof TaxonField){
 						TaxonField tempTaxonField = (TaxonField)fieldView;
 						tempTaxonField.setValue(this.currInstanceNo, this.currentMultipleFieldValue.getValue(this.currInstanceNo).get(0),this.currentMultipleFieldValue.getValue(this.currInstanceNo).get(1), this.currentMultipleFieldValue.getValue(this.currInstanceNo).get(2),this.currentMultipleFieldValue.getValue(this.currInstanceNo).get(3),this.currentMultipleFieldValue.getValue(this.currInstanceNo).get(4));
@@ -1880,13 +1877,13 @@ public class FormScreen extends BaseActivity implements OnClickListener, TextWat
 						tempBooleanField.setValue(this.currInstanceNo, null/*Boolean.valueOf(this.currentMultipleFieldValue.getValue(this.currInstanceNo).get(0))*/,this.getFormScreenId(),false);
 					} else if (fieldView instanceof DateField){
 						DateField tempDateField = (DateField)fieldView;
-						tempDateField.setValue(this.currInstanceNo, this.currentMultipleFieldValue.getValue(this.currInstanceNo).get(0));
+						tempDateField.setValue(this.currInstanceNo, this.currentMultipleFieldValue.getValue(this.currInstanceNo).get(0), FormScreen.this.getFormScreenId(), false);
 					} else if (fieldView instanceof TimeField){
 						TimeField tempTimeField = (TimeField)fieldView;
 						tempTimeField.setValue(this.currInstanceNo, this.currentMultipleFieldValue.getValue(this.currInstanceNo).get(0));
 					} else if (fieldView instanceof CoordinateField){
 						CoordinateField tempCoordinateField = (CoordinateField)fieldView;
-						tempCoordinateField.setValue(this.currInstanceNo, this.currentMultipleFieldValue.getValue(this.currInstanceNo).get(0), this.currentMultipleFieldValue.getValue(this.currInstanceNo).get(1));
+						tempCoordinateField.setValue(this.currInstanceNo, this.currentMultipleFieldValue.getValue(this.currInstanceNo).get(0), this.currentMultipleFieldValue.getValue(this.currInstanceNo).get(1), this.getFormScreenId(), false);
 					} else if (fieldView instanceof TaxonField){
 						TaxonField tempTaxonField = (TaxonField)fieldView;
 						tempTaxonField.setValue(this.currInstanceNo, this.currentMultipleFieldValue.getValue(this.currInstanceNo).get(0), this.currentMultipleFieldValue.getValue(this.currInstanceNo).get(1), this.currentMultipleFieldValue.getValue(this.currInstanceNo).get(2), this.currentMultipleFieldValue.getValue(this.currInstanceNo).get(3), this.currentMultipleFieldValue.getValue(this.currInstanceNo).get(4));
