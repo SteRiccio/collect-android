@@ -13,6 +13,8 @@
     <!-- dialogs -->
     <string name="exitAppTitle">Exiting&#8230;</string>    
     <string name="exitAppMessage">Do you want to exit?</string>
+    <string name="selectRecordTitle">Back to record selection&#8230;</string>    
+    <string name="selectRecordMessage">Do you want to go to record selection screen?</string>
     <string name="startGpsTitle">Starting GPS&#8230;</string>
     <string name="startGpsMessage">GPS on your device is disabled. Do you want to enable it in operating system Settings?</string>
     <string name="savingDataTitle">Saving&#8230;</string>    
@@ -59,9 +61,10 @@
     <string name="saving">Saving&#8230;</string>
     <string name="loading">Loading&#8230;</string>
     
-    <!-- cluster selection -->
+    <!-- root and record selection -->
     <string name="clusterChoiceFailedBecauseNoDataSaved">No data saved in local database</string>
     <string name="clusterChoiceListLabel">Available records:</string>
+    <string name="rootEntityChoiceListLabel">Select root entity</string>
     
     <!-- others -->
     <string name="entityMarker">[]</string>

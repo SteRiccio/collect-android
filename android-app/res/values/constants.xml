@@ -43,13 +43,16 @@
     
     <!-- REQUEST CODES FOR ACTIVITIES -->
     <integer name="clusterSelection">789</integer>
+    <integer name="rootEntitySelection">111</integer>
     <integer name="clusterChoiceSuccessful">123</integer>
+    <integer name="rootEntityChoiceSuccessful">222</integer>
     <integer name="clusterChoiceFailed">456</integer>
     <integer name="startingFormScreen">1000</integer>
     <integer name="backButtonPressed">997</integer>  
    
     <!-- INTENT EXTRAS -->
     <string name="recordId">recordId</string>
+    <string name="rootEntityId">rootEntityId</string>
     <string name="entityId">entityId</string>
     <string name="attributeId">attributeId</string>
     <string name="breadcrumbSeparator">-></string>
@@ -70,10 +73,12 @@
     <integer name="leftButtonMultipleAttribute">11</integer>
     <integer name="rightButtonMultipleAttribute">22</integer>
     
+    <!-- SEPARATORS -->
     <string name="valuesSeparator1">,</string>
     <string name="valuesSeparator2">;</string>
-    <string name="valuesEqualTo">=</string>
+    <string name="valuesEqualsTo">=</string>
     <string name="valuesNotVisibleSign">...</string>
+    <string name="dateSeparator">-</string>
     
     
 </resources>
