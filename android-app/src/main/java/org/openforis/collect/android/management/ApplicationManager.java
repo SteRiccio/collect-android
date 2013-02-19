@@ -49,8 +49,10 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.util.Log;
 import android.view.KeyEvent;
+import android.view.Menu;
+import android.view.MenuInflater;
 
-public class ApplicationManager extends BaseActivity{
+public class ApplicationManager extends BaseActivity {
 	
 	private static final String TAG = "ApplicationManager";
 	
@@ -143,14 +145,14 @@ public class ApplicationManager extends BaseActivity{
         	survey = surveyManager.getSurveyDao().load("Archenland NFI");
         	if (survey==null){
             	long startTime = System.currentTimeMillis();
-            	Log.e("PARSING","====================");   
+            	//Log.e("PARSING","====================");   
             	FileInputStream fis = new FileInputStream(sdcardPath+getResources().getString(R.string.formDefinitionFile));        	
             	SurveyIdmlBinder binder = new SurveyIdmlBinder(collectSurveyContext);
         		binder.addApplicationOptionsBinder(new UIOptionsBinder());
         		survey = (CollectSurvey) binder.unmarshal(fis);
         		survey.setName(survey.getProjectName(null));
         		surveyManager.importModel(survey);
-            	Log.e("TIME","=="+(System.currentTimeMillis()-startTime));       		
+            	//Log.e("TIME","=="+(System.currentTimeMillis()-startTime));       		
         	}
         	schema = survey.getSchema();              
         	ApplicationManager.fieldsDefList = new ArrayList<NodeDefinition>();        	
@@ -227,15 +229,15 @@ public class ApplicationManager extends BaseActivity{
 	 	    		if (recordId==-1){//new record
 	 	    			ApplicationManager.currentRecord = new CollectRecord(this.survey, this.survey.getVersions().get(this.survey.getVersions().size()-1).getName());//null;	 	    			
 	 					Entity rootEntity = ApplicationManager.currentRecord.createRootEntity(ApplicationManager.getSurvey().getSchema().getRootEntityDefinition(ApplicationManager.currRootEntityId).getName());
-	 					rootEntity.setId(ApplicationManager.getSurvey().getSchema().getRootEntityDefinitions().get(0).getId());
-	    				Log.e("rootEntityNewRecord",rootEntity.getId()+"=="+rootEntity.getName());
+	 					rootEntity.setId(ApplicationManager.currRootEntityId);
+	    				//Log.e(ApplicationManager.currRootEntityId+"rootEntityNewRecord",rootEntity.getId()+"=="+rootEntity.getName());
 	 	    		} else {//record from database
 	 	    			CollectSurvey collectSurvey = (CollectSurvey)ApplicationManager.getSurvey();	        	
 			        	DataManager dataManager = new DataManager(collectSurvey,collectSurvey.getSchema().getRootEntityDefinitions().get(0).getName(),ApplicationManager.getLoggedInUser());
 			        	ApplicationManager.currentRecord = dataManager.loadRecord(recordId);
 			        	Entity rootEntity = ApplicationManager.currentRecord.getRootEntity();
-	    				rootEntity.setId(ApplicationManager.getSurvey().getSchema().getRootEntityDefinitions().get(0).getId());
-			        	Log.e("rootEntityLoaded",rootEntity.getId()+"=="+rootEntity.getName());
+	    				rootEntity.setId(ApplicationManager.currRootEntityId);
+			        	//Log.e("rootEntityLoaded",rootEntity.getId()+"=="+rootEntity.getName());
 			        	//printRecord(ApplicationManager.currentRecord);
 	 	    		}	 	    		
 	 	    		showFormRootScreen();
@@ -243,8 +245,9 @@ public class ApplicationManager extends BaseActivity{
 	 	    		showRootEntitiesListScreen();
 	 	    	}
 	 	    } else if (requestCode==getResources().getInteger(R.integer.rootEntitySelection)){
-	 	    	if (resultCode==getResources().getInteger(R.integer.rootEntityChoiceSuccessful)){//root entity was selected
+	 	    	if (resultCode==getResources().getInteger(R.integer.rootEntityChoiceSuccessful)){//root entity was selected	    	
 	 	    		ApplicationManager.currRootEntityId = data.getIntExtra(getResources().getString(R.string.rootEntityId), -1);
+	 	    		Log.e("choosenRootEntity","=="+ApplicationManager.currRootEntityId);
 	 	    		showRecordsListScreen(ApplicationManager.currRootEntityId);	
 	 	    	} else if (resultCode==getResources().getInteger(R.integer.backButtonPressed)){
 	 	    		ApplicationManager.this.finish();

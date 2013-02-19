@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.openforis.collect.android.R;
 import org.openforis.collect.android.management.ApplicationManager;
+import org.openforis.collect.android.management.BaseListActivity;
 import org.openforis.collect.android.management.DataManager;
 import org.openforis.collect.android.misc.RunnableHandler;
 import org.openforis.collect.model.CollectRecord;
@@ -11,8 +12,6 @@ import org.openforis.collect.model.CollectSurvey;
 import org.openforis.idm.metamodel.EntityDefinition;
 import org.openforis.idm.metamodel.NodeLabel.Type;
 
-import android.app.ListActivity;
-import android.app.ProgressDialog;
 import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
@@ -27,7 +26,7 @@ import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
 
-public class RecordChoiceActivity extends ListActivity{
+public class RecordChoiceActivity extends BaseListActivity{
 	
 	private static final String TAG = "RecordChoiceActivity";
 
@@ -39,7 +38,7 @@ public class RecordChoiceActivity extends ListActivity{
 	private EntityDefinition rootEntityDef;
 	
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         Log.i(getResources().getString(R.string.app_name),TAG+":onCreate");
         requestWindowFeature(Window.FEATURE_NO_TITLE);
@@ -61,7 +60,7 @@ public class RecordChoiceActivity extends ListActivity{
         }
     }
     
-    protected void onResume(){
+    public void onResume(){
 		super.onResume();
 		Log.i(getResources().getString(R.string.app_name),TAG+":onResume");
 

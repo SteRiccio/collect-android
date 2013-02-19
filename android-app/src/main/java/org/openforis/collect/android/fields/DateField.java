@@ -19,7 +19,6 @@ import org.openforis.idm.model.EntityBuilder;
 import android.content.Context;
 import android.content.Intent;
 import android.text.InputType;
-import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
@@ -105,9 +104,9 @@ public class DateField extends InputField {
 		
 		try{
 			EntityBuilder.addValue(this.findParentEntity(path), this.nodeDefinition.getName(), Date.parseDate(value), position);
-			Log.e("data sparsowana","=="+value);
+			//Log.e("data sparsowana","=="+value);
 		} catch (Exception e){
-			Log.e("DATA NIE SPARSOWANA","=="+value);
+			//Log.e("DATA NIE SPARSOWANA","=="+value);
 		}
 		
 	}

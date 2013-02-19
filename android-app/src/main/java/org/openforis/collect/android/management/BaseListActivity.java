@@ -6,7 +6,7 @@ import org.openforis.collect.android.misc.RunnableHandler;
 import org.openforis.collect.android.screens.SettingsScreen;
 import org.openforis.collect.model.CollectSurvey;
 
-import android.app.Activity;
+import android.app.ListActivity;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager.NameNotFoundException;
@@ -21,9 +21,9 @@ import android.view.Window;
 import android.view.WindowManager;
 
 
-public class BaseActivity extends Activity {
+public class BaseListActivity extends ListActivity {
 	
-	private static final String TAG = "BaseActivity";
+	private static final String TAG = "BaseListActivity";
 	
 	protected int backgroundColor;
 	
@@ -32,7 +32,7 @@ public class BaseActivity extends Activity {
         super.onCreate(savedInstanceState);       
         requestWindowFeature(Window.FEATURE_NO_TITLE);
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
-        setContentView(R.layout.welcomescreen);
+        //setContentView(R.layout.welcomescreen);
 	}
 	
     @Override
@@ -54,7 +54,7 @@ public class BaseActivity extends Activity {
     public boolean onCreateOptionsMenu(Menu menu)
     {
         MenuInflater menuInflater = getMenuInflater();
-        menuInflater.inflate(R.layout.menu, menu);
+        menuInflater.inflate(R.layout.list_menu, menu);
         return true;
     }
  
@@ -62,14 +62,9 @@ public class BaseActivity extends Activity {
     public boolean onOptionsItemSelected(MenuItem item)
     { 
         switch (item.getItemId())
-        {
-	        case R.id.menu_save:
-	        	CollectSurvey collectSurvey = (CollectSurvey)ApplicationManager.getSurvey();	        	
-	        	DataManager dataManager = new DataManager(collectSurvey,collectSurvey.getSchema().getRootEntityDefinitions().get(0).getName(),ApplicationManager.getLoggedInUser());
-	        	dataManager.saveRecord(ApplicationManager.valuesTree, this);
-	        	return true;	        	
+        {       	
 			case R.id.menu_settings:
-				startActivity(new Intent(BaseActivity.this,SettingsScreen.class));
+				startActivity(new Intent(BaseListActivity.this,SettingsScreen.class));
 			    return true;			    
 			case R.id.menu_about:
 				String versionName;
@@ -78,7 +73,7 @@ public class BaseActivity extends Activity {
 				} catch (NameNotFoundException e) {
 					versionName = "";
 				}
-				AlertMessage.createPositiveDialog(BaseActivity.this, true, null,
+				AlertMessage.createPositiveDialog(BaseListActivity.this, true, null,
 						getResources().getString(R.string.aboutTabTitle), 
 						getResources().getString(R.string.lblApplicationName)+getResources().getString(R.string.app_name)
 						+"\n"

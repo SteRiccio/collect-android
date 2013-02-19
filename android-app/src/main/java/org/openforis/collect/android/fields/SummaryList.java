@@ -15,15 +15,18 @@ import org.openforis.idm.metamodel.NumberAttributeDefinition;
 import org.openforis.idm.model.BooleanValue;
 import org.openforis.idm.model.Code;
 import org.openforis.idm.model.Coordinate;
+import org.openforis.idm.model.Date;
 import org.openforis.idm.model.Entity;
+import org.openforis.idm.model.IntegerRange;
 import org.openforis.idm.model.NumberValue;
+import org.openforis.idm.model.RealRange;
 import org.openforis.idm.model.TextValue;
+import org.openforis.idm.model.Time;
 import org.openforis.idm.model.Value;
 
 import android.content.Context;
 import android.graphics.Color;
 import android.text.Html;
-import android.util.Log;
 import android.view.ViewGroup;
 import android.widget.TableLayout;
 import android.widget.TableRow;
@@ -65,13 +68,28 @@ public class SummaryList extends UIElement {
 		ArrayList<List<String>> detailsList = new ArrayList<List<String>>();
 		
 		Entity parentEntity = this.findParentEntity(this.context.getFormScreenId());
+		//if (parentEntity!=null)
+		//	Log.e("foundParentEntity",this.context.getFormScreenId()+"=="+parentEntity.getName());
+		//Log.e("entityDef.getName()",entityDef.getId()+"=="+entityDef.getName()+ApplicationManager.currentRecord.getRootEntity().getId());
 		Entity currentEntity = null;
-		if (parentEntity.equals(ApplicationManager.currentRecord.getRootEntity())){
+		if (parentEntity.getName().equals(ApplicationManager.currentRecord.getRootEntity().getName())
+				&&
+				entityDef.getName().equals(ApplicationManager.currentRecord.getRootEntity().getName())){
+			//Log.e("CLUSTER","===");
 			currentEntity = parentEntity;
 			parentEntity = null;
 		} else {
+			//Log.e("nieCLUSTER","===");
 			currentEntity = (Entity)parentEntity.get(entityDef.getName(), entityInstanceNo);
 		}
+		
+		/*if (parentEntity!=null){
+			Log.e("parent","=="+parentEntity.getName());
+			Log.e("currentEntity","=="+currentEntity.getName());
+		}else {
+			Log.e("parent","==NULL");
+			Log.e("currentEntity","=="+currentEntity.getName());
+		}*/
 
 		if (this.context.getFormScreenId()!=null){
 			
@@ -80,9 +98,11 @@ public class SummaryList extends UIElement {
 			for (AttributeDefinition attrDef : keyAttrDefsList){
 				List<String> key = new ArrayList<String>();
 				Value attrValue = null;
-				if (entityDef.getId()==currentEntity.getId()){//entityDef isn't yet in currentRecord
-					attrValue = (Value)currentEntity.getValue(attrDef.getName(),0);	
-				}				
+				//Log.e("entityDef"+entityDef.getId(),"currentEntity"+currentEntity.getId());
+				if (currentEntity.getId()!=null)
+					if (entityDef.getId()==currentEntity.getId()){//entityDef isn't yet in currentRecord
+						attrValue = (Value)currentEntity.getValue(attrDef.getName(),0);	
+					}				
 				key.add(attrDef.getName());
 				String stringValue = convertValueToString(attrValue, (NodeDefinition)attrDef);
 				if (stringValue!=null)
@@ -116,13 +136,14 @@ public class SummaryList extends UIElement {
 			for (NodeDefinition nodeDef : detailNodeDefsList){
 				List<String> detail = new ArrayList<String>();
 				Value attrValue = null;
-				if (entityDef.getId()==currentEntity.getId()){//entityDef isn't yet in currentRecord
-					if (nodeDef instanceof EntityDefinition){
-						attrValue = new TextValue("entitydefinitionnode");
-					} else {
-						attrValue = (Value)currentEntity.getValue(nodeDef.getName(),0);	
-					}						
-				}
+				if (currentEntity.getId()!=null)
+					if (entityDef.getId()==currentEntity.getId()){//entityDef isn't yet in currentRecord
+						if (nodeDef instanceof EntityDefinition){
+							attrValue = new TextValue("entitydefinitionnode");
+						} else {
+							attrValue = (Value)currentEntity.getValue(nodeDef.getName(),0);	
+						}						
+					}
 				detail.add(nodeDef.getName());
 				String stringValue = convertValueToString(attrValue, nodeDef);
 				if (stringValue!=null)
@@ -277,7 +298,20 @@ public class SummaryList extends UIElement {
 			} else if (value instanceof Coordinate){
 				Coordinate coordinateValue = (Coordinate)value;
 				valueToReturn = coordinateValue.getX()+","+coordinateValue.getY();
-			}
+			} else if (value instanceof Date){
+				Date dateValue = (Date)value;
+				valueToReturn = dateValue.getMonth()+getResources().getString(R.string.dateSeparator)+dateValue.getDay()+getResources().getString(R.string.dateSeparator)+dateValue.getYear();
+			} else if (value instanceof Time){
+				Time timeValue = (Time)value;
+				if (!timeValue.getHour().equals("null"))
+					valueToReturn = timeValue.getHour()+getResources().getString(R.string.timeSeparator)+timeValue.getMinute();
+			} else if (value instanceof RealRange){
+				RealRange rangeValue = (RealRange)value;
+				valueToReturn = rangeValue.getFrom()+getResources().getString(R.string.rangeSeparator)+rangeValue.getTo();
+			} else if (value instanceof IntegerRange){
+				IntegerRange rangeValue = (IntegerRange)value;
+				valueToReturn = rangeValue.getFrom()+getResources().getString(R.string.rangeSeparator)+rangeValue.getTo();
+			}		
 		}
 		return valueToReturn;
 	}

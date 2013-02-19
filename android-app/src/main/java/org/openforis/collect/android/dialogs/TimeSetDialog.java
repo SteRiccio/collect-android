@@ -21,14 +21,16 @@ import android.view.Window;
 import android.widget.TimePicker;
 
 public class TimeSetDialog extends FragmentActivity {
+	private String path;
 	public class TimePickerFragment extends DialogFragment implements TimePickerDialog.OnTimeSetListener {
 		
 		public TimeField activity_edittext;
 		public TimePickerDialog timePicker;
-		
-		public TimePickerFragment(TimeField time_field){
+		private String pathToParentScreen;
+		public TimePickerFragment(TimeField time_field, String path){
 		    activity_edittext = time_field;
 //		    Log.i(getResources().getString(R.string.app_name), "Id of activity_edittext in constructor is: " + activity_edittext.getElementId());
+		    pathToParentScreen = path;
 		}
 		
 		@Override
@@ -73,7 +75,7 @@ public class TimeSetDialog extends FragmentActivity {
 			String strTime = pad(hourOfDay) + ":" + pad(minute);		
 			//activity_edittext.txtBox.setText(strTime);			
 			Log.i(getResources().getString(R.string.app_name), "Id of activity_edittext in time settings is: " + activity_edittext.getElementId());
-			activity_edittext.setValue(0, strTime);
+			activity_edittext.setValue(0, strTime, this.pathToParentScreen, false);
 			//Finish activity
 		    finish();
 		}
@@ -110,12 +112,12 @@ public class TimeSetDialog extends FragmentActivity {
 	    		  showTimePickerDialog((TimeField)v);
 	    	  }
 	    }    
-	    
+	    this.path = extras.getString("timeFieldPath");
 	}	
 	
 	public void showTimePickerDialog(TimeField timeField) {
 		Log.i(getResources().getString(R.string.app_name), "Id of TimeField is is: " + timeField.getId());
-	    DialogFragment newFragment = new TimePickerFragment(timeField);
+	    DialogFragment newFragment = new TimePickerFragment(timeField, this.path);
 	    newFragment.setCancelable(false);
 	    newFragment.show(getSupportFragmentManager(), "timePicker");
 	}	

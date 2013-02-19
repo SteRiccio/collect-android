@@ -13,11 +13,14 @@ import org.openforis.collect.android.messages.ToastMessage;
 import org.openforis.collect.android.screens.FormScreen;
 import org.openforis.idm.metamodel.NodeDefinition;
 import org.openforis.idm.metamodel.NodeLabel.Type;
+import org.openforis.idm.model.EntityBuilder;
+import org.openforis.idm.model.Time;
 
 import android.content.Context;
 import android.content.Intent;
 import android.text.InputType;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
@@ -87,6 +90,7 @@ public class TimeField extends InputField implements TextWatcher {
 //		Log.i(getResources().getString(R.string.app_name), "Id from date field was: " + id);
 		Intent timePickerIntent = new Intent(TimeField.this.getContext(), TimeSetDialog.class);
 		timePickerIntent.putExtra("timefield_id", id);
+		timePickerIntent.putExtra("timeFieldPath", TimeField.this.form.getFormScreenId());
 		timePickerIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
     	super.getContext().startActivity(timePickerIntent);	
 	}	
@@ -125,12 +129,20 @@ public class TimeField extends InputField implements TextWatcher {
 		return TimeField.this.value.getValue(index).get(0);
 	}
 	
-	public void setValue(int position, String value)
+	public void setValue(int position, String value, String path, boolean isTextChanged)
 	{
-		this.txtBox.setText(value);
+		if (!isTextChanged && !value.equals("null:null"))
+			this.txtBox.setText(value);
 		ArrayList<String> valueToAdd = new ArrayList<String>();
 		valueToAdd.add(value);
 		TimeField.this.value.setValue(position, valueToAdd);
+		
+		try{
+			EntityBuilder.addValue(this.findParentEntity(path), this.nodeDefinition.getName(), Time.parseTime(value), position);
+			//Log.e("time sparsowany","=="+value);
+		} catch (Exception e){
+			//Log.e("CZAS NIE SPARSOWANy","=="+value);
+		}
 	}
 	
 	@Override

@@ -79,6 +79,8 @@
     <string name="valuesEqualsTo">=</string>
     <string name="valuesNotVisibleSign">...</string>
     <string name="dateSeparator">-</string>
+    <string name="timeSeparator">:</string>
+    <string name="rangeSeparator">-</string>
     
     
 </resources>

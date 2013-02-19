@@ -4,12 +4,12 @@ import java.util.List;
 
 import org.openforis.collect.android.R;
 import org.openforis.collect.android.management.ApplicationManager;
+import org.openforis.collect.android.management.BaseListActivity;
 import org.openforis.collect.android.messages.AlertMessage;
 import org.openforis.collect.android.misc.RunnableHandler;
 import org.openforis.collect.model.CollectSurvey;
 import org.openforis.idm.metamodel.EntityDefinition;
 
-import android.app.ListActivity;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
@@ -19,13 +19,11 @@ import android.os.Environment;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
-import android.view.Window;
-import android.view.WindowManager;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
 
-public class RootEntityChoiceActivity extends ListActivity{
+public class RootEntityChoiceActivity extends BaseListActivity{
 	
 	private static final String TAG = "ClusterChoiceActivity";
 
@@ -35,11 +33,11 @@ public class RootEntityChoiceActivity extends ListActivity{
 	private ArrayAdapter<String> adapter;
 	
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         Log.i(getResources().getString(R.string.app_name),TAG+":onCreate");
-        requestWindowFeature(Window.FEATURE_NO_TITLE);
-        getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
+        //requestWindowFeature(Window.FEATURE_NO_TITLE);
+        //getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
         setContentView(R.layout.clusterchoiceactivity);
         try{
         	this.activityLabel = (TextView)findViewById(R.id.lblList);
@@ -81,7 +79,7 @@ public class RootEntityChoiceActivity extends ListActivity{
         }
     }
     
-    protected void onResume(){
+    public void onResume(){
 		super.onResume();
 		Log.i(getResources().getString(R.string.app_name),TAG+":onResume");
 		
