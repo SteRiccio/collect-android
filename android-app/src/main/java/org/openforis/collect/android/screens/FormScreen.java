@@ -1275,9 +1275,32 @@ public class FormScreen extends BaseActivity implements OnClickListener, TextWat
 	    						loadedValue = rangeValue.getFrom()+getResources().getString(R.string.rangeSeparator)+rangeValue.getTo();
 	    					}
 	    					
+	    					String[] rangeArray = loadedValue.split(getResources().getString(R.string.rangeSeparator));
+	    					try{
+	    						if (rangeArray.length>0){
+	    							if (((RangeAttributeDefinition) nodeDef).isReal()){
+	    								RealRange rangeValue = null;
+	    								if (rangeArray.length==1){
+	    									rangeValue = new RealRange(Double.valueOf(rangeArray[0]), null);					
+	    								} else {
+	    									rangeValue = new RealRange(Double.valueOf(rangeArray[0]),Double.valueOf(rangeArray[1]), null);	
+	    								}	    								
+	    								EntityBuilder.addValue(parentEntity, nodeDef.getName(), rangeValue, 0);
+	    							} else {
+	    								IntegerRange rangeValue = null;
+	    								if (rangeArray.length==1){
+	    									rangeValue = new IntegerRange(Integer.valueOf(rangeArray[0]), null);					
+	    								} else {
+	    									rangeValue = new IntegerRange(Integer.valueOf(rangeArray[0]),Integer.valueOf(rangeArray[1]), null);	
+	    								}	    								
+	    								EntityBuilder.addValue(parentEntity, nodeDef.getName(), rangeValue, 0);
+	    							}	
+	    						}	
+	    					} catch (Exception e){
+	    						
+	    					}	
 	    					
-	    					//Log.e("wczytanaWARTOSC",nodeDef.getName()+"=="+loadedValue);
-	    					EntityBuilder.addValue(parentEntity, nodeDef.getName(), loadedValue, 0);
+	    					//Log.e("wczytanaWARTOSC",nodeDef.getName()+"=="+loadedValue);	    					
 	    				} else {
 	    					//Log.e("adding entity", nodeDef.getName()+"to record"+ApplicationManager.currentRecord.getId());
 	    					//parentEntity.add(EntityBuilder.addEntity(parentEntity, ApplicationManager.getSurvey().getSchema().getDefinitionById(nodeDef.getId()).getName()));

@@ -303,8 +303,9 @@ public class SummaryList extends UIElement {
 				valueToReturn = dateValue.getMonth()+getResources().getString(R.string.dateSeparator)+dateValue.getDay()+getResources().getString(R.string.dateSeparator)+dateValue.getYear();
 			} else if (value instanceof Time){
 				Time timeValue = (Time)value;
-				if (!timeValue.getHour().equals("null"))
-					valueToReturn = timeValue.getHour()+getResources().getString(R.string.timeSeparator)+timeValue.getMinute();
+				if (timeValue.getHour()!=null)
+					if (!timeValue.getHour().equals("null"))
+						valueToReturn = timeValue.getHour()+getResources().getString(R.string.timeSeparator)+timeValue.getMinute();
 			} else if (value instanceof RealRange){
 				RealRange rangeValue = (RealRange)value;
 				valueToReturn = rangeValue.getFrom()+getResources().getString(R.string.rangeSeparator)+rangeValue.getTo();

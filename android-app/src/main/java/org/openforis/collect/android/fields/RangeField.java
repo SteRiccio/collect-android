@@ -10,8 +10,11 @@ import org.openforis.collect.android.management.ApplicationManager;
 import org.openforis.collect.android.messages.ToastMessage;
 import org.openforis.collect.android.screens.FormScreen;
 import org.openforis.idm.metamodel.NodeDefinition;
+import org.openforis.idm.metamodel.RangeAttributeDefinition;
 import org.openforis.idm.metamodel.NodeLabel.Type;
 import org.openforis.idm.model.EntityBuilder;
+import org.openforis.idm.model.IntegerRange;
+import org.openforis.idm.model.RealRange;
 
 import android.content.Context;
 import android.text.InputType;
@@ -87,8 +90,32 @@ public class RangeField extends InputField {
 		ArrayList<String> valueToAdd = new ArrayList<String>();
 		valueToAdd.add(value);
 		RangeField.this.value.setValue(position, valueToAdd);
-		
-		EntityBuilder.addValue(this.findParentEntity(path), this.nodeDefinition.getName(), value, position);
+		String[] rangeArray = value.split(getResources().getString(R.string.rangeSeparator));
+		try{
+			if (rangeArray.length>0){
+				if (((RangeAttributeDefinition) this.nodeDefinition).isReal()){
+					RealRange rangeValue = null;
+					if (rangeArray.length==1){
+						rangeValue = new RealRange(Double.valueOf(rangeArray[0]), null);					
+					} else {
+						rangeValue = new RealRange(Double.valueOf(rangeArray[0]),Double.valueOf(rangeArray[1]), null);	
+					}
+					
+					EntityBuilder.addValue(this.findParentEntity(path), this.nodeDefinition.getName(), rangeValue, position);
+				} else {
+					IntegerRange rangeValue = null;
+					if (rangeArray.length==1){
+						rangeValue = new IntegerRange(Integer.valueOf(rangeArray[0]), null);					
+					} else {
+						rangeValue = new IntegerRange(Integer.valueOf(rangeArray[0]),Integer.valueOf(rangeArray[1]), null);	
+					}
+					
+					EntityBuilder.addValue(this.findParentEntity(path), this.nodeDefinition.getName(), rangeValue, position);
+				}	
+			}	
+		} catch (Exception e){
+			
+		}	
 	}
 	
 	@Override

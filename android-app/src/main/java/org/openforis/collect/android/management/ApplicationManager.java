@@ -108,7 +108,7 @@ public class ApplicationManager extends BaseActivity {
 			
 	    	ApplicationManager.fieldValueToPass = null;
 			
-			//creating file structure used by application
+			//creating file structure used by the application
         	String sdcardPath = Environment.getExternalStorageDirectory().toString();
 			File folder = new File(sdcardPath+getResources().getString(R.string.application_folder));
 			folder.mkdirs();
@@ -247,7 +247,7 @@ public class ApplicationManager extends BaseActivity {
 	 	    } else if (requestCode==getResources().getInteger(R.integer.rootEntitySelection)){
 	 	    	if (resultCode==getResources().getInteger(R.integer.rootEntityChoiceSuccessful)){//root entity was selected	    	
 	 	    		ApplicationManager.currRootEntityId = data.getIntExtra(getResources().getString(R.string.rootEntityId), -1);
-	 	    		Log.e("choosenRootEntity","=="+ApplicationManager.currRootEntityId);
+	 	    		//Log.e("choosenRootEntity","=="+ApplicationManager.currRootEntityId);
 	 	    		showRecordsListScreen(ApplicationManager.currRootEntityId);	
 	 	    	} else if (resultCode==getResources().getInteger(R.integer.backButtonPressed)){
 	 	    		ApplicationManager.this.finish();

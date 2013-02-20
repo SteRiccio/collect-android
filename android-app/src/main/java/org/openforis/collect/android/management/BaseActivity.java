@@ -30,6 +30,7 @@ public class BaseActivity extends Activity {
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);       
+        Log.i(getResources().getString(R.string.app_name),TAG+":onCreate");
         requestWindowFeature(Window.FEATURE_NO_TITLE);
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
         setContentView(R.layout.welcomescreen);
@@ -99,4 +100,10 @@ public class BaseActivity extends Activity {
 		        return super.onOptionsItemSelected(item);
 	    }
 	}
+    
+    @Override
+    public void onPause(){
+    	Log.i(getResources().getString(R.string.app_name),TAG+":onPause");
+    	super.onPause();
+    }
 }
