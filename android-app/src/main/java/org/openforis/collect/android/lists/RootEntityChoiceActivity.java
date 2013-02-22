@@ -9,6 +9,7 @@ import org.openforis.collect.android.messages.AlertMessage;
 import org.openforis.collect.android.misc.RunnableHandler;
 import org.openforis.collect.model.CollectSurvey;
 import org.openforis.idm.metamodel.EntityDefinition;
+import org.openforis.idm.metamodel.NodeLabel.Type;
 
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -91,7 +92,8 @@ public class RootEntityChoiceActivity extends BaseListActivity{
 		String[] clusterList = new String[rootEntitiesList.size()];
 		for (int i=0;i<rootEntitiesList.size();i++){
 			EntityDefinition rootEntity = rootEntitiesList.get(i);
-			clusterList[i] = rootEntity.getId()+" "+rootEntity.getName();
+			//clusterList[i] = rootEntity.getId()+" "+rootEntity.getName();
+			clusterList[i] = rootEntity.getLabel(Type.INSTANCE, null);
 		}
 		
 		int layout = (backgroundColor!=Color.WHITE)?R.layout.localclusterrow_white:R.layout.localclusterrow_black;
