@@ -366,7 +366,7 @@ public class ApplicationManager extends BaseActivity {
 		ApplicationManager.valuesTree = new DataTree(this, null);		
 		//List<EntityDefinition> rootEntitiesDefsList = schema.getRootEntityDefinitions();		
 		Intent intent = new Intent(this,FormScreen.class);
-		intent.putExtra(getResources().getString(R.string.breadcrumb), getResources().getString(R.string.rootScreen));
+		intent.putExtra(getResources().getString(R.string.breadcrumb), ""/*getResources().getString(R.string.rootScreen)*/);
 		intent.putExtra(getResources().getString(R.string.intentType), getResources().getInteger(R.integer.singleEntityIntent));
 		intent.putExtra(getResources().getString(R.string.parentFormScreenId), "");
         intent.putExtra(getResources().getString(R.string.idmlId), 0);

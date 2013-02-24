@@ -12,12 +12,15 @@ import org.openforis.idm.metamodel.EntityDefinition;
 import org.openforis.idm.metamodel.NodeDefinition;
 import org.openforis.idm.metamodel.NodeLabel.Type;
 import org.openforis.idm.metamodel.NumberAttributeDefinition;
+import org.openforis.idm.metamodel.TextAttributeDefinition;
 import org.openforis.idm.model.BooleanValue;
 import org.openforis.idm.model.Code;
 import org.openforis.idm.model.Coordinate;
 import org.openforis.idm.model.Date;
 import org.openforis.idm.model.Entity;
+import org.openforis.idm.model.EntityBuilder;
 import org.openforis.idm.model.IntegerRange;
+import org.openforis.idm.model.Node;
 import org.openforis.idm.model.NumberValue;
 import org.openforis.idm.model.RealRange;
 import org.openforis.idm.model.TextValue;
@@ -27,6 +30,7 @@ import org.openforis.idm.model.Value;
 import android.content.Context;
 import android.graphics.Color;
 import android.text.Html;
+import android.util.Log;
 import android.view.ViewGroup;
 import android.widget.TableLayout;
 import android.widget.TableRow;
@@ -63,6 +67,64 @@ public class SummaryList extends UIElement {
 		TextView titleView = new TextView(context);
 		titleView.setText(this.title);
 		this.tableLayout.addView(titleView);
+		
+		//adding the entity and its nodes if do not exist yet
+		//Log.e("SUMMARY LIST FOR",entityInstanceNo+"=="+entityDef.getName());
+		for (int i=0;i<entityDef.getChildDefinitions().size();i++){
+			try{
+				Entity parentEntity1 = ApplicationManager.currentRecord.getRootEntity();
+				String screenPath = this.context.getFormScreenId();
+				String[] entityPath = screenPath.split(getResources().getString(R.string.valuesSeparator2));
+				int pathLength = entityPath.length;
+				/*if (nodeDef!=null)
+					if (nodeDef.isMultiple()){
+						pathLength--;
+					}*/
+				for (int m=2;m<pathLength;m++){
+					String[] instancePath = entityPath[m].split(getResources().getString(R.string.valuesSeparator1));
+					int id = Integer.valueOf(instancePath[0]);
+					int instanceNo = Integer.valueOf(instancePath[1]);
+					parentEntity1 = (Entity) parentEntity1.get(ApplicationManager.getSurvey().getSchema().getDefinitionById(id).getName(), instanceNo);
+					//Log.e("parenEntity"+parentEntity.getName(),parentEntity.getIndex()+"=="+parentEntity.getId());
+					parentEntity1.setId(id);
+				}
+				String loadedValue = "";
+				//Log.e("PARENTentity1",parentEntity1.getName()+"=="+parentEntity1.get(entityDef.getName(), entityInstanceNo).getName());
+				parentEntity1 = (Entity)parentEntity1.get(entityDef.getName(), entityInstanceNo);
+				//Log.e("PARENTentity1,2",parentEntity1.getName()+"==");
+				Node<?> foundNode = parentEntity1.get(entityDef.getChildDefinitions().get(i).getName(), entityInstanceNo);
+				//Log.e("NODE FOUND?","=="+(foundNode!=null));				
+				if (foundNode!=null){
+					//Log.e("foundNodeID"+foundNode.getId(),parentEntity1.getName()+"=="+parentEntity1.getId());
+					/*if (ApplicationManager.getSurvey().getSchema().getDefinitionById(foundNode.getId()) instanceof TextAttributeDefinition){
+						Log.e("TEXT","VALUE1");
+						TextValue textValue = (TextValue)parentEntity1.getValue(entityDef.getChildDefinitions().get(i).getName(), entityInstanceNo);
+						loadedValue = textValue.getValue();
+						Log.e("wczytanaWARTOSC1",entityDef.getChildDefinitions().get(i).getName()+"=="+loadedValue);
+						EntityBuilder.addValue(parentEntity1, entityDef.getChildDefinitions().get(i).getName(), loadedValue, entityInstanceNo);	
+					}*/
+					Object value = parentEntity1.getValue(entityDef.getChildDefinitions().get(i).getName(), entityInstanceNo);
+					//Log.e("value!=null","=="+(value!=null));
+					if (value!=null){
+						//Log.e("value!=null","====");
+						if (value instanceof TextValue){
+							///Log.e("TEXT","VALUE1");
+							TextValue textValue = (TextValue)parentEntity1.getValue(entityDef.getChildDefinitions().get(i).getName(), entityInstanceNo);
+							loadedValue = textValue.getValue();
+							//Log.e("wczytanaWARTOSC1",entityDef.getChildDefinitions().get(i).getName()+"=="+loadedValue);
+							EntityBuilder.addValue(parentEntity1, entityDef.getChildDefinitions().get(i).getName(), loadedValue, entityInstanceNo);
+						} else {
+							//Log.e("klasaVALUE","=="+value.getClass());
+						}
+					}
+					
+				}	
+			} catch (Exception e){
+				//Log.e("SIE RYPŁO","=="+e.getLocalizedMessage());				
+			}
+		}
+
+		
 		
 		ArrayList<List<String>> keysList = new ArrayList<List<String>>();
 		ArrayList<List<String>> detailsList = new ArrayList<List<String>>();
@@ -134,18 +196,23 @@ public class SummaryList extends UIElement {
 			//fetching details and their values
 			List<NodeDefinition> detailNodeDefsList = entityDef.getChildDefinitions();
 			for (NodeDefinition nodeDef : detailNodeDefsList){
+				//currentEntity.setId(2);
+				//Log.e("ENTITY",currentEntity.getId()+"=="+currentEntity.getName());
+				//Log.e("nodeDef","=="+nodeDef.getName());
+				
 				List<String> detail = new ArrayList<String>();
 				Value attrValue = null;
-				if (currentEntity.getId()!=null)
-					if (entityDef.getId()==currentEntity.getId()){//entityDef isn't yet in currentRecord
+				//if (currentEntity.getId()!=null)
+					//if (entityDef.getId()==currentEntity.getId()){
 						if (nodeDef instanceof EntityDefinition){
 							attrValue = new TextValue("entitydefinitionnode");
 						} else {
 							attrValue = (Value)currentEntity.getValue(nodeDef.getName(),0);	
 						}						
-					}
+					//}
 				detail.add(nodeDef.getName());
 				String stringValue = convertValueToString(attrValue, nodeDef);
+				//Log.e("stringValue",nodeDef.getName()+"=="+stringValue);
 				if (stringValue!=null)
 					detail.add(stringValue);				
 				detailsList.add(detail);

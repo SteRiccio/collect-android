@@ -51,27 +51,12 @@ public class TextField extends InputField {
 		this.txtBox.addTextChangedListener(this);
 		this.txtBox.setFilters(new InputFilter[]{new InputFilter.AllCaps()});
 		
-		this.container.addView(this.label);
-		//this.container.addView(this.scrollLeft);		
+		this.container.addView(this.label);		
 		this.container.addView(this.txtBox);
-		//this.container.addView(this.scrollRight);
 		//this.container.setLayoutParams(new LayoutParams(LayoutParams.FILL_PARENT,  LayoutParams.WRAP_CONTENT));
 		this.addView(this.container);
 		
 		this.value = fieldValue;
-		/*this.scrollLeft.setOnClickListener(new OnClickListener() {
-	        @Override
-	        public void onClick(View v) {
-	        	TextField.this.scrollLeft();
-	        }
-	    });
-		
-		this.scrollRight.setOnClickListener(new OnClickListener() {
-	        @Override
-	        public void onClick(View v) {
-	        	TextField.this.scrollRight();        	
-	        }
-	    });*/
 		
 		// When TextField gets focus
 		this.txtBox.setOnFocusChangeListener(new OnFocusChangeListener() {
@@ -100,27 +85,6 @@ public class TextField extends InputField {
 	    });				
 	}
 	
-	/*@Override
-	public void scrollLeft(){
-    	if (TextField.this.currentInstanceNo>0){
-    		TextField.this.values.set(TextField.this.currentInstanceNo, TextField.this.txtBox.getText().toString());	        		
-    		TextField.this.currentInstanceNo--;
-    		TextField.this.txtBox.setText(TextField.this.values.get(TextField.this.currentInstanceNo));    		
-    	}
-	} 
-	
-	@Override
-	public void scrollRight(){
-    	if (TextField.this.values.size()==(TextField.this.currentInstanceNo+1)){
-    		TextField.this.values.add(TextField.this.currentInstanceNo+1, "");
-    	}
-    	TextField.this.values.set(TextField.this.currentInstanceNo, TextField.this.txtBox.getText().toString());
-    	TextField.this.currentInstanceNo++;
-		if (TextField.this.values.size()>=(TextField.this.currentInstanceNo+1)){
-			TextField.this.txtBox.setText(TextField.this.values.get(TextField.this.currentInstanceNo));
-		}
-	}*/
-	
 	public String getValue(int index){
 		//return TextField.this.values.get(index);
 		return TextField.this.value.getValue(index).get(0);
@@ -136,11 +100,6 @@ public class TextField extends InputField {
 		
 		EntityBuilder.addValue(this.findParentEntity(path), this.nodeDefinition.getName(), value, position);
 	}
-	
-	/*@Override
-	public void afterTextChanged(Editable s) {
-		TextField.this.values.set(TextField.this.currentInstanceNo, s.toString().toUpperCase());
-	}*/
 	
 	@Override
 	public int getInstancesNo(){

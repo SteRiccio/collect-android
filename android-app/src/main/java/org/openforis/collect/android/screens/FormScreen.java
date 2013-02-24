@@ -152,11 +152,7 @@ public class FormScreen extends BaseActivity implements OnClickListener, TextWat
 					Log.e("savedFieldVALUE"+i,"=="+ApplicationManager.fieldValueToPass.getValue(i));					
 				}
 				this.currentNode.addFieldValue(ApplicationManager.fieldValueToPass);
-				Log.i("FormScreen onResume","fieldValueToPass is: " + ApplicationManager.fieldValueToPass);
 				ApplicationManager.fieldValueToPass = null;	
-			}
-			else{
-				Log.i("FormScreen onResume","fieldValueToPass is NULL");
 			}
 
     		ArrayList<String> tableColHeaders = new ArrayList<String>();
@@ -166,11 +162,13 @@ public class FormScreen extends BaseActivity implements OnClickListener, TextWat
     		this.ll = new LinearLayout(this);
     		this.ll.setOrientation(android.widget.LinearLayout.VERTICAL);
     		this.sv.addView(ll);
-
-    		TextView breadcrumb = new TextView(this);
-    		breadcrumb.setText(this.breadcrumb);
-    		breadcrumb.setTextSize(getResources().getInteger(R.integer.breadcrumbFontSize));
-    		this.ll.addView(breadcrumb);
+    		
+    		if (!this.breadcrumb.equals("")){
+    			TextView breadcrumb = new TextView(this);
+    			breadcrumb.setText(this.breadcrumb);
+        		breadcrumb.setTextSize(getResources().getInteger(R.integer.breadcrumbFontSize));
+        		this.ll.addView(breadcrumb);
+    		}    		
     		
     		int fieldsNo = startingIntent.getExtras().size()-1;
     		for (int i=0;i<fieldsNo;i++){
@@ -196,15 +194,18 @@ public class FormScreen extends BaseActivity implements OnClickListener, TextWat
         				Node<?> foundNode = parentEntity.get(nodeDef.getName(), this.currInstanceNo);
         				//Log.e("ENTITY FOUND?","=="+(otrzymanyNode!=null));
         				if (foundNode!=null){
-        					//Log.e("nazwaOtrzymana","=="+otrzymanyNode.getName());
+        					//Log.e("nazwaOtrzymana","=="+foundNode.getName());
         				} else {
-        					//Log.e("adding entity", nodeDef.getName()+"to record"+ApplicationManager.currentRecord.getId());
-        					parentEntity.add(EntityBuilder.addEntity(parentEntity, ApplicationManager.getSurvey().getSchema().getDefinitionById(nodeDef.getId()).getName()));        					
+        					//Log.e("adding entity", nodeDef.getName()+"("+nodeDef.getId()+") to record"+ApplicationManager.currentRecord.getId());
+        					Entity addedEntity = EntityBuilder.addEntity(parentEntity, ApplicationManager.getSurvey().getSchema().getDefinitionById(nodeDef.getId()).getName());
+        					addedEntity.setId(nodeDef.getId());
+        					//Log.e("added ntity ID","=="+addedEntity.getId());
+        					parentEntity.add(addedEntity);        					
         				}
     				}
 
     				EntityDefinition entityDef = (EntityDefinition)nodeDef;    				
-    				int entityCardinality = 1;
+    				/*int entityCardinality = 1;
 					ArrayList<List<String>> keysLists = new ArrayList<List<String>>();
     				ArrayList<List<String>> detailsLists = new ArrayList<List<String>>();
     				for (int j=0;j<entityCardinality;j++){
@@ -218,8 +219,6 @@ public class FormScreen extends BaseActivity implements OnClickListener, TextWat
             					//Log.e("keyAttr"+attrDef.getName(),attrDef.getId()+"=="+attrDef.getName());
             					DataTreeNode currTreeNode = ApplicationManager.valuesTree.getChild(getFormScreenId()+getResources().getString(R.string.valuesSeparator2)+entityDef.getId()+getResources().getString(R.string.valuesSeparator1)+j);
                 				//Log.e("currFormScreenId","=="+getFormScreenId()+getResources().getString(R.string.valuesSeparator2)+entityDef.getId()+getResources().getString(R.string.valuesSeparator1)+j);
-                				/*if (currTreeNode!=null)
-                					Log.e("currTreeeNode","=="+currTreeNode.getFieldsNo());*/
             					if (currTreeNode!=null)
             						keysList.add(attrDef.getName()+getResources().getString(R.string.valuesEqualsTo)+currTreeNode.getFieldValue(attrDef.getId()).getValue(0).get(0));
             					else 
@@ -250,7 +249,7 @@ public class FormScreen extends BaseActivity implements OnClickListener, TextWat
             				}
             				detailsLists.add(detailsList);
         				}
-    				}
+    				}*/
     				/*String label = entityDef.getLabel(Type.INSTANCE, null);
     				if (label==null){
     					if (entityDef.getLabels().size()>0)
@@ -1942,7 +1941,12 @@ public class FormScreen extends BaseActivity implements OnClickListener, TextWat
 	
 	private Intent prepareIntentForNewScreen(SummaryList summaryList){
 		Intent intent = new Intent(this,FormScreen.class);
-		intent.putExtra(getResources().getString(R.string.breadcrumb), this.breadcrumb+getResources().getString(R.string.breadcrumbSeparator)+summaryList.getTitle());
+		if (!this.breadcrumb.equals("")){
+			intent.putExtra(getResources().getString(R.string.breadcrumb), this.breadcrumb+getResources().getString(R.string.breadcrumbSeparator)+summaryList.getTitle());	
+		} else {
+			intent.putExtra(getResources().getString(R.string.breadcrumb), summaryList.getTitle());
+		}
+		
 		if (summaryList.getEntityDefinition().isMultiple()){
 			intent.putExtra(getResources().getString(R.string.intentType), getResources().getInteger(R.integer.multipleEntityIntent));	
 		} else {
@@ -1982,10 +1986,14 @@ public class FormScreen extends BaseActivity implements OnClickListener, TextWat
 	
     private void changeBackgroundColor(int backgroundColor){
 		getWindow().setBackgroundDrawable(new ColorDrawable(backgroundColor));
-		TextView breadcrumb = (TextView)this.ll.getChildAt(0);
-		breadcrumb.setTextColor((backgroundColor!=Color.WHITE)?Color.WHITE:Color.BLACK);
+		boolean hasBreadcrumb = !this.breadcrumb.equals("");
+		if (hasBreadcrumb){
+			TextView breadcrumb = (TextView)this.ll.getChildAt(0);
+			breadcrumb.setTextColor((backgroundColor!=Color.WHITE)?Color.WHITE:Color.BLACK);	
+		}
 		int viewsNo = this.ll.getChildCount();
-		for (int i=1;i<viewsNo;i++){
+		int start = (hasBreadcrumb)?1:0;
+		for (int i=start;i<viewsNo;i++){
 			View tempView = this.ll.getChildAt(i);
 			if (tempView instanceof Field){
 				Field field = (Field)tempView;
