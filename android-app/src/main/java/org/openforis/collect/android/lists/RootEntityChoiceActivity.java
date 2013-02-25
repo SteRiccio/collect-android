@@ -42,7 +42,7 @@ public class RootEntityChoiceActivity extends BaseListActivity{
         setContentView(R.layout.clusterchoiceactivity);
         try{
         	this.activityLabel = (TextView)findViewById(R.id.lblList);
-        	this.activityLabel.setText(getResources().getString(R.string.clusterChoiceListLabel));
+        	this.activityLabel.setText(getResources().getString(R.string.rootEntityChoiceListLabel));
         	
         	/*ProgressDialog pd = ProgressDialog.show(ClusterChoiceActivity.this, getResources().getString(R.string.workInProgress), getResources().getString(R.string.loading), true, false);
             //populating available cluster list
