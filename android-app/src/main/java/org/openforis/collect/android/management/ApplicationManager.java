@@ -10,8 +10,6 @@ import java.util.List;
 import java.util.Map;
 
 import org.openforis.collect.android.R;
-import org.openforis.collect.android.data.DataTree;
-import org.openforis.collect.android.data.FieldValue;
 import org.openforis.collect.android.database.CollectDatabase;
 import org.openforis.collect.android.database.DatabaseWrapper;
 import org.openforis.collect.android.fields.UIElement;
@@ -49,8 +47,6 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.util.Log;
 import android.view.KeyEvent;
-import android.view.Menu;
-import android.view.MenuInflater;
 
 public class ApplicationManager extends BaseActivity {
 	
@@ -70,12 +66,7 @@ public class ApplicationManager extends BaseActivity {
 	
 	public static SharedPreferences appPreferences;
 	
-	public static Map<String,FormScreen> formScreensMap;
-	public static Map<Integer,UIElement> uiElementsMap;
-	
-	public static DataTree valuesTree;
-	
-	public static FieldValue fieldValueToPass;
+	private static Map<Integer,UIElement> uiElementsMap;
 	
 	public static CollectRecord currentRecord;
 	public static int currRootEntityId;
@@ -104,9 +95,7 @@ public class ApplicationManager extends BaseActivity {
 	    		editor.putBoolean(getResources().getString(R.string.showSoftKeyboardOnNumericField), false);
 	    	if(valueForText == null)
 	    		editor.putBoolean(getResources().getString(R.string.showSoftKeyboardOnTextField), false);	    	
-	    	editor.commit();
-			
-	    	ApplicationManager.fieldValueToPass = null;
+	    	editor.commit();			
 			
 			//creating file structure used by the application
         	String sdcardPath = Environment.getExternalStorageDirectory().toString();
@@ -159,9 +148,7 @@ public class ApplicationManager extends BaseActivity {
         	List<EntityDefinition> rootEntitiesDefsList = schema.getRootEntityDefinitions();
         	getAllFormFields(rootEntitiesDefsList);
         	
-        	ApplicationManager.formScreensMap = new HashMap<String,FormScreen>();
-        	ApplicationManager.uiElementsMap = new HashMap<Integer,UIElement>();
-        	
+        	ApplicationManager.uiElementsMap = new HashMap<Integer,UIElement>();        	
         	
         	//adding default user to database if not exists        	
         	User defaultUser = new User();
@@ -177,10 +164,7 @@ public class ApplicationManager extends BaseActivity {
     		
             JdbcDaoSupport.close();
             
-            //showRecordsListScreen();
             showRootEntitiesListScreen();
-            
-            //ApplicationManager.valuesTree = new DataTree(this, null);
             
     		Thread thread = new Thread(new RunnableHandler(0, Environment.getExternalStorageDirectory().toString()
     				+getResources().getString(R.string.logs_folder)
@@ -230,15 +214,12 @@ public class ApplicationManager extends BaseActivity {
 	 	    			ApplicationManager.currentRecord = new CollectRecord(this.survey, this.survey.getVersions().get(this.survey.getVersions().size()-1).getName());//null;	 	    			
 	 					Entity rootEntity = ApplicationManager.currentRecord.createRootEntity(ApplicationManager.getSurvey().getSchema().getRootEntityDefinition(ApplicationManager.currRootEntityId).getName());
 	 					rootEntity.setId(ApplicationManager.currRootEntityId);
-	    				//Log.e(ApplicationManager.currRootEntityId+"rootEntityNewRecord",rootEntity.getId()+"=="+rootEntity.getName());
 	 	    		} else {//record from database
 	 	    			CollectSurvey collectSurvey = (CollectSurvey)ApplicationManager.getSurvey();	        	
 			        	DataManager dataManager = new DataManager(collectSurvey,collectSurvey.getSchema().getRootEntityDefinitions().get(0).getName(),ApplicationManager.getLoggedInUser());
 			        	ApplicationManager.currentRecord = dataManager.loadRecord(recordId);
 			        	Entity rootEntity = ApplicationManager.currentRecord.getRootEntity();
 	    				rootEntity.setId(ApplicationManager.currRootEntityId);
-			        	//Log.e("rootEntityLoaded",rootEntity.getId()+"=="+rootEntity.getName());
-			        	//printRecord(ApplicationManager.currentRecord);
 	 	    		}	 	    		
 	 	    		showFormRootScreen();
 	 	    	} else if (resultCode==getResources().getInteger(R.integer.backButtonPressed)){
@@ -247,7 +228,6 @@ public class ApplicationManager extends BaseActivity {
 	 	    } else if (requestCode==getResources().getInteger(R.integer.rootEntitySelection)){
 	 	    	if (resultCode==getResources().getInteger(R.integer.rootEntityChoiceSuccessful)){//root entity was selected	    	
 	 	    		ApplicationManager.currRootEntityId = data.getIntExtra(getResources().getString(R.string.rootEntityId), -1);
-	 	    		//Log.e("choosenRootEntity","=="+ApplicationManager.currRootEntityId);
 	 	    		showRecordsListScreen(ApplicationManager.currRootEntityId);	
 	 	    	} else if (resultCode==getResources().getInteger(R.integer.backButtonPressed)){
 	 	    		ApplicationManager.this.finish();
@@ -279,28 +259,6 @@ public class ApplicationManager extends BaseActivity {
     				+getResources().getString(R.string.log_file_extension));
     	}	   
     }
-	
-    /*private void printRecord(CollectRecord record){
-    	if (record!=null){
-    		Log.e("id","=="+record.getId());
-    		Log.e("creationDate","=="+record.getCreationDate());
-    		Log.e("modificationDate","=="+record.getModifiedDate());
-    		Entity rootEntity = ApplicationManager.currentRecord.getRootEntity();
-    		printRecordNodes(rootEntity, rootEntity.getChildren());
-    	} else {
-    		Log.e("record","is null");
-    	}
-    }
-    
-    private void printRecordNodes(Entity parent, List<Node<? extends NodeDefinition>> children){
-		for (int p=0;p<children.size();p++){
-			Node<? extends NodeDefinition> child = children.get(p);
-			Log.e("child"+" of "+parent.getName(),child.getName()+"=="+child.getClass());
-			if (child instanceof Entity){
-				printRecordNodes((Entity)child, ((Entity) child).getChildren());
-			}
-		}
-    }*/
     
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event)  {
@@ -362,8 +320,7 @@ public class ApplicationManager extends BaseActivity {
 		return ApplicationManager.loggedInUser;
 	}
 	
-	private void showFormRootScreen(){
-		ApplicationManager.valuesTree = new DataTree(this, null);		
+	private void showFormRootScreen(){	
 		//List<EntityDefinition> rootEntitiesDefsList = schema.getRootEntityDefinitions();		
 		Intent intent = new Intent(this,FormScreen.class);
 		intent.putExtra(getResources().getString(R.string.breadcrumb), ""/*getResources().getString(R.string.rootScreen)*/);
@@ -439,6 +396,10 @@ public class ApplicationManager extends BaseActivity {
 	
 	public static UIElement getUIElement(int elementId){
 		return ApplicationManager.uiElementsMap.get(elementId);
+	}
+	
+	public static void putUIElement(int key, UIElement uiEl){
+		ApplicationManager.uiElementsMap.put(key, uiEl);
 	}
 	
 	public static String getSessionId(){

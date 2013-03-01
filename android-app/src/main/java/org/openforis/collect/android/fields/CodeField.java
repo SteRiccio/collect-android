@@ -4,13 +4,14 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.openforis.collect.android.R;
-import org.openforis.collect.android.data.FieldValue;
 import org.openforis.collect.android.messages.ToastMessage;
 import org.openforis.collect.android.screens.FormScreen;
 import org.openforis.idm.metamodel.NodeDefinition;
-import org.openforis.idm.metamodel.NodeLabel.Type;
 import org.openforis.idm.model.Code;
+import org.openforis.idm.model.CodeAttribute;
+import org.openforis.idm.model.Entity;
 import org.openforis.idm.model.EntityBuilder;
+import org.openforis.idm.model.Node;
 
 import android.content.Context;
 import android.view.View;
@@ -40,7 +41,7 @@ public class CodeField extends Field {
 	
 	public CodeField(Context context, NodeDefinition nodeDef, 
 			ArrayList<String> codes, ArrayList<String> options, 
-			String selectedItem, FieldValue fieldValue) {
+			String selectedItem) {
 		super(context, nodeDef);
 		this.searchable = true;
 
@@ -48,7 +49,6 @@ public class CodeField extends Field {
 		
 		this.selectedForTheFirstTime = true;
 		
-		this.label.setText(nodeDef.getLabel(Type.INSTANCE, null));
 		this.label.setLayoutParams(new LayoutParams(0, ViewGroup.LayoutParams.WRAP_CONTENT, (float) 1));
 		this.label.setOnLongClickListener(new OnLongClickListener() {
 	        @Override
@@ -82,18 +82,12 @@ public class CodeField extends Field {
 		    	ArrayList<String> valueToAdd = new ArrayList<String>();
 		    	valueToAdd.add(CodeField.this.codes.get((CodeField.this.spinner.getSelectedItemPosition())));
 
-		    	FieldValue previousFocusedFieldValue = FormScreen.currentFieldValue;
-		    	CodeField.this.setValue(CodeField.form.currInstanceNo, CodeField.this.codes.get(CodeField.this.spinner.getSelectedItemPosition()),CodeField.form.getFormScreenId(),true);
+		    	CodeField.this.setValue(0/*CodeField.form.currInstanceNo*/, CodeField.this.codes.get(CodeField.this.spinner.getSelectedItemPosition()),CodeField.form.getFormScreenId(),true);
 		    	if (!CodeField.this.selectedForTheFirstTime){
-		    		FormScreen.currentFieldValue = CodeField.this.value;
-					FormScreen.currentFieldValue.setValue(CodeField.form.currInstanceNo, valueToAdd);					
+					
 		    	} else {
 		    		CodeField.this.selectedForTheFirstTime = false;
 		    	}
-				if (CodeField.form.currentNode!=null&&FormScreen.currentFieldValue!=null){
-					CodeField.form.currentNode.addFieldValue(FormScreen.currentFieldValue);
-				}
-				FormScreen.currentFieldValue = previousFocusedFieldValue;
 		    }
 
 		    @Override
@@ -102,34 +96,6 @@ public class CodeField extends Field {
 		    }
 
 		});
-
-
-		/*this.spinner.setOnItemClickListener(new OnItemClickListener() {			
-		    public void onClick(View v) {
-		            Log.e("SPINNER"+CodeField.this.getElementId(), "onClick");
-			    	ArrayList<String> valueToAdd = new ArrayList<String>();
-			    	valueToAdd.add(CodeField.this.codes.get((CodeField.this.spinner.getSelectedItemPosition())));
-
-			    	CodeField.this.setValue(CodeField.form.currInstanceNo, CodeField.this.codes.get(CodeField.this.spinner.getSelectedItemPosition()));
-					FormScreen.currentFieldValue = CodeField.this.value;
-					FormScreen.currentFieldValue.setValue(CodeField.form.currInstanceNo, valueToAdd);
-		        }
-
-			@Override
-			public void onItemClick(AdapterView<?> arg0, View arg1, int arg2,
-					long arg3) {
-		        Log.e("SPINNER"+CodeField.this.getElementId(), "onItemClick");
-		    	ArrayList<String> valueToAdd = new ArrayList<String>();
-		    	valueToAdd.add(CodeField.this.codes.get((CodeField.this.spinner.getSelectedItemPosition())));
-
-		    	CodeField.this.setValue(CodeField.form.currInstanceNo, CodeField.this.codes.get(CodeField.this.spinner.getSelectedItemPosition()));
-				FormScreen.currentFieldValue = CodeField.this.value;
-				FormScreen.currentFieldValue.setValue(CodeField.form.currInstanceNo, valueToAdd);
-				if (CodeField.form.currentNode!=null&&FormScreen.currentFieldValue!=null){
-					CodeField.form.currentNode.addFieldValue(FormScreen.currentFieldValue);
-				}
-			}
-		});*/
 		
 		boolean isFound = false;
 		int position = 0;
@@ -149,17 +115,10 @@ public class CodeField extends Field {
 		this.values = new ArrayList<Integer>();
 		this.values.add(this.spinner.getSelectedItemPosition());
 
-		this.addView(this.label);
 		this.addView(this.spinner);
-		
-		this.value = fieldValue;
 	}
 	
-	public String getValue(int index){
-		return CodeField.this.value.getValue(index).get(0);
-	}
-	
-	public void setValue(int position, String code, String path, boolean isSelectionChanged)
+	/*public void setValue(int position, String code, String path, boolean isSelectionChanged)
 	{
 		ArrayList<String> valueToAdd = new ArrayList<String>();	
 		boolean isFound = false;
@@ -180,7 +139,6 @@ public class CodeField extends Field {
 				this.spinner.setSelection(0);
 			valueToAdd.add("null");
 		}
-		CodeField.this.value.setValue(position, valueToAdd);
 		
 		try{
 			//Log.e("node"+this.nodeDefinition.getName(),path+"=="+this.findParentEntity(path).getName());
@@ -190,6 +148,35 @@ public class CodeField extends Field {
 			//Log.e("exception","=="+e.getMessage());
 		}
 		//Log.e("setCODEvalue",this.nodeDefinition.getName()+"=="+code);
+	}*/
+	
+	public void setValue(int position, String code, String path, boolean isSelectionChanged)
+	{
+		boolean isFound = false;
+		int counter = 0;
+		while (!isFound&&counter<this.codes.size()){
+			if (this.codes.get(counter).equals(code)){
+				isFound = true;
+			}
+			counter++;
+		}
+		if (isFound){
+			if (!isSelectionChanged)
+				this.spinner.setSelection(counter-1);
+		}
+		else{
+			if (!isSelectionChanged)
+				this.spinner.setSelection(0);
+		}
+		
+		Entity parentEntity = this.findParentEntity(path);
+		Node<? extends NodeDefinition> node = parentEntity.get(this.nodeDefinition.getName(), position);
+		if (node!=null){
+			CodeAttribute codeAtr = (CodeAttribute)node;
+			codeAtr.setValue(new Code(code));
+		} else {
+			EntityBuilder.addValue(parentEntity, this.nodeDefinition.getName(), new Code(code), position);	
+		}
 	}
 	
 	@Override

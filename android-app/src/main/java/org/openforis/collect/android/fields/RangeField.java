@@ -5,13 +5,10 @@ import java.util.List;
 import java.util.Map;
 
 import org.openforis.collect.android.R;
-import org.openforis.collect.android.data.FieldValue;
 import org.openforis.collect.android.management.ApplicationManager;
 import org.openforis.collect.android.messages.ToastMessage;
-import org.openforis.collect.android.screens.FormScreen;
 import org.openforis.idm.metamodel.NodeDefinition;
 import org.openforis.idm.metamodel.RangeAttributeDefinition;
-import org.openforis.idm.metamodel.NodeLabel.Type;
 import org.openforis.idm.model.EntityBuilder;
 import org.openforis.idm.model.IntegerRange;
 import org.openforis.idm.model.RealRange;
@@ -28,13 +25,12 @@ public class RangeField extends InputField {
 	
 	private List<String> values;
 	
-	public RangeField(Context context, NodeDefinition nodeDef, FieldValue fieldValue) {
+	public RangeField(Context context, NodeDefinition nodeDef) {
 		super(context, nodeDef);
 		
 		RangeField.this.values = new ArrayList<String>();
 		RangeField.this.values.add(RangeField.this.currentInstanceNo, "");
 
-		this.label.setText(nodeDef.getLabel(Type.INSTANCE, null));
 		this.label.setLayoutParams(new LayoutParams(0, ViewGroup.LayoutParams.WRAP_CONTENT, (float) 2));
 		this.label.setOnLongClickListener(new OnLongClickListener() {
 	        @Override
@@ -47,7 +43,7 @@ public class RangeField extends InputField {
 		//this.setHint(hintText);
 		this.txtBox.setLayoutParams(new LayoutParams(0,ViewGroup.LayoutParams.WRAP_CONTENT,(float) 2));		
 		
-		this.addView(this.label);
+		//this.addView(this.label);
 		this.addView(this.txtBox);
 		
 		// When RangeField got focus
@@ -56,7 +52,6 @@ public class RangeField extends InputField {
 		    public void onFocusChange(View v, boolean hasFocus) {
 		    	//Get current settings about software keyboard for text fields
 		    	if(hasFocus){
-		    		FormScreen.currentFieldValue = RangeField.this.value;
 			    	if(this.getClass().toString().contains("RangeField")){
 				    	Map<String, ?> settings = ApplicationManager.appPreferences.getAll();
 				    	Boolean valueForNum = (Boolean)settings.get(getResources().getString(R.string.showSoftKeyboardOnNumericField));
@@ -74,14 +69,11 @@ public class RangeField extends InputField {
 		    	}
 		    }
 	    });
-		
-		this.value = fieldValue;
 	}
 	
-	public String getValue(int index){
-		//return TextField.this.values.get(index);
+	/*public String getValue(int index){
 		return RangeField.this.value.getValue(index).get(0);
-	}
+	}*/
 	
 	public void setValue(int position, String value, String path, boolean isTextChanged)
 	{
@@ -89,7 +81,6 @@ public class RangeField extends InputField {
 			this.txtBox.setText(value);
 		ArrayList<String> valueToAdd = new ArrayList<String>();
 		valueToAdd.add(value);
-		RangeField.this.value.setValue(position, valueToAdd);
 		String[] rangeArray = value.split(getResources().getString(R.string.rangeSeparator));
 		try{
 			if (rangeArray.length>0){

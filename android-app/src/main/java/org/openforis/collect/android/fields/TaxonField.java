@@ -5,7 +5,6 @@ import java.util.List;
 import java.util.Map;
 
 import org.openforis.collect.android.R;
-import org.openforis.collect.android.data.FieldValue;
 import org.openforis.collect.android.dialogs.SearchTaxonActivity;
 import org.openforis.collect.android.management.ApplicationManager;
 import org.openforis.collect.android.screens.FormScreen;
@@ -48,7 +47,7 @@ public class TaxonField extends Field {
 	
 	public TaxonField(Context context, NodeDefinition nodeDef, 
 			ArrayList<String> codes, ArrayList<String> options, 
-			String selectedItem, FieldValue fieldValue) {
+			String selectedItem) {
 		super(context, nodeDef);
 
 		TaxonField.form = (FormScreen)context;
@@ -116,13 +115,7 @@ public class TaxonField extends Field {
 				tempValue.add(TaxonField.this.txtSciName.getText().toString());
 				tempValue.add(TaxonField.this.txtVernacularName.getText().toString());
 				tempValue.add(TaxonField.this.txtVernacularLang.getText().toString());
-				tempValue.add(TaxonField.this.txtLangVariant.getText().toString());				
-				TaxonField.this.value.setValue(TaxonField.form.currInstanceNo, tempValue);
-				FormScreen.currentFieldValue = TaxonField.this.value;
-				FormScreen.currentFieldValue.setValue(TaxonField.form.currInstanceNo, tempValue);
-				if (TaxonField.form.currentNode!=null){
-					TaxonField.form.currentNode.addFieldValue(FormScreen.currentFieldValue);
-				}
+				tempValue.add(TaxonField.this.txtLangVariant.getText().toString());
 				//Check the value is not empty  and Run SearchTaxon activity
 				//TODO: in future validator should check it
 				if (!strValue.isEmpty())
@@ -188,13 +181,7 @@ public class TaxonField extends Field {
 				tempValue.add(TaxonField.this.txtSciName.getText().toString());
 				tempValue.add(TaxonField.this.txtVernacularName.getText().toString());
 				tempValue.add(TaxonField.this.txtVernacularLang.getText().toString());
-				tempValue.add(TaxonField.this.txtLangVariant.getText().toString());				
-				TaxonField.this.value.setValue(TaxonField.form.currInstanceNo, tempValue);
-				FormScreen.currentFieldValue = TaxonField.this.value;
-				FormScreen.currentFieldValue.setValue(TaxonField.form.currInstanceNo, tempValue);
-				if (TaxonField.form.currentNode!=null){
-					TaxonField.form.currentNode.addFieldValue(FormScreen.currentFieldValue);
-				}
+				tempValue.add(TaxonField.this.txtLangVariant.getText().toString());
 				//Check the value is not empty  and Run SearchTaxon activity
 				//TODO: in future validator should check it
 				if (!strValue.isEmpty())
@@ -261,13 +248,7 @@ public class TaxonField extends Field {
 				tempValue.add(TaxonField.this.txtSciName.getText().toString());
 				tempValue.add(TaxonField.this.txtVernacularName.getText().toString());
 				tempValue.add(TaxonField.this.txtVernacularLang.getText().toString());
-				tempValue.add(TaxonField.this.txtLangVariant.getText().toString());				
-				TaxonField.this.value.setValue(TaxonField.form.currInstanceNo, tempValue);
-				FormScreen.currentFieldValue = TaxonField.this.value;
-				FormScreen.currentFieldValue.setValue(TaxonField.form.currInstanceNo, tempValue);
-				if (TaxonField.form.currentNode!=null){
-					TaxonField.form.currentNode.addFieldValue(FormScreen.currentFieldValue);
-				}
+				tempValue.add(TaxonField.this.txtLangVariant.getText().toString());
 				//Check the value is not empty  and Run SearchTaxon activity
 				//TODO: in future validator should check it
 				if (!strValue.isEmpty())
@@ -376,11 +357,6 @@ public class TaxonField extends Field {
 		this.addView(vernNameLL);
 		this.addView(vernLangLL);
 		this.addView(langVariantLL);
-		
-		//this.addView(this.scrollLeft);
-		//this.addView(this.scrollRight);
-		
-		this.value = fieldValue;
 	}
 	
 
@@ -436,9 +412,9 @@ public class TaxonField extends Field {
 	/* 
 	 * getValue and saving field value after state changed i.e. user selected from menu or typed sth
 	 */
-	public List<String> getValue(int index){
+	/*public List<String> getValue(int index){
 		return TaxonField.this.value.getValue(index);
-	}
+	}*/
 
 	public void setValue(int position, String code, String sciName, String vernName, String vernLang, String langVariant){
 		//Set text to textboxes
@@ -455,7 +431,6 @@ public class TaxonField extends Field {
 		valueToAdd.add(vernName);
 		valueToAdd.add(vernLang);
 		valueToAdd.add(langVariant);
-		TaxonField.this.value.setValue(position, valueToAdd);
 	}
 	
 	public void resetValues(){

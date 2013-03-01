@@ -5,13 +5,13 @@ import java.util.List;
 import java.util.Map;
 
 import org.openforis.collect.android.R;
-import org.openforis.collect.android.data.FieldValue;
 import org.openforis.collect.android.management.ApplicationManager;
 import org.openforis.collect.android.messages.ToastMessage;
-import org.openforis.collect.android.screens.FormScreen;
 import org.openforis.idm.metamodel.NodeDefinition;
-import org.openforis.idm.metamodel.NodeLabel.Type;
 import org.openforis.idm.model.EntityBuilder;
+import org.openforis.idm.model.Node;
+import org.openforis.idm.model.TextAttribute;
+import org.openforis.idm.model.TextValue;
 
 import android.app.AlertDialog;
 import android.content.Context;
@@ -28,13 +28,12 @@ public class MemoField extends InputField {
 	
 	private List<String> values;
 	
-	public MemoField(Context context, NodeDefinition nodeDef, FieldValue fieldValue) {
+	public MemoField(Context context, NodeDefinition nodeDef) {
 		super(context, nodeDef);
 		
 		MemoField.this.values = new ArrayList<String>();
 		MemoField.this.values.add(MemoField.this.currentInstanceNo, "");
-		
-		this.label.setText(nodeDef.getLabel(Type.INSTANCE, null));
+
 		this.label.setLayoutParams(new LayoutParams(0, ViewGroup.LayoutParams.WRAP_CONTENT, (float) 2));
 		this.label.setOnLongClickListener(new OnLongClickListener() {
 	        @Override
@@ -50,7 +49,6 @@ public class MemoField extends InputField {
 	        @Override
 	        public void onFocusChange(View v, boolean hasFocus) {
 	            if (hasFocus) {
-	            	FormScreen.currentFieldValue = MemoField.this.value;
 	            	
 			    	Map<String, ?> settings = ApplicationManager.appPreferences.getAll();
 			    	Boolean valueForText = (Boolean)settings.get(getResources().getString(R.string.showSoftKeyboardOnTextField));
@@ -86,34 +84,23 @@ public class MemoField extends InputField {
 	            }
 	        }
 	    });
-		
-		this.value = fieldValue;
 
-		this.addView(this.label);
+		//this.addView(this.label);
 		this.addView(this.txtBox);
 	}
 	
-	public String getValue(int index){
-		return MemoField.this.value.getValue(index).get(0);
-	}
-	
-	/*public void setValue(int position, String value)
-	{
-		this.txtBox.setText(value);
-		ArrayList<String> valueToAdd = new ArrayList<String>();
-		valueToAdd.add(value);
-		MemoField.this.value.setValue(position, valueToAdd);
-	}*/
-	
-	public void setValue(int position, String value, String path, boolean isTextChanged)
+	public void setValue(Integer position, String value, String path, boolean isTextChanged)
 	{
 		if (!isTextChanged)
 			this.txtBox.setText(value);
-		ArrayList<String> valueToAdd = new ArrayList<String>();
-		valueToAdd.add(value);
-		MemoField.this.value.setValue(position, valueToAdd);
-		
-		EntityBuilder.addValue(this.findParentEntity(path), this.nodeDefinition.getName(), value, position);
+
+		Node<? extends NodeDefinition> node = this.findParentEntity(path).get(this.nodeDefinition.getName(), position);
+		if (node!=null){
+			TextAttribute textAtr = (TextAttribute)node;
+			textAtr.setValue(new TextValue(value));
+		} else {
+			EntityBuilder.addValue(this.findParentEntity(path), this.nodeDefinition.getName(), value, position);	
+		}
 	}
 	
 	@Override

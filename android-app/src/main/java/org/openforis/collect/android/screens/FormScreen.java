@@ -4,14 +4,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.openforis.collect.android.R;
-import org.openforis.collect.android.data.DataTreeNode;
-import org.openforis.collect.android.data.FieldValue;
-import org.openforis.collect.android.fields.BooleanField;
 import org.openforis.collect.android.fields.CodeField;
 import org.openforis.collect.android.fields.CoordinateField;
 import org.openforis.collect.android.fields.DateField;
 import org.openforis.collect.android.fields.Field;
-import org.openforis.collect.android.fields.InputField;
 import org.openforis.collect.android.fields.MemoField;
 import org.openforis.collect.android.fields.NumberField;
 import org.openforis.collect.android.fields.RangeField;
@@ -24,8 +20,6 @@ import org.openforis.collect.android.fields.UIElement;
 import org.openforis.collect.android.management.ApplicationManager;
 import org.openforis.collect.android.management.BaseActivity;
 import org.openforis.collect.android.misc.RunnableHandler;
-import org.openforis.idm.metamodel.AttributeDefinition;
-import org.openforis.idm.metamodel.BooleanAttributeDefinition;
 import org.openforis.idm.metamodel.CodeAttributeDefinition;
 import org.openforis.idm.metamodel.CodeListItem;
 import org.openforis.idm.metamodel.CoordinateAttributeDefinition;
@@ -33,20 +27,21 @@ import org.openforis.idm.metamodel.DateAttributeDefinition;
 import org.openforis.idm.metamodel.EntityDefinition;
 import org.openforis.idm.metamodel.NodeDefinition;
 import org.openforis.idm.metamodel.NumberAttributeDefinition;
+import org.openforis.idm.metamodel.NumericAttributeDefinition;
 import org.openforis.idm.metamodel.RangeAttributeDefinition;
 import org.openforis.idm.metamodel.TaxonAttributeDefinition;
 import org.openforis.idm.metamodel.TextAttributeDefinition;
 import org.openforis.idm.metamodel.TimeAttributeDefinition;
-import org.openforis.idm.model.BooleanValue;
 import org.openforis.idm.model.Code;
 import org.openforis.idm.model.Coordinate;
 import org.openforis.idm.model.Date;
 import org.openforis.idm.model.Entity;
 import org.openforis.idm.model.EntityBuilder;
 import org.openforis.idm.model.IntegerRange;
+import org.openforis.idm.model.IntegerValue;
 import org.openforis.idm.model.Node;
-import org.openforis.idm.model.NumberValue;
 import org.openforis.idm.model.RealRange;
+import org.openforis.idm.model.RealValue;
 import org.openforis.idm.model.TextValue;
 import org.openforis.idm.model.Time;
 
@@ -73,63 +68,36 @@ public class FormScreen extends BaseActivity implements OnClickListener, TextWat
 
 	private ScrollView sv;			
     private LinearLayout ll;
-
-	private ArrayList<String> detailsLists;
-	
-	private int intentType;
-	
-	private int idmlId;
-	public int currInstanceNo;
-	private int numberOfInstances;
-	private String parentFormScreenId;
 	
 	private Intent startingIntent;
-
+	private String parentFormScreenId;
 	private String breadcrumb;
-
-	public DataTreeNode currentNode;
-	public static FieldValue currentFieldValue;
-	private FieldValue currentMultipleFieldValue;
+	private int intentType;
+	private int fieldsNo;
+	private int idmlId;
+	public int currInstanceNo;
+	//private int numberOfInstances;
+	
+	private Entity parentEntity;
+	private Entity parentEntityMultiple;
 	
 	public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         try{
         	Log.i(getResources().getString(R.string.app_name),TAG+":onCreate");
-        	//requestWindowFeature(Window.FEATURE_NO_TITLE);
-            //getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
     		
             //breadcrumb of the screen
-    		startingIntent = getIntent();
-    		this.breadcrumb = startingIntent.getStringExtra(getResources().getString(R.string.breadcrumb));
-    		this.intentType = startingIntent.getIntExtra(getResources().getString(R.string.intentType),-1);
-    		this.idmlId = startingIntent.getIntExtra(getResources().getString(R.string.idmlId),-1);
-    		this.currInstanceNo = startingIntent.getIntExtra(getResources().getString(R.string.instanceNo),-1);
-    		this.numberOfInstances = startingIntent.getIntExtra(getResources().getString(R.string.numberOfInstances),-1);
-    		this.parentFormScreenId = startingIntent.getStringExtra(getResources().getString(R.string.parentFormScreenId));;
+    		this.startingIntent = getIntent();
+    		this.breadcrumb = this.startingIntent.getStringExtra(getResources().getString(R.string.breadcrumb));
+    		this.intentType = this.startingIntent.getIntExtra(getResources().getString(R.string.intentType),-1);
+    		this.idmlId = this.startingIntent.getIntExtra(getResources().getString(R.string.idmlId),-1);
+    		this.currInstanceNo = this.startingIntent.getIntExtra(getResources().getString(R.string.instanceNo),-1);
+    		//this.numberOfInstances = this.startingIntent.getIntExtra(getResources().getString(R.string.numberOfInstances),-1);
+    		this.parentFormScreenId = this.startingIntent.getStringExtra(getResources().getString(R.string.parentFormScreenId));;
+    		this.fieldsNo = this.startingIntent.getExtras().size()-1;
     		
-    		//ApplicationManager.valuesTree.printTree(ApplicationManager.valuesTree.getChild("0,0"));
-    		if ((this.intentType==getResources().getInteger(R.integer.multipleEntityIntent))&&(!this.parentFormScreenId.equals(""))){
-    			this.currentNode = ApplicationManager.valuesTree.getChild(getFormScreenId());
-    			if (this.currentNode==null){
-    				this.currentNode = new DataTreeNode(this.idmlId, this.currInstanceNo, this.parentFormScreenId, ApplicationManager.valuesTree.getChild(this.parentFormScreenId) , new ArrayList<FieldValue>());
-            		ApplicationManager.valuesTree.addChild(getFormScreenId(), this.currentNode);
-    			}
-        		this.currentMultipleFieldValue = null;
-    		} else if ((this.intentType==getResources().getInteger(R.integer.singleEntityIntent))&&(!this.parentFormScreenId.equals(""))){
-    			this.currentNode = ApplicationManager.valuesTree.getChild(getFormScreenId());
-    			if (this.currentNode==null){
-    				this.currentNode = new DataTreeNode(this.idmlId, this.currInstanceNo, this.parentFormScreenId, ApplicationManager.valuesTree.getChild(this.parentFormScreenId) , new ArrayList<FieldValue>());
-            		ApplicationManager.valuesTree.addChild(getFormScreenId(), this.currentNode);
-    			}
-        		this.currentMultipleFieldValue = null;
-    		} else if (!this.parentFormScreenId.equals("")){//current screen isn't entity
-    			this.currentNode=null;
-    			ArrayList<String> tableColHeaders = new ArrayList<String>();
-        		tableColHeaders.add("Value");
-        		ArrayList<List<String>> tableRowLists = new ArrayList<List<String>>();
-    			this.currentMultipleFieldValue = new FieldValue(this.idmlId, getFormScreenId(), tableRowLists);    			
-    		}    		
-    		ApplicationManager.formScreensMap.put(getFormScreenId(), this);
+    		this.parentEntity = this.findParentEntity(this.getFormScreenId());
+    		this.parentEntityMultiple = this.findParentEntity(this.parentFormScreenId);
         } catch (Exception e){
     		RunnableHandler.reportException(e,getResources().getString(R.string.app_name),TAG+":onCreate",
     				Environment.getExternalStorageDirectory().toString()
@@ -147,13 +115,6 @@ public class FormScreen extends BaseActivity implements OnClickListener, TextWat
 		Log.i(getResources().getString(R.string.app_name),TAG+":onResume");
 		try{
 			String loadedValue = "";
-			if (ApplicationManager.fieldValueToPass!=null){
-				for (int i=0;i<ApplicationManager.fieldValueToPass.size();i++){
-					Log.e("savedFieldVALUE"+i,"=="+ApplicationManager.fieldValueToPass.getValue(i));					
-				}
-				this.currentNode.addFieldValue(ApplicationManager.fieldValueToPass);
-				ApplicationManager.fieldValueToPass = null;	
-			}
 
     		ArrayList<String> tableColHeaders = new ArrayList<String>();
     		tableColHeaders.add("Value");
@@ -170,555 +131,219 @@ public class FormScreen extends BaseActivity implements OnClickListener, TextWat
         		this.ll.addView(breadcrumb);
     		}    		
     		
-    		int fieldsNo = startingIntent.getExtras().size()-1;
-    		for (int i=0;i<fieldsNo;i++){
-    			NodeDefinition nodeDef = ApplicationManager.getNodeDefinition(startingIntent.getIntExtra(getResources().getString(R.string.attributeId)+i, -1));
-    			if ((nodeDef instanceof EntityDefinition)/*&&(nodeDef.isMultiple())*/){
-    				//Log.e("rotoEntity"+ApplicationManager.currentRecord.getRootEntity().getId(),"nodeDef"+nodeDef.getId());
+    		
+    		for (int i=0;i<this.fieldsNo;i++){
+    			NodeDefinition nodeDef = ApplicationManager.getNodeDefinition(this.startingIntent.getIntExtra(getResources().getString(R.string.attributeId)+i, -1));
+    			if (nodeDef instanceof EntityDefinition){
+    				//Entity parentEntity = ApplicationManager.currentRecord.getRootEntity();
     				if (ApplicationManager.currentRecord.getRootEntity().getId()!=nodeDef.getId()){
-    					/*Log.e("ENTITY","==="+nodeDef.getName()+"===");
-    					Log.e("parent=="+nodeDef.getParentDefinition().getName(),"path=="+nodeDef.getPath());    					
-    					Log.e("parentId"+parentFormScreenId,"screenId=="+this.getFormScreenId());
-    					Log.e("search params",nodeDef.getName()+"=="+this.currInstanceNo);*/
-    					Entity parentEntity = ApplicationManager.currentRecord.getRootEntity();
-    					String path = this.getFormScreenId();
-    					String[] entityPath = path.split(getResources().getString(R.string.valuesSeparator2));
-    					
-    					for (int m=2;m<entityPath.length;m++){
-    						String[] instancePath = entityPath[m].split(getResources().getString(R.string.valuesSeparator1));
-    						int id = Integer.valueOf(instancePath[0]);
-    						int instanceNo = Integer.valueOf(instancePath[1]);
-    						parentEntity = (Entity) parentEntity.get(ApplicationManager.getSurvey().getSchema().getDefinitionById(id).getName(), instanceNo);    						
-    					}
-    					//Log.e("PARENTentity","=="+parentEntity.getName());
-        				Node<?> foundNode = parentEntity.get(nodeDef.getName(), this.currInstanceNo);
-        				//Log.e("ENTITY FOUND?","=="+(otrzymanyNode!=null));
+    					this.parentEntity = this.findParentEntity(this.getFormScreenId());
+
+        				Node<?> foundNode = this.parentEntity.get(nodeDef.getName(), this.currInstanceNo);
         				if (foundNode!=null){
-        					//Log.e("nazwaOtrzymana","=="+foundNode.getName());
         				} else {
-        					//Log.e("adding entity", nodeDef.getName()+"("+nodeDef.getId()+") to record"+ApplicationManager.currentRecord.getId());
-        					Entity addedEntity = EntityBuilder.addEntity(parentEntity, ApplicationManager.getSurvey().getSchema().getDefinitionById(nodeDef.getId()).getName());
-        					addedEntity.setId(nodeDef.getId());
-        					//Log.e("added ntity ID","=="+addedEntity.getId());
-        					parentEntity.add(addedEntity);        					
+        					EntityBuilder.addEntity(this.parentEntity, ApplicationManager.getSurvey().getSchema().getDefinitionById(nodeDef.getId()).getName());
         				}
     				}
-
-    				EntityDefinition entityDef = (EntityDefinition)nodeDef;    				
-    				/*int entityCardinality = 1;
-					ArrayList<List<String>> keysLists = new ArrayList<List<String>>();
-    				ArrayList<List<String>> detailsLists = new ArrayList<List<String>>();
-    				for (int j=0;j<entityCardinality;j++){
-        				ArrayList<String> keysList = new ArrayList<String>();
-        				List<NodeDefinition> fieldsList = entityDef.getChildDefinitions();  
-        				List<AttributeDefinition> attrDefsList = entityDef.getKeyAttributeDefinitions();
-        				//Log.e("#entityKeysNo","=="+attrDefsList.size());
-        				if (getFormScreenId()!=null){
-        					//Log.e("getFormScreenId()","=="+getFormScreenId());
-        					for (AttributeDefinition attrDef : attrDefsList){
-            					//Log.e("keyAttr"+attrDef.getName(),attrDef.getId()+"=="+attrDef.getName());
-            					DataTreeNode currTreeNode = ApplicationManager.valuesTree.getChild(getFormScreenId()+getResources().getString(R.string.valuesSeparator2)+entityDef.getId()+getResources().getString(R.string.valuesSeparator1)+j);
-                				//Log.e("currFormScreenId","=="+getFormScreenId()+getResources().getString(R.string.valuesSeparator2)+entityDef.getId()+getResources().getString(R.string.valuesSeparator1)+j);
-            					if (currTreeNode!=null)
-            						keysList.add(attrDef.getName()+getResources().getString(R.string.valuesEqualsTo)+currTreeNode.getFieldValue(attrDef.getId()).getValue(0).get(0));
-            					else 
-            						keysList.add(attrDef.getName()+"");
-            				}
-            				keysLists.add(keysList);
-            				
-            				ArrayList<String> detailsList = new ArrayList<String>();
-            				  				
-            				for (NodeDefinition childDef : fieldsList){
-            					if (childDef instanceof EntityDefinition){
-            						detailsList.add(childDef.getName()+getResources().getString(R.string.entityMarker));
-            					} else {
-            						DataTreeNode currTreeNode = ApplicationManager.valuesTree.getChild(getFormScreenId()+getResources().getString(R.string.valuesSeparator2)+entityDef.getId()+getResources().getString(R.string.valuesSeparator1)+j);
-                					if (currTreeNode!=null){
-                						FieldValue tempFieldValue = currTreeNode.getFieldValue(childDef.getId());
-                						if (tempFieldValue!=null){
-                							detailsList.add(tempFieldValue.getValue(0).get(0));
-                						} else {
-                							detailsList.add("");
-                						}
-                					}
-                					else 
-                						detailsList.add("");
-            						
-            					}
-            					
-            				}
-            				detailsLists.add(detailsList);
+    				
+    				EntityDefinition entityDef = (EntityDefinition)nodeDef;
+    				if (ApplicationManager.currentRecord.getRootEntity().getId()!=nodeDef.getId()){    					
+        				//Log.e("multipleENTITY"+parentEntity.getName(),parentEntity.getIndex()+""+entityDef.getName()+parentEntity.getCount(entityDef.getName()));
+        				for (int e=0;e<this.parentEntity.getCount(entityDef.getName());e++){
+        					SummaryList summaryListView = new SummaryList(this, entityDef, calcNoOfCharsFitInOneLine(),
+            						this,e);
+            				summaryListView.setOnClickListener(this);
+            				summaryListView.setId(nodeDef.getId());
+            				this.ll.addView(summaryListView);	
         				}
-    				}*/
-    				/*String label = entityDef.getLabel(Type.INSTANCE, null);
-    				if (label==null){
-    					if (entityDef.getLabels().size()>0)
-    						label = entityDef.getLabels().get(0).getText();
-    				}*/
-    				SummaryList summaryListView = new SummaryList(this, entityDef, calcNoOfCharsFitInOneLine(),
-    						/*label,keysLists,detailsLists,*/
-    						this,0);
-    				summaryListView.setOnClickListener(this);
-    				summaryListView.setId(nodeDef.getId());
-    				this.ll.addView(summaryListView);
+    				} else {
+    					SummaryList summaryListView = new SummaryList(this, entityDef, calcNoOfCharsFitInOneLine(),
+        						this,0);
+        				summaryListView.setOnClickListener(this);
+        				summaryListView.setId(nodeDef.getId());
+        				this.ll.addView(summaryListView);
+    				}    				  				
     			} else {
-					/*Log.e("ENTITY","==="+nodeDef.getName()+"===");
-					Log.e("parent=="+nodeDef.getParentDefinition().getName(),"path=="+nodeDef.getPath());    					
-					Log.e("parentId"+parentFormScreenId,"screenId=="+this.getFormScreenId());
-					Log.e("search params",nodeDef.getName()+"=="+this.currInstanceNo);*/
-					Entity parentEntity = ApplicationManager.currentRecord.getRootEntity();
+					/*Entity parentEntity = ApplicationManager.currentRecord.getRootEntity();
 					String screenPath = this.getFormScreenId();
 					String[] entityPath = screenPath.split(getResources().getString(R.string.valuesSeparator2));
 					int pathLength = entityPath.length;
-					/*if (nodeDef!=null)
-						if (nodeDef.isMultiple()){
-							pathLength--;
-						}*/
+					if (this.intentType==getResources().getInteger(R.integer.multipleAttributeIntent)){
+						pathLength--;
+					}
 					for (int m=2;m<pathLength;m++){
 						String[] instancePath = entityPath[m].split(getResources().getString(R.string.valuesSeparator1));
 						int id = Integer.valueOf(instancePath[0]);
 						int instanceNo = Integer.valueOf(instancePath[1]);
 						parentEntity = (Entity) parentEntity.get(ApplicationManager.getSurvey().getSchema().getDefinitionById(id).getName(), instanceNo);
-						//Log.e("parenEntity"+parentEntity.getName(),parentEntity.getIndex()+"=="+parentEntity.getId());
+						if (parentEntity!=null){
+							Log.e("formScreenParentEnt",parentEntity.getName()+id+"=="+instanceNo);
+						} else{
+							Log.e("formScreenParentEnt","NULL");
+						}
 						parentEntity.setId(id);
-					}
+					}*/
 					
 					if (nodeDef instanceof TextAttributeDefinition){
-	    				loadedValue = "";
-						//Log.e("PARENTentity","=="+parentEntity.getName());
-	    				Node<?> foundNode = parentEntity.get(nodeDef.getName(), this.currInstanceNo);
-	    				//Log.e("TEXT NODE FOUND?","=="+(foundNode!=null));
-	    				if (foundNode!=null){
-	    					TextValue textValue = (TextValue)parentEntity.getValue(nodeDef.getName(), this.currInstanceNo);
-	    					loadedValue = textValue.getValue();
-	    					//Log.e("wczytanaWARTOSC",nodeDef.getName()+"=="+loadedValue);
-	    					EntityBuilder.addValue(parentEntity, nodeDef.getName(), loadedValue, 0);
-	    				} else {
-	    					//Log.e("adding entity", nodeDef.getName()+"to record"+ApplicationManager.currentRecord.getId());
-	    					//parentEntity.add(EntityBuilder.addEntity(parentEntity, ApplicationManager.getSurvey().getSchema().getDefinitionById(nodeDef.getId()).getName()));
-	    					EntityBuilder.addValue(parentEntity, nodeDef.getName(), loadedValue, 0);
-	    				}
-	    				/*loadedValue = "";
-	    				if (ApplicationManager.currentRecord.getId()!=null){
-	    					//Log.e("breadcrumb","=="+this.getFormScreenId());
-	    					Entity rootEntity = ApplicationManager.currentRecord.getRootEntity();
-	    					String[] path = this.getFormScreenId().split(";");
-	    					Entity currentEntity = rootEntity;
-	    					for (int p=2;p<path.length;p++){
-	    						String[] elementId = path[p].split(",");
-	    						int elementIdmlId = Integer.valueOf(elementId[0]);
-	    						int elementInstanceNo = Integer.valueOf(elementId[1]);
-	    						//Log.e("getEntityparams",ApplicationManager.getSurvey().getSchema().getDefinitionById(elementIdmlId).getName()+"=="+elementInstanceNo);
-	    						if (currentEntity!=null)
-	    							currentEntity = (Entity) currentEntity.get(ApplicationManager.getSurvey().getSchema().getDefinitionById(elementIdmlId).getName(), elementInstanceNo);
-	    						//Log.e("p=="+p,"currentEntity==Null"+(currentEntity==null));
-	    					}
-	    					if (currentEntity!=null){
-	    						TextValue textValue = (TextValue)currentEntity.getValue(nodeDef.getName(), this.currInstanceNo);
-	        					if (textValue!=null){
-	        						loadedValue = textValue.getValue();
-	        						//Log.e(nodeDef.getName()+"value",this.currInstanceNo+"=="+textValue.getValue());
-	        					}   	
-	    					}    					 						
-	    				}*/
-	    				if (((TextAttributeDefinition) nodeDef).getType().toString().toLowerCase().equals("short")){
-	    					if (!nodeDef.isMultiple()){
-	            				int numberOfInstances = startingIntent.getIntExtra(getResources().getString(R.string.numberOfInstances), -1);
-//	            				Log.e("ILOSC INSTANCJI","=="+numberOfInstances);
-	            				FieldValue tempFieldValue = new FieldValue(nodeDef.getId(),getFormScreenId(),null);
-	            				if (numberOfInstances!=-1){
-	            					ArrayList<String> instanceValues = new ArrayList<String>();
-	                				//Log.e("numberOFinstances","=="+numberOfInstances);
-	                				//for (int k=0;k<numberOfInstances;k++){
-	            					instanceValues = startingIntent.getStringArrayListExtra(getResources().getString(R.string.instanceValues)+0);
-	            					tempFieldValue.addValue(instanceValues);
-	                				//Log.e("dodanowartosc","=="+instanceValues.get(1));
-	                				//}	
-	            				}
-	            				else {
-	            					ArrayList<String> instanceValues = new ArrayList<String>();
-	            					instanceValues.add(loadedValue);
-	            					tempFieldValue.addValue(instanceValues);
-	            				}
-	            				
-	            				final TextField textField= new TextField(this, nodeDef, tempFieldValue);
-	            				textField.setOnClickListener(this);
-	            				textField.setId(nodeDef.getId());
-	            				//textField.txtBox.addTextChangedListener(this);
-	            				textField.setValue(0, tempFieldValue.getValue(0).get(0), this.getFormScreenId(),false);
-	            				FormScreen.currentFieldValue = this.currentNode.getFieldValue(nodeDef.getId());
-	            				//Log.e("FormScreen.currentFieldValue==null",nodeDef.getId()+"=="+(FormScreen.currentFieldValue==null));
-	            				//ApplicationManager.valuesTree.printTree();
-	            				if (FormScreen.currentFieldValue==null){
-	            					ArrayList<String> initialValue = new ArrayList<String>();
-	            					initialValue.add(textField.getValue(0));
-	            					FormScreen.currentFieldValue = new FieldValue(nodeDef.getId(),getFormScreenId(),null);
-	            					FormScreen.currentFieldValue.addValue(initialValue);
-	            					this.currentNode.addFieldValue(FormScreen.currentFieldValue);        		
-	            				} else {
-	            					//Log.e("wczytanaWARTOSC","=="+FormScreen.currentFieldValue.getValue(0).get(0));
-	            					textField.setValue(0, FormScreen.currentFieldValue.getValue(0).get(0), this.getFormScreenId(),false);       
-	            				}
-	            				textField.addTextChangedListener(new TextWatcher(){
-	            			        public void afterTextChanged(Editable s) {
-	            			            //Log.e("s","=="+s.toString());
-	            			            ArrayList<String> value = new ArrayList<String>();
-	            			            value.add(s.toString());
-	            			            FormScreen.currentFieldValue.setValue(0, value);
-	            			            
-	            			            textField.setValue(0, s.toString(), FormScreen.this.getFormScreenId(),true);
-	            			            
-	            			            FormScreen.this.currentNode.addFieldValue(FormScreen.currentFieldValue);  
-	            			            //Log.e("changed",FormScreen.currentFieldValue.getId()+"ValueOFsingleField=="+FormScreen.currentFieldValue.getValue(0).get(0));
-	            			        }
-	            			        public void beforeTextChanged(CharSequence s, int start, int count, int after){}
-	            			        public void onTextChanged(CharSequence s, int start, int before, int count){}
-	            			    });
-	            				this.ll.addView(textField);
-	            				//this.currentNode.addFieldValue(tempFieldValue);
-	            	    		//Log.e("iloscPOLzWARTOSCIA","=="+this.currentNode.getFieldsNo());       				
-	        				} else if (this.intentType==getResources().getInteger(R.integer.multipleAttributeIntent)){    					
-	            				int numberOfInstances = startingIntent.getIntExtra(getResources().getString(R.string.numberOfInstances), -1);
-	            				this.currentMultipleFieldValue = new FieldValue(nodeDef.getId(), getFormScreenId(),null);
-	            				ArrayList<String> instanceValues = new ArrayList<String>();
-	            				//Log.e("numberOFinstances","=="+numberOfInstances);
-	            				for (int k=0;k<numberOfInstances;k++){
-	            					instanceValues = startingIntent.getStringArrayListExtra(getResources().getString(R.string.instanceValues)+k);
-	            					this.currentMultipleFieldValue.addValue(instanceValues);
-	            					//Log.e("dodanowartosc","=="+instanceValues.get(1));
-	            				}
+	    				loadedValue = "";	    				
 
-	            				TextField textField= new TextField(this, nodeDef, this.currentMultipleFieldValue);
-	            				textField.setOnClickListener(this);
-	            				textField.setId(nodeDef.getId());
-	            				textField.txtBox.addTextChangedListener(this);
-	            				//Log.e("TEXTvalues.size",this.currInstanceNo+"=="+this.currentMultipleFieldValue.getValue(this.currInstanceNo).get(0));
-	            				if (this.currentMultipleFieldValue.size()>this.currInstanceNo){
-	            					if (foundNode!=null){
-	                					TextValue textValue = (TextValue)parentEntity.getValue(nodeDef.getName(), this.currInstanceNo);
-	                					loadedValue = textValue.getValue();
-	                					Log.e("wczytanaWARTOSCmulti",nodeDef.getName()+"=="+loadedValue);
-	                					EntityBuilder.addValue(parentEntity, nodeDef.getName(), loadedValue);
-	                				}
-	            					textField.setValue(this.currInstanceNo, loadedValue/*this.currentMultipleFieldValue.getValue(this.currInstanceNo).get(0)*/, this.getFormScreenId(),false);	
-	            				}			
-	            				this.ll.addView(textField);
-	        				} else {/*
-	        					FieldValue fieldValueToBeRestored = this.currentNode.getFieldValue(nodeDef.getId());
-	        					//Log.e("fieldValueToBeRestored!=null",this.currentNode.getNodeValues().size()+"=="+(fieldValueToBeRestored!=null));
-	        					if (fieldValueToBeRestored!=null){
-	        						Log.e("POWROT","z MULTIPLE FIELD");
-	        						SummaryTable summaryTableView = new SummaryTable(this, nodeDef, tableColHeaders, parentEntity/*fieldValueToBeRestored.getValues(), this);
-	            					summaryTableView.setOnClickListener(this);
-	                				summaryTableView.setId(nodeDef.getId());
-	                				this.ll.addView(summaryTableView);
-	        					} else{
-	        						Log.e("PIERWSZE","OTWARCIE");
-	        			    		ArrayList<List<String>> tableValuesLists = new ArrayList<List<String>>();
-	        			    		ArrayList<String> valueRow1 = new ArrayList<String>();
-	        			    		//row1.add("1");
-	        			    		valueRow1.add("");
-	        			    		tableValuesLists.add(valueRow1);        			    		
-	        						SummaryTable summaryTableView = new SummaryTable(this, nodeDef, tableColHeaders, parentEntity/*tableValuesLists, this);
-	            					summaryTableView.setOnClickListener(this);
-	                				summaryTableView.setId(nodeDef.getId());
-	                				this.ll.addView(summaryTableView);
-	        					}		*/	
+	    				if (((TextAttributeDefinition) nodeDef).getType().toString().toLowerCase().equals("short")){
+		    				if (!nodeDef.isMultiple()){
+		    					Node<?> foundNode = this.parentEntity.get(nodeDef.getName(), 0);
+			    				if (foundNode!=null){
+			    					TextValue textValue = (TextValue)this.parentEntity.getValue(nodeDef.getName(), 0);
+			    					if (textValue!=null)
+			    						loadedValue = textValue.getValue();	    				
+			    				}
+		        				final TextField textField= new TextField(this, nodeDef);
+		        				textField.setOnClickListener(this);
+		        				textField.setId(nodeDef.getId());
+		        				textField.setValue(0, loadedValue, FormScreen.this.getFormScreenId(),false);
+		        				textField.addTextChangedListener(new TextWatcher(){
+		        			        public void afterTextChanged(Editable s) {        			            
+		        			        	textField.setValue(0, s.toString(), FormScreen.this.getFormScreenId(),true);
+		        			        }
+		        			        public void beforeTextChanged(CharSequence s, int start, int count, int after){}
+		        			        public void onTextChanged(CharSequence s, int start, int before, int count){}
+		        			    });
+		        				ApplicationManager.putUIElement(textField.getId(), textField);
+		        				this.ll.addView(textField);
+		    				} else if (this.intentType==getResources().getInteger(R.integer.multipleAttributeIntent)){
+		    					Node<?> foundNode = this.parentEntityMultiple.get(nodeDef.getName(), this.currInstanceNo);
+			    				if (foundNode!=null){
+			    					TextValue textValue = (TextValue)this.parentEntityMultiple.getValue(nodeDef.getName(), this.currInstanceNo);
+			    					if (textValue!=null)
+			    						loadedValue = textValue.getValue();	    				
+			    				}
+		        				final TextField textField= new TextField(this, nodeDef);
+		        				textField.setOnClickListener(this);
+		        				textField.setId(nodeDef.getId());
+		        				textField.setValue(this.currInstanceNo, loadedValue, this.parentFormScreenId,false);
+		        				textField.addTextChangedListener(new TextWatcher(){
+		        			        public void afterTextChanged(Editable s) {        			            
+		        			        	textField.setValue(FormScreen.this.currInstanceNo, s.toString(), FormScreen.this.parentFormScreenId,true);
+		        			        }
+		        			        public void beforeTextChanged(CharSequence s, int start, int count, int after){}
+		        			        public void onTextChanged(CharSequence s, int start, int before, int count){}
+		        			    });
+		        				ApplicationManager.putUIElement(textField.getId(), textField);
+		        				this.ll.addView(textField);
+		    				} else {//multiple attribute summary    			    		
+        						SummaryTable summaryTableView = new SummaryTable(this, nodeDef, tableColHeaders, parentEntity, this);
+            					summaryTableView.setOnClickListener(this);
+                				summaryTableView.setId(nodeDef.getId());
+                				this.ll.addView(summaryTableView);
 	        				}
 	    				} else {//memo field
-	        				loadedValue = "";
-	    					//Log.e("PARENTentity","=="+parentEntity.getName());
-	    					foundNode = null;
-	        				foundNode = parentEntity.get(nodeDef.getName(), this.currInstanceNo);
-	        				//Log.e("TEXT NODE FOUND?","=="+(foundNode!=null));
-	        				if (foundNode!=null){
-	        					TextValue textValue = (TextValue)parentEntity.getValue(nodeDef.getName(), this.currInstanceNo);
-	        					loadedValue = textValue.getValue();
-	        					//Log.e("wczytanaWARTOSC",nodeDef.getName()+"=="+loadedValue);
-	        					EntityBuilder.addValue(parentEntity, nodeDef.getName(), loadedValue, 0);
-	        				} else {
-	        					//Log.e("adding entity", nodeDef.getName()+"to record"+ApplicationManager.currentRecord.getId());
-	        					//parentEntity.add(EntityBuilder.addEntity(parentEntity, ApplicationManager.getSurvey().getSchema().getDefinitionById(nodeDef.getId()).getName()));
-	        					EntityBuilder.addValue(parentEntity, nodeDef.getName(), loadedValue, 0);
-	        				}
 	    					if (!nodeDef.isMultiple()){
-	            				int numberOfInstances = startingIntent.getIntExtra(getResources().getString(R.string.numberOfInstances), -1);
-//	            				Log.e("ILOSC INSTANCJI","=="+numberOfInstances);
-	            				FieldValue tempFieldValue = new FieldValue(nodeDef.getId(),getFormScreenId(),null);
-	            				if (numberOfInstances!=-1){
-	            					ArrayList<String> instanceValues = new ArrayList<String>();
-	                				//Log.e("numberOFinstances","=="+numberOfInstances);
-	                				//for (int k=0;k<numberOfInstances;k++){
-	            					instanceValues = startingIntent.getStringArrayListExtra(getResources().getString(R.string.instanceValues)+0);
-	            					tempFieldValue.addValue(instanceValues);
-	                				//Log.e("dodanowartosc","=="+instanceValues.get(1));
-	                				//}	
-	            				}
-	            				else {
-	            					ArrayList<String> instanceValues = new ArrayList<String>();
-	            					instanceValues.add(loadedValue);
-	            					tempFieldValue.addValue(instanceValues);
-	            				}
-	            				
-	            				final MemoField memoField= new MemoField(this, nodeDef, tempFieldValue);
-	            				memoField.setOnClickListener(this);
-	            				memoField.setId(nodeDef.getId());
-	            				//textField.txtBox.addTextChangedListener(this);
-	            				memoField.setValue(0, tempFieldValue.getValue(0).get(0), this.getFormScreenId(), false);
-	            				FormScreen.currentFieldValue = this.currentNode.getFieldValue(nodeDef.getId());
-	            				//Log.e("FormScreen.currentFieldValue==null",nodeDef.getId()+"=="+(FormScreen.currentFieldValue==null));
-	            				if (FormScreen.currentFieldValue==null){
-	            					ArrayList<String> initialValue = new ArrayList<String>();
-	            					initialValue.add(memoField.getValue(0));
-	            					FormScreen.currentFieldValue = new FieldValue(nodeDef.getId(),getFormScreenId(),null);
-	            					FormScreen.currentFieldValue.addValue(initialValue);
-	            					this.currentNode.addFieldValue(FormScreen.currentFieldValue);        		
-	            				} else {
-	            					//Log.e("wczytanaWARTOSC","=="+FormScreen.currentFieldValue.getValue(0).get(0));
-	            					memoField.setValue(0, FormScreen.currentFieldValue.getValue(0).get(0), this.getFormScreenId(), false);       
-	            				}
-	            				memoField.addTextChangedListener(new TextWatcher(){
-	            			        public void afterTextChanged(Editable s) {
-	            			            //Log.e("s","=="+s.toString());
-	            			            ArrayList<String> value = new ArrayList<String>();
-	            			            value.add(s.toString());
-	            			            FormScreen.currentFieldValue.setValue(0, value);
-	            			            FormScreen.this.currentNode.addFieldValue(FormScreen.currentFieldValue);
-	            			            memoField.setValue(0, s.toString(), FormScreen.this.getFormScreenId(),true);
-	            			            //Log.e("changed",FormScreen.currentFieldValue.getId()+"ValueOFsingleField=="+FormScreen.currentFieldValue.getValue(0).get(0));
-	            			        }
-	            			        public void beforeTextChanged(CharSequence s, int start, int count, int after){}
-	            			        public void onTextChanged(CharSequence s, int start, int before, int count){}
-	            			    });
-	            				this.ll.addView(memoField);
-	            				//this.currentNode.addFieldValue(tempFieldValue);
-	            	    		//Log.e("iloscPOLzWARTOSCIA","=="+this.currentNode.getFieldsNo());       				
-	        				} else if (this.intentType==getResources().getInteger(R.integer.multipleAttributeIntent)){    					
-	            				int numberOfInstances = startingIntent.getIntExtra(getResources().getString(R.string.numberOfInstances), -1);
-	            				this.currentMultipleFieldValue = new FieldValue(nodeDef.getId(), getFormScreenId(),null);
-	            				ArrayList<String> instanceValues = new ArrayList<String>();
-	            				//Log.e("numberOFinstances","=="+numberOfInstances);
-	            				for (int k=0;k<numberOfInstances;k++){
-	            					instanceValues = startingIntent.getStringArrayListExtra(getResources().getString(R.string.instanceValues)+k);
-	            					this.currentMultipleFieldValue.addValue(instanceValues);
-	            					//Log.e("dodanowartosc","=="+instanceValues.get(1));
-	            				}
-
-	            				MemoField memoField= new MemoField(this, nodeDef, this.currentMultipleFieldValue);
-	            				memoField.setOnClickListener(this);
-	            				memoField.setId(nodeDef.getId());
-	            				memoField.txtBox.addTextChangedListener(this);
-	            				//Log.e("TEXTvalues.size",this.currInstanceNo+"=="+this.currentMultipleFieldValue.getValue(this.currInstanceNo).get(0));
-	            				if (this.currentMultipleFieldValue.size()>this.currInstanceNo){
-	            					memoField.setValue(this.currInstanceNo, this.currentMultipleFieldValue.getValue(this.currInstanceNo).get(0), this.getFormScreenId(), false);	
-	            				}			
-	            				this.ll.addView(memoField);
-	        				} else {/*
-	        					FieldValue fieldValueToBeRestored = this.currentNode.getFieldValue(nodeDef.getId());
-	        					//Log.e("fieldValueToBeRestored!=null",this.currentNode.getNodeValues().size()+"=="+(fieldValueToBeRestored!=null));
-	        					if (fieldValueToBeRestored!=null){
-	        						//Log.e("POWROT","z MULTIPLE FIELD");
-	        						SummaryTable summaryTableView = new SummaryTable(this, nodeDef, tableColHeaders, fieldValueToBeRestored.getValues(), this);
-	            					summaryTableView.setOnClickListener(this);
-	                				summaryTableView.setId(nodeDef.getId());
-	                				this.ll.addView(summaryTableView);
-	        					} else{
-	        						//Log.e("PIERWSZE","OTWARCIE");
-	        			    		ArrayList<List<String>> tableValuesLists = new ArrayList<List<String>>();
-	        			    		ArrayList<String> valueRow1 = new ArrayList<String>();
-	        			    		//row1.add("1");
-	        			    		valueRow1.add("");
-	        			    		tableValuesLists.add(valueRow1);
-	        						SummaryTable summaryTableView = new SummaryTable(this, nodeDef, tableColHeaders, tableValuesLists, this);
-	            					summaryTableView.setOnClickListener(this);
-	                				summaryTableView.setId(nodeDef.getId());
-	                				this.ll.addView(summaryTableView);
-	        					}	*/		
+		    					Node<?> foundNode = this.parentEntity.get(nodeDef.getName(), 0);
+			    				if (foundNode!=null){
+			    					TextValue textValue = (TextValue)this.parentEntity.getValue(nodeDef.getName(), 0);
+			    					if (textValue!=null)
+			    						loadedValue = textValue.getValue();	    				
+			    				}
+		        				final MemoField memoField= new MemoField(this, nodeDef);
+		        				memoField.setOnClickListener(this);
+		        				memoField.setId(nodeDef.getId());
+		        				memoField.setValue(0, loadedValue, FormScreen.this.getFormScreenId(),false);
+		        				memoField.addTextChangedListener(new TextWatcher(){
+		        			        public void afterTextChanged(Editable s) {        			            
+		        			        	memoField.setValue(0, s.toString(), FormScreen.this.getFormScreenId(),true);
+		        			        }
+		        			        public void beforeTextChanged(CharSequence s, int start, int count, int after){}
+		        			        public void onTextChanged(CharSequence s, int start, int before, int count){}
+		        			    });
+		        				ApplicationManager.putUIElement(memoField.getId(), memoField);
+		        				this.ll.addView(memoField);
+		    				} else if (this.intentType==getResources().getInteger(R.integer.multipleAttributeIntent)){
+		    					Node<?> foundNode = this.parentEntityMultiple.get(nodeDef.getName(), this.currInstanceNo);
+			    				if (foundNode!=null){
+			    					TextValue textValue = (TextValue)this.parentEntityMultiple.getValue(nodeDef.getName(), this.currInstanceNo);
+			    					if (textValue!=null)
+			    						loadedValue = textValue.getValue();	    				
+			    				}
+		        				final MemoField memoField= new MemoField(this, nodeDef);
+		        				memoField.setOnClickListener(this);
+		        				memoField.setId(nodeDef.getId());
+		        				memoField.setValue(this.currInstanceNo, loadedValue, this.parentFormScreenId,false);
+		        				memoField.addTextChangedListener(new TextWatcher(){
+		        			        public void afterTextChanged(Editable s) {        			            
+		        			        	memoField.setValue(FormScreen.this.currInstanceNo, s.toString(), FormScreen.this.parentFormScreenId,true);
+		        			        }
+		        			        public void beforeTextChanged(CharSequence s, int start, int count, int after){}
+		        			        public void onTextChanged(CharSequence s, int start, int before, int count){}
+		        			    });
+		        				ApplicationManager.putUIElement(memoField.getId(), memoField);
+		        				this.ll.addView(memoField);
+		    				} else {//multiple attribute summary    			    		
+        						SummaryTable summaryTableView = new SummaryTable(this, nodeDef, tableColHeaders, parentEntity, this);
+            					summaryTableView.setOnClickListener(this);
+                				summaryTableView.setId(nodeDef.getId());
+                				this.ll.addView(summaryTableView);
 	        				}
-	    				}    				
-	    			} else if (nodeDef instanceof NumberAttributeDefinition){
-	    				loadedValue = null;
-						//Log.e("PARENTentity","=="+parentEntity.getName());
-	    				Node<?> foundNode = parentEntity.get(nodeDef.getName(), this.currInstanceNo);
-	    				//Log.e("TEXT NODE FOUND?","=="+(foundNode!=null));
-	    				if (foundNode!=null){
-	    					NumberValue numberValue = (NumberValue)parentEntity.getValue(nodeDef.getName(), this.currInstanceNo);
-        					if (numberValue!=null){
-        						if (((NumberAttributeDefinition) nodeDef).isInteger()){
-        							loadedValue = String.valueOf(numberValue.getValue().intValue());	
-        						} else {
-        							loadedValue = String.valueOf(numberValue.getValue().doubleValue());
-        						}
-        					}
-	    					//Log.e("wczytanaWARTOSC",nodeDef.getName()+"=="+loadedValue);
-        					try{
-        						if (((NumberAttributeDefinition) nodeDef).isInteger()){
-    	    						EntityBuilder.addValue(parentEntity, nodeDef.getName(), new Integer(""), 0);
-    	    					} else {
-    	    						EntityBuilder.addValue(parentEntity, nodeDef.getName(), new Double(""), 0);	
-    	    					}
-        					} catch (Exception e){
-        						
-        					}
-	    				} else {
-	    					//Log.e("adding entity", nodeDef.getName()+"to record"+ApplicationManager.currentRecord.getId());
-	    					//parentEntity.add(EntityBuilder.addEntity(parentEntity, ApplicationManager.getSurvey().getSchema().getDefinitionById(nodeDef.getId()).getName()));
-    						/*if (((NumberAttributeDefinition) nodeDef).isInteger()){
-	    						EntityBuilder.addValue(parentEntity, nodeDef.getName(), new Integer(""), 0);
-	    					} else {
-	    						EntityBuilder.addValue(parentEntity, nodeDef.getName(), new Double(""), 0);	
-	    					}*/
-	    				}
-	    				/*if (ApplicationManager.currentRecord.getId()!=null){
-	    					//Log.e("breadcrumb","=="+this.getFormScreenId());
-	    					Entity rootEntity = ApplicationManager.currentRecord.getRootEntity();
-	    					String[] path = this.getFormScreenId().split(";");
-	    					Entity currentEntity = rootEntity;
-	    					for (int p=2;p<path.length;p++){
-	    						String[] elementId = path[p].split(",");
-	    						int elementIdmlId = Integer.valueOf(elementId[0]);
-	    						int elementInstanceNo = Integer.valueOf(elementId[1]);
-	    						//Log.e("getEntityparams",ApplicationManager.getSurvey().getSchema().getDefinitionById(elementIdmlId).getName()+"=="+elementInstanceNo);
-	    						if (currentEntity!=null)
-	    							currentEntity = (Entity) currentEntity.get(ApplicationManager.getSurvey().getSchema().getDefinitionById(elementIdmlId).getName(), elementInstanceNo);
-	    						//Log.e("p=="+p,"currentEntity==Null"+(currentEntity==null));
-	    						
-	    					}
-	    					if (currentEntity!=null){    						
-	    						NumberValue numberValue = (NumberValue)currentEntity.getValue(nodeDef.getName(), this.currInstanceNo);
-	        					if (numberValue!=null){
-	        						if (((NumberAttributeDefinition) nodeDef).isInteger()){
-	        							loadedValue = String.valueOf(numberValue.getValue().intValue());	
-	        						} else {
-	        							loadedValue = String.valueOf(numberValue.getValue().doubleValue());
-	        						}
-	        					}   	
-	    					} 					 						
-	    				}*/
+	    				}	
+	    			} else if (nodeDef instanceof NumericAttributeDefinition){
+	    				loadedValue = "";
 	    				if (!nodeDef.isMultiple()){
-	        				int numberOfInstances = startingIntent.getIntExtra(getResources().getString(R.string.numberOfInstances), -1);
-//	        				Log.e("ILOSC INSTANCJI","=="+numberOfInstances);
-	        				FieldValue tempFieldValue = new FieldValue(nodeDef.getId(),getFormScreenId(),null);
-	        				if (numberOfInstances!=-1){
-	        					ArrayList<String> instanceValues = new ArrayList<String>();
-	            				//Log.e("numberOFinstances","=="+numberOfInstances);
-	            				//for (int k=0;k<numberOfInstances;k++){
-	        					instanceValues = startingIntent.getStringArrayListExtra(getResources().getString(R.string.instanceValues)+0);
-	        					tempFieldValue.addValue(instanceValues);
-	            				//Log.e("dodanowartosc","=="+instanceValues.get(1));
-	            				//}	
-	        				}
-	        				else {
-	        					ArrayList<String> instanceValues = new ArrayList<String>();
-	        					instanceValues.add(loadedValue);
-	        					tempFieldValue.addValue(instanceValues);
-	        				}
-	        				
-	        				final NumberField numberField= new NumberField(this, nodeDef, tempFieldValue);
+	    					Node<?> foundNode = this.parentEntity.get(nodeDef.getName(), 0);
+		    				if (foundNode!=null){
+		    					if (((NumberAttributeDefinition) nodeDef).isInteger()){
+		    						IntegerValue intValue = (IntegerValue)this.parentEntity.getValue(nodeDef.getName(), 0);
+		    						if (intValue!=null)
+			    						loadedValue = intValue.getValue().toString();
+		    					} else {
+		    						RealValue realValue = (RealValue)this.parentEntity.getValue(nodeDef.getName(), 0);
+		    						if (realValue!=null)
+			    						loadedValue = realValue.getValue().toString();
+		    					}
+		    				}
+	        				final NumberField numberField= new NumberField(this, nodeDef);
 	        				numberField.setOnClickListener(this);
 	        				numberField.setId(nodeDef.getId());
-	        				//textField.txtBox.addTextChangedListener(this);
-	        				numberField.setValue(0, tempFieldValue.getValue(0).get(0), this.getFormScreenId(), false);
-	        				FormScreen.currentFieldValue = this.currentNode.getFieldValue(nodeDef.getId());
-	        				//Log.e("FormScreen.currentFieldValue==null",nodeDef.getId()+"=="+(FormScreen.currentFieldValue==null));
-	        				if (FormScreen.currentFieldValue==null){
-	        					ArrayList<String> initialValue = new ArrayList<String>();
-	        					initialValue.add(numberField.getValue(0));
-	        					FormScreen.currentFieldValue = new FieldValue(nodeDef.getId(),getFormScreenId(),null);
-	        					FormScreen.currentFieldValue.addValue(initialValue);
-	        					this.currentNode.addFieldValue(FormScreen.currentFieldValue);        		
-	        				} else {
-	        					//Log.e("wczytanaWARTOSC","=="+FormScreen.currentFieldValue.getValue(0).get(0));
-	        					numberField.setValue(0, FormScreen.currentFieldValue.getValue(0).get(0), this.getFormScreenId(), false);       
-	        				}
+	        				numberField.setValue(0, loadedValue, FormScreen.this.getFormScreenId(),false);
 	        				numberField.addTextChangedListener(new TextWatcher(){
-	        			        public void afterTextChanged(Editable s) {
-	        			            //Log.e("s","=="+s.toString());
-	        			            ArrayList<String> value = new ArrayList<String>();
-	        			            value.add(s.toString());
-	        			            FormScreen.currentFieldValue.setValue(0, value);
-	        			            FormScreen.this.currentNode.addFieldValue(FormScreen.currentFieldValue);  
-	        			            
-	        			            numberField.setValue(0, s.toString(), FormScreen.this.getFormScreenId(),true);
-	        			            //Log.e("changed",FormScreen.currentFieldValue.getId()+"ValueOFsingleField=="+FormScreen.currentFieldValue.getValue(0).get(0));
+	        			        public void afterTextChanged(Editable s) {        			            
+	        			        	numberField.setValue(0, s.toString(), FormScreen.this.getFormScreenId(),true);
 	        			        }
 	        			        public void beforeTextChanged(CharSequence s, int start, int count, int after){}
 	        			        public void onTextChanged(CharSequence s, int start, int before, int count){}
 	        			    });
+	        				ApplicationManager.putUIElement(numberField.getId(), numberField);
 	        				this.ll.addView(numberField);
-	        				//this.currentNode.addFieldValue(tempFieldValue);
-	        	    		//Log.e("iloscPOLzWARTOSCIA","=="+this.currentNode.getFieldsNo());       				
-	    				} else if (this.intentType==getResources().getInteger(R.integer.multipleAttributeIntent)){    					
-	        				int numberOfInstances = startingIntent.getIntExtra(getResources().getString(R.string.numberOfInstances), -1);
-	        				this.currentMultipleFieldValue = new FieldValue(nodeDef.getId(), getFormScreenId(),null);
-	        				ArrayList<String> instanceValues = new ArrayList<String>();
-	        				//Log.e("numberOFinstances","=="+numberOfInstances);
-	        				for (int k=0;k<numberOfInstances;k++){
-	        					instanceValues = startingIntent.getStringArrayListExtra(getResources().getString(R.string.instanceValues)+k);
-	        					this.currentMultipleFieldValue.addValue(instanceValues);
-	        					//Log.e("dodanowartosc","=="+instanceValues.get(1));
-	        				}
-
-	        				NumberField numberField= new NumberField(this, nodeDef, this.currentMultipleFieldValue);
+	    				} else if (this.intentType==getResources().getInteger(R.integer.multipleAttributeIntent)){
+	    					Node<?> foundNode = this.parentEntityMultiple.get(nodeDef.getName(), this.currInstanceNo);
+		    				if (foundNode!=null){
+		    					if (((NumberAttributeDefinition) nodeDef).isInteger()){
+		    						IntegerValue intValue = (IntegerValue)this.parentEntityMultiple.getValue(nodeDef.getName(), this.currInstanceNo);
+		    						if (intValue!=null)
+			    						loadedValue = intValue.getValue().toString();
+		    					} else {
+		    						RealValue realValue = (RealValue)this.parentEntityMultiple.getValue(nodeDef.getName(), this.currInstanceNo);
+		    						if (realValue!=null)
+			    						loadedValue = realValue.getValue().toString();
+		    					}
+		    				}
+	        				final NumberField numberField= new NumberField(this, nodeDef);
 	        				numberField.setOnClickListener(this);
 	        				numberField.setId(nodeDef.getId());
-	        				numberField.txtBox.addTextChangedListener(this);
-	        				//Log.e("TEXTvalues.size",this.currInstanceNo+"=="+this.currentMultipleFieldValue.getValue(this.currInstanceNo).get(0));
-	        				if (this.currentMultipleFieldValue.size()>this.currInstanceNo){
-	        					numberField.setValue(this.currInstanceNo, this.currentMultipleFieldValue.getValue(this.currInstanceNo).get(0), this.getFormScreenId(), false);	
-	        				}			
+	        				numberField.setValue(this.currInstanceNo, loadedValue, this.parentFormScreenId,false);
+	        				numberField.addTextChangedListener(new TextWatcher(){
+	        			        public void afterTextChanged(Editable s) {        			            
+	        			        	numberField.setValue(FormScreen.this.currInstanceNo, s.toString(), FormScreen.this.parentFormScreenId,true);
+	        			        }
+	        			        public void beforeTextChanged(CharSequence s, int start, int count, int after){}
+	        			        public void onTextChanged(CharSequence s, int start, int before, int count){}
+	        			    });
+	        				ApplicationManager.putUIElement(numberField.getId(), numberField);
 	        				this.ll.addView(numberField);
-	    				} else {/*
-	    					FieldValue fieldValueToBeRestored = this.currentNode.getFieldValue(nodeDef.getId());
-	    					//Log.e("fieldValueToBeRestored!=null",this.currentNode.getNodeValues().size()+"=="+(fieldValueToBeRestored!=null));
-	    					if (fieldValueToBeRestored!=null){
-	    						//Log.e("POWROT","z MULTIPLE FIELD");
-	    						SummaryTable summaryTableView = new SummaryTable(this, nodeDef, tableColHeaders, fieldValueToBeRestored.getValues(), this);
-	        					summaryTableView.setOnClickListener(this);
-	            				summaryTableView.setId(nodeDef.getId());
-	            				this.ll.addView(summaryTableView);
-	    					} else{
-	    						//Log.e("PIERWSZE","OTWARCIE");
-	    			    		ArrayList<List<String>> tableValuesLists = new ArrayList<List<String>>();
-	    			    		ArrayList<String> valueRow1 = new ArrayList<String>();
-	    			    		//row1.add("1");
-	    			    		valueRow1.add("");
-	    			    		tableValuesLists.add(valueRow1);
-	    						SummaryTable summaryTableView = new SummaryTable(this, nodeDef, tableColHeaders, tableValuesLists, this);
-	        					summaryTableView.setOnClickListener(this);
-	            				summaryTableView.setId(nodeDef.getId());
-	            				this.ll.addView(summaryTableView);
-	    					}	*/		
-	    				}	
+	    				} else {//multiple attribute summary    			    		
+    						SummaryTable summaryTableView = new SummaryTable(this, nodeDef, tableColHeaders, parentEntity, this);
+        					summaryTableView.setOnClickListener(this);
+            				summaryTableView.setId(nodeDef.getId());
+            				this.ll.addView(summaryTableView);
+        				}
 	    			} else if (nodeDef instanceof CodeAttributeDefinition){
-	    				loadedValue = null;
-						//Log.e("PARENTentityKODU"+nodeDef.isMultiple(),nodeDef.getName()+"=="+parentEntity.getName());
-	    				Node<?> foundNode = parentEntity.get(nodeDef.getName(), this.currInstanceNo);
-	    				//Log.e("TEXT NODE FOUND?",nodeDef.getName()+"=="+(foundNode!=null));
-	    				if (foundNode!=null){
-	    					Code codeValue = (Code)parentEntity.getValue(nodeDef.getName(), this.currInstanceNo);
-	    					//Log.e("codeValue!=null","=="+(codeValue!=null));
-        					if (codeValue!=null){
-        						loadedValue = codeValue.getCode();
-        						//Log.e("wczytanaWARTOSCkodu",nodeDef.getName()+"=="+loadedValue);
-        					}
-	    					//Log.e("wczytanaWARTOSC",nodeDef.getName()+"=="+loadedValue);
-        					//try{
-        						//Log.e("dodanaWARTOSCkodu",nodeDef.getName()+"=="+loadedValue);
-    	    					EntityBuilder.addValue(parentEntity, nodeDef.getName(), new Code(loadedValue), 0);	
-        					/*} catch (Exception e){
-        						
-        					}*/
-	    				} else {
-	    					//Log.e("adding entity", nodeDef.getName()+"to record"+ApplicationManager.currentRecord.getId());
-	    					//parentEntity.add(EntityBuilder.addEntity(parentEntity, ApplicationManager.getSurvey().getSchema().getDefinitionById(nodeDef.getId()).getName()));
-    						/*if (((NumberAttributeDefinition) nodeDef).isInteger()){
-	    						EntityBuilder.addValue(parentEntity, nodeDef.getName(), new Integer(""), 0);
-	    					} else {
-	    						EntityBuilder.addValue(parentEntity, nodeDef.getName(), new Double(""), 0);	
-	    					}*/
-	    				}
-	    				
+	    				loadedValue = "";
 	    				CodeAttributeDefinition codeAttrDef = (CodeAttributeDefinition)nodeDef;
 	    				ArrayList<String> options = new ArrayList<String>();
 	    				ArrayList<String> codes = new ArrayList<String>();
@@ -731,398 +356,81 @@ public class FormScreen extends BaseActivity implements OnClickListener, TextWat
 	    				}
 	    				
 	    				if (!nodeDef.isMultiple()){
-	        				int numberOfInstances = startingIntent.getIntExtra(getResources().getString(R.string.numberOfInstances), -1);
-	        				//Log.e("ILOSC INSTANCJI","=="+numberOfInstances);
-	        				FieldValue tempFieldValue = new FieldValue(nodeDef.getId(),getFormScreenId(),null);
-	        				if (numberOfInstances!=-1){
-	        					ArrayList<String> instanceValues = new ArrayList<String>();
-	            				//Log.e("numberOFinstances","=="+numberOfInstances);
-	            				//for (int k=0;k<numberOfInstances;k++){
-	        					instanceValues = startingIntent.getStringArrayListExtra(getResources().getString(R.string.instanceValues)+0);
-	        					tempFieldValue.addValue(instanceValues);
-	            				//Log.e("dodanowartosc","=="+instanceValues.get(0));
-	            				//}	
-	        				}
-	        				else {
-	        					ArrayList<String> instanceValues = new ArrayList<String>();
-	        					instanceValues.add(loadedValue);
-	        					tempFieldValue.addValue(instanceValues);
-	        				}
-	        				
-	        				CodeField codeField= new CodeField(this, nodeDef, codes, options, null, tempFieldValue);
-	        				codeField.setOnClickListener(this);
-	        				codeField.setId(nodeDef.getId());
-	        				//textField.txtBox.addTextChangedListener(this);
-	        				codeField.setValue(0, tempFieldValue.getValue(0).get(0),this.getFormScreenId(),false);
-	        				FormScreen.currentFieldValue = this.currentNode.getFieldValue(nodeDef.getId());
-	        				//if (FormScreen.currentFieldValue!=null)
-	        				//	Log.e("getValue",codeField.getValue(0)+"=="+FormScreen.currentFieldValue.getValue(0).get(0));
-	        				//Log.e("FormScreen.currentFieldValue==null",nodeDef.getId()+"=="+(FormScreen.currentFieldValue==null));
-	        				if (FormScreen.currentFieldValue==null){
-	        					ArrayList<String> initialValue = new ArrayList<String>();
-	        					initialValue.add(codeField.getValue(0));
-	        					FormScreen.currentFieldValue = new FieldValue(nodeDef.getId(),getFormScreenId(),null);
-	        					FormScreen.currentFieldValue.addValue(initialValue);
-	        					this.currentNode.addFieldValue(FormScreen.currentFieldValue);        		
-	        				} else {
-	        					//Log.e("wczytanaWARTOSC",FormScreen.currentFieldValue.getId()+"=="+FormScreen.currentFieldValue.getValue(0).get(0));
-	        					codeField.setValue(0, FormScreen.currentFieldValue.getValue(0).get(0),this.getFormScreenId(),false);    
-	        				}
-	        				//ApplicationManager.uiElementsMap.put(codeField.getId(), codeField);
-	        				this.ll.addView(codeField);
-	        				//this.currentNode.addFieldValue(tempFieldValue);
-	        	    		//Log.e("iloscPOLzWARTOSCIA","=="+this.currentNode.getFieldsNo());       				
-	    				} else if (this.intentType==getResources().getInteger(R.integer.multipleAttributeIntent)){    					
-	        				int numberOfInstances = startingIntent.getIntExtra(getResources().getString(R.string.numberOfInstances), -1);
-	        				this.currentMultipleFieldValue = new FieldValue(nodeDef.getId(), getFormScreenId(),null);
-	        				
-	        				ArrayList<String> instanceValues = new ArrayList<String>();
-	        				//Log.e("numberOFinstances","=="+numberOfInstances);
-	        				for (int k=0;k<numberOfInstances;k++){
-	        					instanceValues = startingIntent.getStringArrayListExtra(getResources().getString(R.string.instanceValues)+k);
-	        					this.currentMultipleFieldValue.addValue(instanceValues);
-	        					//Log.e("dodanowartosc","=="+instanceValues.get(0));
-	        				}
-
-	        				CodeField codeField= new CodeField(this, nodeDef, codes, options, null, this.currentMultipleFieldValue);
-	        				codeField.setOnClickListener(this);
-	        				codeField.setId(nodeDef.getId());
-	        				//booleanField.txtBox.addTextChangedListener(this);
-	        				//add onclick listener for multiple field
-	        				//Log.e("CODEvalues.size", this.currInstanceNo+"=="+this.currentMultipleFieldValue.getValue(this.currInstanceNo).get(0));
-
-	        				if (this.currentMultipleFieldValue.size()>this.currInstanceNo){        					
-	    						codeField.setValue(this.currInstanceNo, this.currentMultipleFieldValue.getValue(this.currInstanceNo).get(0),this.getFormScreenId(),false);	    						
-	        				}
-	        				//ApplicationManager.uiElementsMap.put(codeField.getId(), codeField);
-	        				this.ll.addView(codeField);
-	    				} else {/*
-	    					FieldValue fieldValueToBeRestored = this.currentNode.getFieldValue(nodeDef.getId());    					
-	    					//Log.e("fieldValueToBeRestored!=null",this.currentNode.getNodeValues().size()+"=="+(fieldValueToBeRestored!=null));
-	    					if (fieldValueToBeRestored!=null){
-	    						//Log.e("POWROT","z MULTIPLE FIELD");    						
-	    						ArrayList<List<String>> tableCodeLabelsLists = new ArrayList<List<String>>();    			    		
-	    			    		//Log.e("ILOSC","wartosciDOwczytania=="+fieldValueToBeRestored.getValues().size());
-	    			    		for (List<String> rowValue : fieldValueToBeRestored.getValues()){
-	    			    			 //Log.e("rowValueToBeRestored",rowValue.size()+"=="+rowValue.get(0));
-	    			    			 ArrayList<String> codeLabelsRow1 = new ArrayList<String>();
-	    			    			 for (int d=0;d<rowValue.size();d++){    			    				
-	        			    			 codeLabelsRow1.add(rowValue.get(d));	 
-	    			    			 }
-	    			    			 tableCodeLabelsLists.add(codeLabelsRow1);
-	    			    		}            				
-	    			    		
-	    						SummaryTable summaryTableView = new SummaryTable(this, nodeDef, tableColHeaders, tableCodeLabelsLists, this);
-	        					summaryTableView.setOnClickListener(this);
-	            				summaryTableView.setId(nodeDef.getId());
-	            				this.ll.addView(summaryTableView);
-	    					} else{
-	    						//Log.e("PIERWSZE","OTWARCIE");
-	    			    		ArrayList<List<String>> tableValuesLists = new ArrayList<List<String>>();
-	    			    		ArrayList<String> valueRow1 = new ArrayList<String>();
-	    			    		//row1.add("1");
-	    			    		valueRow1.add("null");
-	    			    		tableValuesLists.add(valueRow1);
-	    			    		ArrayList<List<String>> tableCodeLabelsLists = new ArrayList<List<String>>();
-	    			    		ArrayList<String> codeLabelsRow1 = new ArrayList<String>();
-	    			    		CodeListItem codeListItem = codeAttrDef.getList().getItem(tableValuesLists.get(0).get(0));    			    		
-	    			    		if (codeListItem!=null){
-	    			    			codeLabelsRow1.add(codeAttrDef.getList().getItem(tableValuesLists.get(0).get(0)).getCode());	
-	    			    		} else {
-	    			    			codeLabelsRow1.add("");
-	    			    		}
-	    			    		tableCodeLabelsLists.add(codeLabelsRow1);
-	    			    		
-	    						SummaryTable summaryTableView = new SummaryTable(this, nodeDef, tableColHeaders, tableCodeLabelsLists, this);
-	        					summaryTableView.setOnClickListener(this);
-	            				summaryTableView.setId(nodeDef.getId());
-	            				this.ll.addView(summaryTableView);
-	    					}		*/	
-	    				}
-	    			} else if (nodeDef instanceof BooleanAttributeDefinition){
-	    				loadedValue = null;
-						//Log.e("PARENTentityBOOL",nodeDef.getName()+"=="+parentEntity.getName());
-	    				Node<?> foundNode = parentEntity.get(nodeDef.getName(), this.currInstanceNo);
-	    				//Log.e("TEXT NODE FOUNDbool?",nodeDef.getName()+"=="+(foundNode!=null));
-	    				if (foundNode!=null){
-	    					BooleanValue booleanValue = (BooleanValue)parentEntity.getValue(nodeDef.getName(), this.currInstanceNo);
-	    					//Log.e("codeValue!=null","=="+(booleanValue!=null));
-        					if (booleanValue!=null){
-        						loadedValue = String.valueOf(booleanValue.getValue());
-        						//Log.e("wczytanaWARTOSClogiczna",nodeDef.getName()+"=="+loadedValue);
-        					}
-	    					//Log.e("wczytanaWARTOSC",nodeDef.getName()+"=="+loadedValue);
-        					try{
-        						//Log.e("dodanaWARTOSClogiczna",nodeDef.getName()+"=="+loadedValue);
-    	    					EntityBuilder.addValue(parentEntity, nodeDef.getName(), Boolean.valueOf(loadedValue), 0);	
-        					} catch (Exception e){
-        						
-        					}
-	    				} else {
-	    					//Log.e("adding entity", nodeDef.getName()+"to record"+ApplicationManager.currentRecord.getId());
-	    					//parentEntity.add(EntityBuilder.addEntity(parentEntity, ApplicationManager.getSurvey().getSchema().getDefinitionById(nodeDef.getId()).getName()));
-    						/*if (((NumberAttributeDefinition) nodeDef).isInteger()){
-	    						EntityBuilder.addValue(parentEntity, nodeDef.getName(), new Integer(""), 0);
-	    					} else {
-	    						EntityBuilder.addValue(parentEntity, nodeDef.getName(), new Double(""), 0);	
-	    					}*/
-	    				}
-	    				
-	    				if (!nodeDef.isMultiple()){
-	        				int numberOfInstances = startingIntent.getIntExtra(getResources().getString(R.string.numberOfInstances), -1);
-//	        				Log.e("ILOSC INSTANCJI","=="+numberOfInstances);
-	        				FieldValue tempFieldValue = new FieldValue(nodeDef.getId(),getFormScreenId(),null);
-	        				if (numberOfInstances!=-1){
-	        					ArrayList<String> instanceValues = new ArrayList<String>();
-	            				//Log.e("numberOFinstances","=="+numberOfInstances);
-	            				//for (int k=0;k<numberOfInstances;k++){
-	        					instanceValues = startingIntent.getStringArrayListExtra(getResources().getString(R.string.instanceValues)+0);
-	        					tempFieldValue.addValue(instanceValues);
-	            				//Log.e("dodanowartoscinstancji","=="+instanceValues.get(1));
-	            				//}	
-	        				}
-	        				else {
-	        					ArrayList<String> instanceValues = new ArrayList<String>();
-	        					instanceValues.add(loadedValue);
-	        					String otherValue = "";
-	        					instanceValues.add(otherValue);
-	        					tempFieldValue.addValue(instanceValues);
-	        				}
-
-	        				BooleanField booleanField= new BooleanField(this, nodeDef, 
-	        						false, false, 
-	        						getResources().getString(R.string.yes), 
-	        						getResources().getString(R.string.no), tempFieldValue);
-	        				booleanField.setOnClickListener(this);
-	        				booleanField.setId(nodeDef.getId());
-	        				//Log.e("settingVALUE",tempFieldValue.getValue(0).get(0)+"=="+Boolean.valueOf(tempFieldValue.getValue(0).get(0)));
-	        				//Log.e("tempFieldValue.getValue(0).get(0)==null","=="+(tempFieldValue.getValue(0).get(0)==null));
-	        				if (tempFieldValue.getValue(0).get(0)==null){
-	        					//Log.e("setting","null");
-	        					booleanField.setValue(0, null,this.getFormScreenId(),false);
-	        				} else {
-	        					//Log.e("setting",tempFieldValue.getValue(0).get(0)+"=="+Boolean.valueOf(tempFieldValue.getValue(0).get(0)));
-	        					booleanField.setValue(0, Boolean.valueOf(tempFieldValue.getValue(0).get(0)),this.getFormScreenId(),false);
-	        				}
-	        				//Log.e("settingVALUE","=="+Boolean.valueOf(tempFieldValue.getValue(0).get(0)));
-	        				
-	        				FormScreen.currentFieldValue = this.currentNode.getFieldValue(nodeDef.getId());
-	        				//Log.e("FormScreen.currentFieldValue==null",nodeDef.getId()+"=="+(FormScreen.currentFieldValue==null));
-	        				if (FormScreen.currentFieldValue==null){
-	        					ArrayList<String> initialValue = new ArrayList<String>();
-	        					initialValue.add(null/*booleanField.getValue(0,0)*/);
-	        					initialValue.add(null/*booleanField.getValue(0,1)*/);
-	        					//Log.e("AddedINITIAL","BOOL NULL");
-	        					FormScreen.currentFieldValue = new FieldValue(nodeDef.getId(),getFormScreenId(),null);
-	        					FormScreen.currentFieldValue.addValue(initialValue);
-	        					this.currentNode.addFieldValue(FormScreen.currentFieldValue);        		
-	        				} else {
-	        					//Log.e("wczytanaWARTOSCboolzFIELDVALUE",FormScreen.currentFieldValue.getId()+"=="+FormScreen.currentFieldValue.getValue(0).get(0));
-	        					
-	        					if (FormScreen.currentFieldValue.getValue(0).get(0)==null){
-		        					//Log.e("setting2","null");
-		        					booleanField.setValue(0,null,this.getFormScreenId(),false);
-		        				} else {
-		        					//Log.e("setting2",FormScreen.currentFieldValue.getValue(0).get(0)+"=="+Boolean.valueOf(FormScreen.currentFieldValue.getValue(0).get(0)));
-		        					booleanField.setValue(0, Boolean.valueOf(FormScreen.currentFieldValue.getValue(0).get(0)),this.getFormScreenId(),false);
-		        				}
-	        				}
-	        				/*booleanField.addTextChangedListener(new TextWatcher(){
-	        			        public void afterTextChanged(Editable s) {
-	        			            //Log.e("s","=="+s.toString());
-	        			            ArrayList<String> value = new ArrayList<String>();
-	        			            value.add(s.toString());
-	        			            FormScreen.currentFieldValue.setValue(0, value);
-	        			            FormScreen.this.currentNode.addFieldValue(FormScreen.currentFieldValue);  
-	        			            //Log.e("changed",FormScreen.currentFieldValue.getId()+"ValueOFsingleField=="+FormScreen.currentFieldValue.getValue(0).get(0));
-	        			        }
-	        			        public void beforeTextChanged(CharSequence s, int start, int count, int after){}
-	        			        public void onTextChanged(CharSequence s, int start, int before, int count){}
-	        			    });*/
-	        				/*booleanField.addOnClickListener(new OnClickListener() {
-								@Override
-								public void onClick(View v) {
-									Log.e("CHANGING","CURRENT FIELDVALUE"+BooleanField.this.getElementId());
-							    	FormScreen.currentFieldValue = BooleanField.this.value;
-									CheckBox checkBox1 = (CheckBox)v;
-									ArrayList<String> value = new ArrayList<String>();
-									value.add(String.valueOf(checkBox1.isChecked()));
-									value.add(String.valueOf(!checkBox1.isChecked()));								
-									FormScreen.currentFieldValue.setValue(0, value);
-	        			            FormScreen.this.currentNode.addFieldValue(FormScreen.currentFieldValue);
-	        			            Log.e("CLICKED1","=="+checkBox1.isChecked());
-					  			}
-						    }, new OnClickListener() {
-								@Override
-								public void onClick(View v) {
-									CheckBox checkBox2 = (CheckBox)v;
-									ArrayList<String> value = new ArrayList<String>();
-									value.add(String.valueOf(!checkBox2.isChecked()));
-									value.add(String.valueOf(checkBox2.isChecked()));								
-									FormScreen.currentFieldValue.setValue(0, value);
-	        			            FormScreen.this.currentNode.addFieldValue(FormScreen.currentFieldValue);
-	        			            Log.e("CLICKED2","=="+checkBox2.isChecked());
-					  			}
-						    });*/
-	        				this.ll.addView(booleanField);
-	        				//this.currentNode.addFieldValue(tempFieldValue);
-	        	    		//Log.e("iloscPOLzWARTOSCIA","=="+this.currentNode.getFieldsNo());       				
-	    				} else if (this.intentType==getResources().getInteger(R.integer.multipleAttributeIntent)){    					
-	        				int numberOfInstances = startingIntent.getIntExtra(getResources().getString(R.string.numberOfInstances), -1);
-	        				this.currentMultipleFieldValue = new FieldValue(nodeDef.getId(), getFormScreenId(),null);
-	        				ArrayList<String> instanceValues = new ArrayList<String>();
-	        				//Log.e("numberOFinstances","=="+numberOfInstances);
-	        				for (int k=0;k<numberOfInstances;k++){
-	        					instanceValues = startingIntent.getStringArrayListExtra(getResources().getString(R.string.instanceValues)+k);
-	        					this.currentMultipleFieldValue.addValue(instanceValues);
-	        					//Log.e("dodanowartosc","=="+instanceValues.get(1));
-	        				}
-
-	        				BooleanField booleanField = new BooleanField(this, nodeDef, 
-	        						false, false, getResources().getString(R.string.yes), getResources().getString(R.string.no),
-	        						this.currentMultipleFieldValue);
-	        				booleanField.setOnClickListener(this);
-	        				booleanField.setId(nodeDef.getId());
-	        				//booleanField.txtBox.addTextChangedListener(this);
-	        				//add onclick listener for multiple field
-	        				//Log.e("TEXTvalues.size",this.currInstanceNo+"=="+this.currentMultipleFieldValue.getValue(this.currInstanceNo).get(0));
-	        				if (this.currentMultipleFieldValue.size()>this.currInstanceNo){        					
-	        					if (!Boolean.valueOf(this.currentMultipleFieldValue.getValue(this.currInstanceNo).get(0))&&! Boolean.valueOf(this.currentMultipleFieldValue.getValue(this.currInstanceNo).get(1))){
-	        						booleanField.setValue(this.currInstanceNo,null,this.getFormScreenId(),false);	
-	        					} else {
-	        						booleanField.setValue(this.currInstanceNo, Boolean.valueOf(this.currentMultipleFieldValue.getValue(this.currInstanceNo).get(0)),this.getFormScreenId(),false);	
+	    					Node<?> foundNode = this.parentEntity.get(nodeDef.getName(), 0);
+		    				if (foundNode!=null){
+		    					Code codeValue = (Code)this.parentEntity.getValue(nodeDef.getName(), 0);
+	        					if (codeValue!=null){
+	        						loadedValue = codeValue.getCode();
 	        					}
-	        					
-	        				}			
-	        				this.ll.addView(booleanField);
-	    				} else {/*
-	    					FieldValue fieldValueToBeRestored = this.currentNode.getFieldValue(nodeDef.getId());
-	    					//Log.e("fieldValueToBeRestored!=null",this.currentNode.getNodeValues().size()+"=="+(fieldValueToBeRestored!=null));
-	    					if (fieldValueToBeRestored!=null){
-	    						//Log.e("POWROT","z MULTIPLE FIELD");
-	    						SummaryTable summaryTableView = new SummaryTable(this, nodeDef, tableColHeaders, fieldValueToBeRestored.getValues(), this);
-	        					summaryTableView.setOnClickListener(this);
-	            				summaryTableView.setId(nodeDef.getId());
-	            				this.ll.addView(summaryTableView);
-	    					} else{
-	    						//Log.e("PIERWSZE","OTWARCIE");
-	    			    		ArrayList<List<String>> tableValuesLists = new ArrayList<List<String>>();
-	    			    		ArrayList<String> valueRow1 = new ArrayList<String>();
-	    			    		//row1.add("1");
-	    			    		valueRow1.add("");
-	    			    		valueRow1.add("");
-	    			    		tableValuesLists.add(valueRow1);
-	    						SummaryTable summaryTableView = new SummaryTable(this, nodeDef, tableColHeaders, tableValuesLists, this);
-	        					summaryTableView.setOnClickListener(this);
-	            				summaryTableView.setId(nodeDef.getId());
-	            				this.ll.addView(summaryTableView);
-	    					}			*/
-	    				}
+		    				}
+	        				CodeField codeField = new CodeField(this, nodeDef, codes, options, null);
+	        				codeField.setOnClickListener(this);
+	        				codeField.setId(nodeDef.getId());
+	        				codeField.setValue(0, loadedValue, FormScreen.this.getFormScreenId(),false);
+	        				ApplicationManager.putUIElement(codeField.getId(), codeField);
+	        				this.ll.addView(codeField);
+	    				} else if (this.intentType==getResources().getInteger(R.integer.multipleAttributeIntent)){
+	    					Node<?> foundNode = this.parentEntityMultiple.get(nodeDef.getName(), this.currInstanceNo);
+	    					if (foundNode!=null){
+		    					Code codeValue = (Code)this.parentEntityMultiple.getValue(nodeDef.getName(), this.currInstanceNo);
+	        					if (codeValue!=null){
+	        						loadedValue = codeValue.getCode();
+	        					}
+		    				}
+	        				CodeField codeField = new CodeField(this, nodeDef, codes, options, null);
+	        				codeField.setOnClickListener(this);
+	        				codeField.setId(nodeDef.getId());
+	        				codeField.setValue(this.currInstanceNo, loadedValue, this.parentFormScreenId,false);
+	        				ApplicationManager.putUIElement(codeField.getId(), codeField);
+	        				this.ll.addView(codeField);
+	    				} else {//multiple attribute summary    			    		
+    						SummaryTable summaryTableView = new SummaryTable(this, nodeDef, tableColHeaders, parentEntity, this);
+        					summaryTableView.setOnClickListener(this);
+            				summaryTableView.setId(nodeDef.getId());
+            				this.ll.addView(summaryTableView);
+        				}
 	    			} else if (nodeDef instanceof CoordinateAttributeDefinition){
 	    				String loadedValueLatitude = null;
 	    				String loadedValueLongitude = null;
-						//Log.e("PARENTentityBOOL",nodeDef.getName()+"=="+parentEntity.getName());
 	    				Node<?> foundNode = parentEntity.get(nodeDef.getName(), this.currInstanceNo);
-	    				//Log.e("TEXT NODE FOUNDbool?",nodeDef.getName()+"=="+(foundNode!=null));
 	    				if (foundNode!=null){
 	    					Coordinate coordinateValue = (Coordinate)parentEntity.getValue(nodeDef.getName(), this.currInstanceNo);
-	    					//Log.e("codeValue!=null","=="+(booleanValue!=null));
         					if (coordinateValue!=null){
         						loadedValueLatitude = coordinateValue.getX().toString();
         						loadedValueLongitude = coordinateValue.getY().toString();
-        						//Log.e("wczytanaWARTOSClogiczna",nodeDef.getName()+"=="+loadedValue);
         					}
-	    					//Log.e("wczytanaWARTOSC",nodeDef.getName()+"=="+loadedValue);
         					try{
-        						//Log.e("dodanaWARTOSClogiczna",nodeDef.getName()+"=="+loadedValue);
     	    					EntityBuilder.addValue(parentEntity, nodeDef.getName(), coordinateValue, 0);	
         					} catch (Exception e){
         						
         					}
-	    				} else {
-	    					//Log.e("adding entity", nodeDef.getName()+"to record"+ApplicationManager.currentRecord.getId());
-	    					//parentEntity.add(EntityBuilder.addEntity(parentEntity, ApplicationManager.getSurvey().getSchema().getDefinitionById(nodeDef.getId()).getName()));
-    						/*if (((NumberAttributeDefinition) nodeDef).isInteger()){
-	    						EntityBuilder.addValue(parentEntity, nodeDef.getName(), new Integer(""), 0);
-	    					} else {
-	    						EntityBuilder.addValue(parentEntity, nodeDef.getName(), new Double(""), 0);	
-	    					}*/
 	    				}
 	    				if (!nodeDef.isMultiple()){
 	        				int numberOfInstances = startingIntent.getIntExtra(getResources().getString(R.string.numberOfInstances), -1);
-//	        				Log.e("ILOSC INSTANCJI","=="+numberOfInstances);
-	        				FieldValue tempFieldValue = new FieldValue(nodeDef.getId(),getFormScreenId(),null);
 	        				if (numberOfInstances!=-1){
 	        					ArrayList<String> instanceValues = new ArrayList<String>();
-	            				//Log.e("numberOFinstances","=="+numberOfInstances);
-	            				//for (int k=0;k<numberOfInstances;k++){
 	        					instanceValues = startingIntent.getStringArrayListExtra(getResources().getString(R.string.instanceValues)+0);
-	        					tempFieldValue.addValue(instanceValues);
-	            				//Log.e("dodanowartosc","=="+instanceValues.get(1));
-	            				//}	
 	        				}
 	        				else {
 	        					ArrayList<String> instanceValues = new ArrayList<String>();
 	        					instanceValues.add(loadedValueLatitude);
 	        					instanceValues.add(loadedValueLongitude);
-	        					tempFieldValue.addValue(instanceValues);
 	        				}
-	        				//Log.e("LOADEDVALUE",loadedValueLatitude+"=="+loadedValueLongitude);
 	        				
-	        				CoordinateField coordinateField= new CoordinateField(this, nodeDef, tempFieldValue);
+	        				CoordinateField coordinateField= new CoordinateField(this, nodeDef);
 	        				coordinateField.setOnClickListener(this);
 	        				coordinateField.setId(nodeDef.getId());
-	        				//textField.txtBox.addTextChangedListener(this);
-	        				//coordinateField.setValue(0, tempFieldValue.getValue(0).get(0), tempFieldValue.getValue(0).get(1));
-	        				coordinateField.setValue(0, tempFieldValue.getValue(0).get(0), tempFieldValue.getValue(0).get(1), this.getFormScreenId(), false);
-	        				FormScreen.currentFieldValue = this.currentNode.getFieldValue(nodeDef.getId());
-	        				//Log.e("FormScreen.currentFieldValue==null",nodeDef.getId()+"=="+(FormScreen.currentFieldValue==null));
-	        				if (FormScreen.currentFieldValue==null){
-	        					//Log.e("intiialVALUE",coordinateField.getValue(0).get(0)+"=="+coordinateField.getValue(0).get(1));
-	        					ArrayList<String> initialValue = new ArrayList<String>();
-	        					initialValue.add(coordinateField.getValue(0).get(0));
-	        					initialValue.add(coordinateField.getValue(0).get(1));
-	        					FormScreen.currentFieldValue = new FieldValue(nodeDef.getId(),getFormScreenId(),null);
-	        					FormScreen.currentFieldValue.addValue(initialValue);
-	        					this.currentNode.addFieldValue(FormScreen.currentFieldValue);        		
-	        				} else {
-	        					//Log.e("wczytanaWARTOSC",FormScreen.currentFieldValue.getValue(0).get(0)+"=="+FormScreen.currentFieldValue.getValue(0).get(1));
-	        					coordinateField.setValue(0, FormScreen.currentFieldValue.getValue(0).get(0), FormScreen.currentFieldValue.getValue(0).get(1), this.getFormScreenId(), false);
-	        				}
-	        				/*coordinateField.addTextChangedListener(new TextWatcher(){
-	        			        public void afterTextChanged(Editable s) {
-	        			            //Log.e("s","=="+s.toString());
-	        			            ArrayList<String> value = new ArrayList<String>();
-	        			            value.add(s.toString());
-	        			            FormScreen.currentFieldValue.setValue(0, value);
-	        			            FormScreen.this.currentNode.addFieldValue(FormScreen.currentFieldValue);  
-	        			            //Log.e("changed",FormScreen.currentFieldValue.getId()+"ValueOFsingleField=="+FormScreen.currentFieldValue.getValue(0).get(0));
-	        			        }
-	        			        public void beforeTextChanged(CharSequence s, int start, int count, int after){}
-	        			        public void onTextChanged(CharSequence s, int start, int before, int count){}
-	        			    });*/
-	        				this.ll.addView(coordinateField);
-	        				//this.currentNode.addFieldValue(tempFieldValue);
-	        	    		//Log.e("iloscPOLzWARTOSCIA","=="+this.currentNode.getFieldsNo());       				
+	        				this.ll.addView(coordinateField);  				
 	    				} else if (this.intentType==getResources().getInteger(R.integer.multipleAttributeIntent)){    					
 	        				int numberOfInstances = startingIntent.getIntExtra(getResources().getString(R.string.numberOfInstances), -1);
-	        				this.currentMultipleFieldValue = new FieldValue(nodeDef.getId(), getFormScreenId(),null);
 	        				ArrayList<String> instanceValues = new ArrayList<String>();
-	        				//Log.e("numberOFinstances","=="+numberOfInstances);
 	        				for (int k=0;k<numberOfInstances;k++){
 	        					instanceValues = startingIntent.getStringArrayListExtra(getResources().getString(R.string.instanceValues)+k);
-	        					this.currentMultipleFieldValue.addValue(instanceValues);
-	        					//Log.e("dodanowartosc","=="+instanceValues.get(1));
 	        				}
 
-	        				CoordinateField coordinateField= new CoordinateField(this, nodeDef, this.currentMultipleFieldValue);
+	        				CoordinateField coordinateField= new CoordinateField(this, nodeDef);
 	        				coordinateField.setOnClickListener(this);
 	        				coordinateField.setId(nodeDef.getId());
-	        				//coordinateField.txtBox.addTextChangedListener(this);
-	        				//Log.e("TEXTvalues.size",this.currInstanceNo+"=="+this.currentMultipleFieldValue.getValue(this.currInstanceNo).get(0));
-	        				if (this.currentMultipleFieldValue.size()>this.currInstanceNo){
-	        					coordinateField.setValue(this.currInstanceNo, this.currentMultipleFieldValue.getValue(this.currInstanceNo).get(0), this.currentMultipleFieldValue.getValue(this.currInstanceNo).get(1), this.getFormScreenId(), false);	
-	        				}
 	        				this.ll.addView(coordinateField);
 	    				} else {/*
 	    					FieldValue fieldValueToBeRestored = this.currentNode.getFieldValue(nodeDef.getId());
@@ -1149,94 +457,51 @@ public class FormScreen extends BaseActivity implements OnClickListener, TextWat
 	    				}	
 	    			} else if (nodeDef instanceof DateAttributeDefinition){
 	    				loadedValue = "";
-						//Log.e("PARENTentity","=="+parentEntity.getName());
 	    				Node<?> foundNode = parentEntity.get(nodeDef.getName(), this.currInstanceNo);
-	    				//Log.e("TEXT NODE FOUND?","=="+(foundNode!=null));
 	    				if (foundNode!=null){
 	    					Date dateValue = (Date)parentEntity.getValue(nodeDef.getName(), this.currInstanceNo);
 	    					loadedValue = dateValue.getMonth()+getResources().getString(R.string.dateSeparator)+dateValue.getDay()+getResources().getString(R.string.dateSeparator)+dateValue.getYear();
-	    					//Log.e("wczytanaWARTOSC",nodeDef.getName()+"=="+loadedValue);
 	    					if (dateValue.getDay()!=null)
 	    						EntityBuilder.addValue(parentEntity, nodeDef.getName(), Date.parseDate(loadedValue), 0);
-	    				} else {
-	    					//Log.e("adding entity", nodeDef.getName()+"to record"+ApplicationManager.currentRecord.getId());
-	    					//parentEntity.add(EntityBuilder.addEntity(parentEntity, ApplicationManager.getSurvey().getSchema().getDefinitionById(nodeDef.getId()).getName()));
-	    					//EntityBuilder.addValue(parentEntity, nodeDef.getName(), loadedValue, 0);
 	    				}
 	    				if (!nodeDef.isMultiple()){
 	        				int numberOfInstances = startingIntent.getIntExtra(getResources().getString(R.string.numberOfInstances), -1);
-//	        				Log.e("ILOSC INSTANCJI","=="+numberOfInstances);
-	        				FieldValue tempFieldValue = new FieldValue(nodeDef.getId(),getFormScreenId(),null);
 	        				if (numberOfInstances!=-1){
 	        					ArrayList<String> instanceValues = new ArrayList<String>();
-	            				//Log.e("numberOFinstances","=="+numberOfInstances);
-	            				//for (int k=0;k<numberOfInstances;k++){
 	        					instanceValues = startingIntent.getStringArrayListExtra(getResources().getString(R.string.instanceValues)+0);
-	        					tempFieldValue.addValue(instanceValues);
-	            				//Log.e("dodanowartosc","=="+instanceValues.get(1));
 	            				//}	
 	        				}
 	        				else {
 	        					ArrayList<String> instanceValues = new ArrayList<String>();
 	        					instanceValues.add(loadedValue);
-	        					tempFieldValue.addValue(instanceValues);
 	        				}
 	        				
-	        				final DateField dateField = new DateField(this, nodeDef, tempFieldValue);
+	        				final DateField dateField = new DateField(this, nodeDef);
 	        				dateField.setOnClickListener(this);
 	        				dateField.setId(nodeDef.getId());
-	        				//textField.txtBox.addTextChangedListener(this);
-	        				dateField.setValue(0, tempFieldValue.getValue(0).get(0), FormScreen.this.getFormScreenId(), false);
-	        				FormScreen.currentFieldValue = this.currentNode.getFieldValue(nodeDef.getId());
-	        				//Log.e("FormScreen.currentFieldValue==null",nodeDef.getId()+"=="+(FormScreen.currentFieldValue==null));
-	        				if (FormScreen.currentFieldValue==null){
-	        					ArrayList<String> initialValue = new ArrayList<String>();
-	        					initialValue.add(dateField.getValue(0));
-	        					FormScreen.currentFieldValue = new FieldValue(nodeDef.getId(),getFormScreenId(),null);
-	        					FormScreen.currentFieldValue.addValue(initialValue);
-        			            
-	        					this.currentNode.addFieldValue(FormScreen.currentFieldValue);        		
-	        				} else {
-	        					//Log.e("wczytanaWARTOSC","=="+FormScreen.currentFieldValue.getValue(0).get(0));
-	        					dateField.setValue(0, FormScreen.currentFieldValue.getValue(0).get(0), FormScreen.this.getFormScreenId(), false);       
-	        				}
 	        				dateField.addTextChangedListener(new TextWatcher(){
 	        			        public void afterTextChanged(Editable s) {
-	        			            //Log.e("s","=="+s.toString());
 	        			            ArrayList<String> value = new ArrayList<String>();
 	        			            value.add(s.toString());
-	        			            FormScreen.currentFieldValue.setValue(0, value);
-	        			            FormScreen.this.currentNode.addFieldValue(FormScreen.currentFieldValue);  
-	        			            //Log.e("changed",FormScreen.currentFieldValue.getId()+"ValueOFsingleField=="+FormScreen.currentFieldValue.getValue(0).get(0));
 	        			            dateField.setValue(0, s.toString(), FormScreen.this.getFormScreenId(),true);
 	        			        }
 	        			        public void beforeTextChanged(CharSequence s, int start, int count, int after){}
 	        			        public void onTextChanged(CharSequence s, int start, int before, int count){}
 	        			    });
-	        				ApplicationManager.uiElementsMap.put(dateField.getId(), dateField);
+	        				ApplicationManager.putUIElement(dateField.getId(), dateField);
 	        				this.ll.addView(dateField);
-	        				//this.currentNode.addFieldValue(tempFieldValue);
-	        	    		//Log.e("iloscPOLzWARTOSCIA","=="+this.currentNode.getFieldsNo());       				
 	    				} else if (this.intentType==getResources().getInteger(R.integer.multipleAttributeIntent)){    					
 	        				int numberOfInstances = startingIntent.getIntExtra(getResources().getString(R.string.numberOfInstances), -1);
-	        				this.currentMultipleFieldValue = new FieldValue(nodeDef.getId(), getFormScreenId(),null);
 	        				ArrayList<String> instanceValues = new ArrayList<String>();
-	        				//Log.e("numberOFinstances","=="+numberOfInstances);
 	        				for (int k=0;k<numberOfInstances;k++){
 	        					instanceValues = startingIntent.getStringArrayListExtra(getResources().getString(R.string.instanceValues)+k);
-	        					this.currentMultipleFieldValue.addValue(instanceValues);
-	        					//Log.e("dodanowartosc","=="+instanceValues.get(1));
 	        				}
 
-	        				DateField dateField= new DateField(this, nodeDef, this.currentMultipleFieldValue);
+	        				DateField dateField= new DateField(this, nodeDef);
 	        				dateField.setOnClickListener(this);
 	        				dateField.setId(nodeDef.getId());
 	        				dateField.txtBox.addTextChangedListener(this);
-	        				//Log.e("TEXTvalues.size",this.currInstanceNo+"=="+this.currentMultipleFieldValue.getValue(this.currInstanceNo).get(0));
-	        				if (this.currentMultipleFieldValue.size()>this.currInstanceNo){
-	        					dateField.setValue(this.currInstanceNo, this.currentMultipleFieldValue.getValue(this.currInstanceNo).get(0), FormScreen.this.getFormScreenId(), false);	
-	        				}
-	        				ApplicationManager.uiElementsMap.put(dateField.getId(), dateField);
+	        				ApplicationManager.putUIElement(dateField.getId(), dateField);
 	        				this.ll.addView(dateField);
 	    				} else {/*
 	    					FieldValue fieldValueToBeRestored = this.currentNode.getFieldValue(nodeDef.getId());
@@ -1262,9 +527,7 @@ public class FormScreen extends BaseActivity implements OnClickListener, TextWat
 	    				}	
 	    			} else if (nodeDef instanceof RangeAttributeDefinition){
 	    				loadedValue = "";
-						//Log.e("PARENTentity","=="+parentEntity.getName());
 	    				Node<?> foundNode = parentEntity.get(nodeDef.getName(), this.currInstanceNo);
-	    				//Log.e("TEXT NODE FOUND?","=="+(foundNode!=null));
 	    				if (foundNode!=null){
 	    					if (((RangeAttributeDefinition) nodeDef).isReal()){
 	    						RealRange rangeValue = (RealRange)parentEntity.getValue(nodeDef.getName(), this.currInstanceNo);	
@@ -1297,85 +560,43 @@ public class FormScreen extends BaseActivity implements OnClickListener, TextWat
 	    						}	
 	    					} catch (Exception e){
 	    						
-	    					}	
-	    					
-	    					//Log.e("wczytanaWARTOSC",nodeDef.getName()+"=="+loadedValue);	    					
-	    				} else {
-	    					//Log.e("adding entity", nodeDef.getName()+"to record"+ApplicationManager.currentRecord.getId());
-	    					//parentEntity.add(EntityBuilder.addEntity(parentEntity, ApplicationManager.getSurvey().getSchema().getDefinitionById(nodeDef.getId()).getName()));
-	    					//EntityBuilder.addValue(parentEntity, nodeDef.getName(), loadedValue, 0);
+	    					}    					
 	    				}
 	    				if (!nodeDef.isMultiple()){
 	        				int numberOfInstances = startingIntent.getIntExtra(getResources().getString(R.string.numberOfInstances), -1);
-//	        				Log.e("ILOSC INSTANCJI","=="+numberOfInstances);
-	        				FieldValue tempFieldValue = new FieldValue(nodeDef.getId(),getFormScreenId(),null);
 	        				if (numberOfInstances!=-1){
 	        					ArrayList<String> instanceValues = new ArrayList<String>();
-	            				//Log.e("numberOFinstances","=="+numberOfInstances);
-	            				//for (int k=0;k<numberOfInstances;k++){
 	        					instanceValues = startingIntent.getStringArrayListExtra(getResources().getString(R.string.instanceValues)+0);
-	        					tempFieldValue.addValue(instanceValues);
-	            				//Log.e("dodanowartosc","=="+instanceValues.get(1));
-	            				//}	
 	        				}
 	        				else {
 	        					ArrayList<String> instanceValues = new ArrayList<String>();
 	        					instanceValues.add(loadedValue);
-	        					tempFieldValue.addValue(instanceValues);
 	        				}
 	        				
-	        				final RangeField rangeField= new RangeField(this, nodeDef, tempFieldValue);
+	        				final RangeField rangeField= new RangeField(this, nodeDef);
 	        				rangeField.setOnClickListener(this);
 	        				rangeField.setId(nodeDef.getId());
-	        				//textField.txtBox.addTextChangedListener(this);
-	        				rangeField.setValue(0, tempFieldValue.getValue(0).get(0), this.getFormScreenId(), false);
-	        				FormScreen.currentFieldValue = this.currentNode.getFieldValue(nodeDef.getId());
-	        				//Log.e("FormScreen.currentFieldValue==null",nodeDef.getId()+"=="+(FormScreen.currentFieldValue==null));
-	        				if (FormScreen.currentFieldValue==null){
-	        					ArrayList<String> initialValue = new ArrayList<String>();
-	        					initialValue.add(rangeField.getValue(0));
-	        					FormScreen.currentFieldValue = new FieldValue(nodeDef.getId(),getFormScreenId(),null);
-	        					FormScreen.currentFieldValue.addValue(initialValue);
-	        					this.currentNode.addFieldValue(FormScreen.currentFieldValue);        		
-	        				} else {
-	        					//Log.e("wczytanaWARTOSC","=="+FormScreen.currentFieldValue.getValue(0).get(0));
-	        					rangeField.setValue(0, FormScreen.currentFieldValue.getValue(0).get(0), this.getFormScreenId(), false);       
-	        				}
 	        				rangeField.addTextChangedListener(new TextWatcher(){
 	        			        public void afterTextChanged(Editable s) {
-	        			            //Log.e("s","=="+s.toString());
 	        			            ArrayList<String> value = new ArrayList<String>();
 	        			            value.add(s.toString());
-	        			            FormScreen.currentFieldValue.setValue(0, value);
-	        			            FormScreen.this.currentNode.addFieldValue(FormScreen.currentFieldValue);  
-	        			            //Log.e("changed",FormScreen.currentFieldValue.getId()+"ValueOFsingleField=="+FormScreen.currentFieldValue.getValue(0).get(0));
 	        			            rangeField.setValue(0, s.toString(), FormScreen.this.getFormScreenId(),true);
 	        			        }
 	        			        public void beforeTextChanged(CharSequence s, int start, int count, int after){}
 	        			        public void onTextChanged(CharSequence s, int start, int before, int count){}
 	        			    });
 	        				this.ll.addView(rangeField);
-	        				//this.currentNode.addFieldValue(tempFieldValue);
-	        	    		//Log.e("iloscPOLzWARTOSCIA","=="+this.currentNode.getFieldsNo());       				
 	    				} else if (this.intentType==getResources().getInteger(R.integer.multipleAttributeIntent)){    					
 	        				int numberOfInstances = startingIntent.getIntExtra(getResources().getString(R.string.numberOfInstances), -1);
-	        				this.currentMultipleFieldValue = new FieldValue(nodeDef.getId(), getFormScreenId(),null);
 	        				ArrayList<String> instanceValues = new ArrayList<String>();
-	        				//Log.e("numberOFinstances","=="+numberOfInstances);
 	        				for (int k=0;k<numberOfInstances;k++){
 	        					instanceValues = startingIntent.getStringArrayListExtra(getResources().getString(R.string.instanceValues)+k);
-	        					this.currentMultipleFieldValue.addValue(instanceValues);
-	        					//Log.e("dodanowartosc","=="+instanceValues.get(1));
 	        				}
 
-	        				RangeField rangeField= new RangeField(this, nodeDef, this.currentMultipleFieldValue);
+	        				RangeField rangeField= new RangeField(this, nodeDef);
 	        				rangeField.setOnClickListener(this);
 	        				rangeField.setId(nodeDef.getId());
 	        				rangeField.txtBox.addTextChangedListener(this);
-	        				//Log.e("TEXTvalues.size",this.currInstanceNo+"=="+this.currentMultipleFieldValue.getValue(this.currInstanceNo).get(0));
-	        				if (this.currentMultipleFieldValue.size()>this.currInstanceNo){
-	        					rangeField.setValue(this.currInstanceNo, this.currentMultipleFieldValue.getValue(this.currInstanceNo).get(0), this.getFormScreenId(), false);	
-	        				}			
 	        				this.ll.addView(rangeField);
 	    				} else {/*
 	    					FieldValue fieldValueToBeRestored = this.currentNode.getFieldValue(nodeDef.getId());
@@ -1399,18 +620,6 @@ public class FormScreen extends BaseActivity implements OnClickListener, TextWat
 	    					}			*/
 	    				}
 	    			} else if (nodeDef instanceof TaxonAttributeDefinition){
-	    				/*if (!nodeDef.isMultiple()||(this.intentType==getResources().getInteger(R.integer.multipleAttributeIntent))){
-	    					TaxonAttributeDefinition taxonAttrDef = (TaxonAttributeDefinition)nodeDef;
-	        				TaxonField taxonField= new TaxonField(this, nodeDef.getId(), nodeDef.getLabel(Type.INSTANCE, null), null, null, null, row3, row3, null, false, taxonAttrDef.isMultiple(), false);
-	        				taxonField.setOnClickListener(this);
-	        				taxonField.setId(nodeDef.getId());
-	        				this.ll.addView(taxonField);
-	    				} else {
-	    					SummaryTable summaryTableView = new SummaryTable(this, nodeDef.getId(), nodeDef.getLabel(Type.INSTANCE, null), tableColHeaders, tableRowLists, this);
-	    					summaryTableView.setOnClickListener(this);
-	        				summaryTableView.setId(nodeDef.getId());
-	        				this.ll.addView(summaryTableView);
-	    				}*/
 	    				ArrayList<String> taxonOptions = new ArrayList<String>();
 	    				ArrayList<String> taxonCodes = new ArrayList<String>();
 	    				taxonOptions.add("");
@@ -1418,14 +627,9 @@ public class FormScreen extends BaseActivity implements OnClickListener, TextWat
 	    				
 	    				if (!nodeDef.isMultiple()){
 	        				int numberOfInstances = startingIntent.getIntExtra(getResources().getString(R.string.numberOfInstances), -1);
-//	        				Log.e("ILOSC INSTANCJI","=="+numberOfInstances);
-	        				Log.i("TAXON_FIELD","Not multiple");
-	        				FieldValue tempFieldValue = new FieldValue(nodeDef.getId(),getFormScreenId(),null);
 	        				if (numberOfInstances!=-1){
 	        					ArrayList<String> instanceValues = new ArrayList<String>();
-	            				//Log.e("numberOFinstances","=="+numberOfInstances);
 	        					instanceValues = startingIntent.getStringArrayListExtra(getResources().getString(R.string.instanceValues)+0);
-	        					tempFieldValue.addValue(instanceValues);
 	        				}
 	        				else {
 	        					ArrayList<String> instanceValues = new ArrayList<String>();
@@ -1434,58 +638,24 @@ public class FormScreen extends BaseActivity implements OnClickListener, TextWat
 	        					instanceValues.add("");
 	        					instanceValues.add("");
 	        					instanceValues.add("");
-	        					tempFieldValue.addValue(instanceValues);
 	        				}
-	        				Log.i("TAXON_FIELD","TempFieldValue is: " + tempFieldValue.getValues().toString());
-	        				
-	        				TaxonField taxonField = new TaxonField(this, nodeDef, taxonCodes, taxonOptions, null, tempFieldValue);
+	        				TaxonField taxonField = new TaxonField(this, nodeDef, taxonCodes, taxonOptions, null);
 	        				taxonField.setOnClickListener(this);
 	        				taxonField.setId(nodeDef.getId());
-	        				Log.i("TAXON_FIELD","Setting TaxonField value by tempFieldValue");
-	        				taxonField.setValue(0, tempFieldValue.getValue(0).get(0), tempFieldValue.getValue(0).get(1), tempFieldValue.getValue(0).get(2),tempFieldValue.getValue(0).get(3), tempFieldValue.getValue(0).get(4));
-
-	        				FormScreen.currentFieldValue = this.currentNode.getFieldValue(nodeDef.getId());
-	        				if (FormScreen.currentFieldValue==null){
-	        					ArrayList<String> initialValue = new ArrayList<String>();
-	        					initialValue.add(taxonField.getValue(0).get(0));
-	        					initialValue.add(taxonField.getValue(0).get(1));
-	        					initialValue.add(taxonField.getValue(0).get(2));
-	        					initialValue.add(taxonField.getValue(0).get(3));
-	        					initialValue.add(taxonField.getValue(0).get(4));
-	        					
-	        					FormScreen.currentFieldValue = new FieldValue(nodeDef.getId(),getFormScreenId(),null);
-	        					FormScreen.currentFieldValue.addValue(initialValue);
-	        					this.currentNode.addFieldValue(FormScreen.currentFieldValue);        		
-	        				} else {
-	        					//Log.e("wczytanaWARTOSC",FormScreen.currentFieldValue.getId()+"=="+FormScreen.currentFieldValue.getValue(0).get(0));
-	        					Log.i("TAXON_FIELD","Setting TaxonField value by FormScreen.currentFieldValue");
-	        					Log.i("TAXON_FIELD","FormScreen.currentFieldValue is: " + FormScreen.currentFieldValue.getValue(0).toString());
-	        					taxonField.setValue(0, FormScreen.currentFieldValue.getValue(0).get(0), FormScreen.currentFieldValue.getValue(0).get(1), FormScreen.currentFieldValue.getValue(0).get(2), FormScreen.currentFieldValue.getValue(0).get(3), FormScreen.currentFieldValue.getValue(0).get(4));    
-	        				}
-	        				ApplicationManager.uiElementsMap.put(taxonField.getId(), taxonField);
+	        				ApplicationManager.putUIElement(taxonField.getId(), taxonField);
 	        				this.ll.addView(taxonField);       				
 	    				}
-	    				else if (this.intentType==getResources().getInteger(R.integer.multipleAttributeIntent)){    					
-	    					Log.i("TAXON_FIELD","Is multiple. Intent type is multipleAttributeIntent");
+	    				else if (this.intentType==getResources().getInteger(R.integer.multipleAttributeIntent)){
 	    					int numberOfInstances = startingIntent.getIntExtra(getResources().getString(R.string.numberOfInstances), -1);
-	        				this.currentMultipleFieldValue = new FieldValue(nodeDef.getId(), getFormScreenId(),null);
 	        				ArrayList<String> instanceValues = new ArrayList<String>();
 	        				for (int k=0;k<numberOfInstances;k++){
 	        					instanceValues = startingIntent.getStringArrayListExtra(getResources().getString(R.string.instanceValues)+k);
-	        					this.currentMultipleFieldValue.addValue(instanceValues);
 	        				}
 
-	        				TaxonField taxonField = new TaxonField(this, nodeDef, taxonCodes, taxonOptions, null, this.currentMultipleFieldValue);
+	        				TaxonField taxonField = new TaxonField(this, nodeDef, taxonCodes, taxonOptions, null);
 	        				taxonField.setOnClickListener(this);
 	        				taxonField.setId(nodeDef.getId());
-	        				Log.i("TAXON_FIELD","currentMultipleFieldValue size is: " + this.currentMultipleFieldValue.size());
-	        				Log.i("TAXON_FIELD","this.currInstanceNo is: " + this.currInstanceNo);
-	        				if (this.currentMultipleFieldValue.size()>this.currInstanceNo){        					
-//	        					taxonField.setValue(this.currInstanceNo, this.currentMultipleFieldValue.getValue(this.currInstanceNo).get(0));	    						
-	        					Log.i("TAXON_FIELD","Set TaxonField value by this.currentMultipleFieldValue: " + this.currentMultipleFieldValue.getValue(this.currInstanceNo).toString());
-	        					taxonField.setValue(this.currInstanceNo, this.currentMultipleFieldValue.getValue(this.currInstanceNo).get(0), this.currentMultipleFieldValue.getValue(this.currInstanceNo).get(1), this.currentMultipleFieldValue.getValue(this.currInstanceNo).get(2), this.currentMultipleFieldValue.getValue(this.currInstanceNo).get(3), this.currentMultipleFieldValue.getValue(this.currInstanceNo).get(4));
-	        				}
-	        				ApplicationManager.uiElementsMap.put(taxonField.getId(), taxonField);
+	        				ApplicationManager.putUIElement(taxonField.getId(), taxonField);
 	        				this.ll.addView(taxonField);
 	    				}
 	    				else {/*
@@ -1516,93 +686,52 @@ public class FormScreen extends BaseActivity implements OnClickListener, TextWat
 	    				}
 	    			} else if (nodeDef instanceof TimeAttributeDefinition){
 	    				loadedValue = "";
-						//Log.e("PARENTentity","=="+parentEntity.getName());
 	    				Node<?> foundNode = parentEntity.get(nodeDef.getName(), this.currInstanceNo);
-	    				//Log.e("TEXT NODE FOUND?","=="+(foundNode!=null));
 	    				if (foundNode!=null){
 	    					Time timeValue = (Time)parentEntity.getValue(nodeDef.getName(), this.currInstanceNo);
 	    					loadedValue = timeValue.getHour()+getResources().getString(R.string.timeSeparator)+timeValue.getMinute();
-	    					Log.e("wczytanaWARTOSCtime",nodeDef.getName()+"=="+loadedValue);
+	    					//Log.e("wczytanaWARTOSCtime",nodeDef.getName()+"=="+loadedValue);
 	    					if (timeValue.getHour()!=null)
 	    						EntityBuilder.addValue(parentEntity, nodeDef.getName(), Time.parseTime(loadedValue), 0);
-	    				} else {
-	    					//Log.e("adding entity", nodeDef.getName()+"to record"+ApplicationManager.currentRecord.getId());
-	    					//parentEntity.add(EntityBuilder.addEntity(parentEntity, ApplicationManager.getSurvey().getSchema().getDefinitionById(nodeDef.getId()).getName()));
-	    					//EntityBuilder.addValue(parentEntity, nodeDef.getName(), loadedValue, 0);
 	    				}
 	    				if (!nodeDef.isMultiple()){
 	        				int numberOfInstances = startingIntent.getIntExtra(getResources().getString(R.string.numberOfInstances), -1);
-//	        				Log.e("ILOSC INSTANCJI","=="+numberOfInstances);
-	        				FieldValue tempFieldValue = new FieldValue(nodeDef.getId(),getFormScreenId(),null);
 	        				if (numberOfInstances!=-1){
 	        					ArrayList<String> instanceValues = new ArrayList<String>();
-	            				//Log.e("numberOFinstances","=="+numberOfInstances);
-	            				//for (int k=0;k<numberOfInstances;k++){
 	        					instanceValues = startingIntent.getStringArrayListExtra(getResources().getString(R.string.instanceValues)+0);
-	        					tempFieldValue.addValue(instanceValues);
-	            				//Log.e("dodanowartosc","=="+instanceValues.get(1));
 	            				//}
 	        				}
 	        				else {
 	        					ArrayList<String> instanceValues = new ArrayList<String>();
 	        					instanceValues.add(loadedValue);
-	        					tempFieldValue.addValue(instanceValues);
 	        				}
 	        				
-	        				final TimeField timeField = new TimeField(this, nodeDef, tempFieldValue);
+	        				final TimeField timeField = new TimeField(this, nodeDef);
 	        				timeField.setOnClickListener(this);
 	        				timeField.setId(nodeDef.getId());
-	        				//textField.txtBox.addTextChangedListener(this);
-	        				timeField.setValue(0, tempFieldValue.getValue(0).get(0), this.getFormScreenId(), false);
-	        				FormScreen.currentFieldValue = this.currentNode.getFieldValue(nodeDef.getId());
-	        				//Log.e("FormScreen.currentFieldValue==null",nodeDef.getId()+"=="+(FormScreen.currentFieldValue==null));
-	        				if (FormScreen.currentFieldValue==null){
-	        					ArrayList<String> initialValue = new ArrayList<String>();
-	        					initialValue.add(timeField.getValue(0));
-	        					FormScreen.currentFieldValue = new FieldValue(nodeDef.getId(),getFormScreenId(),null);
-	        					FormScreen.currentFieldValue.addValue(initialValue);
-	        					this.currentNode.addFieldValue(FormScreen.currentFieldValue);        		
-	        				} else {
-	        					//Log.e("wczytanaWARTOSC","=="+FormScreen.currentFieldValue.getValue(0).get(0));
-	        					timeField.setValue(0, FormScreen.currentFieldValue.getValue(0).get(0), this.getFormScreenId(), false);       
-	        				}
 	        				timeField.addTextChangedListener(new TextWatcher(){
 	        			        public void afterTextChanged(Editable s) {
-	        			            //Log.e("s","=="+s.toString());
 	        			            ArrayList<String> value = new ArrayList<String>();
 	        			            value.add(s.toString());
-	        			            FormScreen.currentFieldValue.setValue(0, value);
-	        			            FormScreen.this.currentNode.addFieldValue(FormScreen.currentFieldValue);  
-	        			            //Log.e("changed",FormScreen.currentFieldValue.getId()+"ValueOFsingleField=="+FormScreen.currentFieldValue.getValue(0).get(0));
 	        			            timeField.setValue(0, s.toString(), FormScreen.this.getFormScreenId(),true);
 	        			        }
 	        			        public void beforeTextChanged(CharSequence s, int start, int count, int after){}
 	        			        public void onTextChanged(CharSequence s, int start, int before, int count){}
 	        			    });
-	        				ApplicationManager.uiElementsMap.put(timeField.getId(), timeField);
+	        				ApplicationManager.putUIElement(timeField.getId(), timeField);
 	        				this.ll.addView(timeField);
-	        				//this.currentNode.addFieldValue(tempFieldValue);
-	        	    		//Log.e("iloscPOLzWARTOSCIA","=="+this.currentNode.getFieldsNo());       				
 	    				} else if (this.intentType==getResources().getInteger(R.integer.multipleAttributeIntent)){    					
 	        				int numberOfInstances = startingIntent.getIntExtra(getResources().getString(R.string.numberOfInstances), -1);
-	        				this.currentMultipleFieldValue = new FieldValue(nodeDef.getId(), getFormScreenId(),null);
 	        				ArrayList<String> instanceValues = new ArrayList<String>();
-	        				//Log.e("numberOFinstances","=="+numberOfInstances);
 	        				for (int k=0;k<numberOfInstances;k++){
 	        					instanceValues = startingIntent.getStringArrayListExtra(getResources().getString(R.string.instanceValues)+k);
-	        					this.currentMultipleFieldValue.addValue(instanceValues);
-	        					//Log.e("dodanowartosc","=="+instanceValues.get(1));
 	        				}
 
-	        				TimeField timeField= new TimeField(this, nodeDef, this.currentMultipleFieldValue);
+	        				TimeField timeField= new TimeField(this, nodeDef);
 	        				timeField.setOnClickListener(this);
 	        				timeField.setId(nodeDef.getId());
 	        				timeField.txtBox.addTextChangedListener(this);
-	        				//Log.e("TEXTvalues.size",this.currInstanceNo+"=="+this.currentMultipleFieldValue.getValue(this.currInstanceNo).get(0));
-	        				if (this.currentMultipleFieldValue.size()>this.currInstanceNo){
-	        					timeField.setValue(this.currInstanceNo, this.currentMultipleFieldValue.getValue(this.currInstanceNo).get(0), this.getFormScreenId(), false);	
-	        				}
-	        				ApplicationManager.uiElementsMap.put(timeField.getId(), timeField);
+	        				ApplicationManager.putUIElement(timeField.getId(), timeField);
 	        				this.ll.addView(timeField);
 	    				} else {/*
 	    					FieldValue fieldValueToBeRestored = this.currentNode.getFieldValue(nodeDef.getId());
@@ -1632,11 +761,13 @@ public class FormScreen extends BaseActivity implements OnClickListener, TextWat
     				
     		}
 			if (this.intentType==getResources().getInteger(R.integer.multipleAttributeIntent)){
-				//Log.e("multiple","ATTRIBUTE");
-				this.ll.addView(arrangeButtonsInLine(new Button(this),getResources().getString(R.string.previousInstanceButton),new Button(this),getResources().getString(R.string.nextInstanceButton),this));
-			} else if (this.intentType==getResources().getInteger(R.integer.multipleEntityIntent)){ 
-				//Log.e("multiple","ENTITY");
-				//this.ll.addView(arrangeButtonsInLine(new Button(this),getResources().getString(R.string.previousInstanceButton),new Button(this),getResources().getString(R.string.nextInstanceButton),this));
+				Log.e("multiple","ATTRIBUTE");
+				this.ll.addView(arrangeButtonsInLine(new Button(this),getResources().getString(R.string.previousInstanceButton),new Button(this),getResources().getString(R.string.nextInstanceButton),this, false));
+			} else if (this.intentType==getResources().getInteger(R.integer.multipleEntityIntent)){ 				
+				if (ApplicationManager.currentRecord.getRootEntity().getId()!=this.idmlId){
+					Log.e("multiple","ENTITY");
+					this.ll.addView(arrangeButtonsInLine(new Button(this),getResources().getString(R.string.previousInstanceButton),new Button(this),getResources().getString(R.string.nextInstanceButton),this, true));
+				}	
 			}
     		setContentView(this.sv);
 			
@@ -1655,71 +786,12 @@ public class FormScreen extends BaseActivity implements OnClickListener, TextWat
     @Override
     public void onPause(){    
 		Log.i(getResources().getString(R.string.app_name),TAG+":onPause");
-		if (this.currentMultipleFieldValue!=null){
-			/*Log.e("multipleFieldVALUESno","=="+this.currentMultipleFieldValue.size());
-			for (int i=0;i<this.currentMultipleFieldValue.size();i++){
-				Log.e("multipleFieldVALUE"+i,"=="+this.currentMultipleFieldValue.getValue(i));
-			}*/	
-			ApplicationManager.fieldValueToPass = this.currentMultipleFieldValue;
-		}
-		else{
-			Log.i("FormScreen onPause","currentMultipleFieldValue is NULL");
-		}
-		//Log.e("onPauseID",this.idmlId+"|"+this.currInstanceNo+"=="+getFormScreenId());
 		super.onPause();
     }
-	
-    /*private String getLabel(CodeAttributeDefinition codeAttrDef, String code){
-    	String label = "etykieta";
-		//ArrayList<String> options = new ArrayList<String>();
-		//ArrayList<String> codes = new ArrayList<String>();
-		//options.add("");
-		//codes.add("null");
-		List<CodeListItem> codeListItemsList = codeAttrDef.getList().getItems();
-		for (CodeListItem codeListItem : codeListItemsList){
-			if (codeListItem.getCode().equals(code)){
-				label = codeListItem.getLabel(null);
-				break;
-			}
-		}
-    	return label;
-    }
-    
-    private String getCode(CodeAttributeDefinition codeAttrDef, String label){
-    	String code = "kod";
-		//ArrayList<String> options = new ArrayList<String>();
-		//ArrayList<String> codes = new ArrayList<String>();
-		//options.add("");
-		//codes.add("null");
-		List<CodeListItem> codeListItemsList = codeAttrDef.getList().getItems();
-		for (CodeListItem codeListItem : codeListItemsList){
-			if (codeListItem.getLabel(null).equals(label)){
-				code = codeListItem.getCode();
-				break;
-			}
-		}
-    	return code;
-    }*/
-    
-	/*@Override
-    public boolean onKeyDown(int keyCode, KeyEvent event)  {
-        if (android.os.Build.VERSION.SDK_INT < android.os.Build.VERSION_CODES.ECLAIR
-                && keyCode == KeyEvent.KEYCODE_BACK
-                && event.getRepeatCount() == 0) {
-            onBackPressed();
-        }
-        return super.onKeyDown(keyCode, event);
-    }
-	
-	@Override
-	public void onBackPressed() { 
-		this.getParent().onBackPressed();
-	}*/
 	
 	private int calcNoOfCharsFitInOneLine(){
 		DisplayMetrics metrics = new DisplayMetrics();
     	getWindowManager().getDefaultDisplay().getMetrics(metrics);
-    	//Log.e("ilosc znakow","=="+metrics.widthPixels/14);
     	return metrics.widthPixels/10;    	
 	}
 
@@ -1733,193 +805,13 @@ public class FormScreen extends BaseActivity implements OnClickListener, TextWat
 		} else if (arg0 instanceof Button){
 			Button btn = (Button)arg0;
 			if (btn.getId()==getResources().getInteger(R.integer.leftButtonMultipleAttribute)){
-				if (this.currInstanceNo>0){
-					View fieldView = (View)this.ll.getChildAt(1);
-					String currValue = "";
-					if (fieldView instanceof TextField){
-						TextField tempTextField = (TextField)fieldView;
-						currValue = tempTextField.getValue(this.currInstanceNo);
-					} else if (fieldView instanceof MemoField){
-						MemoField tempMemoField = (MemoField)fieldView;
-						currValue = tempMemoField.getValue(this.currInstanceNo);
-					} else if (fieldView instanceof NumberField){
-						NumberField tempNumberField = (NumberField)fieldView;
-						currValue = tempNumberField.getValue(this.currInstanceNo);
-					} else if (fieldView instanceof BooleanField){
-						BooleanField tempBooleanField = (BooleanField)fieldView;
-						currValue = tempBooleanField.getValue(this.currInstanceNo, 0);
-					} else if (fieldView instanceof DateField){
-						DateField tempDateField = (DateField)fieldView;
-						currValue = tempDateField.getValue(this.currInstanceNo);
-					} else if (fieldView instanceof TimeField){
-						TimeField tempTimeField = (TimeField)fieldView;
-						currValue = tempTimeField.getValue(this.currInstanceNo);
-					} else if (fieldView instanceof CoordinateField){
-						CoordinateField tempCoordinateField = (CoordinateField)fieldView;
-						List<String> currCoordinateValue = tempCoordinateField.getValue(this.currInstanceNo);
-						this.currentMultipleFieldValue.getValue(this.currInstanceNo).set(0, currCoordinateValue.get(0));
-						this.currentMultipleFieldValue.getValue(this.currInstanceNo).set(1, currCoordinateValue.get(1));
-					}else if (fieldView instanceof TaxonField){
-						TaxonField tempTaxonField = (TaxonField)fieldView;
-						List<String> curTaxonValue = tempTaxonField.getValue(this.currInstanceNo);
-						this.currentMultipleFieldValue.getValue(this.currInstanceNo).set(0, curTaxonValue.get(0));
-						this.currentMultipleFieldValue.getValue(this.currInstanceNo).set(1, curTaxonValue.get(1));
-						this.currentMultipleFieldValue.getValue(this.currInstanceNo).set(2, curTaxonValue.get(2));
-						this.currentMultipleFieldValue.getValue(this.currInstanceNo).set(3, curTaxonValue.get(3));
-						this.currentMultipleFieldValue.getValue(this.currInstanceNo).set(4, curTaxonValue.get(4));
-					} else if (fieldView instanceof CodeField){
-						CodeField tempCodeField = (CodeField)fieldView;
-						currValue = tempCodeField.getValue(this.currInstanceNo);
-					}
-					if (!((fieldView instanceof CoordinateField)||(fieldView instanceof TaxonField))){
-						Log.e("setting current VALUE",this.currInstanceNo+"=="+currValue);
-						this.currentMultipleFieldValue.getValue(this.currInstanceNo).set(0, currValue);	
-					}					
-					this.currInstanceNo--;
-					if (fieldView instanceof TextField){
-						TextField tempTextField = (TextField)fieldView;
-						tempTextField.setValue(this.currInstanceNo, this.currentMultipleFieldValue.getValue(this.currInstanceNo).get(0), this.getFormScreenId(),false);
-					} else if (fieldView instanceof NumberField){
-						MemoField tempMemoField = (MemoField)fieldView;
-						tempMemoField.setValue(this.currInstanceNo, this.currentMultipleFieldValue.getValue(this.currInstanceNo).get(0), this.getFormScreenId(), false);
-					} else if (fieldView instanceof NumberField){
-						NumberField tempNumberField = (NumberField)fieldView;
-						tempNumberField.setValue(this.currInstanceNo, this.currentMultipleFieldValue.getValue(this.currInstanceNo).get(0), this.getFormScreenId(), false);
-					} else if (fieldView instanceof BooleanField){
-						BooleanField tempBooleanField = (BooleanField)fieldView;
-						tempBooleanField.setValue(this.currInstanceNo, Boolean.valueOf(this.currentMultipleFieldValue.getValue(this.currInstanceNo).get(0)),this.getFormScreenId(),false);
-					} else if (fieldView instanceof DateField){
-						DateField tempDateField = (DateField)fieldView;
-						tempDateField.setValue(this.currInstanceNo, this.currentMultipleFieldValue.getValue(this.currInstanceNo).get(0), FormScreen.this.getFormScreenId(), false);
-					} else if (fieldView instanceof TimeField){
-						TimeField tempTimeField = (TimeField)fieldView;
-						tempTimeField.setValue(this.currInstanceNo, this.currentMultipleFieldValue.getValue(this.currInstanceNo).get(0), this.getFormScreenId(), false);
-					} else if (fieldView instanceof CoordinateField){
-						CoordinateField tempCoordinateField = (CoordinateField)fieldView;
-						tempCoordinateField.setValue(this.currInstanceNo, this.currentMultipleFieldValue.getValue(this.currInstanceNo).get(0),this.currentMultipleFieldValue.getValue(this.currInstanceNo).get(1), this.getFormScreenId(), false);
-					} else if (fieldView instanceof TaxonField){
-						TaxonField tempTaxonField = (TaxonField)fieldView;
-						tempTaxonField.setValue(this.currInstanceNo, this.currentMultipleFieldValue.getValue(this.currInstanceNo).get(0),this.currentMultipleFieldValue.getValue(this.currInstanceNo).get(1), this.currentMultipleFieldValue.getValue(this.currInstanceNo).get(2),this.currentMultipleFieldValue.getValue(this.currInstanceNo).get(3),this.currentMultipleFieldValue.getValue(this.currInstanceNo).get(4));
-					} else if (fieldView instanceof CodeField){
-						CodeField tempCodeField = (CodeField)fieldView;
-						tempCodeField.setValue(this.currInstanceNo, this.currentMultipleFieldValue.getValue(this.currInstanceNo).get(0),this.getFormScreenId(),false);
-					}
-				}
+				refreshMultipleAttributeScreen(true);
 			} else if (btn.getId()==getResources().getInteger(R.integer.rightButtonMultipleAttribute)){
-				View fieldView = (View)this.ll.getChildAt(1);
-				String currValue = "";
-				if (fieldView instanceof TextField){
-					TextField tempTextField = (TextField)fieldView;
-					currValue = tempTextField.getValue(this.currInstanceNo);
-				} else if (fieldView instanceof MemoField){
-					MemoField tempMemoField = (MemoField)fieldView;
-					currValue = tempMemoField.getValue(this.currInstanceNo);
-				} else if (fieldView instanceof NumberField){
-					NumberField tempNumberField = (NumberField)fieldView;
-					currValue = tempNumberField.getValue(this.currInstanceNo);
-				} else if (fieldView instanceof BooleanField){
-					BooleanField tempBooleanField = (BooleanField)fieldView;
-					currValue = tempBooleanField.getValue(this.currInstanceNo, 0);
-				} else if (fieldView instanceof DateField){
-					DateField tempDateField = (DateField)fieldView;
-					currValue = tempDateField.getValue(this.currInstanceNo);
-				} else if (fieldView instanceof TimeField){
-					TimeField tempTimeField = (TimeField)fieldView;
-					currValue = tempTimeField.getValue(this.currInstanceNo);
-				} else if (fieldView instanceof CoordinateField){
-					CoordinateField tempCoordinateField = (CoordinateField)fieldView;
-					List<String> currCoordinateValue = tempCoordinateField.getValue(this.currInstanceNo);
-					this.currentMultipleFieldValue.getValue(this.currInstanceNo).set(0, currCoordinateValue.get(0));
-					this.currentMultipleFieldValue.getValue(this.currInstanceNo).set(1, currCoordinateValue.get(1));
-				} else if (fieldView instanceof TaxonField){
-					TaxonField tempTaxonField = (TaxonField)fieldView;
-					List<String> curTaxonValue = tempTaxonField.getValue(this.currInstanceNo);
-					this.currentMultipleFieldValue.getValue(this.currInstanceNo).set(0, curTaxonValue.get(0));
-					this.currentMultipleFieldValue.getValue(this.currInstanceNo).set(1, curTaxonValue.get(1));
-					this.currentMultipleFieldValue.getValue(this.currInstanceNo).set(2, curTaxonValue.get(2));
-					this.currentMultipleFieldValue.getValue(this.currInstanceNo).set(3, curTaxonValue.get(3));
-					this.currentMultipleFieldValue.getValue(this.currInstanceNo).set(4, curTaxonValue.get(4));
-				} else if (fieldView instanceof CodeField){
-					CodeField tempCodeField = (CodeField)fieldView;
-					currValue = tempCodeField.getValue(this.currInstanceNo);
-				}
-				if (!((fieldView instanceof CoordinateField)||(fieldView instanceof TaxonField))){
-					this.currentMultipleFieldValue.getValue(this.currInstanceNo).set(0, currValue);	
-				}
-				this.currInstanceNo++;
-				if (this.currInstanceNo<this.numberOfInstances){
-					if (fieldView instanceof TextField){
-						TextField tempTextField = (TextField)fieldView;
-						tempTextField.setValue(this.currInstanceNo, this.currentMultipleFieldValue.getValue(this.currInstanceNo).get(0), this.getFormScreenId(),false);
-					} else if (fieldView instanceof MemoField){
-						MemoField tempMemoField = (MemoField)fieldView;
-						tempMemoField.setValue(this.currInstanceNo, this.currentMultipleFieldValue.getValue(this.currInstanceNo).get(0), this.getFormScreenId(), false);
-					} else if (fieldView instanceof NumberField){
-						NumberField tempNumberField = (NumberField)fieldView;
-						tempNumberField.setValue(this.currInstanceNo, this.currentMultipleFieldValue.getValue(this.currInstanceNo).get(0), this.getFormScreenId(), false);
-					} else if (fieldView instanceof BooleanField){
-						BooleanField tempBooleanField = (BooleanField)fieldView;
-						tempBooleanField.setValue(this.currInstanceNo, Boolean.valueOf(this.currentMultipleFieldValue.getValue(this.currInstanceNo).get(0)),this.getFormScreenId(),false);						
-					} else if (fieldView instanceof DateField){
-						DateField tempDateField = (DateField)fieldView;
-						tempDateField.setValue(this.currInstanceNo, this.currentMultipleFieldValue.getValue(this.currInstanceNo).get(0), FormScreen.this.getFormScreenId(), false);
-					} else if (fieldView instanceof TimeField){
-						TimeField tempTimeField = (TimeField)fieldView;
-						tempTimeField.setValue(this.currInstanceNo, this.currentMultipleFieldValue.getValue(this.currInstanceNo).get(0), this.getFormScreenId(), false);
-					} else if (fieldView instanceof CoordinateField){
-						CoordinateField tempCoordinateField = (CoordinateField)fieldView;
-						tempCoordinateField.setValue(this.currInstanceNo, this.currentMultipleFieldValue.getValue(this.currInstanceNo).get(0), this.currentMultipleFieldValue.getValue(this.currInstanceNo).get(1), this.getFormScreenId(), false);
-					} else if (fieldView instanceof TaxonField){
-						TaxonField tempTaxonField = (TaxonField)fieldView;
-						tempTaxonField.setValue(this.currInstanceNo, this.currentMultipleFieldValue.getValue(this.currInstanceNo).get(0),this.currentMultipleFieldValue.getValue(this.currInstanceNo).get(1), this.currentMultipleFieldValue.getValue(this.currInstanceNo).get(2),this.currentMultipleFieldValue.getValue(this.currInstanceNo).get(3),this.currentMultipleFieldValue.getValue(this.currInstanceNo).get(4));
-					} else if (fieldView instanceof CodeField){
-						CodeField tempCodeField = (CodeField)fieldView;
-						tempCodeField.setValue(this.currInstanceNo, this.currentMultipleFieldValue.getValue(this.currInstanceNo).get(0),this.getFormScreenId(),false);
-					}
-				} else {//new instance
-					ArrayList<String> newValue = new ArrayList<String>();
-					//newValue.add(""+(this.currInstanceNo+1));
-					if (fieldView instanceof InputField){
-						newValue.add("");
-					}/* else if (fieldView instanceof BooleanField) {
-						newValue.add("");
-					}*/ else if (fieldView instanceof BooleanField) {
-						newValue.add("");
-						newValue.add("");
-					} else if (fieldView instanceof CodeField){
-						newValue.add("null");
-					}
-					this.currentMultipleFieldValue.addValue(this.currInstanceNo,newValue);
-					if (fieldView instanceof TextField){
-						TextField tempTextField = (TextField)fieldView;
-						tempTextField.setValue(this.currInstanceNo, "", this.getFormScreenId(),false);
-					} else if (fieldView instanceof MemoField){
-						MemoField tempMemoField = (MemoField)fieldView;
-						tempMemoField.setValue(this.currInstanceNo, this.currentMultipleFieldValue.getValue(this.currInstanceNo).get(0), this.getFormScreenId(), false);
-					} else if (fieldView instanceof NumberField){
-						NumberField tempNumberField = (NumberField)fieldView;
-						tempNumberField.setValue(this.currInstanceNo, this.currentMultipleFieldValue.getValue(this.currInstanceNo).get(0), this.getFormScreenId(), false);
-					} else if (fieldView instanceof BooleanField){
-						BooleanField tempBooleanField = (BooleanField)fieldView;
-						tempBooleanField.setValue(this.currInstanceNo, null/*Boolean.valueOf(this.currentMultipleFieldValue.getValue(this.currInstanceNo).get(0))*/,this.getFormScreenId(),false);
-					} else if (fieldView instanceof DateField){
-						DateField tempDateField = (DateField)fieldView;
-						tempDateField.setValue(this.currInstanceNo, this.currentMultipleFieldValue.getValue(this.currInstanceNo).get(0), FormScreen.this.getFormScreenId(), false);
-					} else if (fieldView instanceof TimeField){
-						TimeField tempTimeField = (TimeField)fieldView;
-						tempTimeField.setValue(this.currInstanceNo, this.currentMultipleFieldValue.getValue(this.currInstanceNo).get(0), this.getFormScreenId(), false);
-					} else if (fieldView instanceof CoordinateField){
-						CoordinateField tempCoordinateField = (CoordinateField)fieldView;
-						tempCoordinateField.setValue(this.currInstanceNo, this.currentMultipleFieldValue.getValue(this.currInstanceNo).get(0), this.currentMultipleFieldValue.getValue(this.currInstanceNo).get(1), this.getFormScreenId(), false);
-					} else if (fieldView instanceof TaxonField){
-						TaxonField tempTaxonField = (TaxonField)fieldView;
-						tempTaxonField.setValue(this.currInstanceNo, this.currentMultipleFieldValue.getValue(this.currInstanceNo).get(0), this.currentMultipleFieldValue.getValue(this.currInstanceNo).get(1), this.currentMultipleFieldValue.getValue(this.currInstanceNo).get(2), this.currentMultipleFieldValue.getValue(this.currInstanceNo).get(3), this.currentMultipleFieldValue.getValue(this.currInstanceNo).get(4));
-					} else if (fieldView instanceof CodeField){
-						CodeField tempCodeField = (CodeField)fieldView;
-						tempCodeField.setValue(this.currInstanceNo, this.currentMultipleFieldValue.getValue(this.currInstanceNo).get(0),this.getFormScreenId(),false);
-					}
-					this.numberOfInstances++;
-				}	
+				refreshMultipleAttributeScreen(false);				
+			} else if (btn.getId()==getResources().getInteger(R.integer.leftButtonMultipleEntity)){
+				refreshEntityScreen(true);
+			} else if (btn.getId()==getResources().getInteger(R.integer.rightButtonMultipleEntity)){
+				refreshEntityScreen(false);
 			}
 		} else if (arg0 instanceof TextView){
 			//Log.e("summary","list row");
@@ -1946,14 +838,23 @@ public class FormScreen extends BaseActivity implements OnClickListener, TextWat
 		} else {
 			intent.putExtra(getResources().getString(R.string.breadcrumb), summaryList.getTitle());
 		}
-		
 		if (summaryList.getEntityDefinition().isMultiple()){
 			intent.putExtra(getResources().getString(R.string.intentType), getResources().getInteger(R.integer.multipleEntityIntent));	
 		} else {
 			intent.putExtra(getResources().getString(R.string.intentType), getResources().getInteger(R.integer.singleEntityIntent));
 		}		
 		intent.putExtra(getResources().getString(R.string.idmlId), summaryList.getId());
-		intent.putExtra(getResources().getString(R.string.instanceNo), 0);
+		/*int instanceNo = summaryList.getInstanceNo();
+		Log.e("instanceNoPrepared","=="+instanceNo);
+		/*Log.e("parentFormScreenId","=="+this.parentFormScreenId+"==");
+		if (!this.parentFormScreenId.equals("")){
+			String[] pathToScreenArray = this.parentFormScreenId.split(getResources().getString(R.string.valuesSeparator2));
+			Log.e("pathTOParentScreen"+this.parentFormScreenId,"=="+pathToScreenArray.length);
+			Log.e("EXTRACTEDinstanceNo"+instanceNo,pathToScreenArray[pathToScreenArray.length-1]+"=="+pathToScreenArray[pathToScreenArray.length-1].substring(pathToScreenArray[pathToScreenArray.length-1].indexOf(getResources().getString(R.string.valuesSeparator1))));
+			instanceNo = Integer.valueOf(pathToScreenArray[pathToScreenArray.length-1].substring(pathToScreenArray[pathToScreenArray.length-1].indexOf(getResources().getString(R.string.valuesSeparator1)+1)));
+			Log.e("EXTRACTEDinstanceNo"+instanceNo,pathToScreenArray[pathToScreenArray.length-1]+"==");	
+		}*/
+		intent.putExtra(getResources().getString(R.string.instanceNo), summaryList.getInstanceNo());
 		intent.putExtra(getResources().getString(R.string.parentFormScreenId), this.getFormScreenId());
         //List<NodeDefinition> formFields = ApplicationManager.fieldsDefList;
         List<NodeDefinition> entityAttributes = summaryList.getEntityDefinition().getChildDefinitions();
@@ -2011,7 +912,7 @@ public class FormScreen extends BaseActivity implements OnClickListener, TextWat
 		}
     }
     
-    private RelativeLayout arrangeButtonsInLine(Button btnLeft, String btnLeftLabel, Button btnRight, String btnRightLabel, OnClickListener listener){
+    private RelativeLayout arrangeButtonsInLine(Button btnLeft, String btnLeftLabel, Button btnRight, String btnRightLabel, OnClickListener listener, boolean isForEntity){
 		RelativeLayout relativeButtonsLayout = new RelativeLayout(this);
 	    RelativeLayout.LayoutParams lp = new RelativeLayout.LayoutParams(
 	            RelativeLayout.LayoutParams.FILL_PARENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
@@ -2035,8 +936,13 @@ public class FormScreen extends BaseActivity implements OnClickListener, TextWat
 		btnRight.setLayoutParams(lpBtnRight);
 		relativeButtonsLayout.addView(btnRight);
 		
-		btnLeft.setId(getResources().getInteger(R.integer.leftButtonMultipleAttribute));
-		btnRight.setId(getResources().getInteger(R.integer.rightButtonMultipleAttribute));
+		if (!isForEntity){
+			btnLeft.setId(getResources().getInteger(R.integer.leftButtonMultipleAttribute));
+			btnRight.setId(getResources().getInteger(R.integer.rightButtonMultipleAttribute));	
+		} else {
+			btnLeft.setId(getResources().getInteger(R.integer.leftButtonMultipleEntity));
+			btnRight.setId(getResources().getInteger(R.integer.rightButtonMultipleEntity));
+		}
 		
 		return relativeButtonsLayout;
     }
@@ -2050,19 +956,20 @@ public class FormScreen extends BaseActivity implements OnClickListener, TextWat
 
 	@Override
 	public void afterTextChanged(Editable arg0) {
-		if (this.currentMultipleFieldValue!=null){
-			//Log.e("currInstanceNo",FormScreen.currentFieldValue.size()+"TEXTFIELD=="+this.currInstanceNo);
+		/*if (this.currentMultipleFieldValue!=null){
+			Log.e("currInstanceNo",FormScreen.currentFieldValue.size()+"TEXTFIELD=="+this.currInstanceNo);
 			ArrayList<String> tempValue = new ArrayList<String>();
 			tempValue.add(arg0.toString());
 			this.currentMultipleFieldValue.setValue(this.currInstanceNo, tempValue);
 		} else {
+			Log.e("afterTextChanged2","formSCREEN"+arg0.toString()+"==");
 			ArrayList<List<String>> valuesLists = new ArrayList<List<String>>();
 			ArrayList<String> currentValuesList = new ArrayList<String>();
 			currentValuesList.add(arg0.toString());
 			valuesLists.add(currentValuesList);
 			FieldValue tempValue = new FieldValue(FormScreen.currentFieldValue.getId(), "", valuesLists);
 			this.currentNode.addFieldValue(tempValue);
-		}
+		}*/
 	}
 
 	@Override
@@ -2074,5 +981,197 @@ public class FormScreen extends BaseActivity implements OnClickListener, TextWat
 	@Override
 	public void onTextChanged(CharSequence arg0, int arg1, int arg2, int arg3) {
 		
+	}
+	
+	private Entity findParentEntity(String path){		
+		Entity parentEntity = ApplicationManager.currentRecord.getRootEntity();
+		String screenPath = path;
+		String[] entityPath = screenPath.split(getResources().getString(R.string.valuesSeparator2));
+		try{
+			for (int m=2;m<entityPath.length;m++){
+				String[] instancePath = entityPath[m].split(getResources().getString(R.string.valuesSeparator1));
+				
+				int id = Integer.valueOf(instancePath[0]);
+				int instanceNo = Integer.valueOf(instancePath[1]);
+				parentEntity = (Entity) parentEntity.get(ApplicationManager.getSurvey().getSchema().getDefinitionById(id).getName(), instanceNo);
+			}			
+		} catch (ClassCastException e){
+			
+		}
+		return parentEntity;
+	}
+	
+	private void refreshEntityScreen(boolean isPreviousEntity){
+		//setting current instance number of the entity
+		if (isPreviousEntity){//scroll left to previous entity
+			if (this.currInstanceNo>0){
+				this.currInstanceNo--;
+			} else {
+				return;
+			}
+		} else {//scroll right to next (or new) entity
+			this.currInstanceNo++;
+		}
+		//Log.e("REFRESHING",this.getFormScreenId()+"currentInstanceNo"+this.currInstanceNo);
+		//refreshing values of fields in the entity 
+		Entity parentEntity = this.findParentEntity(this.getFormScreenId());
+		if (parentEntity!=null){
+			//Log.e("REFRESHING",parentEntity.getIndex()+"parentEntity"+parentEntity.getName());
+			//Log.e("REFRESHING1","parentEntity"+parentEntity.getName());
+			for (int i=0;i<this.fieldsNo;i++){
+				NodeDefinition nodeDef = ApplicationManager.getNodeDefinition(this.startingIntent.getIntExtra(getResources().getString(R.string.attributeId)+i, -1));
+				if (nodeDef!=null){
+					//Log.e("refreshing existing field","=="+nodeDef.getName());
+					if (nodeDef instanceof TextAttributeDefinition){
+						String loadedValue = "";
+						if (((TextAttributeDefinition) nodeDef).getType().toString().toLowerCase().equals("short")){
+							TextValue textValue = (TextValue)parentEntity.getValue(nodeDef.getName(), 0);							
+							if (textValue!=null)
+								loadedValue = textValue.getValue();
+	    					TextField textField = (TextField) ApplicationManager.getUIElement(nodeDef.getId());
+	    					if (textField!=null)
+	    						textField.setValue(0, loadedValue, this.getFormScreenId(), false);					
+						} else {
+							TextValue textValue = (TextValue)parentEntity.getValue(nodeDef.getName(), 0);							
+							if (textValue!=null)
+								loadedValue = textValue.getValue();
+	    					MemoField memoField = (MemoField) ApplicationManager.getUIElement(nodeDef.getId());
+	    					if (memoField!=null)
+	    						memoField.setValue(0, loadedValue, this.getFormScreenId(), false);
+						}								
+					} else if (nodeDef instanceof NumericAttributeDefinition){
+						String loadedValue = "";
+						if (((NumberAttributeDefinition) nodeDef).isInteger()){
+							IntegerValue intValue = (IntegerValue)parentEntity.getValue(nodeDef.getName(), 0);
+							if (intValue!=null)
+								loadedValue = intValue.getValue().toString();	
+						} else {
+							RealValue realValue = (RealValue)parentEntity.getValue(nodeDef.getName(), 0);					
+							if (realValue!=null)
+								loadedValue = realValue.getValue().toString();
+						}					
+						NumberField numberField = (NumberField) ApplicationManager.getUIElement(nodeDef.getId());
+						if (numberField!=null)
+							numberField.setValue(0, loadedValue, this.getFormScreenId(), false);
+					} else if (nodeDef instanceof CodeAttributeDefinition){
+						String loadedValue = "";
+						Code codeValue = (Code)parentEntity.getValue(nodeDef.getName(), 0);
+						if (codeValue!=null)
+							loadedValue = codeValue.getCode();
+						CodeField codeField = (CodeField) ApplicationManager.getUIElement(nodeDef.getId());
+						if (codeField!=null)
+							codeField.setValue(0, loadedValue, this.getFormScreenId(), false);
+					}
+				}
+			}
+		} else{//parentEntity is null, because there is no entity added with this instance number in current record
+			String path = this.getFormScreenId().substring(0,this.getFormScreenId().lastIndexOf(getResources().getString(R.string.valuesSeparator2)));
+			//Log.e("REFRESHING","path=="+path+"==");
+			parentEntity = this.findParentEntity(path);
+			EntityBuilder.addEntity(parentEntity, ApplicationManager.getSurvey().getSchema().getDefinitionById(this.idmlId).getName());
+			parentEntity = this.findParentEntity(this.getFormScreenId());
+			//Log.e("REFRESHING2",parentEntity.getIndex()+"parentEntity"+parentEntity.getName());
+			for (int i=0;i<this.fieldsNo;i++){
+				NodeDefinition nodeDef = ApplicationManager.getNodeDefinition(this.startingIntent.getIntExtra(getResources().getString(R.string.attributeId)+i, -1));
+				if (nodeDef!=null){
+					//Log.e("refreshing new field","=="+nodeDef.getName());
+					if (nodeDef instanceof TextAttributeDefinition){
+						String loadedValue = "";
+						if (((TextAttributeDefinition) nodeDef).getType().toString().toLowerCase().equals("short")){							
+	    					TextField textField = (TextField) ApplicationManager.getUIElement(nodeDef.getId());
+	    					if (textField!=null)
+	    						textField.setValue(0, loadedValue, this.getFormScreenId(), false);	
+						} else {
+	    					MemoField memoField = (MemoField) ApplicationManager.getUIElement(nodeDef.getId());
+	    					if (memoField!=null)
+	    						memoField.setValue(0, loadedValue, this.getFormScreenId(), false);
+						}    					
+					} else if (nodeDef instanceof NumericAttributeDefinition){
+						String loadedValue = "";
+						if (((NumberAttributeDefinition) nodeDef).isInteger()){
+							IntegerValue intValue = (IntegerValue)parentEntity.getValue(nodeDef.getName(), 0);
+							if (intValue!=null)
+								loadedValue = intValue.getValue().toString();	
+						} else {
+							RealValue realValue = (RealValue)parentEntity.getValue(nodeDef.getName(), 0);					
+							if (realValue!=null)
+								loadedValue = realValue.getValue().toString();
+						}					
+						NumberField numberField = (NumberField) ApplicationManager.getUIElement(nodeDef.getId());
+						if (numberField!=null)
+							numberField.setValue(0, loadedValue, this.getFormScreenId(), false);
+					} else if (nodeDef instanceof CodeAttributeDefinition){
+						String loadedValue = "";
+						Code codeValue = (Code)parentEntity.getValue(nodeDef.getName(), 0);
+						if (codeValue!=null)
+							loadedValue = codeValue.getCode();
+						CodeField codeField = (CodeField) ApplicationManager.getUIElement(nodeDef.getId());
+						if (codeField!=null)
+							codeField.setValue(0, loadedValue, this.getFormScreenId(), false);
+					}			
+				}				
+			}
+		}
+	}
+	
+	private void refreshMultipleAttributeScreen(boolean isPreviousField){
+		if (isPreviousField){
+			if (this.currInstanceNo>0){
+				this.currInstanceNo--;
+			} else {
+				return;
+			}	
+		} else {
+			this.currInstanceNo++;
+		}
+		
+		//Entity parentEntity = this.findParentEntity(this.parentFormScreenId);
+		Entity parentEntity = this.parentEntityMultiple;
+		if (parentEntity!=null){
+			NodeDefinition nodeDef = ApplicationManager.getNodeDefinition(this.startingIntent.getIntExtra(getResources().getString(R.string.attributeId)+0, -1));
+			
+			if (nodeDef!=null){
+				if (nodeDef instanceof TextAttributeDefinition){
+					String loadedValue = "";
+					if (((TextAttributeDefinition) nodeDef).getType().toString().toLowerCase().equals("short")){
+						TextValue textValue = (TextValue)parentEntity.getValue(nodeDef.getName(), this.currInstanceNo);						
+						if (textValue!=null)
+							loadedValue = textValue.getValue();
+    					TextField textField = (TextField) ApplicationManager.getUIElement(nodeDef.getId());
+    					if (textField!=null)
+    						textField.setValue(this.currInstanceNo, loadedValue, this.getFormScreenId(), false);	
+					} else {
+						TextValue textValue = (TextValue)parentEntity.getValue(nodeDef.getName(), this.currInstanceNo);
+						if (textValue!=null)
+							loadedValue = textValue.getValue();
+    					TextField textField = (TextField) ApplicationManager.getUIElement(nodeDef.getId());
+    					if (textField!=null)
+    						textField.setValue(this.currInstanceNo, loadedValue, this.getFormScreenId(), false);
+					} 
+				} else if (nodeDef instanceof NumericAttributeDefinition){
+					String loadedValue = "";
+					if (((NumberAttributeDefinition) nodeDef).isInteger()){
+						IntegerValue intValue = (IntegerValue)parentEntity.getValue(nodeDef.getName(), this.currInstanceNo);
+						if (intValue!=null)
+							loadedValue = intValue.getValue().toString();	
+					} else {
+						RealValue realValue = (RealValue)parentEntity.getValue(nodeDef.getName(), this.currInstanceNo);					
+						if (realValue!=null)
+							loadedValue = realValue.getValue().toString();
+					}					
+					NumberField numberField = (NumberField) ApplicationManager.getUIElement(nodeDef.getId());
+					if (numberField!=null)
+						numberField.setValue(this.currInstanceNo, loadedValue, this.getFormScreenId(), false);
+				} else if (nodeDef instanceof CodeAttributeDefinition){
+					String loadedValue = "";
+					Code codeValue = (Code)parentEntity.getValue(nodeDef.getName(), this.currInstanceNo);
+					if (codeValue!=null)
+						loadedValue = codeValue.getCode();
+					CodeField codeField = (CodeField) ApplicationManager.getUIElement(nodeDef.getId());
+					if (codeField!=null)
+						codeField.setValue(this.currInstanceNo, loadedValue, this.getFormScreenId(), false);
+				}
+			}
+		}
 	}
 }

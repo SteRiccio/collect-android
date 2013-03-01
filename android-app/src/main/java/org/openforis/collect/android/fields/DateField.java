@@ -6,13 +6,10 @@ import java.util.Map;
 import java.util.Random;
 
 import org.openforis.collect.android.R;
-import org.openforis.collect.android.data.FieldValue;
 import org.openforis.collect.android.dialogs.DateSetDialog;
 import org.openforis.collect.android.management.ApplicationManager;
 import org.openforis.collect.android.messages.ToastMessage;
-import org.openforis.collect.android.screens.FormScreen;
 import org.openforis.idm.metamodel.NodeDefinition;
-import org.openforis.idm.metamodel.NodeLabel.Type;
 import org.openforis.idm.model.Date;
 import org.openforis.idm.model.EntityBuilder;
 
@@ -28,13 +25,12 @@ public class DateField extends InputField {
 	
 	private List<String> values;
 	
-	public DateField(Context context, NodeDefinition nodeDef, FieldValue fieldValue) {
+	public DateField(Context context, NodeDefinition nodeDef) {
 		super(context, nodeDef);
 		
 		this.values = new ArrayList<String>();
 		DateField.this.values.add(DateField.this.currentInstanceNo, "");
-		
-		this.label.setText(nodeDef.getLabel(Type.INSTANCE, null));
+
 		this.label.setLayoutParams(new LayoutParams(0, ViewGroup.LayoutParams.WRAP_CONTENT, (float) 2));
 		this.label.setOnLongClickListener(new OnLongClickListener() {
 	        @Override
@@ -48,7 +44,7 @@ public class DateField extends InputField {
 		this.txtBox.setLayoutParams(new LayoutParams(0,ViewGroup.LayoutParams.WRAP_CONTENT,(float) 2));
 		this.txtBox.addTextChangedListener(this);
 		
-		this.addView(this.label);
+		//this.addView(this.label);
 		this.addView(this.txtBox);
 	
 		// When text box in DateField got focus
@@ -57,7 +53,6 @@ public class DateField extends InputField {
 		    public void onFocusChange(View v, boolean hasFocus) {
 		    	//Get current settings about software keyboard for text fields
 		    	if(hasFocus){
-		    		FormScreen.currentFieldValue = DateField.this.value;
 			    	if(this.getClass().toString().contains("DateField")){
 				    	Map<String, ?> settings = ApplicationManager.appPreferences.getAll();
 				    	Boolean valueForNum = (Boolean)settings.get(getResources().getString(R.string.showSoftKeyboardOnNumericField));
@@ -77,9 +72,7 @@ public class DateField extends InputField {
 			    	}
 		    	}
 		    }
-	    });	
-		
-		this.value = fieldValue;		
+	    });
 	}
 
 	private void showDatePickerDialog(int id) {
@@ -90,9 +83,9 @@ public class DateField extends InputField {
     	super.getContext().startActivity(datePickerIntent);	
 	}
 	
-	public String getValue(int index){
+	/*public String getValue(int index){
 		return DateField.this.value.getValue(index).get(0);
-	}
+	}*/
 	
 	public void setValue(int position, String value, String path, boolean isTextChanged)
 	{
@@ -100,7 +93,6 @@ public class DateField extends InputField {
 			this.txtBox.setText(value);
 		ArrayList<String> valueToAdd = new ArrayList<String>();
 		valueToAdd.add(value);
-		DateField.this.value.setValue(position, valueToAdd);
 		
 		try{
 			EntityBuilder.addValue(this.findParentEntity(path), this.nodeDefinition.getName(), Date.parseDate(value), position);

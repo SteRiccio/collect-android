@@ -9,6 +9,7 @@
     
     <integer name="field_height">64</integer>
     
+    <!-- FILE SYSTEM -->
     <string name="application_folder">/mofc</string>
     <string name="data_folder">/mofc/data</string>
     <string name="logs_folder">/mofc/logs</string>
@@ -71,6 +72,8 @@
     <!-- BUTTONS IDs -->
     <integer name="leftButtonMultipleAttribute">11</integer>
     <integer name="rightButtonMultipleAttribute">22</integer>
+    <integer name="leftButtonMultipleEntity">33</integer>
+    <integer name="rightButtonMultipleEntity">44</integer>    
     
     <!-- SEPARATORS -->
     <string name="valuesSeparator1">,</string>
@@ -81,5 +84,7 @@
     <string name="timeSeparator">:</string>
     <string name="rangeSeparator">-</string>
     
-    
+    <!-- ADDITIONAL TEXT MARKERS -->
+    <string name="requiredFieldMarker">*</string>
+    <string name="notRequiredFieldMarker"></string>
 </resources>

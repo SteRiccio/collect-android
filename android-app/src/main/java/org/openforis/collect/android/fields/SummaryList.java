@@ -10,17 +10,13 @@ import org.openforis.idm.metamodel.AttributeDefinition;
 import org.openforis.idm.metamodel.CodeAttributeDefinition;
 import org.openforis.idm.metamodel.EntityDefinition;
 import org.openforis.idm.metamodel.NodeDefinition;
-import org.openforis.idm.metamodel.NodeLabel.Type;
 import org.openforis.idm.metamodel.NumberAttributeDefinition;
-import org.openforis.idm.metamodel.TextAttributeDefinition;
 import org.openforis.idm.model.BooleanValue;
 import org.openforis.idm.model.Code;
 import org.openforis.idm.model.Coordinate;
 import org.openforis.idm.model.Date;
 import org.openforis.idm.model.Entity;
-import org.openforis.idm.model.EntityBuilder;
 import org.openforis.idm.model.IntegerRange;
-import org.openforis.idm.model.Node;
 import org.openforis.idm.model.NumberValue;
 import org.openforis.idm.model.RealRange;
 import org.openforis.idm.model.TextValue;
@@ -30,7 +26,6 @@ import org.openforis.idm.model.Value;
 import android.content.Context;
 import android.graphics.Color;
 import android.text.Html;
-import android.util.Log;
 import android.view.ViewGroup;
 import android.widget.TableLayout;
 import android.widget.TableRow;
@@ -40,11 +35,12 @@ public class SummaryList extends UIElement {
 	
 	private TableLayout tableLayout;
 	
-	private String title;
 	private EntityDefinition entityDefinition;
 	
 	private FormScreen context;
 
+	private int instanceNo;
+	
 	public SummaryList(Context context, EntityDefinition entityDef, int threshold,
 			/*String title, List<List<String>> keysList, List<List<String>> detailsList,*/
 			OnClickListener listener, int entityInstanceNo) {
@@ -52,20 +48,23 @@ public class SummaryList extends UIElement {
 		
 		this.context = (FormScreen)context;
 		
+		this.instanceNo = entityInstanceNo;
+		
 		this.tableLayout  = new TableLayout(context);  
 		this.tableLayout.setStretchAllColumns(true); 
 	    this.tableLayout.setShrinkAllColumns(true);
 		this.tableLayout.setPadding(5, 10, 5, 10);
 		
-		this.title = entityDef.getLabel(Type.INSTANCE, null);
+		
+		/*this.title = entityDef.getLabel(Type.INSTANCE, null);
 		if (this.title==null){
 			if (entityDef.getLabels().size()>0)
 				this.title = entityDef.getLabels().get(0).getText();
-		}
+		}*/
 		this.entityDefinition = entityDef;
 		
 		TextView titleView = new TextView(context);
-		titleView.setText(this.title);
+		titleView.setText(this.label.getText()+" "+(this.instanceNo+1));
 		this.tableLayout.addView(titleView);
 		
 		//adding the entity and its nodes if do not exist yet
@@ -91,34 +90,7 @@ public class SummaryList extends UIElement {
 				String loadedValue = "";
 				//Log.e("PARENTentity1",parentEntity1.getName()+"=="+parentEntity1.get(entityDef.getName(), entityInstanceNo).getName());
 				parentEntity1 = (Entity)parentEntity1.get(entityDef.getName(), entityInstanceNo);
-				//Log.e("PARENTentity1,2",parentEntity1.getName()+"==");
-				Node<?> foundNode = parentEntity1.get(entityDef.getChildDefinitions().get(i).getName(), entityInstanceNo);
-				//Log.e("NODE FOUND?","=="+(foundNode!=null));				
-				if (foundNode!=null){
-					//Log.e("foundNodeID"+foundNode.getId(),parentEntity1.getName()+"=="+parentEntity1.getId());
-					/*if (ApplicationManager.getSurvey().getSchema().getDefinitionById(foundNode.getId()) instanceof TextAttributeDefinition){
-						Log.e("TEXT","VALUE1");
-						TextValue textValue = (TextValue)parentEntity1.getValue(entityDef.getChildDefinitions().get(i).getName(), entityInstanceNo);
-						loadedValue = textValue.getValue();
-						Log.e("wczytanaWARTOSC1",entityDef.getChildDefinitions().get(i).getName()+"=="+loadedValue);
-						EntityBuilder.addValue(parentEntity1, entityDef.getChildDefinitions().get(i).getName(), loadedValue, entityInstanceNo);	
-					}*/
-					Object value = parentEntity1.getValue(entityDef.getChildDefinitions().get(i).getName(), entityInstanceNo);
-					//Log.e("value!=null","=="+(value!=null));
-					if (value!=null){
-						//Log.e("value!=null","====");
-						if (value instanceof TextValue){
-							///Log.e("TEXT","VALUE1");
-							TextValue textValue = (TextValue)parentEntity1.getValue(entityDef.getChildDefinitions().get(i).getName(), entityInstanceNo);
-							loadedValue = textValue.getValue();
-							//Log.e("wczytanaWARTOSC1",entityDef.getChildDefinitions().get(i).getName()+"=="+loadedValue);
-							EntityBuilder.addValue(parentEntity1, entityDef.getChildDefinitions().get(i).getName(), loadedValue, entityInstanceNo);
-						} else {
-							//Log.e("klasaVALUE","=="+value.getClass());
-						}
-					}
-					
-				}	
+				//Log.e("PARENTentity1,2",parentEntity1.getName()+"==");				
 			} catch (Exception e){
 				//Log.e("SIE RYPŁO","=="+e.getLocalizedMessage());				
 			}
@@ -325,12 +297,12 @@ public class SummaryList extends UIElement {
 	}
 	
 	public String getTitle(){
-		return this.title;
+		return this.label.getText().toString();
 	}
 	
-	public void setTitle(String title){
+	/*public void setTitle(String title){
 		this.title = title;
-	}	
+	}*/
 	
 	public EntityDefinition getEntityDefinition(){
 		return this.entityDefinition;
@@ -347,7 +319,7 @@ public class SummaryList extends UIElement {
 				TextValue textValue = (TextValue)value;
 				valueToReturn = textValue.getValue();
 			} else if (value instanceof NumberValue){
-				NumberValue numberValue = (NumberValue)value;
+				NumberValue<?> numberValue = (NumberValue<?>)value;
 				if (((NumberAttributeDefinition) nodeDef).isInteger()){
 					valueToReturn = String.valueOf(numberValue.getValue().intValue());	
 				} else {
@@ -362,6 +334,12 @@ public class SummaryList extends UIElement {
 				if (codeValue.getCode()!=null && !codeValue.getCode().equals("null")){
 					valueToReturn = ApplicationManager.getSurvey().getCodeList(codeDef.getList().getName()).findItem(codeValue.getCode()).getLabel(null);//codeValue.getCode();	
 				}
+			} else if (value instanceof RealRange){
+				RealRange rangeValue = (RealRange)value;
+				valueToReturn = rangeValue.getFrom()+getResources().getString(R.string.rangeSeparator)+rangeValue.getTo();
+			} else if (value instanceof IntegerRange){
+				IntegerRange rangeValue = (IntegerRange)value;
+				valueToReturn = rangeValue.getFrom()+getResources().getString(R.string.rangeSeparator)+rangeValue.getTo();
 			} else if (value instanceof Coordinate){
 				Coordinate coordinateValue = (Coordinate)value;
 				valueToReturn = coordinateValue.getX()+","+coordinateValue.getY();
@@ -373,14 +351,12 @@ public class SummaryList extends UIElement {
 				if (timeValue.getHour()!=null)
 					if (!timeValue.getHour().equals("null"))
 						valueToReturn = timeValue.getHour()+getResources().getString(R.string.timeSeparator)+timeValue.getMinute();
-			} else if (value instanceof RealRange){
-				RealRange rangeValue = (RealRange)value;
-				valueToReturn = rangeValue.getFrom()+getResources().getString(R.string.rangeSeparator)+rangeValue.getTo();
-			} else if (value instanceof IntegerRange){
-				IntegerRange rangeValue = (IntegerRange)value;
-				valueToReturn = rangeValue.getFrom()+getResources().getString(R.string.rangeSeparator)+rangeValue.getTo();
-			}		
+			}
 		}
 		return valueToReturn;
+	}
+	
+	public int getInstanceNo(){
+		return this.instanceNo;
 	}
 }

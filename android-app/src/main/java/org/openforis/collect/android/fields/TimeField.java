@@ -6,13 +6,10 @@ import java.util.Map;
 import java.util.Random;
 
 import org.openforis.collect.android.R;
-import org.openforis.collect.android.data.FieldValue;
 import org.openforis.collect.android.dialogs.TimeSetDialog;
 import org.openforis.collect.android.management.ApplicationManager;
 import org.openforis.collect.android.messages.ToastMessage;
-import org.openforis.collect.android.screens.FormScreen;
 import org.openforis.idm.metamodel.NodeDefinition;
-import org.openforis.idm.metamodel.NodeLabel.Type;
 import org.openforis.idm.model.EntityBuilder;
 import org.openforis.idm.model.Time;
 
@@ -20,7 +17,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.text.InputType;
 import android.text.TextWatcher;
-import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
@@ -30,13 +26,12 @@ public class TimeField extends InputField implements TextWatcher {
 	
 	private List<String> values;
 	
-	public TimeField(Context context, NodeDefinition nodeDef, FieldValue fieldValue) {
+	public TimeField(Context context, NodeDefinition nodeDef) {
 		super(context, nodeDef);
 		
 		this.values = new ArrayList<String>();
 		TimeField.this.values.add(TimeField.this.currentInstanceNo, "");
 		
-		this.label.setText(nodeDef.getLabel(Type.INSTANCE, null));
 		this.label.setLayoutParams(new LayoutParams(0, ViewGroup.LayoutParams.WRAP_CONTENT, (float) 2));
 		this.label.setOnLongClickListener(new OnLongClickListener() {
 	        @Override
@@ -51,7 +46,7 @@ public class TimeField extends InputField implements TextWatcher {
 		this.txtBox.addTextChangedListener(this);
 		
 		//this.addView(this.scrollLeft);
-		this.addView(this.label);
+		//this.addView(this.label);
 		this.addView(this.txtBox);
 		//this.addView(this.scrollRight);		
 		
@@ -61,7 +56,6 @@ public class TimeField extends InputField implements TextWatcher {
 		    public void onFocusChange(View v, boolean hasFocus) {
 		    	//Get current settings about software keyboard for text fields
 		    	if(hasFocus){
-		    		FormScreen.currentFieldValue = TimeField.this.value;
 			    	if(this.getClass().toString().contains("TimeField")){
 				    	Map<String, ?> settings = ApplicationManager.appPreferences.getAll();
 				    	Boolean valueForNum = (Boolean)settings.get(getResources().getString(R.string.showSoftKeyboardOnNumericField));
@@ -81,9 +75,7 @@ public class TimeField extends InputField implements TextWatcher {
 			    	}
 		    	}
 		    }
-	    });			
-		
-		this.value = fieldValue;
+	    });
 	}
 	
 	private void showTimePickerDialog(int id) {  	
@@ -125,9 +117,9 @@ public class TimeField extends InputField implements TextWatcher {
 		TimeField.this.values.add(currentInstanceNo, s.toString());
 	}*/
 	
-	public String getValue(int index){
+	/*/public String getValue(int index){
 		return TimeField.this.value.getValue(index).get(0);
-	}
+	}*/
 	
 	public void setValue(int position, String value, String path, boolean isTextChanged)
 	{
@@ -135,7 +127,6 @@ public class TimeField extends InputField implements TextWatcher {
 			this.txtBox.setText(value);
 		ArrayList<String> valueToAdd = new ArrayList<String>();
 		valueToAdd.add(value);
-		TimeField.this.value.setValue(position, valueToAdd);
 		
 		try{
 			EntityBuilder.addValue(this.findParentEntity(path), this.nodeDefinition.getName(), Time.parseTime(value), position);

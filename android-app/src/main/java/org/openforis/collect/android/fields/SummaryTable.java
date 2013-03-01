@@ -5,14 +5,18 @@ import java.util.List;
 
 import org.openforis.collect.android.R;
 import org.openforis.idm.metamodel.NodeDefinition;
-import org.openforis.idm.metamodel.NodeLabel.Type;
+import org.openforis.idm.metamodel.NumberAttributeDefinition;
+import org.openforis.idm.metamodel.TextAttributeDefinition;
 import org.openforis.idm.model.Entity;
+import org.openforis.idm.model.IntegerAttribute;
+import org.openforis.idm.model.IntegerValue;
 import org.openforis.idm.model.Node;
+import org.openforis.idm.model.RealAttribute;
+import org.openforis.idm.model.RealValue;
 import org.openforis.idm.model.TextValue;
 
 import android.content.Context;
 import android.graphics.Color;
-import android.util.Log;
 import android.view.Gravity;
 import android.view.ViewGroup;
 import android.widget.TableLayout;
@@ -22,8 +26,6 @@ import android.widget.TextView;
 public class SummaryTable extends UIElement {
 	
 	private TableLayout tableLayout;
-	
-	private String title;
 	
 	private List<List<String>> values;
 	
@@ -36,15 +38,11 @@ public class SummaryTable extends UIElement {
 	    this.tableLayout.setShrinkAllColumns(true);
 	    this.tableLayout.setPadding(5, 10, 5, 10);
 	    
-	    this.title = nodeDef.getLabel(Type.INSTANCE, null);
 	    //this.values = rows;
-	    this.values = new ArrayList<List<String>>();
-	    
+	    this.values = new ArrayList<List<String>>();	    
 	   
 	    List<Node<?>> listOfNodes = parentEntity.getAll(nodeDef.getName());
-	    Log.e("SUMMARY TABLE","VALUES"+listOfNodes.size());
 	    if (listOfNodes.size()==0){
-	    	Log.e("PUSTE","WARTOSCI");
 		    ArrayList<String> newValue = new ArrayList<String>();
 		    newValue.add("");
 		    this.values.add(newValue);
@@ -53,23 +51,34 @@ public class SummaryTable extends UIElement {
 	    for (int i=0;i<listOfNodes.size();i++){
 	    	Node<?> foundNode = parentEntity.get(nodeDef.getName(), i);
 		    String loadedValue = "";
-			Log.e("TEXT NODE FOUND?"+i,"=="+(foundNode!=null));
 			if (foundNode!=null){
-				TextValue textValue = (TextValue)parentEntity.getValue(nodeDef.getName(), i);
-				loadedValue = textValue.getValue();
-				Log.e("wczytanaWARTOSC"+i,nodeDef.getName()+"=="+loadedValue);
-			    ArrayList<String> newValue = new ArrayList<String>();
-			    newValue.add(loadedValue);
-			    this.values.add(newValue);
-				//EntityBuilder.addValue(parentEntity, nodeDef.getName(), loadedValue, i);
-			} else {
-				//Log.e("adding entity", nodeDef.getName()+"to record"+ApplicationManager.currentRecord.getId());
-				//parentEntity.add(EntityBuilder.addEntity(parentEntity, ApplicationManager.getSurvey().getSchema().getDefinitionById(nodeDef.getId()).getName()));
-				//EntityBuilder.addValue(parentEntity, nodeDef.getName(), loadedValue, i);
-			    ArrayList<String> newValue = new ArrayList<String>();
-			    newValue.add(loadedValue);
-			    this.values.add(newValue);
-			}	
+				if (nodeDef instanceof TextAttributeDefinition){
+					TextValue textValue = (TextValue)parentEntity.getValue(nodeDef.getName(), i);
+					loadedValue = textValue.getValue();
+				    ArrayList<String> newValue = new ArrayList<String>();
+				    newValue.add(loadedValue);
+				    this.values.add(newValue);	
+				} else if (nodeDef instanceof NumberAttributeDefinition){
+					if (((NumberAttributeDefinition) this.nodeDefinition).isInteger()){
+						IntegerAttribute intAttr = (IntegerAttribute)parentEntity.getValue(nodeDef.getName(), i);
+						IntegerValue intValue = (IntegerValue)intAttr.getValue();
+						if (intValue!=null)
+    						loadedValue = intValue.getValue().toString();
+						ArrayList<String> newValue = new ArrayList<String>();
+						newValue.add(loadedValue);
+						this.values.add(newValue);
+					} else {
+						RealAttribute realAttr = (RealAttribute)parentEntity.getValue(nodeDef.getName(), i);
+						RealValue realValue = (RealValue)realAttr.getValue();
+						if (realValue!=null)
+    						loadedValue = realValue.getValue().toString();						
+						loadedValue = realValue.getValue().toString();
+						ArrayList<String> newValue = new ArrayList<String>();
+						newValue.add(loadedValue);
+						this.values.add(newValue);
+					}
+				}
+			}
 	    }
 	    
 	    
@@ -78,12 +87,7 @@ public class SummaryTable extends UIElement {
 		int rowNo = this.values.size();
 		
 		TextView header = new TextView(context);
-		header.setText(this.title);
-		//TableRow tr1 = new TableRow(context);
-		//TableRow.LayoutParams params = new TableRow.LayoutParams();  
-	    //params.span = colNo;
-		//tr1.addView(header);
-		//this.tableLayout.addView(tr1);
+		header.setText(this.label.getText());
 		this.tableLayout.addView(header);
 		
 		TableRow colHeaders = new TableRow(context);
@@ -153,12 +157,12 @@ public class SummaryTable extends UIElement {
 	}
 	
 	public String getTitle(){
-		return this.title;
+		return this.label.getText().toString();
 	}
 	
-	public void setTitle(String title){
-		this.title = title;
-	}
+	/*public void setTitle(String title){
+		this.label.setText(title);
+	}*/
 	
 	public List<List<String>> getValues(){
 		return this.values;
