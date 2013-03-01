@@ -45,6 +45,8 @@
     <string name="settings">Settings</string>
     <string name="about">About</string>
     
+    <string name="addNewRecord">Add new</string>
+    
     
     <!-- settings screen -->
     <string name="settingsScreenTitle">SETTINGS</string>

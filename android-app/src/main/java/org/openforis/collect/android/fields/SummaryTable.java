@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.openforis.collect.android.R;
+import org.openforis.idm.metamodel.BooleanAttributeDefinition;
+import org.openforis.idm.metamodel.CodeAttributeDefinition;
 import org.openforis.idm.metamodel.NodeDefinition;
 import org.openforis.idm.metamodel.NumberAttributeDefinition;
 import org.openforis.idm.metamodel.TextAttributeDefinition;
@@ -77,6 +79,10 @@ public class SummaryTable extends UIElement {
 						newValue.add(loadedValue);
 						this.values.add(newValue);
 					}
+				} else if (nodeDef instanceof BooleanAttributeDefinition){
+					
+				}	else if (nodeDef instanceof CodeAttributeDefinition){
+					
 				}
 			}
 	    }

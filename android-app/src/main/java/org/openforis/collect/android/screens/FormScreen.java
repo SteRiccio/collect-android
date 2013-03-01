@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.openforis.collect.android.R;
+import org.openforis.collect.android.fields.BooleanField;
 import org.openforis.collect.android.fields.CodeField;
 import org.openforis.collect.android.fields.CoordinateField;
 import org.openforis.collect.android.fields.DateField;
@@ -20,6 +21,7 @@ import org.openforis.collect.android.fields.UIElement;
 import org.openforis.collect.android.management.ApplicationManager;
 import org.openforis.collect.android.management.BaseActivity;
 import org.openforis.collect.android.misc.RunnableHandler;
+import org.openforis.idm.metamodel.BooleanAttributeDefinition;
 import org.openforis.idm.metamodel.CodeAttributeDefinition;
 import org.openforis.idm.metamodel.CodeListItem;
 import org.openforis.idm.metamodel.CoordinateAttributeDefinition;
@@ -32,6 +34,7 @@ import org.openforis.idm.metamodel.RangeAttributeDefinition;
 import org.openforis.idm.metamodel.TaxonAttributeDefinition;
 import org.openforis.idm.metamodel.TextAttributeDefinition;
 import org.openforis.idm.metamodel.TimeAttributeDefinition;
+import org.openforis.idm.model.BooleanValue;
 import org.openforis.idm.model.Code;
 import org.openforis.idm.model.Coordinate;
 import org.openforis.idm.model.Date;
@@ -336,6 +339,50 @@ public class FormScreen extends BaseActivity implements OnClickListener, TextWat
 	        			    });
 	        				ApplicationManager.putUIElement(numberField.getId(), numberField);
 	        				this.ll.addView(numberField);
+	    				} else {//multiple attribute summary    			    		
+    						SummaryTable summaryTableView = new SummaryTable(this, nodeDef, tableColHeaders, parentEntity, this);
+        					summaryTableView.setOnClickListener(this);
+            				summaryTableView.setId(nodeDef.getId());
+            				this.ll.addView(summaryTableView);
+        				}
+	    			} else if (nodeDef instanceof BooleanAttributeDefinition){
+	    				loadedValue = "";
+	    				if (!nodeDef.isMultiple()){
+	    					Node<?> foundNode = this.parentEntity.get(nodeDef.getName(), 0);
+		    				if (foundNode!=null){
+		    					BooleanValue boolValue = (BooleanValue)this.parentEntity.getValue(nodeDef.getName(), 0);
+	        					if (boolValue!=null){
+	        						loadedValue = boolValue.getValue().toString();
+	        					}
+		    				}
+	        				BooleanField boolField = new BooleanField(this, nodeDef, false, false, getResources().getString(R.string.yes), getResources().getString(R.string.no));
+	        				boolField.setOnClickListener(this);
+	        				boolField.setId(nodeDef.getId());
+	        				if (loadedValue.equals("")){
+	        					boolField.setValue(0, null, FormScreen.this.getFormScreenId(),false);	
+	        				} else {
+	        					boolField.setValue(0, Boolean.valueOf(loadedValue), FormScreen.this.getFormScreenId(),false);	
+	        				}	        				
+	        				ApplicationManager.putUIElement(boolField.getId(), boolField);
+	        				this.ll.addView(boolField);
+	    				} else if (this.intentType==getResources().getInteger(R.integer.multipleAttributeIntent)){
+	    					Node<?> foundNode = this.parentEntityMultiple.get(nodeDef.getName(), this.currInstanceNo);
+	    					if (foundNode!=null){
+	    						BooleanValue boolValue = (BooleanValue)this.parentEntityMultiple.getValue(nodeDef.getName(), this.currInstanceNo);
+		    					if (boolValue!=null){
+	        						loadedValue = boolValue.getValue().toString();
+	        					}
+		    				}
+	    					BooleanField boolField = new BooleanField(this, nodeDef, false, false, getResources().getString(R.string.yes), getResources().getString(R.string.no));
+	    					boolField.setOnClickListener(this);
+	    					boolField.setId(nodeDef.getId());
+	    					if (loadedValue.equals("")){
+	    						boolField.setValue(this.currInstanceNo, null, this.parentFormScreenId,false);
+	    					} else {
+	    						boolField.setValue(this.currInstanceNo, Boolean.valueOf(loadedValue), this.parentFormScreenId,false);
+	    					}
+	        				ApplicationManager.putUIElement(boolField.getId(), boolField);
+	        				this.ll.addView(boolField);
 	    				} else {//multiple attribute summary    			    		
     						SummaryTable summaryTableView = new SummaryTable(this, nodeDef, tableColHeaders, parentEntity, this);
         					summaryTableView.setOnClickListener(this);
@@ -989,8 +1036,7 @@ public class FormScreen extends BaseActivity implements OnClickListener, TextWat
 		String[] entityPath = screenPath.split(getResources().getString(R.string.valuesSeparator2));
 		try{
 			for (int m=2;m<entityPath.length;m++){
-				String[] instancePath = entityPath[m].split(getResources().getString(R.string.valuesSeparator1));
-				
+				String[] instancePath = entityPath[m].split(getResources().getString(R.string.valuesSeparator1));				
 				int id = Integer.valueOf(instancePath[0]);
 				int instanceNo = Integer.valueOf(instancePath[1]);
 				parentEntity = (Entity) parentEntity.get(ApplicationManager.getSurvey().getSchema().getDefinitionById(id).getName(), instanceNo);
@@ -1053,6 +1099,19 @@ public class FormScreen extends BaseActivity implements OnClickListener, TextWat
 						NumberField numberField = (NumberField) ApplicationManager.getUIElement(nodeDef.getId());
 						if (numberField!=null)
 							numberField.setValue(0, loadedValue, this.getFormScreenId(), false);
+					}  else if (nodeDef instanceof BooleanAttributeDefinition){
+						String loadedValue = "";
+						BooleanValue boolValue = (BooleanValue)parentEntity.getValue(nodeDef.getName(), this.currInstanceNo);
+						if (boolValue!=null)
+							loadedValue = boolValue.getValue().toString();
+						BooleanField boolField = (BooleanField) ApplicationManager.getUIElement(nodeDef.getId());
+						if (boolField!=null){
+							if (loadedValue.equals("")){
+								boolField.setValue(0, null, this.getFormScreenId(), false);
+							} else {
+								boolField.setValue(0, Boolean.valueOf(loadedValue), this.getFormScreenId(), false);
+							}
+						}					
 					} else if (nodeDef instanceof CodeAttributeDefinition){
 						String loadedValue = "";
 						Code codeValue = (Code)parentEntity.getValue(nodeDef.getName(), 0);
@@ -1066,11 +1125,9 @@ public class FormScreen extends BaseActivity implements OnClickListener, TextWat
 			}
 		} else{//parentEntity is null, because there is no entity added with this instance number in current record
 			String path = this.getFormScreenId().substring(0,this.getFormScreenId().lastIndexOf(getResources().getString(R.string.valuesSeparator2)));
-			//Log.e("REFRESHING","path=="+path+"==");
 			parentEntity = this.findParentEntity(path);
 			EntityBuilder.addEntity(parentEntity, ApplicationManager.getSurvey().getSchema().getDefinitionById(this.idmlId).getName());
 			parentEntity = this.findParentEntity(this.getFormScreenId());
-			//Log.e("REFRESHING2",parentEntity.getIndex()+"parentEntity"+parentEntity.getName());
 			for (int i=0;i<this.fieldsNo;i++){
 				NodeDefinition nodeDef = ApplicationManager.getNodeDefinition(this.startingIntent.getIntExtra(getResources().getString(R.string.attributeId)+i, -1));
 				if (nodeDef!=null){
@@ -1100,6 +1157,19 @@ public class FormScreen extends BaseActivity implements OnClickListener, TextWat
 						NumberField numberField = (NumberField) ApplicationManager.getUIElement(nodeDef.getId());
 						if (numberField!=null)
 							numberField.setValue(0, loadedValue, this.getFormScreenId(), false);
+					} else if (nodeDef instanceof BooleanAttributeDefinition){
+						String loadedValue = "";
+						BooleanValue boolValue = (BooleanValue)parentEntity.getValue(nodeDef.getName(), this.currInstanceNo);
+						if (boolValue!=null)
+							loadedValue = boolValue.getValue().toString();
+						BooleanField boolField = (BooleanField) ApplicationManager.getUIElement(nodeDef.getId());
+						if (boolField!=null){
+							if (loadedValue.equals("")){
+								boolField.setValue(0, null, this.getFormScreenId(), false);
+							} else {
+								boolField.setValue(0, Boolean.valueOf(loadedValue), this.getFormScreenId(), false);
+							}
+						}					
 					} else if (nodeDef instanceof CodeAttributeDefinition){
 						String loadedValue = "";
 						Code codeValue = (Code)parentEntity.getValue(nodeDef.getName(), 0);
@@ -1109,7 +1179,7 @@ public class FormScreen extends BaseActivity implements OnClickListener, TextWat
 						if (codeField!=null)
 							codeField.setValue(0, loadedValue, this.getFormScreenId(), false);
 					}			
-				}				
+				}
 			}
 		}
 	}
@@ -1162,6 +1232,19 @@ public class FormScreen extends BaseActivity implements OnClickListener, TextWat
 					NumberField numberField = (NumberField) ApplicationManager.getUIElement(nodeDef.getId());
 					if (numberField!=null)
 						numberField.setValue(this.currInstanceNo, loadedValue, this.getFormScreenId(), false);
+				} else if (nodeDef instanceof BooleanAttributeDefinition){
+					String loadedValue = "";
+					BooleanValue boolValue = (BooleanValue)parentEntity.getValue(nodeDef.getName(), this.currInstanceNo);
+					if (boolValue!=null)
+						loadedValue = boolValue.getValue().toString();
+					BooleanField boolField = (BooleanField) ApplicationManager.getUIElement(nodeDef.getId());
+					if (boolField!=null){
+						if (loadedValue.equals("")){
+							boolField.setValue(this.currInstanceNo, null, this.getFormScreenId(), false);
+						} else {
+							boolField.setValue(this.currInstanceNo, Boolean.valueOf(loadedValue), this.getFormScreenId(), false);
+						}
+					}					
 				} else if (nodeDef instanceof CodeAttributeDefinition){
 					String loadedValue = "";
 					Code codeValue = (Code)parentEntity.getValue(nodeDef.getName(), this.currInstanceNo);

@@ -72,7 +72,7 @@ public class RecordChoiceActivity extends BaseListActivity{
 		CollectSurvey collectSurvey = (CollectSurvey)ApplicationManager.getSurvey();	        	
     	DataManager dataManager = new DataManager(collectSurvey,this.rootEntityDef.getName(),ApplicationManager.getLoggedInUser());
     	this.recordsList = dataManager.loadSummaries();
-		String[] clusterList = new String[recordsList.size()+1];
+		String[] clusterList = new String[recordsList.size()+2];
 		for (int i=0;i<recordsList.size();i++){
 			CollectRecord record = recordsList.get(i);
 			clusterList[i] = record.getId()+" "+record.getCreatedBy().getName()
@@ -81,7 +81,8 @@ public class RecordChoiceActivity extends BaseListActivity{
 				clusterList[i] += "\n"+record.getModifiedDate();
 			}
 		}
-		clusterList[recordsList.size()]="Add new "+this.rootEntityDef.getLabel(Type.INSTANCE, null);
+		clusterList[recordsList.size()]="";
+		clusterList[recordsList.size()+1]=getResources().getString(R.string.addNewRecord)+" "+this.rootEntityDef.getLabel(Type.INSTANCE, null);
 		
 		int layout = (backgroundColor!=Color.WHITE)?R.layout.localclusterrow_white:R.layout.localclusterrow_black;
         this.adapter = new ArrayAdapter<String>(this, layout, R.id.plotlabel, clusterList);
@@ -92,14 +93,16 @@ public class RecordChoiceActivity extends BaseListActivity{
 	protected void onListItemClick(ListView l, View v, int position, long id) {
 		super.onListItemClick(l, v, position, id);
 		Log.i(getResources().getString(R.string.app_name),TAG+":onListItemClick");
-		Intent resultHolder = new Intent();
-		if (position<recordsList.size()){
-			resultHolder.putExtra(getResources().getString(R.string.recordId), this.recordsList.get(position).getId());	
-		} else {
-			resultHolder.putExtra(getResources().getString(R.string.recordId), -1);	
-		}			
-		setResult(getResources().getInteger(R.integer.clusterChoiceSuccessful),resultHolder);
-		RecordChoiceActivity.this.finish();
+		if (position!=recordsList.size()){
+			Intent resultHolder = new Intent();
+			if (position<recordsList.size()){
+				resultHolder.putExtra(getResources().getString(R.string.recordId), this.recordsList.get(position).getId());	
+			} else {
+				resultHolder.putExtra(getResources().getString(R.string.recordId), -1);	
+			}			
+			setResult(getResources().getInteger(R.integer.clusterChoiceSuccessful),resultHolder);
+			RecordChoiceActivity.this.finish();	
+		}	
 		/*
 		if (!this.isFirstClick){
 			this.isFirstClick = true;

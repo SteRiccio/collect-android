@@ -7,7 +7,11 @@ import org.openforis.collect.android.messages.ToastMessage;
 import org.openforis.collect.android.screens.FormScreen;
 import org.openforis.idm.metamodel.BooleanAttributeDefinition;
 import org.openforis.idm.metamodel.NodeDefinition;
+import org.openforis.idm.model.BooleanAttribute;
+import org.openforis.idm.model.BooleanValue;
+import org.openforis.idm.model.Entity;
 import org.openforis.idm.model.EntityBuilder;
+import org.openforis.idm.model.Node;
 
 import android.content.Context;
 import android.graphics.Color;
@@ -107,29 +111,8 @@ public class BooleanField extends Field {
 		
 	}*/
 	
-	public void setValue(int position, Boolean boolValue, String path, boolean isSelectionChanged)
+	/*public void setValue(int position, Boolean boolValue, String path, boolean isSelectionChanged)
 	{
-/*		ArrayList<String> valueToAdd = new ArrayList<String>();
-		if (value1!=null){
-			if (!isSelectionChanged)
-				this.chckBox1.setChecked(value1);
-			valueToAdd.add(String.valueOf(value1));	
-		} else {
-			if (!isSelectionChanged)
-				this.chckBox1.setChecked(false);
-			valueToAdd.add("");
-		}
-		
-		if (value2!=null){
-			if (!isSelectionChanged)
-				this.chckBox2.setChecked(value2);
-			valueToAdd.add(String.valueOf(value2));	
-		} else {
-			if (!isSelectionChanged)
-				this.chckBox2.setChecked(false);
-			valueToAdd.add("");
-		}
-		BooleanField.this.value.setValue(position, valueToAdd);*/
 		ArrayList<String> valueToAdd = new ArrayList<String>();
 		if (boolValue==null){
 			if (!isSelectionChanged)
@@ -152,6 +135,30 @@ public class BooleanField extends Field {
 		} catch (Exception e){
 
 		}		
+	}*/
+	
+	public void setValue(int position, Boolean boolValue, String path, boolean isSelectionChanged)
+	{
+		if (boolValue==null){
+			if (!isSelectionChanged)
+				this.chckBox1.setChecked(false);
+			if (!isSelectionChanged)
+				this.chckBox2.setChecked(false);
+		} else {
+			if (!isSelectionChanged)
+				this.chckBox1.setChecked(boolValue);
+			if (!isSelectionChanged)
+				this.chckBox2.setChecked(!boolValue);
+		}
+		
+		Entity parentEntity = this.findParentEntity(path);
+		Node<? extends NodeDefinition> node = parentEntity.get(this.nodeDefinition.getName(), position);
+		if (node!=null){
+			BooleanAttribute boolAtr = (BooleanAttribute)node;
+			boolAtr.setValue(new BooleanValue(boolValue));
+		} else {
+			EntityBuilder.addValue(parentEntity, this.nodeDefinition.getName(), boolValue, position);	
+		}
 	}
 	
 	@Override
