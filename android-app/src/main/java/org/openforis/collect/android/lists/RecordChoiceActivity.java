@@ -72,7 +72,12 @@ public class RecordChoiceActivity extends BaseListActivity{
 		CollectSurvey collectSurvey = (CollectSurvey)ApplicationManager.getSurvey();	        	
     	DataManager dataManager = new DataManager(collectSurvey,this.rootEntityDef.getName(),ApplicationManager.getLoggedInUser());
     	this.recordsList = dataManager.loadSummaries();
-		String[] clusterList = new String[recordsList.size()+2];
+		String[] clusterList;
+		if (this.recordsList.size()==0){
+			clusterList = new String[1];
+		} else {
+			clusterList = new String[recordsList.size()+2];
+		}
 		for (int i=0;i<recordsList.size();i++){
 			CollectRecord record = recordsList.get(i);
 			clusterList[i] = record.getId()+" "+record.getCreatedBy().getName()
@@ -81,8 +86,12 @@ public class RecordChoiceActivity extends BaseListActivity{
 				clusterList[i] += "\n"+record.getModifiedDate();
 			}
 		}
-		clusterList[recordsList.size()]="";
-		clusterList[recordsList.size()+1]=getResources().getString(R.string.addNewRecord)+" "+this.rootEntityDef.getLabel(Type.INSTANCE, null);
+		if (this.recordsList.size()==0){			
+			clusterList[0]=getResources().getString(R.string.addNewRecord)+" "+this.rootEntityDef.getLabel(Type.INSTANCE, null);
+		} else {
+			clusterList[recordsList.size()]="";
+			clusterList[recordsList.size()+1]=getResources().getString(R.string.addNewRecord)+" "+this.rootEntityDef.getLabel(Type.INSTANCE, null);
+		}
 		
 		int layout = (backgroundColor!=Color.WHITE)?R.layout.localclusterrow_white:R.layout.localclusterrow_black;
         this.adapter = new ArrayAdapter<String>(this, layout, R.id.plotlabel, clusterList);
@@ -93,29 +102,23 @@ public class RecordChoiceActivity extends BaseListActivity{
 	protected void onListItemClick(ListView l, View v, int position, long id) {
 		super.onListItemClick(l, v, position, id);
 		Log.i(getResources().getString(R.string.app_name),TAG+":onListItemClick");
-		if (position!=recordsList.size()){
+		if (this.recordsList.size()==0){
 			Intent resultHolder = new Intent();
-			if (position<recordsList.size()){
-				resultHolder.putExtra(getResources().getString(R.string.recordId), this.recordsList.get(position).getId());	
-			} else {
-				resultHolder.putExtra(getResources().getString(R.string.recordId), -1);	
-			}			
+			resultHolder.putExtra(getResources().getString(R.string.recordId), -1);	
 			setResult(getResources().getInteger(R.integer.clusterChoiceSuccessful),resultHolder);
-			RecordChoiceActivity.this.finish();	
-		}	
-		/*
-		if (!this.isFirstClick){
-			this.isFirstClick = true;
-			this.firstClickPosition = position;
-			this.firstClickTime = System.currentTimeMillis();
+			RecordChoiceActivity.this.finish();		
 		} else {
-			if ((position==this.firstClickPosition)&&(System.currentTimeMillis()-this.firstClickTime<getResources().getInteger(R.integer.timeDifference4DoubleClick))){//double click on the item
+			if (position!=recordsList.size()){
 				Intent resultHolder = new Intent();
-				resultHolder.putExtra("clusterId", this.recordsList.get(position).getId());
-				setResult(getResources().getInteger(R.integer.clusterChoice),resultHolder);
-				ClusterChoiceActivity.this.finish();
+				if (position<recordsList.size()){
+					resultHolder.putExtra(getResources().getString(R.string.recordId), this.recordsList.get(position).getId());	
+				} else {
+					resultHolder.putExtra(getResources().getString(R.string.recordId), -1);	
+				}			
+				setResult(getResources().getInteger(R.integer.clusterChoiceSuccessful),resultHolder);
+				RecordChoiceActivity.this.finish();	
 			}
-		}*/
+		}		
 	}
     
 	@Override
@@ -132,27 +135,6 @@ public class RecordChoiceActivity extends BaseListActivity{
 	public void onBackPressed() { 
 		setResult(getResources().getInteger(R.integer.backButtonPressed), new Intent());
 		RecordChoiceActivity.this.finish();
-		//Log.e("parent==null","=="+(this.getParent()==null));
-		//this.getParent().onBackPressed();
-//		setResult(getResources().getInteger(R.integer.backButtonPressed), new Intent());
-//		ClusterChoiceActivity.this.finish();
-		/*AlertMessage.createPositiveNegativeDialog(ClusterChoiceActivity.this, false, getResources().getDrawable(R.drawable.warningsign),
-				getResources().getString(R.string.exitAppTitle), getResources().getString(R.string.exitAppMessage),
-				getResources().getString(R.string.yes), getResources().getString(R.string.no),
-	    		new DialogInterface.OnClickListener() {
-					@Override
-					public void onClick(DialogInterface dialog, int which) {
-						setResult(getResources().getInteger(R.integer.backButtonPressed), new Intent());
-						ClusterChoiceActivity.this.finish();
-					}
-				},
-	    		new DialogInterface.OnClickListener() {
-					@Override
-					public void onClick(DialogInterface dialog, int which) {
-						
-					}
-				},
-				null).show();*/
 	}
 	
     private void changeBackgroundColor(int backgroundColor){

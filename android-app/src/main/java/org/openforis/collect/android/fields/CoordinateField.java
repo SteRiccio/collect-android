@@ -11,7 +11,9 @@ import org.openforis.collect.android.messages.ToastMessage;
 import org.openforis.collect.android.screens.FormScreen;
 import org.openforis.idm.metamodel.NodeDefinition;
 import org.openforis.idm.model.Coordinate;
+import org.openforis.idm.model.CoordinateAttribute;
 import org.openforis.idm.model.EntityBuilder;
+import org.openforis.idm.model.Node;
 
 import android.content.Context;
 import android.text.Editable;
@@ -127,7 +129,7 @@ public class CoordinateField extends InputField {
 		return CoordinateField.this.value.getValue(index);
 	}*/
 	
-	public void setValue(int position, String latitude, String longitude, String path, boolean isTextChanged)
+	/*public void setValue(int position, String latitude, String longitude, String path, boolean isTextChanged)
 	{
 		if (!isTextChanged){
 			this.txtLatitude.setText(latitude);
@@ -143,6 +145,25 @@ public class CoordinateField extends InputField {
 		} catch (Exception e) {
 			//Log.e("EXCEPTION","WHILE ADDING COORD VALUE");
 		}		
+	}*/
+	
+	public void setValue(Integer position, String lon, String lat, String path, boolean isTextChanged)
+	{
+		if (!isTextChanged){
+			this.txtLongitude.setText(lon);
+			this.txtLatitude.setText(lat);
+		}
+
+		/*Node<? extends NodeDefinition> node = this.findParentEntity(path).get(this.nodeDefinition.getName(), position);
+		if (node!=null){
+			CoordinateAttribute coordAtr = (CoordinateAttribute)node;
+			if ((lan.equals("")&&lon.equals(""))){
+				coordAtr.setValue(new Coordinate(lon, lat, null));	
+			}
+			
+		} else {
+			EntityBuilder.addValue(this.findParentEntity(path), this.nodeDefinition.getName(), value, position);	
+		}*/
 	}
 	
 	@Override

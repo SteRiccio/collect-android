@@ -24,7 +24,6 @@ import org.openforis.collect.android.misc.RunnableHandler;
 import org.openforis.idm.metamodel.BooleanAttributeDefinition;
 import org.openforis.idm.metamodel.CodeAttributeDefinition;
 import org.openforis.idm.metamodel.CodeListItem;
-import org.openforis.idm.metamodel.CoordinateAttributeDefinition;
 import org.openforis.idm.metamodel.DateAttributeDefinition;
 import org.openforis.idm.metamodel.EntityDefinition;
 import org.openforis.idm.metamodel.NodeDefinition;
@@ -436,8 +435,59 @@ public class FormScreen extends BaseActivity implements OnClickListener, TextWat
             				summaryTableView.setId(nodeDef.getId());
             				this.ll.addView(summaryTableView);
         				}
-	    			} else if (nodeDef instanceof CoordinateAttributeDefinition){
-	    				String loadedValueLatitude = null;
+	    			} else if (nodeDef instanceof TextAttributeDefinition){
+	    				String loadedValueLon = "";
+	    				String loadedValueLat = "";
+	    				if (!nodeDef.isMultiple()){
+	    					Node<?> foundNode = this.parentEntity.get(nodeDef.getName(), 0);
+		    				if (foundNode!=null){
+		    					Coordinate coordValue = (Coordinate)this.parentEntity.getValue(nodeDef.getName(), 0);
+		    					if (coordValue!=null){
+		    						loadedValueLon = coordValue.getX().toString();
+		    						loadedValueLat = coordValue.getY().toString();
+		    					}	    				
+		    				}
+	        				final CoordinateField coordField= new CoordinateField(this, nodeDef);
+	        				coordField.setOnClickListener(this);
+	        				coordField.setId(nodeDef.getId());
+	        			//	coordField.setValue(0, loadedValue, FormScreen.this.getFormScreenId(),false);
+	        				coordField.addTextChangedListener(new TextWatcher(){
+	        			        public void afterTextChanged(Editable s) {        			            
+	        			        	//coordField.setValue(0, s.toString(), FormScreen.this.getFormScreenId(),true);
+	        			        }
+	        			        public void beforeTextChanged(CharSequence s, int start, int count, int after){}
+	        			        public void onTextChanged(CharSequence s, int start, int before, int count){}
+	        			    });
+	        				ApplicationManager.putUIElement(coordField.getId(), coordField);
+	        				this.ll.addView(coordField);
+	    				} else if (this.intentType==getResources().getInteger(R.integer.multipleAttributeIntent)){
+	    					Node<?> foundNode = this.parentEntityMultiple.get(nodeDef.getName(), this.currInstanceNo);
+		    				if (foundNode!=null){
+		    					TextValue textValue = (TextValue)this.parentEntityMultiple.getValue(nodeDef.getName(), this.currInstanceNo);
+		    					if (textValue!=null)
+		    						loadedValue = textValue.getValue();	    				
+		    				}
+	        				final TextField textField= new TextField(this, nodeDef);
+	        				textField.setOnClickListener(this);
+	        				textField.setId(nodeDef.getId());
+	        				textField.setValue(this.currInstanceNo, loadedValue, this.parentFormScreenId,false);
+	        				textField.addTextChangedListener(new TextWatcher(){
+	        			        public void afterTextChanged(Editable s) {        			            
+	        			        	textField.setValue(FormScreen.this.currInstanceNo, s.toString(), FormScreen.this.parentFormScreenId,true);
+	        			        }
+	        			        public void beforeTextChanged(CharSequence s, int start, int count, int after){}
+	        			        public void onTextChanged(CharSequence s, int start, int before, int count){}
+	        			    });
+	        				ApplicationManager.putUIElement(textField.getId(), textField);
+	        				this.ll.addView(textField);
+	    				} else {//multiple attribute summary    			    		
+    						SummaryTable summaryTableView = new SummaryTable(this, nodeDef, tableColHeaders, parentEntity, this);
+        					summaryTableView.setOnClickListener(this);
+            				summaryTableView.setId(nodeDef.getId());
+            				this.ll.addView(summaryTableView);
+        				}
+	    				
+	    				/*String loadedValueLatitude = null;
 	    				String loadedValueLongitude = null;
 	    				Node<?> foundNode = parentEntity.get(nodeDef.getName(), this.currInstanceNo);
 	    				if (foundNode!=null){
@@ -479,29 +529,8 @@ public class FormScreen extends BaseActivity implements OnClickListener, TextWat
 	        				coordinateField.setOnClickListener(this);
 	        				coordinateField.setId(nodeDef.getId());
 	        				this.ll.addView(coordinateField);
-	    				} else {/*
-	    					FieldValue fieldValueToBeRestored = this.currentNode.getFieldValue(nodeDef.getId());
-	    					//Log.e("fieldValueToBeRestored!=null",this.currentNode.getNodeValues().size()+"=="+(fieldValueToBeRestored!=null));
-	    					if (fieldValueToBeRestored!=null){
-	    						//Log.e("POWROT","z MULTIPLE FIELD");
-	    						SummaryTable summaryTableView = new SummaryTable(this, nodeDef, tableColHeaders, fieldValueToBeRestored.getValues(), this);
-	        					summaryTableView.setOnClickListener(this);
-	            				summaryTableView.setId(nodeDef.getId());
-	            				this.ll.addView(summaryTableView);
-	    					} else{
-	    						//Log.e("PIERWSZE","OTWARCIE");
-	    			    		ArrayList<List<String>> tableValuesLists = new ArrayList<List<String>>();
-	    			    		ArrayList<String> valueRow1 = new ArrayList<String>();
-	    			    		//row1.add("1");
-	    			    		valueRow1.add("");
-	    			    		valueRow1.add("");
-	    			    		tableValuesLists.add(valueRow1);
-	    						SummaryTable summaryTableView = new SummaryTable(this, nodeDef, tableColHeaders, tableValuesLists, this);
-	        					summaryTableView.setOnClickListener(this);
-	            				summaryTableView.setId(nodeDef.getId());
-	            				this.ll.addView(summaryTableView);
-	    					}			*/
-	    				}	
+	    				} else {
+	    				}	*/
 	    			} else if (nodeDef instanceof DateAttributeDefinition){
 	    				loadedValue = "";
 	    				Node<?> foundNode = parentEntity.get(nodeDef.getName(), this.currInstanceNo);
