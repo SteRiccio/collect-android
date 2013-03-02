@@ -12,6 +12,7 @@ import org.openforis.collect.android.fields.DateField;
 import org.openforis.collect.android.fields.Field;
 import org.openforis.collect.android.fields.MemoField;
 import org.openforis.collect.android.fields.NumberField;
+import org.openforis.collect.android.fields.PhotoField;
 import org.openforis.collect.android.fields.RangeField;
 import org.openforis.collect.android.fields.SummaryList;
 import org.openforis.collect.android.fields.SummaryTable;
@@ -27,6 +28,7 @@ import org.openforis.idm.metamodel.CodeListItem;
 import org.openforis.idm.metamodel.CoordinateAttributeDefinition;
 import org.openforis.idm.metamodel.DateAttributeDefinition;
 import org.openforis.idm.metamodel.EntityDefinition;
+import org.openforis.idm.metamodel.FileAttributeDefinition;
 import org.openforis.idm.metamodel.NodeDefinition;
 import org.openforis.idm.metamodel.NumberAttributeDefinition;
 import org.openforis.idm.metamodel.NumericAttributeDefinition;
@@ -690,6 +692,46 @@ public class FormScreen extends BaseActivity implements OnClickListener, TextWat
         				}
 	    			} else if (nodeDef instanceof TaxonAttributeDefinition){
 						
+					} else if (nodeDef instanceof FileAttributeDefinition){
+						FileAttributeDefinition fileDef = (FileAttributeDefinition)nodeDef;
+						List<String> extensionsList = fileDef.getExtensions();
+						if (extensionsList.contains("jpg")||extensionsList.contains("jpeg")){
+							loadedValue = "";
+		    				if (!nodeDef.isMultiple()){
+		    					Node<?> foundNode = this.parentEntity.get(nodeDef.getName(), 0);
+			    				if (foundNode!=null){
+			    					Time timeValue = (Time)this.parentEntity.getValue(nodeDef.getName(), 0);
+			    					if (timeValue!=null){
+			    						loadedValue = "";   						
+			    					}	    				
+			    				}
+		        				final PhotoField photoField= new PhotoField(this, nodeDef);
+		        				photoField.setOnClickListener(this);
+		        				photoField.setId(nodeDef.getId());
+		        				photoField.setValue(0, loadedValue, FormScreen.this.getFormScreenId(),false);
+		        				ApplicationManager.putUIElement(photoField.getId(), photoField);
+		        				this.ll.addView(photoField);
+		    				} else if (this.intentType==getResources().getInteger(R.integer.multipleAttributeIntent)){
+		    					Node<?> foundNode = this.parentEntityMultiple.get(nodeDef.getName(), this.currInstanceNo);
+			    				if (foundNode!=null){
+			    					Time timeValue = (Time)this.parentEntityMultiple.getValue(nodeDef.getName(), this.currInstanceNo);
+			    					if (timeValue!=null){
+			    						loadedValue = "";		    						
+			    					}	   				
+			    				}
+		        				final PhotoField photoField= new PhotoField(this, nodeDef);
+		        				photoField.setOnClickListener(this);
+		        				photoField.setId(nodeDef.getId());
+		        				photoField.setValue(this.currInstanceNo, loadedValue, this.parentFormScreenId,false);
+		        				ApplicationManager.putUIElement(photoField.getId(), photoField);
+		        				this.ll.addView(photoField);
+		    				} else {//multiple attribute summary    			    		
+	    						SummaryTable summaryTableView = new SummaryTable(this, nodeDef, tableColHeaders, parentEntity, this);
+	        					summaryTableView.setOnClickListener(this);
+	            				summaryTableView.setId(nodeDef.getId());
+	            				this.ll.addView(summaryTableView);
+	        				}
+						}
 					}
     			}
     				

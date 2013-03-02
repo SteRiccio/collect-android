@@ -21,7 +21,6 @@ import android.text.InputType;
 import android.text.TextWatcher;
 import android.text.method.DigitsKeyListener;
 import android.text.method.KeyListener;
-import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
@@ -74,12 +73,10 @@ public class CoordinateField extends InputField {
 		this.txtLongitude.setOnFocusChangeListener(new OnFocusChangeListener(){
 			@Override
 			public void onFocusChange(View v, boolean hasFocus) {
-				Log.i(getResources().getString(R.string.app_name), "Longitude field got focus");
 		    	//Get current settings about software keyboard for numeric fields
 		    	if(hasFocus){
 			    	Map<String, ?> settings = ApplicationManager.appPreferences.getAll();
 			    	Boolean valueForNum = (Boolean)settings.get(getResources().getString(R.string.showSoftKeyboardOnNumericField));
-			    	Log.i(getResources().getString(R.string.app_name), "Setting longitude field is: " + valueForNum);
 			    	//Switch on or off Software keyboard depend of settings
 			    	if(valueForNum){	
 			    		txtLongitude.setKeyListener(new DigitsKeyListener(true,true));
@@ -102,13 +99,11 @@ public class CoordinateField extends InputField {
 
 		this.txtLatitude.setOnFocusChangeListener(new OnFocusChangeListener(){
 			@Override
-			public void onFocusChange(View v, boolean hasFocus) {
-				Log.i(getResources().getString(R.string.app_name), "Lattitude field got focus");					    	
+			public void onFocusChange(View v, boolean hasFocus) {					    	
 		    	//Get current settings about software keyboard for numeric fields
 		    	if(hasFocus){
 			    	Map<String, ?> settings = ApplicationManager.appPreferences.getAll();
 			    	Boolean valueForNum = (Boolean)settings.get(getResources().getString(R.string.showSoftKeyboardOnNumericField));
-			    	Log.i(getResources().getString(R.string.app_name), "Setting latitude field is: " + valueForNum);
 			    	//Switch on or off Software keyboard depend of settings
 			    	if(valueForNum){	
 			    		txtLatitude.setKeyListener(new DigitsKeyListener(true,true));
@@ -153,7 +148,7 @@ public class CoordinateField extends InputField {
 			this.txtLongitude.setText(lon);
 			this.txtLatitude.setText(lat);
 		}
-Log.e("lon=="+lon,"lat=="+lat);
+
 		Node<? extends NodeDefinition> node = this.findParentEntity(path).get(this.nodeDefinition.getName(), position);
 		if (node!=null){
 			CoordinateAttribute coordAtr = (CoordinateAttribute)node;
@@ -194,9 +189,6 @@ Log.e("lon=="+lon,"lat=="+lat);
 	
 	@Override
 	public void afterTextChanged(Editable s) {
-    	ArrayList<String> tempValue = new ArrayList<String>();
-		tempValue.add(CoordinateField.this.txtLatitude.getText().toString());
-		tempValue.add(CoordinateField.this.txtLongitude.getText().toString());
 		this.setValue(0, CoordinateField.this.txtLongitude.getText().toString(), CoordinateField.this.txtLatitude.getText().toString(), CoordinateField.form.getFormScreenId(),true);
 	}
 	
