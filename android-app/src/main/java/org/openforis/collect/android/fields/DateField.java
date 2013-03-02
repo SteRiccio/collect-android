@@ -11,7 +11,9 @@ import org.openforis.collect.android.management.ApplicationManager;
 import org.openforis.collect.android.messages.ToastMessage;
 import org.openforis.idm.metamodel.NodeDefinition;
 import org.openforis.idm.model.Date;
+import org.openforis.idm.model.DateAttribute;
 import org.openforis.idm.model.EntityBuilder;
+import org.openforis.idm.model.Node;
 
 import android.content.Context;
 import android.content.Intent;
@@ -83,24 +85,65 @@ public class DateField extends InputField {
     	super.getContext().startActivity(datePickerIntent);	
 	}
 	
-	/*public String getValue(int index){
-		return DateField.this.value.getValue(index).get(0);
-	}*/
-	
-	public void setValue(int position, String value, String path, boolean isTextChanged)
+	public void setValue(Integer position, String value, String path, boolean isTextChanged)
 	{
 		if (!isTextChanged)
 			this.txtBox.setText(value);
-		ArrayList<String> valueToAdd = new ArrayList<String>();
-		valueToAdd.add(value);
-		
-		try{
-			EntityBuilder.addValue(this.findParentEntity(path), this.nodeDefinition.getName(), Date.parseDate(value), position);
-			//Log.e("data sparsowana","=="+value);
-		} catch (Exception e){
-			//Log.e("DATA NIE SPARSOWANA","=="+value);
+
+		String day = "";
+		String month = "";
+		String year = "";
+		int firstSeparatorIndex = value.indexOf(getResources().getString(R.string.dateSeparator));
+		int secondSeparatorIndex = value.lastIndexOf(getResources().getString(R.string.dateSeparator));
+		if (firstSeparatorIndex!=-1){
+			if (secondSeparatorIndex!=-1){
+				month = value.substring(0,firstSeparatorIndex);
+				if (secondSeparatorIndex>(firstSeparatorIndex+1)){
+					day = value.substring(firstSeparatorIndex+1,secondSeparatorIndex);	
+				}				
+				if (secondSeparatorIndex+1<value.length())
+					year = value.substring(secondSeparatorIndex+1);
+			}
 		}
-		
+		Node<? extends NodeDefinition> node = this.findParentEntity(path).get(this.nodeDefinition.getName(), position);
+		if (node!=null){
+			DateAttribute dateAtr = (DateAttribute)node;
+			if (month.equals("") && day.equals("") && year.equals("")){
+				dateAtr.setValue(new Date(null,null,null));
+			} else if (month.equals("") && day.equals("")){
+				dateAtr.setValue(new Date(Integer.valueOf(year),null,null));		    							
+			} else if (month.equals("") && year.equals("")){
+				dateAtr.setValue(new Date(null,null,Integer.valueOf(day)));	
+			} else if (day.equals("") && year.equals("")){
+				dateAtr.setValue(new Date(null,Integer.valueOf(month),null));	
+			} else if (month.equals("")){
+				dateAtr.setValue(new Date(Integer.valueOf(year),null,Integer.valueOf(day)));			    							
+			} else if (day.equals("")){
+				dateAtr.setValue(new Date(Integer.valueOf(year),Integer.valueOf(month),null));	
+			} else if (year.equals("")){
+				dateAtr.setValue(new Date(null,Integer.valueOf(month),Integer.valueOf(day)));	
+			} else {
+				dateAtr.setValue(new Date(Integer.valueOf(year),Integer.valueOf(month),Integer.valueOf(day)));
+			}
+		} else {
+			if (month.equals("") && day.equals("") && year.equals("")){
+				EntityBuilder.addValue(this.findParentEntity(path), this.nodeDefinition.getName(), new Date(null,null,null), position);
+			} else if (month.equals("") && day.equals("")){
+				EntityBuilder.addValue(this.findParentEntity(path), this.nodeDefinition.getName(), new Date(Integer.valueOf(year),null,null), position);		    							
+			} else if (month.equals("") && year.equals("")){
+				EntityBuilder.addValue(this.findParentEntity(path), this.nodeDefinition.getName(), new Date(null,null,Integer.valueOf(day)), position);	
+			} else if (day.equals("") && year.equals("")){
+				EntityBuilder.addValue(this.findParentEntity(path), this.nodeDefinition.getName(), new Date(null,Integer.valueOf(month),null), position);	
+			} else if (month.equals("")){
+				EntityBuilder.addValue(this.findParentEntity(path), this.nodeDefinition.getName(), new Date(Integer.valueOf(year),null,Integer.valueOf(day)), position);			    							
+			} else if (day.equals("")){
+				EntityBuilder.addValue(this.findParentEntity(path), this.nodeDefinition.getName(), new Date(Integer.valueOf(year),Integer.valueOf(month),null), position);	
+			} else if (year.equals("")){
+				EntityBuilder.addValue(this.findParentEntity(path), this.nodeDefinition.getName(), new Date(null,Integer.valueOf(month),Integer.valueOf(day)), position);
+			} else {
+				EntityBuilder.addValue(this.findParentEntity(path), this.nodeDefinition.getName(), new Date(Integer.valueOf(year),Integer.valueOf(month),Integer.valueOf(day)), position);
+			}	
+		}
 	}
 	
 	@Override

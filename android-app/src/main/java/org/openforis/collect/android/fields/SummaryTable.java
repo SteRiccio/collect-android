@@ -6,9 +6,14 @@ import java.util.List;
 import org.openforis.collect.android.R;
 import org.openforis.idm.metamodel.BooleanAttributeDefinition;
 import org.openforis.idm.metamodel.CodeAttributeDefinition;
+import org.openforis.idm.metamodel.CoordinateAttributeDefinition;
+import org.openforis.idm.metamodel.DateAttributeDefinition;
 import org.openforis.idm.metamodel.NodeDefinition;
 import org.openforis.idm.metamodel.NumberAttributeDefinition;
+import org.openforis.idm.metamodel.RangeAttributeDefinition;
+import org.openforis.idm.metamodel.TaxonAttributeDefinition;
 import org.openforis.idm.metamodel.TextAttributeDefinition;
+import org.openforis.idm.metamodel.TimeAttributeDefinition;
 import org.openforis.idm.model.Entity;
 import org.openforis.idm.model.IntegerAttribute;
 import org.openforis.idm.model.IntegerValue;
@@ -81,7 +86,17 @@ public class SummaryTable extends UIElement {
 					}
 				} else if (nodeDef instanceof BooleanAttributeDefinition){
 					
-				}	else if (nodeDef instanceof CodeAttributeDefinition){
+				} else if (nodeDef instanceof CodeAttributeDefinition){
+					
+				} else if (nodeDef instanceof CoordinateAttributeDefinition){
+					
+				} else if (nodeDef instanceof RangeAttributeDefinition){
+					
+				} else if (nodeDef instanceof DateAttributeDefinition){
+					
+				} else if (nodeDef instanceof TimeAttributeDefinition){
+					
+				} else if (nodeDef instanceof TaxonAttributeDefinition){
 					
 				}
 			}
@@ -89,7 +104,6 @@ public class SummaryTable extends UIElement {
 	    
 	    
 		int colNo = columnHeader.size();
-		//int rowNo = rows.size();
 		int rowNo = this.values.size();
 		
 		TextView header = new TextView(context);

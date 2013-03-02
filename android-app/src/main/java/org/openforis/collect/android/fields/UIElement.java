@@ -82,20 +82,22 @@ public class UIElement extends LinearLayout{
 	}
 	
 	public Entity findParentEntity(String path){
-		Entity parentEntity = ApplicationManager.currentRecord.getRootEntity();
-		String screenPath = path;
-		String[] entityPath = screenPath.split(getResources().getString(R.string.valuesSeparator2));
-		try{
-			for (int m=2;m<entityPath.length;m++){
-				String[] instancePath = entityPath[m].split(getResources().getString(R.string.valuesSeparator1));
+		if (path!=null){
+			Entity parentEntity = ApplicationManager.currentRecord.getRootEntity();
+			String[] entityPath = path.split(getResources().getString(R.string.valuesSeparator2));
+			try{
+				for (int m=1;m<entityPath.length;m++){
+					String[] instancePath = entityPath[m].split(getResources().getString(R.string.valuesSeparator1));
+					
+					int id = Integer.valueOf(instancePath[0]);
+					int instanceNo = Integer.valueOf(instancePath[1]);
+					parentEntity = (Entity) parentEntity.get(ApplicationManager.getSurvey().getSchema().getDefinitionById(id).getName(), instanceNo);
+				}			
+			} catch (ClassCastException e){
 				
-				int id = Integer.valueOf(instancePath[0]);
-				int instanceNo = Integer.valueOf(instancePath[1]);
-				parentEntity = (Entity) parentEntity.get(ApplicationManager.getSurvey().getSchema().getDefinitionById(id).getName(), instanceNo);
-			}			
-		} catch (ClassCastException e){
-			
+			}
+			return parentEntity;
 		}
-		return parentEntity;
+		return null;
 	}
 }

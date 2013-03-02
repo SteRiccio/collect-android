@@ -8,8 +8,6 @@ import android.database.sqlite.SQLiteOpenHelper;
 
 public class DatabaseWrapper{
 	
-	private static final String TAG = "Database";
-	
 	private static final String DATABASE_NAME = "collect.db";
 	private static final String DB_PATH = "/data/data/org.openforis.collect.android/databases/";
 	private static final int DATABASE_VERSION = 3;

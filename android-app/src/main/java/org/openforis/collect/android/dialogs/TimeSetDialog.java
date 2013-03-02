@@ -105,14 +105,14 @@ public class TimeSetDialog extends FragmentActivity {
 	    super.onCreate(savedInstanceState);
 	    getWindow().requestFeature(Window.FEATURE_OPTIONS_PANEL);
 	    Bundle extras = getIntent().getExtras(); 
+	    this.path = extras.getString("timeFieldPath");
 	    if (extras != null) {
 	    	  int widget_id = extras.getInt("timefield_id");
 	    	  View v = ApplicationManager.getUIElement(widget_id);
 	    	  if (v != null){
 	    		  showTimePickerDialog((TimeField)v);
 	    	  }
-	    }    
-	    this.path = extras.getString("timeFieldPath");
+	    }	    
 	}	
 	
 	public void showTimePickerDialog(TimeField timeField) {

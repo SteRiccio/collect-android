@@ -31,6 +31,7 @@ import org.openforis.collect.persistence.UserDao;
 import org.openforis.collect.persistence.xml.UIOptionsBinder;
 import org.openforis.idm.metamodel.EntityDefinition;
 import org.openforis.idm.metamodel.NodeDefinition;
+import org.openforis.idm.metamodel.NodeLabel.Type;
 import org.openforis.idm.metamodel.Schema;
 import org.openforis.idm.metamodel.Survey;
 import org.openforis.idm.metamodel.validation.Validator;
@@ -323,16 +324,24 @@ public class ApplicationManager extends BaseActivity {
 	private void showFormRootScreen(){	
 		//List<EntityDefinition> rootEntitiesDefsList = schema.getRootEntityDefinitions();		
 		Intent intent = new Intent(this,FormScreen.class);
-		intent.putExtra(getResources().getString(R.string.breadcrumb), ""/*getResources().getString(R.string.rootScreen)*/);
+		EntityDefinition rootEntityDef = (EntityDefinition)ApplicationManager.getSurvey().getSchema().getDefinitionById(ApplicationManager.currRootEntityId);
+		intent.putExtra(getResources().getString(R.string.breadcrumb), rootEntityDef.getLabel(Type.INSTANCE, null));
+		intent.putExtra(getResources().getString(R.string.intentType), getResources().getInteger(R.integer.singleEntityIntent));
+		intent.putExtra(getResources().getString(R.string.parentFormScreenId), "");
+		intent.putExtra(getResources().getString(R.string.idmlId), ApplicationManager.currRootEntityId);
+		intent.putExtra(getResources().getString(R.string.instanceNo), 0);
+		List<NodeDefinition> entityAttributes = rootEntityDef.getChildDefinitions();
+        int counter = 0;
+        for (NodeDefinition formField : entityAttributes){
+			intent.putExtra(getResources().getString(R.string.attributeId)+counter, formField.getId());
+			counter++;
+        }
+		/*intent.putExtra(getResources().getString(R.string.breadcrumb), "");
 		intent.putExtra(getResources().getString(R.string.intentType), getResources().getInteger(R.integer.singleEntityIntent));
 		intent.putExtra(getResources().getString(R.string.parentFormScreenId), "");
         intent.putExtra(getResources().getString(R.string.idmlId), 0);
         intent.putExtra(getResources().getString(R.string.instanceNo), 0);
-		/*for (int i=0;i<rootEntitiesDefsList.size();i++){
-			int id = rootEntitiesDefsList.get(i).getId();
-			intent.putExtra(getResources().getString(R.string.attributeId)+i, id);
-		}*/
-        intent.putExtra(getResources().getString(R.string.attributeId)+0, ApplicationManager.currRootEntityId);
+        intent.putExtra(getResources().getString(R.string.attributeId)+0, ApplicationManager.currRootEntityId);*/
 		this.startActivityForResult(intent,getResources().getInteger(R.integer.startingFormScreen));		
 	}
 	

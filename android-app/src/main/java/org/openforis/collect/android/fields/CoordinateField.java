@@ -63,13 +63,40 @@ public class CoordinateField extends InputField {
 	    			        	
 	        }
 	    });
-
-		//this.addView(this.label);
 		
+		this.txtLongitude = new EditText(context);
+		this.txtLongitude.setLayoutParams(new LayoutParams(0,ViewGroup.LayoutParams.WRAP_CONTENT,(float) 2));
+		//this.txtLongitude.setText(initialTextLon);
+		//this.txtLongitude.setHint("LONGITUDEx");
+		this.txtLongitude.addTextChangedListener(this);
+		this.addView(txtLongitude);
+		
+		this.txtLongitude.setOnFocusChangeListener(new OnFocusChangeListener(){
+			@Override
+			public void onFocusChange(View v, boolean hasFocus) {
+				Log.i(getResources().getString(R.string.app_name), "Longitude field got focus");
+		    	//Get current settings about software keyboard for numeric fields
+		    	if(hasFocus){
+			    	Map<String, ?> settings = ApplicationManager.appPreferences.getAll();
+			    	Boolean valueForNum = (Boolean)settings.get(getResources().getString(R.string.showSoftKeyboardOnNumericField));
+			    	Log.i(getResources().getString(R.string.app_name), "Setting longitude field is: " + valueForNum);
+			    	//Switch on or off Software keyboard depend of settings
+			    	if(valueForNum){	
+			    		txtLongitude.setKeyListener(new DigitsKeyListener(true,true));
+			        }
+			    	else {
+			    		txtLongitude.setInputType(InputType.TYPE_NULL);
+//			    		CoordinateField.this.setKeyboardType(null);
+			    	}
+
+		    	}		    	
+			}
+		});
+
 		this.txtLatitude = new EditText(context);
 		this.txtLatitude.setLayoutParams(new LayoutParams(0,ViewGroup.LayoutParams.WRAP_CONTENT,(float) 2));
 		//this.txtLatitude.setText(initialTextLat);
-		//this.txtLatitude.setHint(hintTextLat);
+		//this.txtLatitude.setHint("LATITUDEy");
 		this.txtLatitude.addTextChangedListener(this);
 		this.addView(txtLatitude);
 
@@ -95,34 +122,7 @@ public class CoordinateField extends InputField {
 			}
 		});
 		
-		this.txtLongitude = new EditText(context);
-		this.txtLongitude.setLayoutParams(new LayoutParams(0,ViewGroup.LayoutParams.WRAP_CONTENT,(float) 2));
-		//this.txtLongitude.setText(initialTextLon);
-		//this.txtLongitude.setHint(hintTextLon);
-		this.txtLongitude.addTextChangedListener(this);
-		this.addView(txtLongitude);
 		
-		this.txtLongitude.setOnFocusChangeListener(new OnFocusChangeListener(){
-			@Override
-			public void onFocusChange(View v, boolean hasFocus) {
-				Log.i(getResources().getString(R.string.app_name), "Longitude field got focus");
-		    	//Get current settings about software keyboard for numeric fields
-		    	if(hasFocus){
-			    	Map<String, ?> settings = ApplicationManager.appPreferences.getAll();
-			    	Boolean valueForNum = (Boolean)settings.get(getResources().getString(R.string.showSoftKeyboardOnNumericField));
-			    	Log.i(getResources().getString(R.string.app_name), "Setting longitude field is: " + valueForNum);
-			    	//Switch on or off Software keyboard depend of settings
-			    	if(valueForNum){	
-			    		txtLongitude.setKeyListener(new DigitsKeyListener(true,true));
-			        }
-			    	else {
-			    		txtLongitude.setInputType(InputType.TYPE_NULL);
-//			    		CoordinateField.this.setKeyboardType(null);
-			    	}
-
-		    	}		    	
-			}
-		});
 	}
 
 	/*public List<String> getValue(int index){
@@ -153,17 +153,31 @@ public class CoordinateField extends InputField {
 			this.txtLongitude.setText(lon);
 			this.txtLatitude.setText(lat);
 		}
-
-		/*Node<? extends NodeDefinition> node = this.findParentEntity(path).get(this.nodeDefinition.getName(), position);
+Log.e("lon=="+lon,"lat=="+lat);
+		Node<? extends NodeDefinition> node = this.findParentEntity(path).get(this.nodeDefinition.getName(), position);
 		if (node!=null){
 			CoordinateAttribute coordAtr = (CoordinateAttribute)node;
-			if ((lan.equals("")&&lon.equals(""))){
-				coordAtr.setValue(new Coordinate(lon, lat, null));	
-			}
-			
+			if ((lat.equals("")&&lon.equals(""))){
+				coordAtr.setValue(new Coordinate(null, null, null));	
+			} else if (lat.equals("")){
+				coordAtr.setValue(new Coordinate(Double.valueOf(lon), null, null));
+			} else if (lon.equals("")){
+				coordAtr.setValue(new Coordinate(null, Double.valueOf(lat), null));
+			} else {
+				coordAtr.setValue(new Coordinate(Double.valueOf(lon), Double.valueOf(lat), null));
+			}			
 		} else {
-			EntityBuilder.addValue(this.findParentEntity(path), this.nodeDefinition.getName(), value, position);	
-		}*/
+			if ((lat.equals("")&&lon.equals(""))){
+				EntityBuilder.addValue(this.findParentEntity(path), this.nodeDefinition.getName(), new Coordinate(null, null, null), position);
+			} else if (lat.equals("")){
+				EntityBuilder.addValue(this.findParentEntity(path), this.nodeDefinition.getName(), new Coordinate(Double.valueOf(lon), null, null), position);
+			} else if (lon.equals("")){
+				EntityBuilder.addValue(this.findParentEntity(path), this.nodeDefinition.getName(), new Coordinate(null, Double.valueOf(lat), null), position);
+			} else {
+				EntityBuilder.addValue(this.findParentEntity(path), this.nodeDefinition.getName(), new Coordinate(Double.valueOf(lon), Double.valueOf(lat), null), position);
+			}
+				
+		}
 	}
 	
 	@Override
@@ -183,8 +197,7 @@ public class CoordinateField extends InputField {
     	ArrayList<String> tempValue = new ArrayList<String>();
 		tempValue.add(CoordinateField.this.txtLatitude.getText().toString());
 		tempValue.add(CoordinateField.this.txtLongitude.getText().toString());
-		//CoordinateField.this.values.set(CoordinateField.this.currentInstanceNo, tempValue);
-		this.setValue(0, CoordinateField.this.txtLatitude.getText().toString(), CoordinateField.this.txtLongitude.getText().toString(), CoordinateField.form.getFormScreenId(),true);
+		this.setValue(0, CoordinateField.this.txtLongitude.getText().toString(), CoordinateField.this.txtLatitude.getText().toString(), CoordinateField.form.getFormScreenId(),true);
 	}
 	
 	@Override

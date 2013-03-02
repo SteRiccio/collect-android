@@ -14,7 +14,6 @@ import android.content.DialogInterface.OnKeyListener;
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.FragmentActivity;
-import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.Window;
@@ -57,7 +56,6 @@ public class DateSetDialog extends FragmentActivity {
 				public boolean onKey( DialogInterface dialog , int keyCode , KeyEvent event ){
 					// disable search button action
 					if (keyCode == KeyEvent.KEYCODE_BACK){
-						Log.i(getResources().getString(R.string.app_name), "Button BACK pressed form DateSettingsDialog");
 					    //Finish activity
 					    finish();						
 						return true;
@@ -98,6 +96,7 @@ public class DateSetDialog extends FragmentActivity {
 	    super.onCreate(savedInstanceState);
 	    getWindow().requestFeature(Window.FEATURE_OPTIONS_PANEL);
 	    Bundle extras = getIntent().getExtras(); 
+	    this.path = extras.getString("dateFieldPath");
 	    if (extras != null) {
 	    	  int widget_id = extras.getInt("datefield_id");
 	    	  View v = ApplicationManager.getUIElement(widget_id);
@@ -105,7 +104,6 @@ public class DateSetDialog extends FragmentActivity {
 	    		  showDatePickerDialog((DateField)v);
 	    	  }
 	    }
-	    this.path = extras.getString("dateFieldPath");
 	}	
 	
 	public void showDatePickerDialog(DateField dateField) {

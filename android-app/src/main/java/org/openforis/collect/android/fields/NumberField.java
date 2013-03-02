@@ -82,30 +82,34 @@ public class NumberField extends InputField {
 	}
 	
 	public void setValue(int position, String value, String path, boolean isTextChanged)
-	{
-		if (!isTextChanged)
-			this.txtBox.setText(value);
-		
-		Node<? extends NodeDefinition> node = this.findParentEntity(path).get(this.nodeDefinition.getName(), position);
-		if (node!=null){
-			if ((value!=null) && (!value.equals("")) && (!value.equals("null"))){
-				if (((NumberAttributeDefinition) this.nodeDefinition).isInteger()){
-					IntegerAttribute intAttr = (IntegerAttribute)node;
-					intAttr.setValue(new IntegerValue(Integer.valueOf(value), null));
-				} else {
-					RealAttribute intAttr = (RealAttribute)node;
-					intAttr.setValue(new RealValue(Double.valueOf(value), null));
+	{		
+		try{
+			Node<? extends NodeDefinition> node = this.findParentEntity(path).get(this.nodeDefinition.getName(), position);
+			if (node!=null){
+				if ((value!=null) && (!value.equals("")) && (!value.equals("null"))){
+					if (((NumberAttributeDefinition) this.nodeDefinition).isInteger()){
+						IntegerAttribute intAttr = (IntegerAttribute)node;
+						intAttr.setValue(new IntegerValue(Integer.valueOf(value), null));
+					} else {
+						RealAttribute intAttr = (RealAttribute)node;
+						intAttr.setValue(new RealValue(Double.valueOf(value), null));
+					}
 				}
+			} else {
+				if ((value!=null) && (!value.equals("")) && (!value.equals("null"))){
+					if (((NumberAttributeDefinition) this.nodeDefinition).isInteger()){
+						EntityBuilder.addValue(this.findParentEntity(path), this.nodeDefinition.getName(), Integer.valueOf(value), position);	
+					} else {
+						EntityBuilder.addValue(this.findParentEntity(path), this.nodeDefinition.getName(), Double.valueOf(value), position);
+					}	
+				}			
 			}
-		} else {
-			if ((value!=null) && (!value.equals("")) && (!value.equals("null"))){
-				if (((NumberAttributeDefinition) this.nodeDefinition).isInteger()){
-					EntityBuilder.addValue(this.findParentEntity(path), this.nodeDefinition.getName(), Integer.valueOf(value), position);	
-				} else {
-					EntityBuilder.addValue(this.findParentEntity(path), this.nodeDefinition.getName(), Double.valueOf(value), position);
-				}	
-			}			
-		}
+			
+			if (!isTextChanged)
+				this.txtBox.setText(value);
+		} catch (Exception e){
+			
+		}		
 	}
 	
 	public String getType(){

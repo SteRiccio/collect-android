@@ -11,7 +11,9 @@ import org.openforis.collect.android.management.ApplicationManager;
 import org.openforis.collect.android.messages.ToastMessage;
 import org.openforis.idm.metamodel.NodeDefinition;
 import org.openforis.idm.model.EntityBuilder;
-import org.openforis.idm.model.Time;
+import org.openforis.idm.model.IntegerRange;
+import org.openforis.idm.model.IntegerRangeAttribute;
+import org.openforis.idm.model.Node;
 
 import android.content.Context;
 import android.content.Intent;
@@ -121,7 +123,7 @@ public class TimeField extends InputField implements TextWatcher {
 		return TimeField.this.value.getValue(index).get(0);
 	}*/
 	
-	public void setValue(int position, String value, String path, boolean isTextChanged)
+	/*public void setValue(int position, String value, String path, boolean isTextChanged)
 	{
 		if (!isTextChanged && !value.equals("null:null"))
 			this.txtBox.setText(value);
@@ -133,6 +135,45 @@ public class TimeField extends InputField implements TextWatcher {
 			//Log.e("time sparsowany","=="+value);
 		} catch (Exception e){
 			//Log.e("CZAS NIE SPARSOWANy","=="+value);
+		}
+	}*/
+	
+	public void setValue(Integer position, String value, String path, boolean isTextChanged)
+	{
+		if (!isTextChanged)
+			this.txtBox.setText(value);
+		
+		String hour = "";
+		String minute = "";
+		int separatorIndex = value.indexOf(getResources().getString(R.string.timeSeparator));
+		if (separatorIndex!=-1){
+			hour = value.substring(0,separatorIndex);
+			if (separatorIndex+1<value.length())
+				minute = value.substring(separatorIndex+1);
+		}
+
+		Node<? extends NodeDefinition> node = this.findParentEntity(path).get(this.nodeDefinition.getName(), position);
+		if (node!=null){
+			IntegerRangeAttribute rangeAtr = (IntegerRangeAttribute)node;
+			if (hour.equals("") && minute.equals("")){
+				rangeAtr.setValue(new IntegerRange(null,null,null));
+			} else if (hour.equals("")){
+				rangeAtr.setValue(new IntegerRange(null,Integer.valueOf(minute),null));
+			} else if (minute.equals("")){
+				rangeAtr.setValue(new IntegerRange(Integer.valueOf(hour),null,null));
+			} else {
+				rangeAtr.setValue(new IntegerRange(Integer.valueOf(hour),Integer.valueOf(minute),null));
+			}
+		} else {
+			if (hour.equals("") && minute.equals("")){
+				EntityBuilder.addValue(this.findParentEntity(path), this.nodeDefinition.getName(), new IntegerRange(null,null,null), position);
+			} else if (hour.equals("")){
+				EntityBuilder.addValue(this.findParentEntity(path), this.nodeDefinition.getName(), new IntegerRange(null,Integer.valueOf(minute),null), position);
+			} else if (minute.equals("")){
+				EntityBuilder.addValue(this.findParentEntity(path), this.nodeDefinition.getName(), new IntegerRange(Integer.valueOf(hour),null,null), position);
+			} else {
+				EntityBuilder.addValue(this.findParentEntity(path), this.nodeDefinition.getName(), new IntegerRange(Integer.valueOf(hour),Integer.valueOf(minute),null), position);
+			}			
 		}
 	}
 	
