@@ -49,7 +49,9 @@
     <integer name="rootEntityChoiceSuccessful">222</integer>
     <integer name="clusterChoiceFailed">456</integer>
     <integer name="startingFormScreen">1000</integer>
-    <integer name="backButtonPressed">997</integer>  
+    <integer name="backButtonPressed">997</integer>
+    <integer name="cameraStarted">986</integer>  
+    <integer name="photoTaken">702</integer>    
    
     <!-- INTENT EXTRAS -->
     <string name="recordId">recordId</string>
@@ -68,6 +70,7 @@
     <integer name="multipleEntityIntent">2</integer>
     <integer name="singleEntityIntent">3</integer>
     <integer name="breadcrumbFontSize">24</integer>
+    <string name="photoPath">photoPath</string>
     
     <!-- BUTTONS IDs -->
     <integer name="leftButtonMultipleAttribute">11</integer>

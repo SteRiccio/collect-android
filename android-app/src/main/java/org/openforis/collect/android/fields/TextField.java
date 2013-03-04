@@ -76,7 +76,7 @@ public class TextField extends InputField {
 			    	}
 		    	}
 		    }
-	    });				
+	    });
 	}
 	
 	public void setValue(Integer position, String value, String path, boolean isTextChanged)
