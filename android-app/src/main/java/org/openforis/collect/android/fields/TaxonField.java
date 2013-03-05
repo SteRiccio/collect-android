@@ -363,14 +363,6 @@ public class TaxonField extends Field {
 		this.txtVernacularName.setText(vernName);
 		this.txtVernacularLang.setText(vernLang);
 		this.txtLangVariant.setText(langVariant);
-		Log.i(getResources().getString(R.string.app_name), "Value was set!!! " + code + " " + sciName);
-		
-		ArrayList<String> valueToAdd = new ArrayList<String>();
-		valueToAdd.add(code);
-		valueToAdd.add(sciName);
-		valueToAdd.add(vernName);
-		valueToAdd.add(vernLang);
-		valueToAdd.add(langVariant);
 	}
 
 	private void startSearchScreen(String strContent, String strCriteria){

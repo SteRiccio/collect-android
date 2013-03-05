@@ -1124,20 +1124,60 @@ public class FormScreen extends BaseActivity implements OnClickListener, TextWat
 						String loadedValueLon = "";
 						Coordinate coordValue = (Coordinate)parentEntity.getValue(nodeDef.getName(), 0);
 						if (coordValue!=null){
-							loadedValueLon = coordValue.getX().toString();
-							loadedValueLat = coordValue.getY().toString();
+							if (coordValue.getX()!=null)
+								loadedValueLon = coordValue.getX().toString();
+							if (coordValue.getY()!=null)
+								loadedValueLat = coordValue.getY().toString();
 						}
 							
 						CoordinateField coordField = (CoordinateField) ApplicationManager.getUIElement(nodeDef.getId());
 						if (coordField!=null)
 							coordField.setValue(0, loadedValueLon, loadedValueLat, this.getFormScreenId(), false);
 					} else if (nodeDef instanceof RangeAttributeDefinition){
-						
+						String from = "";
+						String to = "";
+						Range rangeValue = (Range)parentEntity.getValue(nodeDef.getName(), 0);
+						if (rangeValue!=null){
+							if (rangeValue.getMinimum()!=null)
+								from = rangeValue.getMinimum().toString();
+							if (rangeValue.getMaximum()!=null)
+								to = rangeValue.getMaximum().toString();						
+						}						
+						RangeField rangeField = (RangeField) ApplicationManager.getUIElement(nodeDef.getId());
+						if (rangeField!=null)
+							rangeField.setValue(0, from+getResources().getString(R.string.rangeSeparator)+to, this.getFormScreenId(), false);
 					} else if (nodeDef instanceof DateAttributeDefinition){
-						
+						String day = "";
+						String month = "";
+						String year = "";
+						Date dateValue = (Date)parentEntity.getValue(nodeDef.getName(), 0);
+						if (dateValue!=null){
+							if (dateValue.getDay()!=null)
+								day = dateValue.getDay().toString();
+							if (dateValue.getMonth()!=null)
+								month = dateValue.getMonth().toString();
+							if (dateValue.getYear()!=null)
+								year = dateValue.getYear().toString();
+						}						
+						DateField dateField = (DateField) ApplicationManager.getUIElement(nodeDef.getId());
+						if (dateField!=null)
+							dateField.setValue(0, month+getResources().getString(R.string.dateSeparator)+day+getResources().getString(R.string.dateSeparator)+year, this.getFormScreenId(), false);
 					} else if (nodeDef instanceof TimeAttributeDefinition){
-						
+						String hour = "";
+						String minute = "";
+						Time timeValue = (Time)parentEntity.getValue(nodeDef.getName(), 0);
+						if (timeValue!=null){
+							if (timeValue.getHour()!=null)
+								hour = timeValue.getHour().toString();
+							if (timeValue.getMinute()!=null)
+								minute = timeValue.getMinute().toString();
+						}						
+						TimeField timeField = (TimeField) ApplicationManager.getUIElement(nodeDef.getId());
+						if (timeField!=null)
+							timeField.setValue(0, hour+getResources().getString(R.string.timeSeparator)+minute, this.getFormScreenId(), false);					
 					} else if (nodeDef instanceof TaxonAttributeDefinition){
+						
+					} else if (nodeDef instanceof FileAttributeDefinition){
 						
 					}
 				}
@@ -1201,23 +1241,62 @@ public class FormScreen extends BaseActivity implements OnClickListener, TextWat
 					} else if (nodeDef instanceof CoordinateAttributeDefinition){
 						String loadedValueLat = "";
 						String loadedValueLon = "";
-						Coordinate coordValue = (Coordinate)parentEntity.getValue(nodeDef.getName(), this.currInstanceNo);
+						Coordinate coordValue = (Coordinate)parentEntity.getValue(nodeDef.getName(), 0);
 						if (coordValue!=null){
 							if (coordValue.getX()!=null)
 								loadedValueLon = coordValue.getX().toString();
 							if (coordValue.getY()!=null)
 								loadedValueLat = coordValue.getY().toString();
-						}							
+						}
+							
 						CoordinateField coordField = (CoordinateField) ApplicationManager.getUIElement(nodeDef.getId());
 						if (coordField!=null)
 							coordField.setValue(0, loadedValueLon, loadedValueLat, this.getFormScreenId(), false);
 					} else if (nodeDef instanceof RangeAttributeDefinition){
-						
+						String from = "";
+						String to = "";
+						Range rangeValue = (Range)parentEntity.getValue(nodeDef.getName(), 0);
+						if (rangeValue!=null){
+							if (rangeValue.getMinimum()!=null)
+								from = rangeValue.getMinimum().toString();
+							if (rangeValue.getMaximum()!=null)
+								to = rangeValue.getMaximum().toString();						
+						}						
+						RangeField rangeField = (RangeField) ApplicationManager.getUIElement(nodeDef.getId());
+						if (rangeField!=null)
+							rangeField.setValue(0, from+getResources().getString(R.string.rangeSeparator)+to, this.getFormScreenId(), false);
 					} else if (nodeDef instanceof DateAttributeDefinition){
-						
+						String day = "";
+						String month = "";
+						String year = "";
+						Date dateValue = (Date)parentEntity.getValue(nodeDef.getName(), 0);
+						if (dateValue!=null){
+							if (dateValue.getDay()!=null)
+								day = dateValue.getDay().toString();
+							if (dateValue.getMonth()!=null)
+								month = dateValue.getMonth().toString();
+							if (dateValue.getYear()!=null)
+								year = dateValue.getYear().toString();
+						}						
+						DateField dateField = (DateField) ApplicationManager.getUIElement(nodeDef.getId());
+						if (dateField!=null)
+							dateField.setValue(0, month+getResources().getString(R.string.dateSeparator)+day+getResources().getString(R.string.dateSeparator)+year, this.getFormScreenId(), false);
 					} else if (nodeDef instanceof TimeAttributeDefinition){
-						
+						String hour = "";
+						String minute = "";
+						Time timeValue = (Time)parentEntity.getValue(nodeDef.getName(), 0);
+						if (timeValue!=null){
+							if (timeValue.getHour()!=null)
+								hour = timeValue.getHour().toString();
+							if (timeValue.getMinute()!=null)
+								minute = timeValue.getMinute().toString();
+						}						
+						TimeField timeField = (TimeField) ApplicationManager.getUIElement(nodeDef.getId());
+						if (timeField!=null)
+							timeField.setValue(0, hour+getResources().getString(R.string.timeSeparator)+minute, this.getFormScreenId(), false);					
 					} else if (nodeDef instanceof TaxonAttributeDefinition){
+						
+					} else if (nodeDef instanceof FileAttributeDefinition){
 						
 					}
 				}
@@ -1300,18 +1379,67 @@ public class FormScreen extends BaseActivity implements OnClickListener, TextWat
 					Coordinate coordValue = (Coordinate)parentEntity.getValue(nodeDef.getName(), this.currInstanceNo);
 					if (coordValue!=null){
 						loadedValueLon = coordValue.getX().toString();
+						if (loadedValueLon==null)
+							loadedValueLon = "";
 						loadedValueLat = coordValue.getY().toString();
+						if (loadedValueLat==null)
+							loadedValueLat = "";
 					}						
 					CoordinateField coordField = (CoordinateField) ApplicationManager.getUIElement(nodeDef.getId());
 					if (coordField!=null)
 						coordField.setValue(this.currInstanceNo, loadedValueLon, loadedValueLat, this.getFormScreenId(), false);
 				} else if (nodeDef instanceof RangeAttributeDefinition){
-					
+					String from = "";
+					String to = "";
+					Range rangeValue = (Range)parentEntity.getValue(nodeDef.getName(), this.currInstanceNo);
+					if (rangeValue!=null){
+						from = rangeValue.getMinimum().toString();
+						if (from==null)
+							from = "";
+						to = rangeValue.getMaximum().toString();
+						if (to == null)
+							to = "";						
+					}						
+					RangeField rangeField = (RangeField) ApplicationManager.getUIElement(nodeDef.getId());
+					if (rangeField!=null)
+						rangeField.setValue(this.currInstanceNo, from+getResources().getString(R.string.rangeSeparator)+to, this.getFormScreenId(), false);
 				} else if (nodeDef instanceof DateAttributeDefinition){
-					
+					String day = "";
+					String month = "";
+					String year = "";
+					Date dateValue = (Date)parentEntity.getValue(nodeDef.getName(), this.currInstanceNo);
+					if (dateValue!=null){
+						day = dateValue.getDay().toString();
+						if (day==null)
+							day = "";
+						month = dateValue.getMonth().toString();
+						if (month==null)
+							month = "";
+						year = dateValue.getYear().toString();
+						if (year==null)
+							year = "";
+					}						
+					DateField dateField = (DateField) ApplicationManager.getUIElement(nodeDef.getId());
+					if (dateField!=null)
+						dateField.setValue(this.currInstanceNo, month+getResources().getString(R.string.dateSeparator)+day+getResources().getString(R.string.dateSeparator)+year, this.getFormScreenId(), false);
 				} else if (nodeDef instanceof TimeAttributeDefinition){
-					
+					String hour = "";
+					String minute = "";
+					Time timeValue = (Time)parentEntity.getValue(nodeDef.getName(), this.currInstanceNo);
+					if (timeValue!=null){
+						hour = timeValue.getHour().toString();
+						if (hour==null)
+							hour = "";
+						minute = timeValue.getMinute().toString();
+						if (minute==null)
+							minute = "";
+					}						
+					TimeField timeField = (TimeField) ApplicationManager.getUIElement(nodeDef.getId());
+					if (timeField!=null)
+						timeField.setValue(this.currInstanceNo, hour+getResources().getString(R.string.timeSeparator)+minute, this.getFormScreenId(), false);					
 				} else if (nodeDef instanceof TaxonAttributeDefinition){
+					
+				} else if (nodeDef instanceof FileAttributeDefinition){
 					
 				}
 			}
@@ -1321,7 +1449,6 @@ public class FormScreen extends BaseActivity implements OnClickListener, TextWat
     public void startCamera(/*Context context, */PhotoField photoField){
 		Intent cameraIntent = new Intent(this/*context*/, CameraScreen.class); 
 		this.startActivityForResult(cameraIntent,getResources().getInteger(R.integer.cameraStarted));
-		//this.currPhotoField = fileField;
 	}
     
     @Override
@@ -1332,7 +1459,6 @@ public class FormScreen extends BaseActivity implements OnClickListener, TextWat
 	 	    if (requestCode==getResources().getInteger(R.integer.cameraStarted)){
 	 	    	if (resultCode==getResources().getInteger(R.integer.photoTaken)){
 	 	    		photoPath = data.getStringExtra(getResources().getString(R.string.photoPath));
-	 	    		Log.e("photopath","=="+photoPath);
 	 	    	}
 	 	    }
 	    } catch (Exception e){

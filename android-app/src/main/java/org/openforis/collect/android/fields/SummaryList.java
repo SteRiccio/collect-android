@@ -16,6 +16,7 @@ import org.openforis.idm.model.Code;
 import org.openforis.idm.model.Coordinate;
 import org.openforis.idm.model.Date;
 import org.openforis.idm.model.Entity;
+import org.openforis.idm.model.File;
 import org.openforis.idm.model.IntegerRange;
 import org.openforis.idm.model.NumberValue;
 import org.openforis.idm.model.RealRange;
@@ -253,22 +254,39 @@ public class SummaryList extends UIElement {
 				if (coordinateValue.getX()==null && coordinateValue.getY()==null){
 					valueToReturn = "";
 				} else if (coordinateValue.getX()==null) {
-					valueToReturn = ","+coordinateValue.getY();
+					valueToReturn = getResources().getString(R.string.coordinateSeparator)+coordinateValue.getY();
 				} else if (coordinateValue.getY()==null) {
-					valueToReturn = coordinateValue.getX()+",";
+					valueToReturn = coordinateValue.getX()+getResources().getString(R.string.coordinateSeparator);
 				} else {
-					valueToReturn = coordinateValue.getX()+","+coordinateValue.getY();	
-				}				
+					valueToReturn = coordinateValue.getX()+getResources().getString(R.string.coordinateSeparator)+coordinateValue.getY();	
+				}
 			} else if (value instanceof Date){
 				Date dateValue = (Date)value;
-				valueToReturn = dateValue.getMonth()+getResources().getString(R.string.dateSeparator)+dateValue.getDay()+getResources().getString(R.string.dateSeparator)+dateValue.getYear();
+				String day = "";
+				String month = "";
+				String year = "";
+				if (dateValue.getDay()!=null)
+					day = dateValue.getDay().toString();
+				if (dateValue.getMonth()!=null)
+					month = dateValue.getMonth().toString();
+				if (dateValue.getYear()!=null)
+					year = dateValue.getYear().toString();
+				valueToReturn = month+getResources().getString(R.string.dateSeparator)+day+getResources().getString(R.string.dateSeparator)+year;
 			} else if (value instanceof Time){
 				Time timeValue = (Time)value;
+				String hour = "";
+				String minute = "";
 				if (timeValue.getHour()!=null)
-					if (!timeValue.getHour().equals("null"))
-						valueToReturn = timeValue.getHour()+getResources().getString(R.string.timeSeparator)+timeValue.getMinute();
+					hour = timeValue.getHour().toString();
+				if (timeValue.getMinute()!=null)
+					minute = timeValue.getMinute().toString();
+				valueToReturn = hour+getResources().getString(R.string.timeSeparator)+minute;
 			} else if (value instanceof Taxon){
 				
+			} else if (value instanceof File){
+				File fileValue = (File)value;
+				if (fileValue.getFilename()!=null)
+					valueToReturn = fileValue.getFilename();
 			}
 		}
 		return valueToReturn;

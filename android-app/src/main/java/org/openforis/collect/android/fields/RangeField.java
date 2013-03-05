@@ -117,7 +117,7 @@ public class RangeField extends InputField {
 				} else {
 					EntityBuilder.addValue(this.findParentEntity(path), this.nodeDefinition.getName(), new RealRange(Double.valueOf(valueFrom),Double.valueOf(valueTo),null), position);
 				}		
-			} else {				
+			} else {
 				if (valueFrom.equals("") && valueTo.equals("")){
 					EntityBuilder.addValue(this.findParentEntity(path), this.nodeDefinition.getName(), new IntegerRange(null,null,null), position);
 				} else if (valueFrom.equals("")){

@@ -86,6 +86,7 @@
     <string name="dateSeparator">-</string>
     <string name="timeSeparator">:</string>
     <string name="rangeSeparator">-</string>
+    <string name="coordinateSeparator">,</string>
     
     <!-- ADDITIONAL TEXT MARKERS -->
     <string name="requiredFieldMarker">*</string>
