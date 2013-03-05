@@ -9,9 +9,10 @@ import org.openforis.idm.metamodel.CodeAttributeDefinition;
 import org.openforis.idm.metamodel.NodeDefinition;
 import org.openforis.idm.model.Code;
 import org.openforis.idm.model.CodeAttribute;
-import org.openforis.idm.model.Entity;
 import org.openforis.idm.model.EntityBuilder;
 import org.openforis.idm.model.Node;
+import org.openforis.idm.model.TextAttribute;
+import org.openforis.idm.model.TextValue;
 
 import android.content.Context;
 import android.text.InputFilter;
@@ -130,7 +131,7 @@ public class CodeField extends InputField {
 	
 	public void setValue(int position, String code, String path, boolean isSelectionChanged)
 	{
-		if (this.codeAttrDef.isAllowUnlisted()){
+		if (!this.codeAttrDef.isAllowUnlisted()){
 			boolean isFound = false;
 			int counter = 0;
 			while (!isFound&&counter<this.codes.size()){
@@ -148,18 +149,24 @@ public class CodeField extends InputField {
 					this.spinner.setSelection(0);
 			}	
 		} else {
-			if (isSelectionChanged){
+			if (!isSelectionChanged)
 				this.txtBox.setText(code);
+
+			Node<? extends NodeDefinition> node = this.findParentEntity(path).get(this.nodeDefinition.getName(), position);
+			if (node!=null){
+				TextAttribute textAtr = (TextAttribute)node;
+				textAtr.setValue(new TextValue(code));
+			} else {
+				EntityBuilder.addValue(this.findParentEntity(path), this.nodeDefinition.getName(), code, position);	
 			}
 		}		
 		
-		Entity parentEntity = this.findParentEntity(path);
-		Node<? extends NodeDefinition> node = parentEntity.get(this.nodeDefinition.getName(), position);
+		Node<? extends NodeDefinition> node = this.findParentEntity(path).get(this.nodeDefinition.getName(), position);
 		if (node!=null){
 			CodeAttribute codeAtr = (CodeAttribute)node;
 			codeAtr.setValue(new Code(code));
 		} else {
-			EntityBuilder.addValue(parentEntity, this.nodeDefinition.getName(), new Code(code), position);	
+			EntityBuilder.addValue(this.findParentEntity(path), this.nodeDefinition.getName(), new Code(code), position);	
 		}
 	}
 }

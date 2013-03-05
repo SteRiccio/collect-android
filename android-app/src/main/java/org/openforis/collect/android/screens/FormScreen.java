@@ -83,8 +83,8 @@ public class FormScreen extends BaseActivity implements OnClickListener, TextWat
 	private int idmlId;
 	public int currInstanceNo;
 	
-	private Entity parentEntity;
-	private Entity parentEntityMultiple;
+	public Entity parentEntitySingleAttribute;
+	public Entity parentEntityMultipleAttribute;
 	
 	public PhotoField currentPictureField;
 	private String photoPath;
@@ -103,8 +103,8 @@ public class FormScreen extends BaseActivity implements OnClickListener, TextWat
     		this.parentFormScreenId = this.startingIntent.getStringExtra(getResources().getString(R.string.parentFormScreenId));;
     		this.fieldsNo = this.startingIntent.getExtras().size()-5;
     		
-    		this.parentEntity = this.findParentEntity(this.getFormScreenId());
-    		this.parentEntityMultiple = this.findParentEntity(this.parentFormScreenId);
+    		this.parentEntitySingleAttribute = this.findParentEntity(this.getFormScreenId());
+    		this.parentEntityMultipleAttribute = this.findParentEntity(this.parentFormScreenId);
     		
     		this.currentPictureField = null;
     		this.photoPath = null;
@@ -150,16 +150,16 @@ public class FormScreen extends BaseActivity implements OnClickListener, TextWat
     				if (ApplicationManager.currentRecord.getRootEntity().getId()!=nodeDef.getId()){
     					//this.parentEntity = this.findParentEntity(this.getFormScreenId());
 
-        				Node<?> foundNode = this.parentEntity.get(nodeDef.getName(), this.currInstanceNo);
+        				Node<?> foundNode = this.parentEntitySingleAttribute.get(nodeDef.getName(), this.currInstanceNo);
         				if (foundNode==null){
-        					EntityBuilder.addEntity(this.parentEntity, ApplicationManager.getSurvey().getSchema().getDefinitionById(nodeDef.getId()).getName());
+        					EntityBuilder.addEntity(this.parentEntitySingleAttribute, ApplicationManager.getSurvey().getSchema().getDefinitionById(nodeDef.getId()).getName());
         				}
     				}
     				
     				EntityDefinition entityDef = (EntityDefinition)nodeDef;
     				//if (ApplicationManager.currentRecord.getRootEntity().getId()!=nodeDef.getId()){    					
         				//Log.e("multipleENTITY"+parentEntity.getName(),parentEntity.getIndex()+""+entityDef.getName()+parentEntity.getCount(entityDef.getName()));
-        				for (int e=0;e<this.parentEntity.getCount(entityDef.getName());e++){
+        				for (int e=0;e<this.parentEntitySingleAttribute.getCount(entityDef.getName());e++){
         					SummaryList summaryListView = new SummaryList(this, entityDef, calcNoOfCharsFitInOneLine(),
             						this,e);
             				summaryListView.setOnClickListener(this);
@@ -199,9 +199,9 @@ public class FormScreen extends BaseActivity implements OnClickListener, TextWat
 
 	    				if (((TextAttributeDefinition) nodeDef).getType().toString().toLowerCase().equals("short")){
 		    				if (!nodeDef.isMultiple()){
-		    					Node<?> foundNode = this.parentEntity.get(nodeDef.getName(), 0);
+		    					Node<?> foundNode = this.parentEntitySingleAttribute.get(nodeDef.getName(), 0);
 			    				if (foundNode!=null){
-			    					TextValue textValue = (TextValue)this.parentEntity.getValue(nodeDef.getName(), 0);
+			    					TextValue textValue = (TextValue)this.parentEntitySingleAttribute.getValue(nodeDef.getName(), 0);
 			    					if (textValue!=null)
 			    						loadedValue = textValue.getValue();	    				
 			    				}
@@ -219,9 +219,9 @@ public class FormScreen extends BaseActivity implements OnClickListener, TextWat
 		        				ApplicationManager.putUIElement(textField.getId(), textField);
 		        				this.ll.addView(textField);
 		    				} else if (this.intentType==getResources().getInteger(R.integer.multipleAttributeIntent)){
-		    					Node<?> foundNode = this.parentEntityMultiple.get(nodeDef.getName(), this.currInstanceNo);
+		    					Node<?> foundNode = this.parentEntityMultipleAttribute.get(nodeDef.getName(), this.currInstanceNo);
 			    				if (foundNode!=null){
-			    					TextValue textValue = (TextValue)this.parentEntityMultiple.getValue(nodeDef.getName(), this.currInstanceNo);
+			    					TextValue textValue = (TextValue)this.parentEntityMultipleAttribute.getValue(nodeDef.getName(), this.currInstanceNo);
 			    					if (textValue!=null)
 			    						loadedValue = textValue.getValue();	    				
 			    				}
@@ -239,16 +239,16 @@ public class FormScreen extends BaseActivity implements OnClickListener, TextWat
 		        				ApplicationManager.putUIElement(textField.getId(), textField);
 		        				this.ll.addView(textField);
 		    				} else {//multiple attribute summary    			    		
-        						SummaryTable summaryTableView = new SummaryTable(this, nodeDef, tableColHeaders, parentEntity, this);
+        						SummaryTable summaryTableView = new SummaryTable(this, nodeDef, tableColHeaders, parentEntitySingleAttribute, this);
             					summaryTableView.setOnClickListener(this);
                 				summaryTableView.setId(nodeDef.getId());
                 				this.ll.addView(summaryTableView);
 	        				}
 	    				} else {//memo field
 	    					if (!nodeDef.isMultiple()){
-		    					Node<?> foundNode = this.parentEntity.get(nodeDef.getName(), 0);
+		    					Node<?> foundNode = this.parentEntitySingleAttribute.get(nodeDef.getName(), 0);
 			    				if (foundNode!=null){
-			    					TextValue textValue = (TextValue)this.parentEntity.getValue(nodeDef.getName(), 0);
+			    					TextValue textValue = (TextValue)this.parentEntitySingleAttribute.getValue(nodeDef.getName(), 0);
 			    					if (textValue!=null)
 			    						loadedValue = textValue.getValue();	    				
 			    				}
@@ -266,9 +266,9 @@ public class FormScreen extends BaseActivity implements OnClickListener, TextWat
 		        				ApplicationManager.putUIElement(memoField.getId(), memoField);
 		        				this.ll.addView(memoField);
 		    				} else if (this.intentType==getResources().getInteger(R.integer.multipleAttributeIntent)){
-		    					Node<?> foundNode = this.parentEntityMultiple.get(nodeDef.getName(), this.currInstanceNo);
+		    					Node<?> foundNode = this.parentEntityMultipleAttribute.get(nodeDef.getName(), this.currInstanceNo);
 			    				if (foundNode!=null){
-			    					TextValue textValue = (TextValue)this.parentEntityMultiple.getValue(nodeDef.getName(), this.currInstanceNo);
+			    					TextValue textValue = (TextValue)this.parentEntityMultipleAttribute.getValue(nodeDef.getName(), this.currInstanceNo);
 			    					if (textValue!=null)
 			    						loadedValue = textValue.getValue();	    				
 			    				}
@@ -286,7 +286,7 @@ public class FormScreen extends BaseActivity implements OnClickListener, TextWat
 		        				ApplicationManager.putUIElement(memoField.getId(), memoField);
 		        				this.ll.addView(memoField);
 		    				} else {//multiple attribute summary    			    		
-        						SummaryTable summaryTableView = new SummaryTable(this, nodeDef, tableColHeaders, parentEntity, this);
+        						SummaryTable summaryTableView = new SummaryTable(this, nodeDef, tableColHeaders, parentEntitySingleAttribute, this);
             					summaryTableView.setOnClickListener(this);
                 				summaryTableView.setId(nodeDef.getId());
                 				this.ll.addView(summaryTableView);
@@ -295,14 +295,14 @@ public class FormScreen extends BaseActivity implements OnClickListener, TextWat
 	    			} else if (nodeDef instanceof NumericAttributeDefinition){
 	    				loadedValue = "";
 	    				if (!nodeDef.isMultiple()){
-	    					Node<?> foundNode = this.parentEntity.get(nodeDef.getName(), 0);
+	    					Node<?> foundNode = this.parentEntitySingleAttribute.get(nodeDef.getName(), 0);
 		    				if (foundNode!=null){
 		    					if (((NumberAttributeDefinition) nodeDef).isInteger()){
-		    						IntegerValue intValue = (IntegerValue)this.parentEntity.getValue(nodeDef.getName(), 0);
+		    						IntegerValue intValue = (IntegerValue)this.parentEntitySingleAttribute.getValue(nodeDef.getName(), 0);
 		    						if (intValue!=null)
 			    						loadedValue = intValue.getValue().toString();
 		    					} else {
-		    						RealValue realValue = (RealValue)this.parentEntity.getValue(nodeDef.getName(), 0);
+		    						RealValue realValue = (RealValue)this.parentEntitySingleAttribute.getValue(nodeDef.getName(), 0);
 		    						if (realValue!=null)
 			    						loadedValue = realValue.getValue().toString();
 		    					}
@@ -321,14 +321,14 @@ public class FormScreen extends BaseActivity implements OnClickListener, TextWat
 	        				ApplicationManager.putUIElement(numberField.getId(), numberField);
 	        				this.ll.addView(numberField);
 	    				} else if (this.intentType==getResources().getInteger(R.integer.multipleAttributeIntent)){
-	    					Node<?> foundNode = this.parentEntityMultiple.get(nodeDef.getName(), this.currInstanceNo);
+	    					Node<?> foundNode = this.parentEntityMultipleAttribute.get(nodeDef.getName(), this.currInstanceNo);
 		    				if (foundNode!=null){
 		    					if (((NumberAttributeDefinition) nodeDef).isInteger()){
-		    						IntegerValue intValue = (IntegerValue)this.parentEntityMultiple.getValue(nodeDef.getName(), this.currInstanceNo);
+		    						IntegerValue intValue = (IntegerValue)this.parentEntityMultipleAttribute.getValue(nodeDef.getName(), this.currInstanceNo);
 		    						if (intValue!=null)
 			    						loadedValue = intValue.getValue().toString();
 		    					} else {
-		    						RealValue realValue = (RealValue)this.parentEntityMultiple.getValue(nodeDef.getName(), this.currInstanceNo);
+		    						RealValue realValue = (RealValue)this.parentEntityMultipleAttribute.getValue(nodeDef.getName(), this.currInstanceNo);
 		    						if (realValue!=null)
 			    						loadedValue = realValue.getValue().toString();
 		    					}
@@ -347,7 +347,7 @@ public class FormScreen extends BaseActivity implements OnClickListener, TextWat
 	        				ApplicationManager.putUIElement(numberField.getId(), numberField);
 	        				this.ll.addView(numberField);
 	    				} else {//multiple attribute summary    			    		
-    						SummaryTable summaryTableView = new SummaryTable(this, nodeDef, tableColHeaders, parentEntity, this);
+    						SummaryTable summaryTableView = new SummaryTable(this, nodeDef, tableColHeaders, parentEntitySingleAttribute, this);
         					summaryTableView.setOnClickListener(this);
             				summaryTableView.setId(nodeDef.getId());
             				this.ll.addView(summaryTableView);
@@ -355,9 +355,9 @@ public class FormScreen extends BaseActivity implements OnClickListener, TextWat
 	    			} else if (nodeDef instanceof BooleanAttributeDefinition){
 	    				loadedValue = "";
 	    				if (!nodeDef.isMultiple()){
-	    					Node<?> foundNode = this.parentEntity.get(nodeDef.getName(), 0);
+	    					Node<?> foundNode = this.parentEntitySingleAttribute.get(nodeDef.getName(), 0);
 		    				if (foundNode!=null){
-		    					BooleanValue boolValue = (BooleanValue)this.parentEntity.getValue(nodeDef.getName(), 0);
+		    					BooleanValue boolValue = (BooleanValue)this.parentEntitySingleAttribute.getValue(nodeDef.getName(), 0);
 	        					if (boolValue!=null){
 	        						if (boolValue.getValue()!=null)
 	        							loadedValue = boolValue.getValue().toString();
@@ -374,9 +374,9 @@ public class FormScreen extends BaseActivity implements OnClickListener, TextWat
 	        				ApplicationManager.putUIElement(boolField.getId(), boolField);
 	        				this.ll.addView(boolField);
 	    				} else if (this.intentType==getResources().getInteger(R.integer.multipleAttributeIntent)){
-	    					Node<?> foundNode = this.parentEntityMultiple.get(nodeDef.getName(), this.currInstanceNo);
+	    					Node<?> foundNode = this.parentEntityMultipleAttribute.get(nodeDef.getName(), this.currInstanceNo);
 	    					if (foundNode!=null){
-	    						BooleanValue boolValue = (BooleanValue)this.parentEntityMultiple.getValue(nodeDef.getName(), this.currInstanceNo);
+	    						BooleanValue boolValue = (BooleanValue)this.parentEntityMultipleAttribute.getValue(nodeDef.getName(), this.currInstanceNo);
 		    					if (boolValue!=null){
 	        						if (boolValue.getValue()!=null)
 	        							loadedValue = boolValue.getValue().toString();
@@ -393,7 +393,7 @@ public class FormScreen extends BaseActivity implements OnClickListener, TextWat
 	        				ApplicationManager.putUIElement(boolField.getId(), boolField);
 	        				this.ll.addView(boolField);
 	    				} else {//multiple attribute summary    			    		
-    						SummaryTable summaryTableView = new SummaryTable(this, nodeDef, tableColHeaders, parentEntity, this);
+    						SummaryTable summaryTableView = new SummaryTable(this, nodeDef, tableColHeaders, parentEntitySingleAttribute, this);
         					summaryTableView.setOnClickListener(this);
             				summaryTableView.setId(nodeDef.getId());
             				this.ll.addView(summaryTableView);
@@ -412,9 +412,9 @@ public class FormScreen extends BaseActivity implements OnClickListener, TextWat
 	    				}
 	    				
 	    				if (!nodeDef.isMultiple()){
-	    					Node<?> foundNode = this.parentEntity.get(nodeDef.getName(), 0);
+	    					Node<?> foundNode = this.parentEntitySingleAttribute.get(nodeDef.getName(), 0);
 		    				if (foundNode!=null){
-		    					Code codeValue = (Code)this.parentEntity.getValue(nodeDef.getName(), 0);
+		    					Code codeValue = (Code)this.parentEntitySingleAttribute.getValue(nodeDef.getName(), 0);
 	        					if (codeValue!=null){
 	        						loadedValue = codeValue.getCode();
 	        					}
@@ -426,9 +426,9 @@ public class FormScreen extends BaseActivity implements OnClickListener, TextWat
 	        				ApplicationManager.putUIElement(codeField.getId(), codeField);
 	        				this.ll.addView(codeField);
 	    				} else if (this.intentType==getResources().getInteger(R.integer.multipleAttributeIntent)){
-	    					Node<?> foundNode = this.parentEntityMultiple.get(nodeDef.getName(), this.currInstanceNo);
+	    					Node<?> foundNode = this.parentEntityMultipleAttribute.get(nodeDef.getName(), this.currInstanceNo);
 	    					if (foundNode!=null){
-		    					Code codeValue = (Code)this.parentEntityMultiple.getValue(nodeDef.getName(), this.currInstanceNo);
+		    					Code codeValue = (Code)this.parentEntityMultipleAttribute.getValue(nodeDef.getName(), this.currInstanceNo);
 	        					if (codeValue!=null){
 	        						loadedValue = codeValue.getCode();
 	        					}
@@ -440,7 +440,7 @@ public class FormScreen extends BaseActivity implements OnClickListener, TextWat
 	        				ApplicationManager.putUIElement(codeField.getId(), codeField);
 	        				this.ll.addView(codeField);
 	    				} else {//multiple attribute summary    			    		
-    						SummaryTable summaryTableView = new SummaryTable(this, nodeDef, tableColHeaders, parentEntity, this);
+    						SummaryTable summaryTableView = new SummaryTable(this, nodeDef, tableColHeaders, parentEntitySingleAttribute, this);
         					summaryTableView.setOnClickListener(this);
             				summaryTableView.setId(nodeDef.getId());
             				this.ll.addView(summaryTableView);
@@ -449,9 +449,9 @@ public class FormScreen extends BaseActivity implements OnClickListener, TextWat
 	    				String loadedValueLon = "";
 	    				String loadedValueLat = "";
 	    				if (!nodeDef.isMultiple()){
-	    					Node<?> foundNode = this.parentEntity.get(nodeDef.getName(), 0);
+	    					Node<?> foundNode = this.parentEntitySingleAttribute.get(nodeDef.getName(), 0);
 		    				if (foundNode!=null){
-		    					Coordinate coordValue = (Coordinate)this.parentEntity.getValue(nodeDef.getName(), 0);
+		    					Coordinate coordValue = (Coordinate)this.parentEntitySingleAttribute.getValue(nodeDef.getName(), 0);
 		    					if (coordValue!=null){
 		    						if (coordValue.getX()!=null)
 		    							loadedValueLon = coordValue.getX().toString();
@@ -466,9 +466,9 @@ public class FormScreen extends BaseActivity implements OnClickListener, TextWat
 	        				ApplicationManager.putUIElement(coordField.getId(), coordField);
 	        				this.ll.addView(coordField);
 	    				} else if (this.intentType==getResources().getInteger(R.integer.multipleAttributeIntent)){
-	    					Node<?> foundNode = this.parentEntityMultiple.get(nodeDef.getName(), this.currInstanceNo);
+	    					Node<?> foundNode = this.parentEntityMultipleAttribute.get(nodeDef.getName(), this.currInstanceNo);
 		    				if (foundNode!=null){
-		    					Coordinate coordValue = (Coordinate)this.parentEntityMultiple.getValue(nodeDef.getName(), this.currInstanceNo);
+		    					Coordinate coordValue = (Coordinate)this.parentEntityMultipleAttribute.getValue(nodeDef.getName(), this.currInstanceNo);
 		    					if (coordValue!=null){
 		    						if (coordValue.getX()!=null)
 		    							loadedValueLon = coordValue.getX().toString();
@@ -483,7 +483,7 @@ public class FormScreen extends BaseActivity implements OnClickListener, TextWat
 	        				ApplicationManager.putUIElement(coordField.getId(), coordField);
 	        				this.ll.addView(coordField);
 	    				} else {//multiple attribute summary    			    		
-    						SummaryTable summaryTableView = new SummaryTable(this, nodeDef, tableColHeaders, parentEntity, this);
+    						SummaryTable summaryTableView = new SummaryTable(this, nodeDef, tableColHeaders, parentEntitySingleAttribute, this);
         					summaryTableView.setOnClickListener(this);
             				summaryTableView.setId(nodeDef.getId());
             				this.ll.addView(summaryTableView);
@@ -491,9 +491,9 @@ public class FormScreen extends BaseActivity implements OnClickListener, TextWat
 	    			} else if (nodeDef instanceof RangeAttributeDefinition){
 	    				loadedValue = "";
 	    				if (!nodeDef.isMultiple()){
-	    					Node<?> foundNode = this.parentEntity.get(nodeDef.getName(), 0);
+	    					Node<?> foundNode = this.parentEntitySingleAttribute.get(nodeDef.getName(), 0);
 		    				if (foundNode!=null){
-		    					Range rangeValue = (Range)this.parentEntity.getValue(nodeDef.getName(), 0);
+		    					Range rangeValue = (Range)this.parentEntitySingleAttribute.getValue(nodeDef.getName(), 0);
 		    					if (rangeValue!=null){
 		    						if (rangeValue.getMinimum()==null && rangeValue.getMaximum()==null){
 		    							loadedValue = "";
@@ -520,9 +520,9 @@ public class FormScreen extends BaseActivity implements OnClickListener, TextWat
 	        				ApplicationManager.putUIElement(rangeField.getId(), rangeField);
 	        				this.ll.addView(rangeField);
 	    				} else if (this.intentType==getResources().getInteger(R.integer.multipleAttributeIntent)){
-	    					Node<?> foundNode = this.parentEntityMultiple.get(nodeDef.getName(), this.currInstanceNo);
+	    					Node<?> foundNode = this.parentEntityMultipleAttribute.get(nodeDef.getName(), this.currInstanceNo);
 		    				if (foundNode!=null){
-		    					Range rangeValue = (Range)this.parentEntityMultiple.getValue(nodeDef.getName(), this.currInstanceNo);
+		    					Range rangeValue = (Range)this.parentEntityMultipleAttribute.getValue(nodeDef.getName(), this.currInstanceNo);
 		    					if (rangeValue!=null){
 		    						if (rangeValue.getMinimum()==null && rangeValue.getMaximum()==null){
 		    							loadedValue = "";
@@ -549,7 +549,7 @@ public class FormScreen extends BaseActivity implements OnClickListener, TextWat
 	        				ApplicationManager.putUIElement(rangeField.getId(), rangeField);
 	        				this.ll.addView(rangeField);
 	    				} else {//multiple attribute summary    			    		
-    						SummaryTable summaryTableView = new SummaryTable(this, nodeDef, tableColHeaders, parentEntity, this);
+    						SummaryTable summaryTableView = new SummaryTable(this, nodeDef, tableColHeaders, parentEntitySingleAttribute, this);
         					summaryTableView.setOnClickListener(this);
             				summaryTableView.setId(nodeDef.getId());
             				this.ll.addView(summaryTableView);
@@ -557,9 +557,9 @@ public class FormScreen extends BaseActivity implements OnClickListener, TextWat
 	    			} else if (nodeDef instanceof DateAttributeDefinition){
 	    				loadedValue = "";
 	    				if (!nodeDef.isMultiple()){
-	    					Node<?> foundNode = this.parentEntity.get(nodeDef.getName(), 0);
+	    					Node<?> foundNode = this.parentEntitySingleAttribute.get(nodeDef.getName(), 0);
 		    				if (foundNode!=null){
-		    					Date dateValue = (Date)this.parentEntity.getValue(nodeDef.getName(), 0);
+		    					Date dateValue = (Date)this.parentEntitySingleAttribute.getValue(nodeDef.getName(), 0);
 		    					if (dateValue!=null){
 		    						if (dateValue.getMonth()==null && dateValue.getDay()==null && dateValue.getYear()==null){
 		    							loadedValue = "";
@@ -595,9 +595,9 @@ public class FormScreen extends BaseActivity implements OnClickListener, TextWat
 	        				ApplicationManager.putUIElement(dateField.getId(), dateField);
 	        				this.ll.addView(dateField);
 	    				} else if (this.intentType==getResources().getInteger(R.integer.multipleAttributeIntent)){
-	    					Node<?> foundNode = this.parentEntityMultiple.get(nodeDef.getName(), this.currInstanceNo);
+	    					Node<?> foundNode = this.parentEntityMultipleAttribute.get(nodeDef.getName(), this.currInstanceNo);
 		    				if (foundNode!=null){
-		    					Date dateValue = (Date)this.parentEntity.getValue(nodeDef.getName(), 0);
+		    					Date dateValue = (Date)this.parentEntitySingleAttribute.getValue(nodeDef.getName(), 0);
 		    					if (dateValue!=null){
 		    						if (dateValue.getMonth()==null && dateValue.getDay()==null && dateValue.getYear()==null){
 		    							loadedValue = "";
@@ -635,18 +635,18 @@ public class FormScreen extends BaseActivity implements OnClickListener, TextWat
 	    			} else if (nodeDef instanceof TimeAttributeDefinition){
 	    				loadedValue = "";
 	    				if (!nodeDef.isMultiple()){
-	    					Node<?> foundNode = this.parentEntity.get(nodeDef.getName(), 0);
+	    					Node<?> foundNode = this.parentEntitySingleAttribute.get(nodeDef.getName(), 0);
 		    				if (foundNode!=null){
-		    					Time timeValue = (Time)this.parentEntity.getValue(nodeDef.getName(), 0);
+		    					Time timeValue = (Time)this.parentEntitySingleAttribute.getValue(nodeDef.getName(), 0);
 		    					if (timeValue!=null){
 		    						if (timeValue.getHour()==null && timeValue.getMinute()==null){
 		    							loadedValue = "";
 		    						} else if (timeValue.getHour()==null){
-		    							loadedValue = getResources().getString(R.string.rangeSeparator)+timeValue.getMinute();
+		    							loadedValue = getResources().getString(R.string.timeSeparator)+timeValue.getMinute();
 		    						} else if (timeValue.getMinute()==null){
-		    							loadedValue = timeValue.getHour()+getResources().getString(R.string.rangeSeparator);
+		    							loadedValue = timeValue.getHour()+getResources().getString(R.string.timeSeparator);
 		    						} else {
-		    							loadedValue = timeValue.getHour()+getResources().getString(R.string.rangeSeparator)+timeValue.getMinute();
+		    							loadedValue = timeValue.getHour()+getResources().getString(R.string.timeSeparator)+timeValue.getMinute();
 		    						}		    						
 		    					}	    				
 		    				}
@@ -655,8 +655,8 @@ public class FormScreen extends BaseActivity implements OnClickListener, TextWat
 	        				timeField.setId(nodeDef.getId());
 	        				timeField.setValue(0, loadedValue, FormScreen.this.getFormScreenId(),false);
 	        				timeField.addTextChangedListener(new TextWatcher(){
-	        			        public void afterTextChanged(Editable s) {        			            
-	        			        	timeField.setValue(0, s.toString(), FormScreen.this.parentFormScreenId,true);
+	        			        public void afterTextChanged(Editable s) {
+	        			        	timeField.setValue(0, s.toString(), FormScreen.this.getFormScreenId(),true);
 	        			        }
 	        			        public void beforeTextChanged(CharSequence s, int start, int count, int after){}
 	        			        public void onTextChanged(CharSequence s, int start, int before, int count){}
@@ -664,18 +664,18 @@ public class FormScreen extends BaseActivity implements OnClickListener, TextWat
 	        				ApplicationManager.putUIElement(timeField.getId(), timeField);
 	        				this.ll.addView(timeField);
 	    				} else if (this.intentType==getResources().getInteger(R.integer.multipleAttributeIntent)){
-	    					Node<?> foundNode = this.parentEntityMultiple.get(nodeDef.getName(), this.currInstanceNo);
+	    					Node<?> foundNode = this.parentEntityMultipleAttribute.get(nodeDef.getName(), this.currInstanceNo);
 		    				if (foundNode!=null){
-		    					Time timeValue = (Time)this.parentEntityMultiple.getValue(nodeDef.getName(), this.currInstanceNo);
+		    					Time timeValue = (Time)this.parentEntityMultipleAttribute.getValue(nodeDef.getName(), this.currInstanceNo);
 		    					if (timeValue!=null){
 		    						if (timeValue.getHour()==null && timeValue.getMinute()==null){
 		    							loadedValue = "";
 		    						} else if (timeValue.getHour()==null){
-		    							loadedValue = getResources().getString(R.string.rangeSeparator)+timeValue.getMinute();
+		    							loadedValue = getResources().getString(R.string.timeSeparator)+timeValue.getMinute();
 		    						} else if (timeValue.getMinute()==null){
-		    							loadedValue = timeValue.getHour()+getResources().getString(R.string.rangeSeparator);
+		    							loadedValue = timeValue.getHour()+getResources().getString(R.string.timeSeparator);
 		    						} else {
-		    							loadedValue = timeValue.getHour()+getResources().getString(R.string.rangeSeparator)+timeValue.getMinute();
+		    							loadedValue = timeValue.getHour()+getResources().getString(R.string.timeSeparator)+timeValue.getMinute();
 		    						}		    						
 		    					}	   				
 		    				}
@@ -693,7 +693,7 @@ public class FormScreen extends BaseActivity implements OnClickListener, TextWat
 	        				ApplicationManager.putUIElement(timeField.getId(), timeField);
 	        				this.ll.addView(timeField);
 	    				} else {//multiple attribute summary    			    		
-    						SummaryTable summaryTableView = new SummaryTable(this, nodeDef, tableColHeaders, parentEntity, this);
+    						SummaryTable summaryTableView = new SummaryTable(this, nodeDef, tableColHeaders, parentEntitySingleAttribute, this);
         					summaryTableView.setOnClickListener(this);
             				summaryTableView.setId(nodeDef.getId());
             				this.ll.addView(summaryTableView);
@@ -712,9 +712,9 @@ public class FormScreen extends BaseActivity implements OnClickListener, TextWat
 	    				
 	    				loadedValue = "";
 	    				if (!nodeDef.isMultiple()){
-	    					Node<?> foundNode = this.parentEntity.get(nodeDef.getName(), 0);
+	    					Node<?> foundNode = this.parentEntitySingleAttribute.get(nodeDef.getName(), 0);
 		    				if (foundNode!=null){
-		    					Taxon taxonValue = (Taxon)this.parentEntity.getValue(nodeDef.getName(), 0);
+		    					Taxon taxonValue = (Taxon)this.parentEntitySingleAttribute.getValue(nodeDef.getName(), 0);
 		    					if (taxonValue!=null){
 		    						//TBI!!!	
 		    					}	    				
@@ -726,9 +726,9 @@ public class FormScreen extends BaseActivity implements OnClickListener, TextWat
 	        				ApplicationManager.putUIElement(taxonField.getId(), taxonField);
 	        				this.ll.addView(taxonField);
 	    				} else if (this.intentType==getResources().getInteger(R.integer.multipleAttributeIntent)){
-	    					Node<?> foundNode = this.parentEntityMultiple.get(nodeDef.getName(), this.currInstanceNo);
+	    					Node<?> foundNode = this.parentEntityMultipleAttribute.get(nodeDef.getName(), this.currInstanceNo);
 		    				if (foundNode!=null){
-		    					Taxon taxonValue = (Taxon)this.parentEntityMultiple.getValue(nodeDef.getName(), this.currInstanceNo);
+		    					Taxon taxonValue = (Taxon)this.parentEntityMultipleAttribute.getValue(nodeDef.getName(), this.currInstanceNo);
 		    					if (taxonValue!=null){
 		    								    						
 		    					}	   				
@@ -740,7 +740,7 @@ public class FormScreen extends BaseActivity implements OnClickListener, TextWat
 	        				ApplicationManager.putUIElement(taxonField.getId(), taxonField);
 	        				this.ll.addView(taxonField);
 	    				} else {//multiple attribute summary    			    		
-    						SummaryTable summaryTableView = new SummaryTable(this, nodeDef, tableColHeaders, parentEntity, this);
+    						SummaryTable summaryTableView = new SummaryTable(this, nodeDef, tableColHeaders, parentEntitySingleAttribute, this);
         					summaryTableView.setOnClickListener(this);
             				summaryTableView.setId(nodeDef.getId());
             				this.ll.addView(summaryTableView);
@@ -758,9 +758,9 @@ public class FormScreen extends BaseActivity implements OnClickListener, TextWat
 		    		    			this.currentPictureField = null;
 		    		    			this.photoPath = null;
 		    		    		}
-		        				Node<?> foundNode = this.parentEntity.get(nodeDef.getName(), 0);
+		        				Node<?> foundNode = this.parentEntitySingleAttribute.get(nodeDef.getName(), 0);
 			    				if (foundNode!=null){
-			    					File fileValue = (File)this.parentEntity.getValue(nodeDef.getName(), 0);
+			    					File fileValue = (File)this.parentEntitySingleAttribute.getValue(nodeDef.getName(), 0);
 			    					if (fileValue!=null){
 			    						loadedValue = fileValue.getFilename();
 			    					}
@@ -777,9 +777,9 @@ public class FormScreen extends BaseActivity implements OnClickListener, TextWat
 		    		    			this.currentPictureField = null;
 		    		    			this.photoPath = null;
 		    		    		}
-		        				Node<?> foundNode = this.parentEntityMultiple.get(nodeDef.getName(), this.currInstanceNo);
+		        				Node<?> foundNode = this.parentEntityMultipleAttribute.get(nodeDef.getName(), this.currInstanceNo);
 			    				if (foundNode!=null){
-			    					File fileValue = (File)this.parentEntityMultiple.getValue(nodeDef.getName(), this.currInstanceNo);
+			    					File fileValue = (File)this.parentEntityMultipleAttribute.getValue(nodeDef.getName(), this.currInstanceNo);
 			    					if (fileValue!=null){
 			    						loadedValue = fileValue.getFilename();
 			    					}
@@ -790,7 +790,7 @@ public class FormScreen extends BaseActivity implements OnClickListener, TextWat
 		        				ApplicationManager.putUIElement(photoField.getId(), photoField);
 		        				this.ll.addView(photoField);
 		    				} else {//multiple attribute summary    			    		
-	    						SummaryTable summaryTableView = new SummaryTable(this, nodeDef, tableColHeaders, parentEntity, this);
+	    						SummaryTable summaryTableView = new SummaryTable(this, nodeDef, tableColHeaders, parentEntitySingleAttribute, this);
 	        					summaryTableView.setOnClickListener(this);
 	            				summaryTableView.setId(nodeDef.getId());
 	            				this.ll.addView(summaryTableView);
@@ -1072,14 +1072,16 @@ public class FormScreen extends BaseActivity implements OnClickListener, TextWat
 						if (((TextAttributeDefinition) nodeDef).getType().toString().toLowerCase().equals("short")){
 							TextValue textValue = (TextValue)parentEntity.getValue(nodeDef.getName(), 0);							
 							if (textValue!=null)
-								loadedValue = textValue.getValue();
+								if (textValue.getValue()!=null)
+									loadedValue = textValue.getValue();
 	    					TextField textField = (TextField) ApplicationManager.getUIElement(nodeDef.getId());
 	    					if (textField!=null)
 	    						textField.setValue(0, loadedValue, this.getFormScreenId(), false);					
 						} else {
 							TextValue textValue = (TextValue)parentEntity.getValue(nodeDef.getName(), 0);							
 							if (textValue!=null)
-								loadedValue = textValue.getValue();
+								if (textValue.getValue()!=null)
+									loadedValue = textValue.getValue();
 	    					MemoField memoField = (MemoField) ApplicationManager.getUIElement(nodeDef.getId());
 	    					if (memoField!=null)
 	    						memoField.setValue(0, loadedValue, this.getFormScreenId(), false);
@@ -1089,11 +1091,13 @@ public class FormScreen extends BaseActivity implements OnClickListener, TextWat
 						if (((NumberAttributeDefinition) nodeDef).isInteger()){
 							IntegerValue intValue = (IntegerValue)parentEntity.getValue(nodeDef.getName(), 0);
 							if (intValue!=null)
-								loadedValue = intValue.getValue().toString();	
+								if (intValue.getValue()!=null)
+									loadedValue = intValue.getValue().toString();	
 						} else {
 							RealValue realValue = (RealValue)parentEntity.getValue(nodeDef.getName(), 0);					
 							if (realValue!=null)
-								loadedValue = realValue.getValue().toString();
+								if (realValue.getValue()!=null)
+									loadedValue = realValue.getValue().toString();
 						}					
 						NumberField numberField = (NumberField) ApplicationManager.getUIElement(nodeDef.getId());
 						if (numberField!=null)
@@ -1102,7 +1106,8 @@ public class FormScreen extends BaseActivity implements OnClickListener, TextWat
 						String loadedValue = "";
 						BooleanValue boolValue = (BooleanValue)parentEntity.getValue(nodeDef.getName(), this.currInstanceNo);
 						if (boolValue!=null)
-							loadedValue = boolValue.getValue().toString();
+							if (boolValue.getValue()!=null)
+								loadedValue = boolValue.getValue().toString();
 						BooleanField boolField = (BooleanField) ApplicationManager.getUIElement(nodeDef.getId());
 						if (boolField!=null){
 							if (loadedValue.equals("")){
@@ -1115,7 +1120,8 @@ public class FormScreen extends BaseActivity implements OnClickListener, TextWat
 						String loadedValue = "";
 						Code codeValue = (Code)parentEntity.getValue(nodeDef.getName(), 0);
 						if (codeValue!=null)
-							loadedValue = codeValue.getCode();
+							if (codeValue.getCode()!=null)
+								loadedValue = codeValue.getCode();
 						CodeField codeField = (CodeField) ApplicationManager.getUIElement(nodeDef.getId());
 						if (codeField!=null)
 							codeField.setValue(0, loadedValue, this.getFormScreenId(), false);
@@ -1193,11 +1199,19 @@ public class FormScreen extends BaseActivity implements OnClickListener, TextWat
 					//Log.e("refreshing new field","=="+nodeDef.getName());
 					if (nodeDef instanceof TextAttributeDefinition){
 						String loadedValue = "";
-						if (((TextAttributeDefinition) nodeDef).getType().toString().toLowerCase().equals("short")){							
+						if (((TextAttributeDefinition) nodeDef).getType().toString().toLowerCase().equals("short")){
+							TextValue textValue = (TextValue)parentEntity.getValue(nodeDef.getName(), 0);							
+							if (textValue!=null)
+								if (textValue.getValue()!=null)
+									loadedValue = textValue.getValue();
 	    					TextField textField = (TextField) ApplicationManager.getUIElement(nodeDef.getId());
 	    					if (textField!=null)
 	    						textField.setValue(0, loadedValue, this.getFormScreenId(), false);	
 						} else {
+							TextValue textValue = (TextValue)parentEntity.getValue(nodeDef.getName(), 0);							
+							if (textValue!=null)
+								if (textValue.getValue()!=null)
+									loadedValue = textValue.getValue();
 	    					MemoField memoField = (MemoField) ApplicationManager.getUIElement(nodeDef.getId());
 	    					if (memoField!=null)
 	    						memoField.setValue(0, loadedValue, this.getFormScreenId(), false);
@@ -1316,7 +1330,7 @@ public class FormScreen extends BaseActivity implements OnClickListener, TextWat
 		}
 		
 		//Entity parentEntity = this.findParentEntity(this.parentFormScreenId);
-		Entity parentEntity = this.parentEntityMultiple;
+		Entity parentEntity = this.parentEntityMultipleAttribute;
 		if (parentEntity!=null){
 			NodeDefinition nodeDef = ApplicationManager.getNodeDefinition(this.startingIntent.getIntExtra(getResources().getString(R.string.attributeId)+0, -1));
 			

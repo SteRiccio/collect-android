@@ -8,7 +8,6 @@ import org.openforis.idm.metamodel.BooleanAttributeDefinition;
 import org.openforis.idm.metamodel.NodeDefinition;
 import org.openforis.idm.model.BooleanAttribute;
 import org.openforis.idm.model.BooleanValue;
-import org.openforis.idm.model.Entity;
 import org.openforis.idm.model.EntityBuilder;
 import org.openforis.idm.model.Node;
 
@@ -103,14 +102,13 @@ public class BooleanField extends Field {
 			if (!isSelectionChanged)
 				this.chckBox2.setChecked(!boolValue);
 		}
-		
-		Entity parentEntity = this.findParentEntity(path);
-		Node<? extends NodeDefinition> node = parentEntity.get(this.nodeDefinition.getName(), position);
+	
+		Node<? extends NodeDefinition> node = this.findParentEntity(path).get(this.nodeDefinition.getName(), position);
 		if (node!=null){
 			BooleanAttribute boolAtr = (BooleanAttribute)node;
 			boolAtr.setValue(new BooleanValue(boolValue));
 		} else {
-			EntityBuilder.addValue(parentEntity, this.nodeDefinition.getName(), boolValue, position);	
+			EntityBuilder.addValue(this.findParentEntity(path), this.nodeDefinition.getName(), boolValue, position);	
 		}
 	}
 	

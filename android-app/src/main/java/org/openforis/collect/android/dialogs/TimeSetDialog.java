@@ -14,7 +14,6 @@ import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.FragmentActivity;
 import android.text.format.DateFormat;
-import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.Window;
@@ -58,7 +57,6 @@ public class TimeSetDialog extends FragmentActivity {
 				public boolean onKey( DialogInterface dialog , int keyCode , KeyEvent event ){
 					// disable search button action
 					if (keyCode == KeyEvent.KEYCODE_BACK){
-						Log.i(getResources().getString(R.string.app_name), "Button BACK pressed form TimeSettingsDialog");
 					    //Finish activity
 					    finish();						
 						return true;
@@ -72,9 +70,7 @@ public class TimeSetDialog extends FragmentActivity {
 
 		public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
 		    //Set time to the clicked TimeField
-			String strTime = pad(hourOfDay) + ":" + pad(minute);		
-			//activity_edittext.txtBox.setText(strTime);			
-			Log.i(getResources().getString(R.string.app_name), "Id of activity_edittext in time settings is: " + activity_edittext.getElementId());
+			String strTime = pad(hourOfDay) + ":" + pad(minute);
 			activity_edittext.setValue(0, strTime, this.pathToParentScreen, false);
 			//Finish activity
 		    finish();
@@ -116,7 +112,6 @@ public class TimeSetDialog extends FragmentActivity {
 	}	
 	
 	public void showTimePickerDialog(TimeField timeField) {
-		Log.i(getResources().getString(R.string.app_name), "Id of TimeField is is: " + timeField.getId());
 	    DialogFragment newFragment = new TimePickerFragment(timeField, this.path);
 	    newFragment.setCancelable(false);
 	    newFragment.show(getSupportFragmentManager(), "timePicker");
@@ -125,7 +120,6 @@ public class TimeSetDialog extends FragmentActivity {
 	@Override
 	public boolean onKeyDown(int keyCode, KeyEvent event) {
 	    if ((keyCode == KeyEvent.KEYCODE_BACK)) {
-	    	Log.i(getResources().getString(R.string.app_name), "Button BACK pressed form activity");
 		    //Finish activity
 		    finish();	    	
 	    }

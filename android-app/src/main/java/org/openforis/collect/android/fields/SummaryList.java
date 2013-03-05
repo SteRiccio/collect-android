@@ -81,8 +81,6 @@ public class SummaryList extends UIElement {
 			
 			}
 		}
-
-		
 		
 		ArrayList<List<String>> keysList = new ArrayList<List<String>>();
 		ArrayList<List<String>> detailsList = new ArrayList<List<String>>();
