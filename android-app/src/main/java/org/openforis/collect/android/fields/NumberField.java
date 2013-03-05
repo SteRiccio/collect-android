@@ -7,13 +7,18 @@ import java.util.Map;
 import org.openforis.collect.android.R;
 import org.openforis.collect.android.management.ApplicationManager;
 import org.openforis.collect.android.messages.ToastMessage;
+import org.openforis.collect.android.screens.FormScreen;
 import org.openforis.idm.metamodel.NodeDefinition;
 import org.openforis.idm.metamodel.NumberAttributeDefinition;
 import org.openforis.idm.metamodel.NumericAttributeDefinition;
+import org.openforis.idm.metamodel.validation.ValidationResults;
+import org.openforis.idm.metamodel.validation.Validator;
+import org.openforis.idm.model.Entity;
 import org.openforis.idm.model.EntityBuilder;
 import org.openforis.idm.model.IntegerAttribute;
 import org.openforis.idm.model.IntegerValue;
 import org.openforis.idm.model.Node;
+import org.openforis.idm.model.NumberAttribute;
 import org.openforis.idm.model.RealAttribute;
 import org.openforis.idm.model.RealValue;
 
@@ -28,8 +33,9 @@ import android.widget.Toast;
 public class NumberField extends InputField {
 	
 	private List<String> values;
-
+	private NumericAttributeDefinition numericNodeDef;
 	private String type;
+	private Entity parentEntity;
 	
 	public NumberField(Context context, NodeDefinition nodeDef) {
 		super(context, nodeDef);
@@ -48,9 +54,10 @@ public class NumberField extends InputField {
 		this.txtBox = new EditText(context);
 		//this.setHint(hintText);
 		this.txtBox.setLayoutParams(new LayoutParams(0,ViewGroup.LayoutParams.WRAP_CONTENT,(float) 2));
-		NumericAttributeDefinition numericNodeDef = (NumericAttributeDefinition)nodeDef;
+		this.numericNodeDef = (NumericAttributeDefinition)nodeDef;
 		this.type = numericNodeDef.getType().toString();
-
+		this.parentEntity =  NumberField.this.form.parentEntity;
+		
 		this.addView(this.txtBox);	
 		
 		// When NumberField got focus
@@ -76,6 +83,40 @@ public class NumberField extends InputField {
 				    		NumberField.this.txtBox.setInputType(InputType.TYPE_NULL);
 				    	}
 			    	}
+		    	}else{
+		    		Log.i("NUMBER FIELD info", "Number field lost focus");
+		    		Validator validator = new Validator();		    		
+		    		Log.i("VALIDATION FOR NUMBER FIELD", "Attribute defenition: " + NumberField.this.numericNodeDef.toString());
+		    		@SuppressWarnings("rawtypes")
+					NumberAttribute attribute;
+		    		if (NumberField.this.type.toLowerCase().equals("integer")){
+		    			Log.i("VALIDATION FOR NUMBER FIELD", "Integer Attribute");
+		    			attribute = new IntegerAttribute((NumberAttributeDefinition) NumberField.this.numericNodeDef);
+		    		} else{
+		    			Log.i("VALIDATION FOR NUMBER FIELD", "Integer Attribute");
+		    			attribute = new RealAttribute((NumberAttributeDefinition) NumberField.this.numericNodeDef);
+		    		}
+		    		Log.i("VALIDATION FOR NUMBER FIELD", "Parent entity is: " + parentEntity.getName());
+		    		Log.i("VALIDATION FOR NUMBER FIELD", "Currect record is: " + ApplicationManager.currentRecord);
+		    		
+		    		//GETTING VALUE (Karol code)
+		    		String loadedValue = "";
+		    		if (((NumberAttributeDefinition) NumberField.this.numericNodeDef).isInteger()){
+					    IntegerValue intValue = (IntegerValue)parentEntity.getValue(NumberField.this.numericNodeDef.getName(), NumberField.this.currentInstanceNo);
+					    if (intValue!=null)
+					        loadedValue = intValue.getValue().toString();    
+					} else{
+					        RealValue realValue = (RealValue)parentEntity.getValue(NumberField.this.numericNodeDef.getName(), NumberField.this.currentInstanceNo);
+					        if (realValue!=null)
+					            loadedValue = realValue.getValue().toString();
+					}  
+		    		Log.i("VALIDATION FOR NUMBER FIELD", "Value is: " + loadedValue);
+					ValidationResults results = validator.validate(attribute);
+					Log.i("VALIDATION FOR NUMBER FIELD", "Value is: " + attribute.getValue());
+		    		Log.i("VALIDATION FOR NUMBER FIELD", "Errors: " + results.getErrors().size() + " : " + results.getErrors().toString());
+		    		Log.i("VALIDATION FOR NUMBER FIELD", "Warnings: "  + results.getWarnings().size() + " : " + results.getWarnings().toString());
+		    		Log.i("VALIDATION FOR NUMBER FIELD", "Fails: "  + results.getFailed().size() + " : " +  results.getFailed().toString());
+		    		Log.i("VALIDATION FOR NUMBER FIELD", "Number of ERRORS from Current Record: " + ApplicationManager.currentRecord.getErrors());
 		    	}
 		    }
 	    });		
