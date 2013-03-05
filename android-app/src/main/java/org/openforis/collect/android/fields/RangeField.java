@@ -1,7 +1,5 @@
 package org.openforis.collect.android.fields;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Map;
 
 import org.openforis.collect.android.R;
@@ -26,13 +24,8 @@ import android.widget.Toast;
 
 public class RangeField extends InputField {
 	
-	private List<String> values;
-	
 	public RangeField(Context context, NodeDefinition nodeDef) {
 		super(context, nodeDef);
-		
-		RangeField.this.values = new ArrayList<String>();
-		RangeField.this.values.add(RangeField.this.currentInstanceNo, "");
 
 		this.label.setLayoutParams(new LayoutParams(0, ViewGroup.LayoutParams.WRAP_CONTENT, (float) 2));
 		this.label.setOnLongClickListener(new OnLongClickListener() {
@@ -136,10 +129,5 @@ public class RangeField extends InputField {
 				}	
 			}				
 		}
-	}
-	
-	@Override
-	public int getInstancesNo(){
-		return this.values.size();
 	}
 }

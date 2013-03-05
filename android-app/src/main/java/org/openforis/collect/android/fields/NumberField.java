@@ -1,7 +1,5 @@
 package org.openforis.collect.android.fields;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Map;
 
 import org.openforis.collect.android.R;
@@ -31,17 +29,18 @@ import android.widget.EditText;
 import android.widget.Toast;
 
 public class NumberField extends InputField {
+<<<<<<< HEAD
 	
 	private List<String> values;
 	private NumericAttributeDefinition numericNodeDef;
+=======
+
+>>>>>>> 4b01c8d29aa496919fb57e477766c9487729e104
 	private String type;
 	private Entity parentEntity;
 	
 	public NumberField(Context context, NodeDefinition nodeDef) {
 		super(context, nodeDef);
-		
-		this.values = new ArrayList<String>();
-		NumberField.this.values.add(NumberField.this.currentInstanceNo, "");
 
 		this.label.setLayoutParams(new LayoutParams(0, ViewGroup.LayoutParams.WRAP_CONTENT, (float) 2));
 		this.label.setOnLongClickListener(new OnLongClickListener() {
@@ -155,23 +154,5 @@ public class NumberField extends InputField {
 	
 	public String getType(){
 		return this.type;
-	}
-	
-	@Override
-	public int getInstancesNo(){
-		return this.values.size();
-	}
-	
-	public void resetValues(){
-		this.values = new ArrayList<String>();
-	}
-	
-	public void addValue(String value){
-		this.values.add(value);
-		this.currentInstanceNo++;
-	}
-	
-	public List<String> getValues(){
-		return this.values;
 	}
 }

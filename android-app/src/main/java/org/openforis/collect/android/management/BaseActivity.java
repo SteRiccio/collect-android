@@ -9,6 +9,7 @@ import org.openforis.collect.model.CollectSurvey;
 import android.app.Activity;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.ActivityInfo;
 import android.content.pm.PackageManager.NameNotFoundException;
 import android.graphics.Color;
 import android.os.Bundle;
@@ -33,6 +34,7 @@ public class BaseActivity extends Activity {
         Log.i(getResources().getString(R.string.app_name),TAG+":onCreate");
         requestWindowFeature(Window.FEATURE_NO_TITLE);
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
+        setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
         setContentView(R.layout.welcomescreen);
 	}
 	

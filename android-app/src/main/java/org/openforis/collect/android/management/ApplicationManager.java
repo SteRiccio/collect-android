@@ -77,6 +77,7 @@ public class ApplicationManager extends BaseActivity {
         try{
         	Log.i(getResources().getString(R.string.app_name),TAG+":onCreate");       
             //setContentView(R.layout.applicationwindow);
+        	//setContentView(R.layout.welcomescreen);
             initSession();
             
             ApplicationManager.currentRecord = null;

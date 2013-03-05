@@ -1,8 +1,6 @@
 package org.openforis.collect.android.fields;
 
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Map;
 
 import org.openforis.collect.android.R;
@@ -32,21 +30,11 @@ public class CoordinateField extends InputField {
 	private EditText txtLongitude;
 	
 	private static FormScreen form;
-
-	private List<ArrayList<String>> values;
 	
 	public CoordinateField(Context context, NodeDefinition nodeDef) {		
 		super(context, nodeDef);
 
 		CoordinateField.form = (FormScreen)context;
-		
-		this.values = new ArrayList<ArrayList<String>>();
-		ArrayList<String> initialValue = new ArrayList<String>();
-		//initialValue.add(initialTextLat);
-		//initialValue.add(initialTextLon);
-		initialValue.add("");
-		initialValue.add("");
-		this.values.add(initialValue);
 		
 		this.label.setLayoutParams(new LayoutParams(0, ViewGroup.LayoutParams.WRAP_CONTENT, (float) 1));
 		this.label.setOnLongClickListener(new OnLongClickListener() {
@@ -190,25 +178,6 @@ public class CoordinateField extends InputField {
 	@Override
 	public void afterTextChanged(Editable s) {
 		this.setValue(0, CoordinateField.this.txtLongitude.getText().toString(), CoordinateField.this.txtLatitude.getText().toString(), CoordinateField.form.getFormScreenId(),true);
-	}
-	
-	@Override
-	public int getInstancesNo(){
-		return this.values.size();
-	}
-	
-	public void resetValues(){
-		this.values = new ArrayList<ArrayList<String>>();
-
-	}
-	
-	public void addValue(ArrayList<String> value){
-		this.values.add(value);
-		this.currentInstanceNo++;
-	}
-	
-	public List<ArrayList<String>> getValues(){
-		return this.values;
 	}
 	
 	@Override

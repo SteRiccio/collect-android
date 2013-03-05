@@ -16,6 +16,7 @@ import org.openforis.collect.android.fields.PhotoField;
 import org.openforis.collect.android.fields.RangeField;
 import org.openforis.collect.android.fields.SummaryList;
 import org.openforis.collect.android.fields.SummaryTable;
+import org.openforis.collect.android.fields.TaxonField;
 import org.openforis.collect.android.fields.TextField;
 import org.openforis.collect.android.fields.TimeField;
 import org.openforis.collect.android.fields.UIElement;
@@ -42,11 +43,13 @@ import org.openforis.idm.model.Coordinate;
 import org.openforis.idm.model.Date;
 import org.openforis.idm.model.Entity;
 import org.openforis.idm.model.EntityBuilder;
+import org.openforis.idm.model.File;
 import org.openforis.idm.model.IntegerValue;
 import org.openforis.idm.model.Node;
 import org.openforis.idm.model.RealValue;
 import org.openforis.idm.model.TextValue;
 import org.openforis.idm.model.Time;
+import org.openforis.idm.model.species.Taxon;
 
 import android.content.Intent;
 import android.graphics.Color;
@@ -79,17 +82,18 @@ public class FormScreen extends BaseActivity implements OnClickListener, TextWat
 	private int fieldsNo;
 	private int idmlId;
 	public int currInstanceNo;
-	//private int numberOfInstances;
 	
 	private Entity parentEntity;
 	private Entity parentEntityMultiple;
+	
+	public PhotoField currentPictureField;
+	private String photoPath;
 	
 	public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         try{
         	Log.i(getResources().getString(R.string.app_name),TAG+":onCreate");
     		
-            //breadcrumb of the screen
     		this.startingIntent = getIntent();
     		this.breadcrumb = this.startingIntent.getStringExtra(getResources().getString(R.string.breadcrumb));
     		this.intentType = this.startingIntent.getIntExtra(getResources().getString(R.string.intentType),-1);
@@ -97,10 +101,13 @@ public class FormScreen extends BaseActivity implements OnClickListener, TextWat
     		this.currInstanceNo = this.startingIntent.getIntExtra(getResources().getString(R.string.instanceNo),-1);
     		//this.numberOfInstances = this.startingIntent.getIntExtra(getResources().getString(R.string.numberOfInstances),-1);
     		this.parentFormScreenId = this.startingIntent.getStringExtra(getResources().getString(R.string.parentFormScreenId));;
-    		this.fieldsNo = this.startingIntent.getExtras().size()-1;
+    		this.fieldsNo = this.startingIntent.getExtras().size()-5;
     		
     		this.parentEntity = this.findParentEntity(this.getFormScreenId());
     		this.parentEntityMultiple = this.findParentEntity(this.parentFormScreenId);
+    		
+    		this.currentPictureField = null;
+    		this.photoPath = null;
         } catch (Exception e){
     		RunnableHandler.reportException(e,getResources().getString(R.string.app_name),TAG+":onCreate",
     				Environment.getExternalStorageDirectory().toString()
@@ -134,23 +141,24 @@ public class FormScreen extends BaseActivity implements OnClickListener, TextWat
         		this.ll.addView(breadcrumb);
     		}    		
     		
+
     		
     		for (int i=0;i<this.fieldsNo;i++){
     			NodeDefinition nodeDef = ApplicationManager.getNodeDefinition(this.startingIntent.getIntExtra(getResources().getString(R.string.attributeId)+i, -1));
     			if (nodeDef instanceof EntityDefinition){
     				//Entity parentEntity = ApplicationManager.currentRecord.getRootEntity();
     				if (ApplicationManager.currentRecord.getRootEntity().getId()!=nodeDef.getId()){
-    					this.parentEntity = this.findParentEntity(this.getFormScreenId());
+    					//this.parentEntity = this.findParentEntity(this.getFormScreenId());
 
         				Node<?> foundNode = this.parentEntity.get(nodeDef.getName(), this.currInstanceNo);
-        				if (foundNode!=null){
-        				} else {
+        				if (foundNode==null){
         					EntityBuilder.addEntity(this.parentEntity, ApplicationManager.getSurvey().getSchema().getDefinitionById(nodeDef.getId()).getName());
         				}
     				}
     				
     				EntityDefinition entityDef = (EntityDefinition)nodeDef;
-    				//if (ApplicationManager.currentRecord.getRootEntity().getId()!=nodeDef.getId()){
+    				//if (ApplicationManager.currentRecord.getRootEntity().getId()!=nodeDef.getId()){    					
+        				//Log.e("multipleENTITY"+parentEntity.getName(),parentEntity.getIndex()+""+entityDef.getName()+parentEntity.getCount(entityDef.getName()));
         				for (int e=0;e<this.parentEntity.getCount(entityDef.getName());e++){
         					SummaryList summaryListView = new SummaryList(this, entityDef, calcNoOfCharsFitInOneLine(),
             						this,e);
@@ -164,8 +172,8 @@ public class FormScreen extends BaseActivity implements OnClickListener, TextWat
         				summaryListView.setOnClickListener(this);
         				summaryListView.setId(nodeDef.getId());
         				this.ll.addView(summaryListView);
-    				}  */  				  				
-    			} else {
+    				}   */ 				  				
+    			}else {
 					/*Entity parentEntity = ApplicationManager.currentRecord.getRootEntity();
 					String screenPath = this.getFormScreenId();
 					String[] entityPath = screenPath.split(getResources().getString(R.string.valuesSeparator2));
@@ -691,35 +699,91 @@ public class FormScreen extends BaseActivity implements OnClickListener, TextWat
             				this.ll.addView(summaryTableView);
         				}
 	    			} else if (nodeDef instanceof TaxonAttributeDefinition){
-						
+	    				TaxonAttributeDefinition taxonAttrDef = (TaxonAttributeDefinition)nodeDef;
+	    				ArrayList<String> options = new ArrayList<String>();
+	    				ArrayList<String> codes = new ArrayList<String>();
+	    				options.add("");
+	    				codes.add("null");
+	    				/*List<CodeListItem> codeListItemsList = taxonAttrDef.getTaxonomy().getItems();
+	    				for (CodeListItem codeListItem : codeListItemsList){
+	    					codes.add(codeListItem.getCode());
+	    					options.add(codeListItem.getLabel(null));
+	    				}*/
+	    				
+	    				loadedValue = "";
+	    				if (!nodeDef.isMultiple()){
+	    					Node<?> foundNode = this.parentEntity.get(nodeDef.getName(), 0);
+		    				if (foundNode!=null){
+		    					Taxon taxonValue = (Taxon)this.parentEntity.getValue(nodeDef.getName(), 0);
+		    					if (taxonValue!=null){
+		    						//TBI!!!	
+		    					}	    				
+		    				}
+	        				final TaxonField taxonField= new TaxonField(this, nodeDef, codes, options, null);
+	        				taxonField.setOnClickListener(this);
+	        				taxonField.setId(nodeDef.getId());
+	        				//taxonField.setValue(0, loadedValue, FormScreen.this.getFormScreenId(),false);
+	        				ApplicationManager.putUIElement(taxonField.getId(), taxonField);
+	        				this.ll.addView(taxonField);
+	    				} else if (this.intentType==getResources().getInteger(R.integer.multipleAttributeIntent)){
+	    					Node<?> foundNode = this.parentEntityMultiple.get(nodeDef.getName(), this.currInstanceNo);
+		    				if (foundNode!=null){
+		    					Taxon taxonValue = (Taxon)this.parentEntityMultiple.getValue(nodeDef.getName(), this.currInstanceNo);
+		    					if (taxonValue!=null){
+		    								    						
+		    					}	   				
+		    				}
+		    				final TaxonField taxonField= new TaxonField(this, nodeDef, codes, options, null);
+		    				taxonField.setOnClickListener(this);
+		    				taxonField.setId(nodeDef.getId());
+		    				//taxonField.setValue(this.currInstanceNo, loadedValue, this.parentFormScreenId,false);
+	        				ApplicationManager.putUIElement(taxonField.getId(), taxonField);
+	        				this.ll.addView(taxonField);
+	    				} else {//multiple attribute summary    			    		
+    						SummaryTable summaryTableView = new SummaryTable(this, nodeDef, tableColHeaders, parentEntity, this);
+        					summaryTableView.setOnClickListener(this);
+            				summaryTableView.setId(nodeDef.getId());
+            				this.ll.addView(summaryTableView);
+        				}
 					} else if (nodeDef instanceof FileAttributeDefinition){
 						FileAttributeDefinition fileDef = (FileAttributeDefinition)nodeDef;
 						List<String> extensionsList = fileDef.getExtensions();
+						
 						if (extensionsList.contains("jpg")||extensionsList.contains("jpeg")){
 							loadedValue = "";
 		    				if (!nodeDef.isMultiple()){
-		    					Node<?> foundNode = this.parentEntity.get(nodeDef.getName(), 0);
-			    				if (foundNode!=null){
-			    					Time timeValue = (Time)this.parentEntity.getValue(nodeDef.getName(), 0);
-			    					if (timeValue!=null){
-			    						loadedValue = "";   						
-			    					}	    				
-			    				}
 		        				final PhotoField photoField= new PhotoField(this, nodeDef);
+		        				if (this.currentPictureField!=null){
+		    		    			photoField.setValue(0, this.photoPath, FormScreen.this.getFormScreenId(),false);
+		    		    			this.currentPictureField = null;
+		    		    			this.photoPath = null;
+		    		    		}
+		        				Node<?> foundNode = this.parentEntity.get(nodeDef.getName(), 0);
+			    				if (foundNode!=null){
+			    					File fileValue = (File)this.parentEntity.getValue(nodeDef.getName(), 0);
+			    					if (fileValue!=null){
+			    						loadedValue = fileValue.getFilename();
+			    					}
+			    				}
 		        				photoField.setOnClickListener(this);
 		        				photoField.setId(nodeDef.getId());
 		        				photoField.setValue(0, loadedValue, FormScreen.this.getFormScreenId(),false);
 		        				ApplicationManager.putUIElement(photoField.getId(), photoField);
 		        				this.ll.addView(photoField);
 		    				} else if (this.intentType==getResources().getInteger(R.integer.multipleAttributeIntent)){
-		    					Node<?> foundNode = this.parentEntityMultiple.get(nodeDef.getName(), this.currInstanceNo);
-			    				if (foundNode!=null){
-			    					Time timeValue = (Time)this.parentEntityMultiple.getValue(nodeDef.getName(), this.currInstanceNo);
-			    					if (timeValue!=null){
-			    						loadedValue = "";		    						
-			    					}	   				
-			    				}
 		        				final PhotoField photoField= new PhotoField(this, nodeDef);
+		        				if (this.currentPictureField!=null){
+		        					photoField.setValue(this.currInstanceNo, this.photoPath, this.parentFormScreenId,false);
+		    		    			this.currentPictureField = null;
+		    		    			this.photoPath = null;
+		    		    		}
+		        				Node<?> foundNode = this.parentEntityMultiple.get(nodeDef.getName(), this.currInstanceNo);
+			    				if (foundNode!=null){
+			    					File fileValue = (File)this.parentEntityMultiple.getValue(nodeDef.getName(), this.currInstanceNo);
+			    					if (fileValue!=null){
+			    						loadedValue = fileValue.getFilename();
+			    					}
+			    				}
 		        				photoField.setOnClickListener(this);
 		        				photoField.setId(nodeDef.getId());
 		        				photoField.setValue(this.currInstanceNo, loadedValue, this.parentFormScreenId,false);
@@ -733,15 +797,14 @@ public class FormScreen extends BaseActivity implements OnClickListener, TextWat
 	        				}
 						}
 					}
-    			}
-    				
+    			}    				
     		}
 			if (this.intentType==getResources().getInteger(R.integer.multipleAttributeIntent)){
-				Log.e("multiple","ATTRIBUTE");
+				//Log.e("multiple","ATTRIBUTE");
 				this.ll.addView(arrangeButtonsInLine(new Button(this),getResources().getString(R.string.previousInstanceButton),new Button(this),getResources().getString(R.string.nextInstanceButton),this, false));
 			} else if (this.intentType==getResources().getInteger(R.integer.multipleEntityIntent)){ 				
 				if (ApplicationManager.currentRecord.getRootEntity().getId()!=this.idmlId){
-					Log.e("multiple","ENTITY");
+					//Log.e("multiple","ENTITY");
 					this.ll.addView(arrangeButtonsInLine(new Button(this),getResources().getString(R.string.previousInstanceButton),new Button(this),getResources().getString(R.string.nextInstanceButton),this, true));
 				}	
 			}
@@ -875,6 +938,13 @@ public class FormScreen extends BaseActivity implements OnClickListener, TextWat
 			if (tempView instanceof Field){
 				Field field = (Field)tempView;
 				field.setLabelTextColor((backgroundColor!=Color.WHITE)?Color.WHITE:Color.BLACK);
+				if (tempView instanceof BooleanField){
+					BooleanField tempBooleanField = (BooleanField)tempView;
+					tempBooleanField.setChoiceLabelsTextColor((backgroundColor!=Color.WHITE)?Color.WHITE:Color.BLACK);
+				} else if (tempView instanceof TaxonField){
+					TaxonField tempTaxonField = (TaxonField)tempView;
+					tempTaxonField.setFieldsLabelsTextColor((backgroundColor!=Color.WHITE)?Color.WHITE:Color.BLACK);
+				}
 			}	
 			else if (tempView instanceof UIElement){
 				if (tempView instanceof SummaryList){
@@ -1247,4 +1317,31 @@ public class FormScreen extends BaseActivity implements OnClickListener, TextWat
 			}
 		}
 	}
+	
+    public void startCamera(/*Context context, */PhotoField photoField){
+		Intent cameraIntent = new Intent(this/*context*/, CameraScreen.class); 
+		this.startActivityForResult(cameraIntent,getResources().getInteger(R.integer.cameraStarted));
+		//this.currPhotoField = fileField;
+	}
+    
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {    	
+	    super.onActivityResult(requestCode, resultCode, data);
+	    try{
+	    	//Log.e("request="+requestCode,"result="+resultCode);
+	 	    if (requestCode==getResources().getInteger(R.integer.cameraStarted)){
+	 	    	if (resultCode==getResources().getInteger(R.integer.photoTaken)){
+	 	    		photoPath = data.getStringExtra(getResources().getString(R.string.photoPath));
+	 	    		Log.e("photopath","=="+photoPath);
+	 	    	}
+	 	    }
+	    } catch (Exception e){
+    		RunnableHandler.reportException(e,getResources().getString(R.string.app_name),TAG+":onActivityResult",
+    				Environment.getExternalStorageDirectory().toString()
+    				+getResources().getString(R.string.logs_folder)
+    				+getResources().getString(R.string.logs_file_name)
+    				+System.currentTimeMillis()
+    				+getResources().getString(R.string.log_file_extension));
+    	}	   
+    }
 }

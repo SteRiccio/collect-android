@@ -1,7 +1,5 @@
 package org.openforis.collect.android.fields;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Map;
 
 import org.openforis.collect.android.R;
@@ -26,13 +24,8 @@ import android.widget.Toast;
 
 public class MemoField extends InputField {
 	
-	private List<String> values;
-	
 	public MemoField(Context context, NodeDefinition nodeDef) {
 		super(context, nodeDef);
-		
-		MemoField.this.values = new ArrayList<String>();
-		MemoField.this.values.add(MemoField.this.currentInstanceNo, "");
 
 		this.label.setLayoutParams(new LayoutParams(0, ViewGroup.LayoutParams.WRAP_CONTENT, (float) 2));
 		this.label.setOnLongClickListener(new OnLongClickListener() {
@@ -85,7 +78,6 @@ public class MemoField extends InputField {
 	        }
 	    });
 
-		//this.addView(this.label);
 		this.addView(this.txtBox);
 	}
 	
@@ -101,23 +93,5 @@ public class MemoField extends InputField {
 		} else {
 			EntityBuilder.addValue(this.findParentEntity(path), this.nodeDefinition.getName(), value, position);	
 		}
-	}
-	
-	@Override
-	public int getInstancesNo(){
-		return this.values.size();
-	}
-	
-	public void resetValues(){
-		this.values = new ArrayList<String>();
-	}
-	
-	public void addValue(String value){
-		this.values.add(value);
-		this.currentInstanceNo++;
-	}
-	
-	public List<String> getValues(){
-		return this.values;
 	}
 }
