@@ -1,7 +1,6 @@
 package org.openforis.collect.android.fields;
 
 import java.util.ArrayList;
-import java.util.List;
 
 import org.openforis.collect.android.messages.ToastMessage;
 import org.openforis.collect.android.screens.FormScreen;
@@ -28,18 +27,10 @@ public class BooleanField extends Field {
 	private CheckBox chckBox1;
 	private CheckBox chckBox2;
 	
-	private List<ArrayList<Boolean>> values;
-	
 	private static FormScreen form;
 	
 	public BooleanField(Context context, NodeDefinition nodeDef, boolean isChecked1, boolean isChecked2, String label1Text, String label2Text) {
 		super(context, nodeDef);
-
-		this.values = new ArrayList<ArrayList<Boolean>>();
-		ArrayList<Boolean> initialValue = new ArrayList<Boolean>();
-		initialValue.add(isChecked1);
-		initialValue.add(isChecked2);
-		this.values.add(initialValue);
 
 		BooleanField.form = (FormScreen)context;
 
@@ -123,26 +114,13 @@ public class BooleanField extends Field {
 		}
 	}
 	
-	@Override
-	public int getInstancesNo(){
-		return this.values.size();
-	}
-	
-	public void resetValues(){
-		this.values = new ArrayList<ArrayList<Boolean>>();
-	}
-	
-	public void addValue(ArrayList<Boolean> value){
-		this.values.add(value);
-		this.currentInstanceNo++;
-	}
-	
-	public List<ArrayList<Boolean>> getValues(){
-		return this.values;
-	}
-	
 	public void addOnClickListener(OnClickListener onClickListener1, OnClickListener onClickListener2) {
 		this.chckBox1.setOnClickListener(onClickListener1);
 		this.chckBox2.setOnClickListener(onClickListener2);
+	}
+	
+	public void setChoiceLabelsTextColor(int color){
+		this.label1.setTextColor(color);
+		this.label2.setTextColor(color);
 	}
 }

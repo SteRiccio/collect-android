@@ -1,7 +1,5 @@
 package org.openforis.collect.android.fields;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Map;
 import java.util.Random;
 
@@ -26,13 +24,8 @@ import android.widget.Toast;
 
 public class TimeField extends InputField implements TextWatcher {
 	
-	private List<String> values;
-	
 	public TimeField(Context context, NodeDefinition nodeDef) {
 		super(context, nodeDef);
-		
-		this.values = new ArrayList<String>();
-		TimeField.this.values.add(TimeField.this.currentInstanceNo, "");
 		
 		this.label.setLayoutParams(new LayoutParams(0, ViewGroup.LayoutParams.WRAP_CONTENT, (float) 2));
 		this.label.setOnLongClickListener(new OnLongClickListener() {
@@ -175,23 +168,5 @@ public class TimeField extends InputField implements TextWatcher {
 				EntityBuilder.addValue(this.findParentEntity(path), this.nodeDefinition.getName(), new IntegerRange(Integer.valueOf(hour),Integer.valueOf(minute),null), position);
 			}			
 		}
-	}
-	
-	@Override
-	public int getInstancesNo(){
-		return this.values.size();
-	}
-	
-	public void resetValues(){
-		this.values = new ArrayList<String>();
-	}
-	
-	public void addValue(String value){
-		this.values.add(value);
-		this.currentInstanceNo++;
-	}
-	
-	public List<String> getValues(){
-		return this.values;
 	}
 }

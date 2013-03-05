@@ -16,16 +16,13 @@ import org.openforis.collect.android.fields.PhotoField;
 import org.openforis.collect.android.fields.RangeField;
 import org.openforis.collect.android.fields.SummaryList;
 import org.openforis.collect.android.fields.SummaryTable;
+import org.openforis.collect.android.fields.TaxonField;
 import org.openforis.collect.android.fields.TextField;
 import org.openforis.collect.android.fields.TimeField;
 import org.openforis.collect.android.fields.UIElement;
 import org.openforis.collect.android.management.ApplicationManager;
 import org.openforis.collect.android.management.BaseActivity;
-import org.openforis.collect.android.management.DataManager;
-import org.openforis.collect.android.messages.AlertMessage;
 import org.openforis.collect.android.misc.RunnableHandler;
-import org.openforis.collect.model.CollectRecord;
-import org.openforis.collect.model.CollectSurvey;
 import org.openforis.idm.metamodel.BooleanAttributeDefinition;
 import org.openforis.idm.metamodel.CodeAttributeDefinition;
 import org.openforis.idm.metamodel.CodeListItem;
@@ -52,8 +49,8 @@ import org.openforis.idm.model.Node;
 import org.openforis.idm.model.RealValue;
 import org.openforis.idm.model.TextValue;
 import org.openforis.idm.model.Time;
+import org.openforis.idm.model.species.Taxon;
 
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
@@ -85,7 +82,6 @@ public class FormScreen extends BaseActivity implements OnClickListener, TextWat
 	private int fieldsNo;
 	private int idmlId;
 	public int currInstanceNo;
-	//private int numberOfInstances;
 	
 	private Entity parentEntity;
 	private Entity parentEntityMultiple;
@@ -162,7 +158,7 @@ public class FormScreen extends BaseActivity implements OnClickListener, TextWat
     				
     				EntityDefinition entityDef = (EntityDefinition)nodeDef;
     				//if (ApplicationManager.currentRecord.getRootEntity().getId()!=nodeDef.getId()){    					
-        				Log.e("multipleENTITY"+parentEntity.getName(),parentEntity.getIndex()+""+entityDef.getName()+parentEntity.getCount(entityDef.getName()));
+        				//Log.e("multipleENTITY"+parentEntity.getName(),parentEntity.getIndex()+""+entityDef.getName()+parentEntity.getCount(entityDef.getName()));
         				for (int e=0;e<this.parentEntity.getCount(entityDef.getName());e++){
         					SummaryList summaryListView = new SummaryList(this, entityDef, calcNoOfCharsFitInOneLine(),
             						this,e);
@@ -703,7 +699,52 @@ public class FormScreen extends BaseActivity implements OnClickListener, TextWat
             				this.ll.addView(summaryTableView);
         				}
 	    			} else if (nodeDef instanceof TaxonAttributeDefinition){
-						
+	    				TaxonAttributeDefinition taxonAttrDef = (TaxonAttributeDefinition)nodeDef;
+	    				ArrayList<String> options = new ArrayList<String>();
+	    				ArrayList<String> codes = new ArrayList<String>();
+	    				options.add("");
+	    				codes.add("null");
+	    				/*List<CodeListItem> codeListItemsList = taxonAttrDef.getTaxonomy().getItems();
+	    				for (CodeListItem codeListItem : codeListItemsList){
+	    					codes.add(codeListItem.getCode());
+	    					options.add(codeListItem.getLabel(null));
+	    				}*/
+	    				
+	    				loadedValue = "";
+	    				if (!nodeDef.isMultiple()){
+	    					Node<?> foundNode = this.parentEntity.get(nodeDef.getName(), 0);
+		    				if (foundNode!=null){
+		    					Taxon taxonValue = (Taxon)this.parentEntity.getValue(nodeDef.getName(), 0);
+		    					if (taxonValue!=null){
+		    						//TBI!!!	
+		    					}	    				
+		    				}
+	        				final TaxonField taxonField= new TaxonField(this, nodeDef, codes, options, null);
+	        				taxonField.setOnClickListener(this);
+	        				taxonField.setId(nodeDef.getId());
+	        				//taxonField.setValue(0, loadedValue, FormScreen.this.getFormScreenId(),false);
+	        				ApplicationManager.putUIElement(taxonField.getId(), taxonField);
+	        				this.ll.addView(taxonField);
+	    				} else if (this.intentType==getResources().getInteger(R.integer.multipleAttributeIntent)){
+	    					Node<?> foundNode = this.parentEntityMultiple.get(nodeDef.getName(), this.currInstanceNo);
+		    				if (foundNode!=null){
+		    					Taxon taxonValue = (Taxon)this.parentEntityMultiple.getValue(nodeDef.getName(), this.currInstanceNo);
+		    					if (taxonValue!=null){
+		    								    						
+		    					}	   				
+		    				}
+		    				final TaxonField taxonField= new TaxonField(this, nodeDef, codes, options, null);
+		    				taxonField.setOnClickListener(this);
+		    				taxonField.setId(nodeDef.getId());
+		    				//taxonField.setValue(this.currInstanceNo, loadedValue, this.parentFormScreenId,false);
+	        				ApplicationManager.putUIElement(taxonField.getId(), taxonField);
+	        				this.ll.addView(taxonField);
+	    				} else {//multiple attribute summary    			    		
+    						SummaryTable summaryTableView = new SummaryTable(this, nodeDef, tableColHeaders, parentEntity, this);
+        					summaryTableView.setOnClickListener(this);
+            				summaryTableView.setId(nodeDef.getId());
+            				this.ll.addView(summaryTableView);
+        				}
 					} else if (nodeDef instanceof FileAttributeDefinition){
 						FileAttributeDefinition fileDef = (FileAttributeDefinition)nodeDef;
 						List<String> extensionsList = fileDef.getExtensions();
@@ -897,6 +938,13 @@ public class FormScreen extends BaseActivity implements OnClickListener, TextWat
 			if (tempView instanceof Field){
 				Field field = (Field)tempView;
 				field.setLabelTextColor((backgroundColor!=Color.WHITE)?Color.WHITE:Color.BLACK);
+				if (tempView instanceof BooleanField){
+					BooleanField tempBooleanField = (BooleanField)tempView;
+					tempBooleanField.setChoiceLabelsTextColor((backgroundColor!=Color.WHITE)?Color.WHITE:Color.BLACK);
+				} else if (tempView instanceof TaxonField){
+					TaxonField tempTaxonField = (TaxonField)tempView;
+					tempTaxonField.setFieldsLabelsTextColor((backgroundColor!=Color.WHITE)?Color.WHITE:Color.BLACK);
+				}
 			}	
 			else if (tempView instanceof UIElement){
 				if (tempView instanceof SummaryList){

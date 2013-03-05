@@ -1,10 +1,6 @@
 package org.openforis.collect.android.fields;
 
-import org.openforis.collect.android.R;
-import org.openforis.collect.android.management.ApplicationManager;
 import org.openforis.idm.metamodel.NodeDefinition;
-import org.openforis.idm.model.Entity;
-import org.openforis.idm.model.EntityBuilder;
 
 import android.content.Context;
 import android.text.Editable;

@@ -1,7 +1,6 @@
 package org.openforis.collect.android.fields;
 
 import java.util.ArrayList;
-import java.util.List;
 
 import org.openforis.collect.android.R;
 import org.openforis.collect.android.messages.ToastMessage;
@@ -32,8 +31,6 @@ public class CodeField extends Field {
 	ArrayList<String> codes;
 	
 	boolean searchable;
-	
-	private List<Integer> values;
 	
 	private static FormScreen form;
 	
@@ -111,44 +108,9 @@ public class CodeField extends Field {
 			this.spinner.setSelection(position-1);
 		else
 			this.spinner.setSelection(0);
-		
-		this.values = new ArrayList<Integer>();
-		this.values.add(this.spinner.getSelectedItemPosition());
 
 		this.addView(this.spinner);
 	}
-	
-	/*public void setValue(int position, String code, String path, boolean isSelectionChanged)
-	{
-		ArrayList<String> valueToAdd = new ArrayList<String>();	
-		boolean isFound = false;
-		int counter = 0;
-		while (!isFound&&counter<this.codes.size()){
-			if (this.codes.get(counter).equals(code)){
-				isFound = true;
-			}
-			counter++;
-		}
-		if (isFound){
-			if (!isSelectionChanged)
-				this.spinner.setSelection(counter-1);
-			valueToAdd.add(code);
-		}			
-		else{
-			if (!isSelectionChanged)
-				this.spinner.setSelection(0);
-			valueToAdd.add("null");
-		}
-		
-		try{
-			//Log.e("node"+this.nodeDefinition.getName(),path+"=="+this.findParentEntity(path).getName());
-			EntityBuilder.addValue(this.findParentEntity(path), this.nodeDefinition.getName(), new Code(code), 0);
-			//Log.e("addedCODEvalue",this.nodeDefinition.getName()+"=="+code);
-		} catch (Exception e){
-			//Log.e("exception","=="+e.getMessage());
-		}
-		//Log.e("setCODEvalue",this.nodeDefinition.getName()+"=="+code);
-	}*/
 	
 	public void setValue(int position, String code, String path, boolean isSelectionChanged)
 	{
@@ -177,33 +139,5 @@ public class CodeField extends Field {
 		} else {
 			EntityBuilder.addValue(parentEntity, this.nodeDefinition.getName(), new Code(code), position);	
 		}
-	}
-	
-	@Override
-	public int getInstancesNo(){
-		return this.values.size();
-	}
-	
-	public void resetValues(){
-		this.values = new ArrayList<Integer>();
-	}
-	
-	public void addValue(String valueCode){
-		boolean isFound = false;
-		int position = 0;
-		while (!isFound&&position<this.codes.size()){
-			if (this.codes.get(position).equals(valueCode)){
-				isFound = true;
-			}
-			position++;
-		}
-		if (isFound){
-			this.values.add(position-1);
-			this.currentInstanceNo++;
-		}
-	}
-	
-	public List<Integer> getValues(){
-		return this.values;
 	}
 }

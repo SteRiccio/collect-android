@@ -1,7 +1,5 @@
 package org.openforis.collect.android.fields;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Map;
 
 import org.openforis.collect.android.R;
@@ -25,13 +23,8 @@ import android.widget.Toast;
 
 public class TextField extends InputField {
 
-	protected List<String> values;
-	
 	public TextField(Context context, NodeDefinition nodeDef) {
 		super(context, nodeDef);
-		
-		this.values = new ArrayList<String>();
-		TextField.this.values.add(TextField.this.currentInstanceNo, "");
 		
 		this.label.setLayoutParams(new LayoutParams(0, ViewGroup.LayoutParams.WRAP_CONTENT, (float) 1));
 		//this.label.setLayoutParams(new LayoutParams(LayoutParams.FILL_PARENT,LayoutParams.WRAP_CONTENT));
@@ -91,23 +84,5 @@ public class TextField extends InputField {
 		} else {
 			EntityBuilder.addValue(this.findParentEntity(path), this.nodeDefinition.getName(), value, position);	
 		}
-	}
-	
-	@Override
-	public int getInstancesNo(){
-		return this.values.size();
-	}
-	
-	public void resetValues(){
-		this.values = new ArrayList<String>();
-	}
-	
-	public void addValue(String value){
-		this.values.add(value);
-		this.currentInstanceNo++;
-	}
-	
-	public List<String> getValues(){
-		return this.values;
 	}
 }

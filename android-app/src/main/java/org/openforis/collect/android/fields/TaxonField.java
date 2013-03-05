@@ -1,7 +1,6 @@
 package org.openforis.collect.android.fields;
 
 import java.util.ArrayList;
-import java.util.List;
 import java.util.Map;
 
 import org.openforis.collect.android.R;
@@ -26,6 +25,7 @@ import android.widget.TextView;
 
 public class TaxonField extends Field {
 	
+	private TextView codeLabel;
 	private TextView sciNameLabel;
 	private TextView venacNamesLabel;
 	private TextView venacLangLabel;
@@ -43,7 +43,6 @@ public class TaxonField extends Field {
 	
 	boolean searchable;
 	private static FormScreen form;
-	private List<ArrayList<String>> values;
 	
 	public TaxonField(Context context, NodeDefinition nodeDef, 
 			ArrayList<String> codes, ArrayList<String> options, 
@@ -52,27 +51,14 @@ public class TaxonField extends Field {
 
 		TaxonField.form = (FormScreen)context;
 		
-		//Set Taxon field value
-		this.values = new ArrayList<ArrayList<String>>();
-//		TaxonField.this.values.add(TaxonField.this.currentInstanceNo, "");
-		ArrayList<String> initialValue = new ArrayList<String>();
-		/*initialValue.add(initialText[0]);
-		initialValue.add(initialText[1]);
-		initialValue.add(initialText[2]);
-		initialValue.add(initialText[3]);
-		initialValue.add(initialText[4]);*/
-		initialValue.add("");
-		initialValue.add("");
-		initialValue.add("");
-		initialValue.add("");
-		initialValue.add("");
-		TaxonField.this.values.add(initialValue);
-		
 		//Create input field "Code"
 		//Label "Code"
-		this.label.setText("Code");
+		//Create label "Scientific name"
+		this.codeLabel = new TextView(context);
+		this.codeLabel.setText("Code");
+		this.codeLabel.setTextColor(Color.BLACK);
 
-		this.label.setLayoutParams(new LayoutParams(0, ViewGroup.LayoutParams.WRAP_CONTENT, (float) 1));
+		this.codeLabel.setLayoutParams(new LayoutParams(0, ViewGroup.LayoutParams.WRAP_CONTENT, (float) 1));
 		//Add text field where user can type a code
 		this.txtCodes = new EditText(context);
 		this.txtCodes.setText(""/*initialText[0]*/);
@@ -128,7 +114,7 @@ public class TaxonField extends Field {
 		//Create layout and add input field "Code" into there
 		LinearLayout codeLL = new LinearLayout(context);		
 		codeLL.setOrientation(HORIZONTAL);
-		codeLL.addView(this.label);
+		codeLL.addView(this.codeLabel);
 		codeLL.addView(this.txtCodes);
 		codeLL.addView(this.btnSearchByCode);		
 		
@@ -359,40 +345,6 @@ public class TaxonField extends Field {
 		this.addView(langVariantLL);
 	}
 	
-
-	/*@Override
-	public void scrollLeft(){
-    	if (TaxonField.this.currentInstanceNo>0){
-    		ArrayList<String> tempValue = new ArrayList<String>();
-    		tempValue.add(String.valueOf(TaxonField.this.spinner.getSelectedItemPosition()));
-    		tempValue.add(TaxonField.this.txtBox.getText().toString());
-    		TaxonField.this.values.set(TaxonField.this.currentInstanceNo, tempValue);
-    		TaxonField.this.txtBox.setText(TaxonField.this.values.get(TaxonField.this.currentInstanceNo-1).get(1).toString());
-			TaxonField.this.spinner.setSelection(Integer.valueOf(TaxonField.this.values.get(TaxonField.this.currentInstanceNo-2).get(0)));
-    		TaxonField.this.currentInstanceNo--;
-    	}
-	}
-	
-	@Override
-	public void scrollRight(){
-    	if (TaxonField.this.values.size()==TaxonField.this.currentInstanceNo){
-    		ArrayList<String> tempValue = new ArrayList<String>();
-    		tempValue.add("0");
-    		tempValue.add("");
-    		this.values.add(tempValue);
-    		TaxonField.this.values.add(TaxonField.this.currentInstanceNo, tempValue);	        		
-    	}
-		ArrayList<String> tempValue = new ArrayList<String>();
-		tempValue.add(String.valueOf(TaxonField.this.spinner.getSelectedItemPosition()));
-		tempValue.add(TaxonField.this.txtBox.getText().toString());
-    	TaxonField.this.values.set(TaxonField.this.currentInstanceNo, tempValue);        			        		
-		if (TaxonField.this.values.size()>TaxonField.this.currentInstanceNo){
-			TaxonField.this.txtBox.setText(TaxonField.this.values.get(TaxonField.this.currentInstanceNo).get(1).toString());
-			TaxonField.this.spinner.setSelection(Integer.valueOf(TaxonField.this.values.get(TaxonField.this.currentInstanceNo).get(0)));
-		}			
-		TaxonField.this.currentInstanceNo++;
-	}*/
-	
 	public String getHint()
 	{
 //		return this.txtBox.getHint().toString();
@@ -404,18 +356,6 @@ public class TaxonField extends Field {
 //		this.txtBox.setHint(value);
 	}
 	
-	@Override
-	public int getInstancesNo(){
-		return this.values.size();
-	}
-	
-	/* 
-	 * getValue and saving field value after state changed i.e. user selected from menu or typed sth
-	 */
-	/*public List<String> getValue(int index){
-		return TaxonField.this.value.getValue(index);
-	}*/
-
 	public void setValue(int position, String code, String sciName, String vernName, String vernLang, String langVariant){
 		//Set text to textboxes
 		this.txtCodes.setText(code);
@@ -432,17 +372,7 @@ public class TaxonField extends Field {
 		valueToAdd.add(vernLang);
 		valueToAdd.add(langVariant);
 	}
-	
-	public void resetValues(){
-		this.values = new ArrayList<ArrayList<String>>();
 
-	}
-	
-	public void addValue(ArrayList<String> value){
-		this.values.add(value);
-		this.currentInstanceNo++;
-	}	
-	
 	private void startSearchScreen(String strContent, String strCriteria){
 		int taxonId = TaxonField.this.elemId;
 		Intent searchTaxonIntent = new Intent(TaxonField.this.getContext(), SearchTaxonActivity.class);
@@ -452,5 +382,13 @@ public class TaxonField extends Field {
 		searchTaxonIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
     	super.getContext().startActivity(searchTaxonIntent);			
 		
+	}
+	
+	public void setFieldsLabelsTextColor(int color){
+		this.codeLabel.setTextColor(color);
+		this.sciNameLabel.setTextColor(color);
+		this.venacNamesLabel.setTextColor(color);
+		this.venacLangLabel.setTextColor(color);
+		this.langVariantLabel.setTextColor(color);
 	}
 }

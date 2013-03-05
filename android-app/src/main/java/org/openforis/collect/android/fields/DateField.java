@@ -1,7 +1,5 @@
 package org.openforis.collect.android.fields;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Map;
 import java.util.Random;
 
@@ -25,13 +23,8 @@ import android.widget.Toast;
 
 public class DateField extends InputField {
 	
-	private List<String> values;
-	
 	public DateField(Context context, NodeDefinition nodeDef) {
 		super(context, nodeDef);
-		
-		this.values = new ArrayList<String>();
-		DateField.this.values.add(DateField.this.currentInstanceNo, "");
 
 		this.label.setLayoutParams(new LayoutParams(0, ViewGroup.LayoutParams.WRAP_CONTENT, (float) 2));
 		this.label.setOnLongClickListener(new OnLongClickListener() {
@@ -144,23 +137,5 @@ public class DateField extends InputField {
 				EntityBuilder.addValue(this.findParentEntity(path), this.nodeDefinition.getName(), new Date(Integer.valueOf(year),Integer.valueOf(month),Integer.valueOf(day)), position);
 			}	
 		}
-	}
-	
-	@Override
-	public int getInstancesNo(){
-		return this.values.size();
-	}
-	
-	public void resetValues(){
-		this.values = new ArrayList<String>();
-	}
-	
-	public void addValue(String value){
-		this.values.add(value);
-		this.currentInstanceNo++;
-	}
-	
-	public List<String> getValues(){
-		return this.values;
 	}
 }
