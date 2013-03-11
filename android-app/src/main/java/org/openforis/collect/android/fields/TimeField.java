@@ -9,9 +9,9 @@ import org.openforis.collect.android.management.ApplicationManager;
 import org.openforis.collect.android.messages.ToastMessage;
 import org.openforis.idm.metamodel.NodeDefinition;
 import org.openforis.idm.model.EntityBuilder;
-import org.openforis.idm.model.IntegerRange;
-import org.openforis.idm.model.IntegerRangeAttribute;
 import org.openforis.idm.model.Node;
+import org.openforis.idm.model.Time;
+import org.openforis.idm.model.TimeAttribute;
 
 import android.content.Context;
 import android.content.Intent;
@@ -146,26 +146,27 @@ public class TimeField extends InputField implements TextWatcher {
 		}
 
 		Node<? extends NodeDefinition> node = this.findParentEntity(path).get(this.nodeDefinition.getName(), position);
+		
 		if (node!=null){
-			IntegerRangeAttribute rangeAtr = (IntegerRangeAttribute)node;
+			TimeAttribute timeAttr = (TimeAttribute)node;
 			if (hour.equals("") && minute.equals("")){
-				rangeAtr.setValue(new IntegerRange(null,null,null));
+				timeAttr.setValue(new Time(null,null));
 			} else if (hour.equals("")){
-				rangeAtr.setValue(new IntegerRange(null,Integer.valueOf(minute),null));
+				timeAttr.setValue(new Time(null,Integer.valueOf(minute)));
 			} else if (minute.equals("")){
-				rangeAtr.setValue(new IntegerRange(Integer.valueOf(hour),null,null));
+				timeAttr.setValue(new Time(Integer.valueOf(hour),null));
 			} else {
-				rangeAtr.setValue(new IntegerRange(Integer.valueOf(hour),Integer.valueOf(minute),null));
+				timeAttr.setValue(new Time(Integer.valueOf(hour),Integer.valueOf(minute)));
 			}
 		} else {
 			if (hour.equals("") && minute.equals("")){
-				EntityBuilder.addValue(this.findParentEntity(path), this.nodeDefinition.getName(), new IntegerRange(null,null,null), position);
+				EntityBuilder.addValue(this.findParentEntity(path), this.nodeDefinition.getName(), new Time(null,null), position);
 			} else if (hour.equals("")){
-				EntityBuilder.addValue(this.findParentEntity(path), this.nodeDefinition.getName(), new IntegerRange(null,Integer.valueOf(minute),null), position);
+				EntityBuilder.addValue(this.findParentEntity(path), this.nodeDefinition.getName(), new Time(null,Integer.valueOf(minute)), position);
 			} else if (minute.equals("")){
-				EntityBuilder.addValue(this.findParentEntity(path), this.nodeDefinition.getName(), new IntegerRange(Integer.valueOf(hour),null,null), position);
+				EntityBuilder.addValue(this.findParentEntity(path), this.nodeDefinition.getName(), new Time(Integer.valueOf(hour),null), position);
 			} else {
-				EntityBuilder.addValue(this.findParentEntity(path), this.nodeDefinition.getName(), new IntegerRange(Integer.valueOf(hour),Integer.valueOf(minute),null), position);
+				EntityBuilder.addValue(this.findParentEntity(path), this.nodeDefinition.getName(), new Time(Integer.valueOf(hour),Integer.valueOf(minute)), position);
 			}			
 		}
 	}

@@ -98,6 +98,7 @@ public class DateField extends InputField {
 					year = value.substring(secondSeparatorIndex+1);
 			}
 		}
+		
 		Node<? extends NodeDefinition> node = this.findParentEntity(path).get(this.nodeDefinition.getName(), position);
 		if (node!=null){
 			DateAttribute dateAtr = (DateAttribute)node;

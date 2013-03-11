@@ -3,24 +3,32 @@ package org.openforis.collect.android.fields;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.commons.lang3.Range;
 import org.openforis.collect.android.R;
 import org.openforis.idm.metamodel.BooleanAttributeDefinition;
 import org.openforis.idm.metamodel.CodeAttributeDefinition;
 import org.openforis.idm.metamodel.CoordinateAttributeDefinition;
 import org.openforis.idm.metamodel.DateAttributeDefinition;
+import org.openforis.idm.metamodel.FileAttributeDefinition;
 import org.openforis.idm.metamodel.NodeDefinition;
 import org.openforis.idm.metamodel.NumberAttributeDefinition;
 import org.openforis.idm.metamodel.RangeAttributeDefinition;
 import org.openforis.idm.metamodel.TaxonAttributeDefinition;
 import org.openforis.idm.metamodel.TextAttributeDefinition;
 import org.openforis.idm.metamodel.TimeAttributeDefinition;
+import org.openforis.idm.model.BooleanValue;
+import org.openforis.idm.model.Code;
+import org.openforis.idm.model.Coordinate;
+import org.openforis.idm.model.Date;
 import org.openforis.idm.model.Entity;
+import org.openforis.idm.model.File;
 import org.openforis.idm.model.IntegerAttribute;
 import org.openforis.idm.model.IntegerValue;
 import org.openforis.idm.model.Node;
 import org.openforis.idm.model.RealAttribute;
 import org.openforis.idm.model.RealValue;
 import org.openforis.idm.model.TextValue;
+import org.openforis.idm.model.Time;
 
 import android.content.Context;
 import android.graphics.Color;
@@ -45,7 +53,6 @@ public class SummaryTable extends UIElement {
 	    this.tableLayout.setShrinkAllColumns(true);
 	    this.tableLayout.setPadding(5, 10, 5, 10);
 	    
-	    //this.values = rows;
 	    this.values = new ArrayList<List<String>>();	    
 	   
 	    List<Node<?>> listOfNodes = parentEntity.getAll(nodeDef.getName());
@@ -61,7 +68,10 @@ public class SummaryTable extends UIElement {
 			if (foundNode!=null){
 				if (nodeDef instanceof TextAttributeDefinition){
 					TextValue textValue = (TextValue)parentEntity.getValue(nodeDef.getName(), i);
-					loadedValue = textValue.getValue();
+					if (textValue!=null)
+						loadedValue = textValue.getValue();
+					if (loadedValue==null)
+						loadedValue = "";
 				    ArrayList<String> newValue = new ArrayList<String>();
 				    newValue.add(loadedValue);
 				    this.values.add(newValue);	
@@ -70,7 +80,9 @@ public class SummaryTable extends UIElement {
 						IntegerAttribute intAttr = (IntegerAttribute)parentEntity.getValue(nodeDef.getName(), i);
 						IntegerValue intValue = (IntegerValue)intAttr.getValue();
 						if (intValue!=null)
-    						loadedValue = intValue.getValue().toString();
+							if  (intValue.getValue()!=null)
+								loadedValue = intValue.getValue().toString();
+							else loadedValue = "";
 						ArrayList<String> newValue = new ArrayList<String>();
 						newValue.add(loadedValue);
 						this.values.add(newValue);
@@ -78,26 +90,67 @@ public class SummaryTable extends UIElement {
 						RealAttribute realAttr = (RealAttribute)parentEntity.getValue(nodeDef.getName(), i);
 						RealValue realValue = (RealValue)realAttr.getValue();
 						if (realValue!=null)
-    						loadedValue = realValue.getValue().toString();						
+							if (realValue.getValue()!=null)
+								loadedValue = realValue.getValue().toString();
+							else 
+								loadedValue = "";
 						loadedValue = realValue.getValue().toString();
 						ArrayList<String> newValue = new ArrayList<String>();
 						newValue.add(loadedValue);
 						this.values.add(newValue);
 					}
 				} else if (nodeDef instanceof BooleanAttributeDefinition){
-					
+					BooleanValue boolValue = (BooleanValue)parentEntity.getValue(nodeDef.getName(), i);
+					if (boolValue!=null)
+						if (boolValue.getValue())
+							loadedValue = boolValue.getValue().toString();
+						else
+							loadedValue = "";
+				    ArrayList<String> newValue = new ArrayList<String>();
+				    newValue.add(loadedValue);
+				    this.values.add(newValue);
 				} else if (nodeDef instanceof CodeAttributeDefinition){
-					
+					Code codeValue = (Code)parentEntity.getValue(nodeDef.getName(), i);
+					if (codeValue!=null)
+						if (codeValue.getCode()!=null)
+							loadedValue = codeValue.getCode();
+						else
+							loadedValue = "";
+				    ArrayList<String> newValue = new ArrayList<String>();
+				    newValue.add(loadedValue);
+				    this.values.add(newValue);
 				} else if (nodeDef instanceof CoordinateAttributeDefinition){
-					
+					Coordinate coordValue = (Coordinate)parentEntity.getValue(nodeDef.getName(), i);
+					loadedValue = coordValue.getX()+getResources().getString(R.string.coordinateSeparator)+coordValue.getY();
+				    ArrayList<String> newValue = new ArrayList<String>();
+				    newValue.add(loadedValue);
+				    this.values.add(newValue);
 				} else if (nodeDef instanceof RangeAttributeDefinition){
-					
+					Range rangeValue = (Range)parentEntity.getValue(nodeDef.getName(), i);
+					loadedValue = rangeValue.getMinimum()+getResources().getString(R.string.rangeSeparator)+rangeValue.getMaximum();
+				    ArrayList<String> newValue = new ArrayList<String>();
+				    newValue.add(loadedValue);
+				    this.values.add(newValue);
 				} else if (nodeDef instanceof DateAttributeDefinition){
-					
+					Date dateValue = (Date)parentEntity.getValue(nodeDef.getName(), i);
+					loadedValue = dateValue.getMonth()+getResources().getString(R.string.dateSeparator)+dateValue.getDay()+getResources().getString(R.string.dateSeparator)+dateValue.getYear();
+				    ArrayList<String> newValue = new ArrayList<String>();
+				    newValue.add(loadedValue);
+				    this.values.add(newValue);
 				} else if (nodeDef instanceof TimeAttributeDefinition){
-					
+					Time timeValue = (Time)parentEntity.getValue(nodeDef.getName(), i);
+					loadedValue = timeValue.getHour()+getResources().getString(R.string.timeSeparator)+timeValue.getMinute();
+				    ArrayList<String> newValue = new ArrayList<String>();
+				    newValue.add(loadedValue);
+				    this.values.add(newValue);
 				} else if (nodeDef instanceof TaxonAttributeDefinition){
 					
+				} else if (nodeDef instanceof FileAttributeDefinition){
+					File fileValue = (File)parentEntity.getValue(nodeDef.getName(), i);
+					loadedValue = fileValue.getFilename();
+				    ArrayList<String> newValue = new ArrayList<String>();
+				    newValue.add(loadedValue);
+				    this.values.add(newValue);
 				}
 			}
 	    }
@@ -179,10 +232,6 @@ public class SummaryTable extends UIElement {
 	public String getTitle(){
 		return this.label.getText().toString();
 	}
-	
-	/*public void setTitle(String title){
-		this.label.setText(title);
-	}*/
 	
 	public List<List<String>> getValues(){
 		return this.values;
