@@ -1,7 +1,6 @@
 package org.openforis.collect.android.fields;
 
 import java.util.Map;
-
 import org.openforis.collect.android.R;
 import org.openforis.collect.android.management.ApplicationManager;
 import org.openforis.collect.android.messages.ToastMessage;
@@ -13,7 +12,6 @@ import org.openforis.idm.model.IntegerRangeAttribute;
 import org.openforis.idm.model.Node;
 import org.openforis.idm.model.RealRange;
 import org.openforis.idm.model.RealRangeAttribute;
-
 import android.content.Context;
 import android.text.InputType;
 import android.util.Log;
@@ -62,9 +60,49 @@ public class RangeField extends InputField {
 //				    		RangeField.this.setKeyboardType(null);
 				    	}
 			    	}
+		    	}else{
+		    		String strValue = RangeField.this.txtBox.getText().toString();
+		    		if(strValue.contains("-")){
+		    			String[] rangeValues = strValue.split("-");
+		    			if(!isNumeric(rangeValues[0])){
+		    				Log.i("RANGE FIELD", "Value 'From': " + rangeValues[0] + " is NOT numeric.");
+		    			}
+		    			if(!isNumeric(rangeValues[1])){
+		    				Log.i("RANGE FIELD", "Value 'To': " + rangeValues[1] + " is NOT numeric.");
+		    			}		    			
+		    		}else{
+		    			Log.i("RANGE NUMBER", "Value does not contains separator '-'");
+		    		}
 		    	}
 		    }
 	    });
+		
+//		//Check for every given character is it number or not
+//		this.txtBox.addTextChangedListener(new TextWatcher(){
+//			public void afterTextChanged(Editable s) {
+//				if (s.length() > 0){
+//					if(!isNumeric(s.toString())){
+//						Log.i("RANGE FIELD", "Value: " + s + " is NOT numeric.");
+//						String strReplace = s.subSequence(0, s.length()-1).toString();
+//						RangeField.this.txtBox.setText(strReplace);
+//						RangeField.this.txtBox.setSelection(strReplace.length());
+//					}else{
+//						Log.i("RANGE FIELD", "Value: " + s + " is numeric.");
+//					}
+////					Log.i("NUMBER FIELD", "New value is: " + s.charAt(s.length()-1));
+////					if (validateCharacter(s.charAt(s.length()-1)))
+////						Log.i("NUMBER FIELD", "Check character. Result is: TRUE");
+////					else{
+////						Log.i("NUMBER FIELD", "Check character. Result is: FALSE");
+////						String strReplace = s.subSequence(0, s.length()-1).toString(); 
+////						NumberField.this.txtBox.setText(strReplace);
+////					}
+//				}
+//			}
+//			public void beforeTextChanged(CharSequence s, int start,  int count, int after) {}				 
+//			public void onTextChanged(CharSequence s, int start, int before, int count) {}	
+//			
+//		});		
 	}
 	
 	public void setValue(Integer position, String value, String path, boolean isTextChanged)
@@ -129,5 +167,17 @@ public class RangeField extends InputField {
 				}	
 			}				
 		}
+	}
+	
+	//Check is given value a number
+	private Boolean isNumeric(String strValue){
+		Boolean result = false;
+		try{
+			Double.parseDouble(strValue);
+			result = true;
+		} catch(NumberFormatException e){
+			result = false;
+		}
+		return result;
 	}
 }

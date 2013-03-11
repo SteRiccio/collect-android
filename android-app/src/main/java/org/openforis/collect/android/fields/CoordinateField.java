@@ -19,6 +19,7 @@ import android.text.InputType;
 import android.text.TextWatcher;
 import android.text.method.DigitsKeyListener;
 import android.text.method.KeyListener;
+import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
@@ -105,7 +106,39 @@ public class CoordinateField extends InputField {
 			}
 		});
 		
-		
+		//Check if value is numeric
+		this.txtLatitude.addTextChangedListener(new TextWatcher(){
+			public void afterTextChanged(Editable s) {}
+			public void beforeTextChanged(CharSequence s, int start,  int count, int after) {}				 
+			public void onTextChanged(CharSequence s, int start, int before, int count) {
+				if (s.length() > 0){
+					if(!isNumeric(s.toString())){
+						Log.i("COORDINATE FIELD", "Value of Latitude: " + s + " is NOT numeric.");
+						String strReplace = s.subSequence(0, s.length()-1).toString();
+						CoordinateField.this.txtLatitude.setText(strReplace);
+						CoordinateField.this.txtLatitude.setSelection(strReplace.length());
+					}else{
+						Log.i("COORDINATE FIELD", "Value of Latitude: " + s + " is numeric.");
+					}
+				}				
+			}	
+		});
+		this.txtLongitude.addTextChangedListener(new TextWatcher(){
+			public void afterTextChanged(Editable s) {}
+			public void beforeTextChanged(CharSequence s, int start,  int count, int after) {}				 
+			public void onTextChanged(CharSequence s, int start, int before, int count) {
+				if (s.length() > 0){
+					if(!isNumeric(s.toString())){
+						Log.i("COORDINATE FIELD", "Value of Longitude: " + s + " is NOT numeric.");
+						String strReplace = s.subSequence(0, s.length()-1).toString();
+						CoordinateField.this.txtLongitude.setText(strReplace);
+						CoordinateField.this.txtLongitude.setSelection(strReplace.length());
+					}else{
+						Log.i("COORDINATE FIELD", "Value of Longitude: " + s + " is numeric.");
+					}
+				}				
+			}	
+		});		
 	}
 
 	/*public List<String> getValue(int index){
@@ -177,12 +210,25 @@ public class CoordinateField extends InputField {
 	
 	@Override
 	public void afterTextChanged(Editable s) {
+		//Check if value is numeric
 		this.setValue(0, CoordinateField.this.txtLongitude.getText().toString(), CoordinateField.this.txtLatitude.getText().toString(), CoordinateField.form.getFormScreenId(),true);
 	}
 	
 	@Override
 	public void addTextChangedListener(TextWatcher textWatcher) {
-		this.txtLatitude.addTextChangedListener(textWatcher);
-		this.txtLongitude.addTextChangedListener(textWatcher);
+//		this.txtLatitude.addTextChangedListener(textWatcher);
+//		this.txtLongitude.addTextChangedListener(textWatcher);
 	}
+	
+	//Check is given value a number
+	private Boolean isNumeric(String strValue){
+		Boolean result = false;
+		try{
+			Double.parseDouble(strValue);
+			result = true;
+		} catch(NumberFormatException e){
+			result = false;
+		}
+		return result;
+	}	
 }

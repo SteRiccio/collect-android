@@ -1,16 +1,14 @@
 package org.openforis.collect.android.fields;
 
+import java.util.List;
 import java.util.Map;
 
 import org.openforis.collect.android.R;
 import org.openforis.collect.android.management.ApplicationManager;
 import org.openforis.collect.android.messages.ToastMessage;
-import org.openforis.collect.android.screens.FormScreen;
 import org.openforis.idm.metamodel.NodeDefinition;
 import org.openforis.idm.metamodel.NumberAttributeDefinition;
 import org.openforis.idm.metamodel.NumericAttributeDefinition;
-import org.openforis.idm.metamodel.validation.ValidationResults;
-import org.openforis.idm.metamodel.validation.Validator;
 import org.openforis.idm.model.Entity;
 import org.openforis.idm.model.EntityBuilder;
 import org.openforis.idm.model.IntegerAttribute;
@@ -21,21 +19,19 @@ import org.openforis.idm.model.RealAttribute;
 import org.openforis.idm.model.RealValue;
 
 import android.content.Context;
+import android.text.Editable;
 import android.text.InputType;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
+import android.text.TextWatcher;
 import android.widget.Toast;
 
 public class NumberField extends InputField {
-<<<<<<< HEAD
 	
 	private List<String> values;
 	private NumericAttributeDefinition numericNodeDef;
-=======
-
->>>>>>> 4b01c8d29aa496919fb57e477766c9487729e104
 	private String type;
 	private Entity parentEntity;
 	
@@ -83,8 +79,7 @@ public class NumberField extends InputField {
 				    	}
 			    	}
 		    	}else{
-		    		Log.i("NUMBER FIELD info", "Number field lost focus");
-		    		Validator validator = new Validator();		    		
+		    		Log.i("NUMBER FIELD info", "Number field lost focus");		    		
 		    		Log.i("VALIDATION FOR NUMBER FIELD", "Attribute defenition: " + NumberField.this.numericNodeDef.toString());
 		    		@SuppressWarnings("rawtypes")
 					NumberAttribute attribute;
@@ -92,11 +87,11 @@ public class NumberField extends InputField {
 		    			Log.i("VALIDATION FOR NUMBER FIELD", "Integer Attribute");
 		    			attribute = new IntegerAttribute((NumberAttributeDefinition) NumberField.this.numericNodeDef);
 		    		} else{
-		    			Log.i("VALIDATION FOR NUMBER FIELD", "Integer Attribute");
+		    			Log.i("VALIDATION FOR NUMBER FIELD", "Real Attribute");
 		    			attribute = new RealAttribute((NumberAttributeDefinition) NumberField.this.numericNodeDef);
 		    		}
 		    		Log.i("VALIDATION FOR NUMBER FIELD", "Parent entity is: " + parentEntity.getName());
-		    		Log.i("VALIDATION FOR NUMBER FIELD", "Currect record is: " + ApplicationManager.currentRecord);
+		    		//Log.i("VALIDATION FOR NUMBER FIELD", "Currect record is: " + ApplicationManager.currentRecord);
 		    		
 		    		//GETTING VALUE (Karol code)
 		    		String loadedValue = "";
@@ -110,16 +105,47 @@ public class NumberField extends InputField {
 					            loadedValue = realValue.getValue().toString();
 					}  
 		    		Log.i("VALIDATION FOR NUMBER FIELD", "Value is: " + loadedValue);
-					ValidationResults results = validator.validate(attribute);
-					Log.i("VALIDATION FOR NUMBER FIELD", "Value is: " + attribute.getValue());
-		    		Log.i("VALIDATION FOR NUMBER FIELD", "Errors: " + results.getErrors().size() + " : " + results.getErrors().toString());
-		    		Log.i("VALIDATION FOR NUMBER FIELD", "Warnings: "  + results.getWarnings().size() + " : " + results.getWarnings().toString());
-		    		Log.i("VALIDATION FOR NUMBER FIELD", "Fails: "  + results.getFailed().size() + " : " +  results.getFailed().toString());
-		    		Log.i("VALIDATION FOR NUMBER FIELD", "Number of ERRORS from Current Record: " + ApplicationManager.currentRecord.getErrors());
+//					Validator validator = new Validator();
+//		    		ValidationResults results = validator.validate(attribute);
+//					Log.i("VALIDATION FOR NUMBER FIELD", "Value is: " + attribute.getValue());
+//		    		Log.i("VALIDATION FOR NUMBER FIELD", "Errors: " + results.getErrors().size() + " : " + results.getErrors().toString());
+//		    		Log.i("VALIDATION FOR NUMBER FIELD", "Warnings: "  + results.getWarnings().size() + " : " + results.getWarnings().toString());
+//		    		Log.i("VALIDATION FOR NUMBER FIELD", "Fails: "  + results.getFailed().size() + " : " +  results.getFailed().toString());
+//		    		Log.i("VALIDATION FOR NUMBER FIELD", "Number of ERRORS from Current Record: " + ApplicationManager.currentRecord.getErrors());
 		    	}
 		    }
 	    });		
+		
+		//Check for every given character is it number or not
+		this.txtBox.addTextChangedListener(new TextWatcher(){
+		   
+			public void afterTextChanged(Editable s) {
+				if (s.length() > 0){
+					if(!isNumeric(s.toString())){
+						Log.i("NUMBER FIELD", "Value: " + s + " is NOT numeric.");
+						String strReplace = s.subSequence(0, s.length()-1).toString();
+						NumberField.this.txtBox.setText(strReplace);
+						NumberField.this.txtBox.setSelection(strReplace.length());
+					}else{
+						Log.i("NUMBER FIELD", "Value: " + s + " is numeric.");
+					}
+//					Log.i("NUMBER FIELD", "New value is: " + s.charAt(s.length()-1));
+//					if (validateCharacter(s.charAt(s.length()-1)))
+//						Log.i("NUMBER FIELD", "Check character. Result is: TRUE");
+//					else{
+//						Log.i("NUMBER FIELD", "Check character. Result is: FALSE");
+//						String strReplace = s.subSequence(0, s.length()-1).toString(); 
+//						NumberField.this.txtBox.setText(strReplace);
+//					}
+				}
+			}
+			public void beforeTextChanged(CharSequence s, int start,  int count, int after) {}				 
+			public void onTextChanged(CharSequence s, int start, int before, int count) {}	
+			
+		});
 	}
+	
+	
 	
 	public void setValue(int position, String value, String path, boolean isTextChanged)
 	{		
@@ -154,5 +180,47 @@ public class NumberField extends InputField {
 	
 	public String getType(){
 		return this.type;
+	}
+	
+	//Check is given symbol number or "." (if type is not "integer")
+//	private Boolean validateCharacter(char symbol){
+//		Boolean result = false;
+//		if (this.type.toLowerCase().equals("integer")){
+//			if (Character.isDigit(symbol)){
+//				result = true;
+//			}
+//		}else if (this.type.toLowerCase().equals("real")){
+//			if (Character.isDigit(symbol) || symbol == '.'){
+//				result = true;
+//			}
+//		}else {
+//				result = false;
+//		}
+//		return result;
+//	}
+	
+	//Check is given value a number
+	private Boolean isNumeric(String strValue){
+		Boolean result = false;
+		if (this.type.toLowerCase().equals("integer")){
+			try{
+				Integer.parseInt(strValue);
+				result = true;
+			} catch(NumberFormatException e){
+				result = false;
+			}
+		}
+		else if (this.type.toLowerCase().equals("real")){
+			try{
+				Double.parseDouble(strValue);
+				result = true;
+			} catch(NumberFormatException e){
+				result = false;
+			}
+		}
+		else {
+			result = false;
+		}	
+		return result;
 	}
 }

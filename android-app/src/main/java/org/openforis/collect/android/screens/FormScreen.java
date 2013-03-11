@@ -83,8 +83,8 @@ public class FormScreen extends BaseActivity implements OnClickListener, TextWat
 	private int idmlId;
 	public int currInstanceNo;
 	
-	private Entity parentEntity;
-	private Entity parentEntityMultiple;
+	public Entity parentEntity;
+	public Entity parentEntityMultiple;
 	
 	public PhotoField currentPictureField;
 	private String photoPath;
