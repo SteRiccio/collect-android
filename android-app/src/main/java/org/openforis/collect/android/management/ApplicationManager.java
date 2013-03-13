@@ -133,7 +133,8 @@ public class ApplicationManager extends BaseActivity {
         	jdbcDao.getConnection();
         	
         	//reading form definition if it is not available in database
-        	survey = surveyManager.getSurveyDao().load("Archenland NFI");
+        	survey = surveyManager.get("Archenland NFI");
+//        	survey = surveyManager.getSurveyDao().load("Archenland NFI");
         	if (survey==null){
             	long startTime = System.currentTimeMillis();
             	//Log.e("PARSING","====================");   
@@ -142,6 +143,7 @@ public class ApplicationManager extends BaseActivity {
         		binder.addApplicationOptionsBinder(new UIOptionsBinder());
         		survey = (CollectSurvey) binder.unmarshal(fis);
         		survey.setName(survey.getProjectName(null));
+        		Log.i(getResources().getString(R.string.app_name), "Survey after parsing is: " + survey.getId() + " Schema: " + survey.getSchema());
         		surveyManager.importModel(survey);
             	//Log.e("TIME","=="+(System.currentTimeMillis()-startTime));       		
         	}

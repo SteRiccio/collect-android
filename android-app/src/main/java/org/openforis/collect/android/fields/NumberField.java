@@ -9,6 +9,8 @@ import org.openforis.collect.android.messages.ToastMessage;
 import org.openforis.idm.metamodel.NodeDefinition;
 import org.openforis.idm.metamodel.NumberAttributeDefinition;
 import org.openforis.idm.metamodel.NumericAttributeDefinition;
+import org.openforis.idm.metamodel.validation.ValidationResults;
+import org.openforis.idm.metamodel.validation.Validator;
 import org.openforis.idm.model.Entity;
 import org.openforis.idm.model.EntityBuilder;
 import org.openforis.idm.model.IntegerAttribute;
@@ -105,13 +107,13 @@ public class NumberField extends InputField {
 					            loadedValue = realValue.getValue().toString();
 					}  
 		    		Log.i("VALIDATION FOR NUMBER FIELD", "Value is: " + loadedValue);
-//					Validator validator = new Validator();
-//		    		ValidationResults results = validator.validate(attribute);
-//					Log.i("VALIDATION FOR NUMBER FIELD", "Value is: " + attribute.getValue());
-//		    		Log.i("VALIDATION FOR NUMBER FIELD", "Errors: " + results.getErrors().size() + " : " + results.getErrors().toString());
-//		    		Log.i("VALIDATION FOR NUMBER FIELD", "Warnings: "  + results.getWarnings().size() + " : " + results.getWarnings().toString());
-//		    		Log.i("VALIDATION FOR NUMBER FIELD", "Fails: "  + results.getFailed().size() + " : " +  results.getFailed().toString());
-//		    		Log.i("VALIDATION FOR NUMBER FIELD", "Number of ERRORS from Current Record: " + ApplicationManager.currentRecord.getErrors());
+					Validator validator = new Validator();
+		    		ValidationResults results = validator.validate(attribute);
+					Log.i("VALIDATION FOR NUMBER FIELD", "Value is: " + attribute.getValue());
+		    		Log.i("VALIDATION FOR NUMBER FIELD", "Errors: " + results.getErrors().size() + " : " + results.getErrors().toString());
+		    		Log.i("VALIDATION FOR NUMBER FIELD", "Warnings: "  + results.getWarnings().size() + " : " + results.getWarnings().toString());
+		    		Log.i("VALIDATION FOR NUMBER FIELD", "Fails: "  + results.getFailed().size() + " : " +  results.getFailed().toString());
+		    		Log.i("VALIDATION FOR NUMBER FIELD", "Number of ERRORS from Current Record: " + ApplicationManager.currentRecord.getErrors());
 		    	}
 		    }
 	    });		
