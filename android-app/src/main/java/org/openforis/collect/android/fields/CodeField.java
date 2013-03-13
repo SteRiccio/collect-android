@@ -70,11 +70,11 @@ public class CodeField extends InputField {
 		
 		this.codeAttrDef = (CodeAttributeDefinition)this.nodeDefinition;
 		if (codeAttrDef.isAllowUnlisted()){
-			this.txtBox = new EditText(context);
+			/*this.txtBox = new EditText(context);
 			this.txtBox.setLayoutParams(new LayoutParams(0,ViewGroup.LayoutParams.WRAP_CONTENT,(float) 3));
 			this.txtBox.addTextChangedListener(this);
 			this.txtBox.setFilters(new InputFilter[]{new InputFilter.AllCaps()});
-			this.addView(this.txtBox);
+			this.addView(this.txtBox);*/
 		} else {
 			this.spinner = new Spinner(context);
 			this.spinner.setPrompt(nodeDef.getName());
@@ -93,7 +93,7 @@ public class CodeField extends InputField {
 			    	ArrayList<String> valueToAdd = new ArrayList<String>();
 			    	valueToAdd.add(CodeField.this.codes.get((CodeField.this.spinner.getSelectedItemPosition())));
 
-			    	CodeField.this.setValue(0/*CodeField.form.currInstanceNo*/, CodeField.this.codes.get(CodeField.this.spinner.getSelectedItemPosition()),CodeField.form.getFormScreenId(),true);
+			    	CodeField.this.setValue(0, CodeField.this.codes.get(CodeField.this.spinner.getSelectedItemPosition()),CodeField.form.getFormScreenId(),true);
 			    	if (!CodeField.this.selectedForTheFirstTime){
 						
 			    	} else {
@@ -117,7 +117,7 @@ public class CodeField extends InputField {
 					}
 					position++;
 				}	
-			}		
+			}
 			if (isFound)
 				this.spinner.setSelection(position-1);
 			else
@@ -147,8 +147,8 @@ public class CodeField extends InputField {
 			else{
 				if (!isSelectionChanged)
 					this.spinner.setSelection(0);
-			}	
-		} else {
+			}
+		}/* else {
 			if (!isSelectionChanged)
 				this.txtBox.setText(code);
 
@@ -159,7 +159,7 @@ public class CodeField extends InputField {
 			} else {
 				EntityBuilder.addValue(this.findParentEntity(path), this.nodeDefinition.getName(), code, position);	
 			}
-		}		
+		}	*/	
 		
 		Node<? extends NodeDefinition> node = this.findParentEntity(path).get(this.nodeDefinition.getName(), position);
 		if (node!=null){
