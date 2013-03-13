@@ -70,11 +70,11 @@ public class CodeField extends InputField {
 		
 		this.codeAttrDef = (CodeAttributeDefinition)this.nodeDefinition;
 		if (codeAttrDef.isAllowUnlisted()){
-			/*this.txtBox = new EditText(context);
+			this.txtBox = new EditText(context);
 			this.txtBox.setLayoutParams(new LayoutParams(0,ViewGroup.LayoutParams.WRAP_CONTENT,(float) 3));
 			this.txtBox.addTextChangedListener(this);
-			this.txtBox.setFilters(new InputFilter[]{new InputFilter.AllCaps()});
-			this.addView(this.txtBox);*/
+			//this.txtBox.setFilters(new InputFilter[]{new InputFilter.AllCaps()});
+			this.addView(this.txtBox);
 		} else {
 			this.spinner = new Spinner(context);
 			this.spinner.setPrompt(nodeDef.getName());
@@ -148,18 +148,10 @@ public class CodeField extends InputField {
 				if (!isSelectionChanged)
 					this.spinner.setSelection(0);
 			}
-		}/* else {
+		} else {
 			if (!isSelectionChanged)
 				this.txtBox.setText(code);
-
-			Node<? extends NodeDefinition> node = this.findParentEntity(path).get(this.nodeDefinition.getName(), position);
-			if (node!=null){
-				TextAttribute textAtr = (TextAttribute)node;
-				textAtr.setValue(new TextValue(code));
-			} else {
-				EntityBuilder.addValue(this.findParentEntity(path), this.nodeDefinition.getName(), code, position);	
-			}
-		}	*/	
+		}
 		
 		Node<? extends NodeDefinition> node = this.findParentEntity(path).get(this.nodeDefinition.getName(), position);
 		if (node!=null){
