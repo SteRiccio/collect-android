@@ -8,7 +8,6 @@ import org.openforis.collect.android.management.ApplicationManager;
 import org.openforis.collect.android.messages.ToastMessage;
 import org.openforis.idm.metamodel.NodeDefinition;
 import org.openforis.idm.metamodel.NumberAttributeDefinition;
-import org.openforis.idm.metamodel.NumericAttributeDefinition;
 import org.openforis.idm.metamodel.validation.ValidationResults;
 import org.openforis.idm.metamodel.validation.Validator;
 import org.openforis.idm.model.Entity;
@@ -23,17 +22,17 @@ import org.openforis.idm.model.RealValue;
 import android.content.Context;
 import android.text.Editable;
 import android.text.InputType;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
-import android.text.TextWatcher;
 import android.widget.Toast;
 
 public class NumberField extends InputField {
 	
 	private List<String> values;
-	private NumericAttributeDefinition numericNodeDef;
+	private NumberAttributeDefinition numberNodeDef;
 	private String type;
 	private Entity parentEntity;
 	
@@ -51,8 +50,8 @@ public class NumberField extends InputField {
 		this.txtBox = new EditText(context);
 		//this.setHint(hintText);
 		this.txtBox.setLayoutParams(new LayoutParams(0,ViewGroup.LayoutParams.WRAP_CONTENT,(float) 2));
-		this.numericNodeDef = (NumericAttributeDefinition)nodeDef;
-		this.type = numericNodeDef.getType().toString();
+		this.numberNodeDef = (NumberAttributeDefinition)nodeDef;
+		this.type = numberNodeDef.getType().toString();
 		this.parentEntity =  NumberField.this.form.parentEntity;
 		
 		this.addView(this.txtBox);	
@@ -82,27 +81,27 @@ public class NumberField extends InputField {
 			    	}
 		    	}else{
 		    		Log.i("NUMBER FIELD info", "Number field lost focus");		    		
-		    		Log.i("VALIDATION FOR NUMBER FIELD", "Attribute defenition: " + NumberField.this.numericNodeDef.toString());
+		    		Log.i("VALIDATION FOR NUMBER FIELD", "Attribute defenition: " + NumberField.this.numberNodeDef.toString());
 		    		@SuppressWarnings("rawtypes")
 					NumberAttribute attribute;
 		    		if (NumberField.this.type.toLowerCase().equals("integer")){
 		    			Log.i("VALIDATION FOR NUMBER FIELD", "Integer Attribute");
-		    			attribute = new IntegerAttribute((NumberAttributeDefinition) NumberField.this.numericNodeDef);
+		    			attribute = new IntegerAttribute((NumberAttributeDefinition) NumberField.this.numberNodeDef);
 		    		} else{
 		    			Log.i("VALIDATION FOR NUMBER FIELD", "Real Attribute");
-		    			attribute = new RealAttribute((NumberAttributeDefinition) NumberField.this.numericNodeDef);
+		    			attribute = new RealAttribute((NumberAttributeDefinition) NumberField.this.numberNodeDef);
 		    		}
 		    		Log.i("VALIDATION FOR NUMBER FIELD", "Parent entity is: " + parentEntity.getName());
 		    		//Log.i("VALIDATION FOR NUMBER FIELD", "Currect record is: " + ApplicationManager.currentRecord);
 		    		
 		    		//GETTING VALUE (Karol code)
 		    		String loadedValue = "";
-		    		if (((NumberAttributeDefinition) NumberField.this.numericNodeDef).isInteger()){
-					    IntegerValue intValue = (IntegerValue)parentEntity.getValue(NumberField.this.numericNodeDef.getName(), NumberField.this.currentInstanceNo);
+		    		if (((NumberAttributeDefinition) NumberField.this.numberNodeDef).isInteger()){
+					    IntegerValue intValue = (IntegerValue)parentEntity.getValue(NumberField.this.numberNodeDef.getName(), NumberField.this.currentInstanceNo);
 					    if (intValue!=null)
 					        loadedValue = intValue.getValue().toString();    
 					} else{
-					        RealValue realValue = (RealValue)parentEntity.getValue(NumberField.this.numericNodeDef.getName(), NumberField.this.currentInstanceNo);
+					        RealValue realValue = (RealValue)parentEntity.getValue(NumberField.this.numberNodeDef.getName(), NumberField.this.currentInstanceNo);
 					        if (realValue!=null)
 					            loadedValue = realValue.getValue().toString();
 					}  

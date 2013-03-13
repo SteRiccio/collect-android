@@ -23,9 +23,11 @@ import org.openforis.idm.model.Date;
 import org.openforis.idm.model.Entity;
 import org.openforis.idm.model.File;
 import org.openforis.idm.model.IntegerAttribute;
+import org.openforis.idm.model.IntegerRange;
 import org.openforis.idm.model.IntegerValue;
 import org.openforis.idm.model.Node;
 import org.openforis.idm.model.RealAttribute;
+import org.openforis.idm.model.RealRange;
 import org.openforis.idm.model.RealValue;
 import org.openforis.idm.model.TextValue;
 import org.openforis.idm.model.Time;
@@ -126,8 +128,14 @@ public class SummaryTable extends UIElement {
 				    newValue.add(loadedValue);
 				    this.values.add(newValue);
 				} else if (nodeDef instanceof RangeAttributeDefinition){
-					Range rangeValue = (Range)parentEntity.getValue(nodeDef.getName(), i);
-					loadedValue = rangeValue.getMinimum()+getResources().getString(R.string.rangeSeparator)+rangeValue.getMaximum();
+					RangeAttributeDefinition rangeAttrDef = (RangeAttributeDefinition)nodeDef;
+					if (rangeAttrDef.isReal()){
+						RealRange rangeValue = (RealRange)parentEntity.getValue(nodeDef.getName(), i);
+						loadedValue = rangeValue.getFrom()+getResources().getString(R.string.rangeSeparator)+rangeValue.getTo();
+					} else {
+						IntegerRange rangeValue = (IntegerRange)parentEntity.getValue(nodeDef.getName(), i);
+						loadedValue = rangeValue.getFrom()+getResources().getString(R.string.rangeSeparator)+rangeValue.getTo();	
+					}					
 				    ArrayList<String> newValue = new ArrayList<String>();
 				    newValue.add(loadedValue);
 				    this.values.add(newValue);

@@ -32,7 +32,6 @@ import org.openforis.idm.metamodel.EntityDefinition;
 import org.openforis.idm.metamodel.FileAttributeDefinition;
 import org.openforis.idm.metamodel.NodeDefinition;
 import org.openforis.idm.metamodel.NumberAttributeDefinition;
-import org.openforis.idm.metamodel.NumericAttributeDefinition;
 import org.openforis.idm.metamodel.RangeAttributeDefinition;
 import org.openforis.idm.metamodel.TaxonAttributeDefinition;
 import org.openforis.idm.metamodel.TextAttributeDefinition;
@@ -44,8 +43,10 @@ import org.openforis.idm.model.Date;
 import org.openforis.idm.model.Entity;
 import org.openforis.idm.model.EntityBuilder;
 import org.openforis.idm.model.File;
+import org.openforis.idm.model.IntegerRange;
 import org.openforis.idm.model.IntegerValue;
 import org.openforis.idm.model.Node;
+import org.openforis.idm.model.RealRange;
 import org.openforis.idm.model.RealValue;
 import org.openforis.idm.model.TextValue;
 import org.openforis.idm.model.Time;
@@ -293,7 +294,7 @@ public class FormScreen extends BaseActivity implements OnClickListener, TextWat
                 				this.ll.addView(summaryTableView);
 	        				}
 	    				}	
-	    			} else if (nodeDef instanceof NumericAttributeDefinition){
+	    			} else if (nodeDef instanceof NumberAttributeDefinition){
 	    				loadedValue = "";
 	    				if (!nodeDef.isMultiple()){
 	    					Node<?> foundNode = this.parentEntitySingleAttribute.get(nodeDef.getName(), 0);
@@ -494,18 +495,34 @@ public class FormScreen extends BaseActivity implements OnClickListener, TextWat
 	    				if (!nodeDef.isMultiple()){
 	    					Node<?> foundNode = this.parentEntitySingleAttribute.get(nodeDef.getName(), 0);
 		    				if (foundNode!=null){
-		    					Range rangeValue = (Range)this.parentEntitySingleAttribute.getValue(nodeDef.getName(), 0);
-		    					if (rangeValue!=null){
-		    						if (rangeValue.getMinimum()==null && rangeValue.getMaximum()==null){
-		    							loadedValue = "";
-		    						} else if (rangeValue.getMinimum()==null){
-		    							loadedValue = getResources().getString(R.string.rangeSeparator)+rangeValue.getMaximum();
-		    						} else if (rangeValue.getMaximum()==null){
-		    							loadedValue = rangeValue.getMinimum()+getResources().getString(R.string.rangeSeparator);
-		    						} else {
-		    							loadedValue = rangeValue.getMinimum()+getResources().getString(R.string.rangeSeparator)+rangeValue.getMaximum();
-		    						}		    						
-		    					}				
+		    					RangeAttributeDefinition rangeAttrDef = (RangeAttributeDefinition)nodeDef;
+		    					if (rangeAttrDef.isReal()){
+		    						RealRange rangeValue = (RealRange)this.parentEntitySingleAttribute.getValue(nodeDef.getName(), 0);
+		    						if (rangeValue!=null){
+			    						if (rangeValue.getFrom()==null && rangeValue.getTo()==null){
+			    							loadedValue = "";
+			    						} else if (rangeValue.getFrom()==null){
+			    							loadedValue = getResources().getString(R.string.rangeSeparator)+rangeValue.getTo();
+			    						} else if (rangeValue.getTo()==null){
+			    							loadedValue = rangeValue.getFrom()+getResources().getString(R.string.rangeSeparator);
+			    						} else {
+			    							loadedValue = rangeValue.getFrom()+getResources().getString(R.string.rangeSeparator)+rangeValue.getTo();
+			    						}		    						
+			    					}	
+		    					} else {
+		    						IntegerRange rangeValue = (IntegerRange)this.parentEntitySingleAttribute.getValue(nodeDef.getName(), 0);
+		    						if (rangeValue!=null){
+			    						if (rangeValue.getFrom()==null && rangeValue.getTo()==null){
+			    							loadedValue = "";
+			    						} else if (rangeValue.getFrom()==null){
+			    							loadedValue = getResources().getString(R.string.rangeSeparator)+rangeValue.getTo();
+			    						} else if (rangeValue.getTo()==null){
+			    							loadedValue = rangeValue.getFrom()+getResources().getString(R.string.rangeSeparator);
+			    						} else {
+			    							loadedValue = rangeValue.getFrom()+getResources().getString(R.string.rangeSeparator)+rangeValue.getTo();
+			    						}		    						
+			    					}	
+		    					}		    							
 		    				}
 	        				final RangeField rangeField= new RangeField(this, nodeDef);
 	        				rangeField.setOnClickListener(this);
@@ -513,7 +530,7 @@ public class FormScreen extends BaseActivity implements OnClickListener, TextWat
 	        				rangeField.setValue(0, loadedValue, FormScreen.this.getFormScreenId(),false);
 	        				rangeField.addTextChangedListener(new TextWatcher(){
 	        			        public void afterTextChanged(Editable s) {        			            
-	        			        	rangeField.setValue(0, s.toString(), FormScreen.this.parentFormScreenId,true);
+	        			        	rangeField.setValue(0, s.toString(),  FormScreen.this.getFormScreenId(),true);
 	        			        }
 	        			        public void beforeTextChanged(CharSequence s, int start, int count, int after){}
 	        			        public void onTextChanged(CharSequence s, int start, int before, int count){}
@@ -523,18 +540,34 @@ public class FormScreen extends BaseActivity implements OnClickListener, TextWat
 	    				} else if (this.intentType==getResources().getInteger(R.integer.multipleAttributeIntent)){
 	    					Node<?> foundNode = this.parentEntityMultipleAttribute.get(nodeDef.getName(), this.currInstanceNo);
 		    				if (foundNode!=null){
-		    					Range rangeValue = (Range)this.parentEntityMultipleAttribute.getValue(nodeDef.getName(), this.currInstanceNo);
-		    					if (rangeValue!=null){
-		    						if (rangeValue.getMinimum()==null && rangeValue.getMaximum()==null){
-		    							loadedValue = "";
-		    						} else if (rangeValue.getMinimum()==null){
-		    							loadedValue = getResources().getString(R.string.rangeSeparator)+rangeValue.getMaximum();
-		    						} else if (rangeValue.getMaximum()==null){
-		    							loadedValue = rangeValue.getMinimum()+getResources().getString(R.string.rangeSeparator);
-		    						} else {
-		    							loadedValue = rangeValue.getMinimum()+getResources().getString(R.string.rangeSeparator)+rangeValue.getMaximum();
-		    						}		    						
-		    					}    				
+		    					RangeAttributeDefinition rangeAttrDef = (RangeAttributeDefinition)nodeDef;
+		    					if (rangeAttrDef.isReal()){
+		    						RealRange rangeValue = (RealRange)this.parentEntitySingleAttribute.getValue(nodeDef.getName(), 0);
+		    						if (rangeValue!=null){
+			    						if (rangeValue.getFrom()==null && rangeValue.getTo()==null){
+			    							loadedValue = "";
+			    						} else if (rangeValue.getFrom()==null){
+			    							loadedValue = getResources().getString(R.string.rangeSeparator)+rangeValue.getTo();
+			    						} else if (rangeValue.getTo()==null){
+			    							loadedValue = rangeValue.getFrom()+getResources().getString(R.string.rangeSeparator);
+			    						} else {
+			    							loadedValue = rangeValue.getFrom()+getResources().getString(R.string.rangeSeparator)+rangeValue.getTo();
+			    						}		    						
+			    					}	
+		    					} else {
+		    						IntegerRange rangeValue = (IntegerRange)this.parentEntitySingleAttribute.getValue(nodeDef.getName(), 0);
+		    						if (rangeValue!=null){
+			    						if (rangeValue.getFrom()==null && rangeValue.getTo()==null){
+			    							loadedValue = "";
+			    						} else if (rangeValue.getFrom()==null){
+			    							loadedValue = getResources().getString(R.string.rangeSeparator)+rangeValue.getTo();
+			    						} else if (rangeValue.getTo()==null){
+			    							loadedValue = rangeValue.getFrom()+getResources().getString(R.string.rangeSeparator);
+			    						} else {
+			    							loadedValue = rangeValue.getFrom()+getResources().getString(R.string.rangeSeparator)+rangeValue.getTo();
+			    						}		    						
+			    					}	
+		    					}  				
 		    				}
 	        				final RangeField rangeField= new RangeField(this, nodeDef);
 	        				rangeField.setOnClickListener(this);
@@ -1087,7 +1120,7 @@ public class FormScreen extends BaseActivity implements OnClickListener, TextWat
 	    					if (memoField!=null)
 	    						memoField.setValue(0, loadedValue, this.getFormScreenId(), false);
 						}								
-					} else if (nodeDef instanceof NumericAttributeDefinition){
+					} else if (nodeDef instanceof NumberAttributeDefinition){
 						String loadedValue = "";
 						if (((NumberAttributeDefinition) nodeDef).isInteger()){
 							IntegerValue intValue = (IntegerValue)parentEntity.getValue(nodeDef.getName(), 0);
@@ -1143,13 +1176,26 @@ public class FormScreen extends BaseActivity implements OnClickListener, TextWat
 					} else if (nodeDef instanceof RangeAttributeDefinition){
 						String from = "";
 						String to = "";
-						Range rangeValue = (Range)parentEntity.getValue(nodeDef.getName(), 0);
-						if (rangeValue!=null){
-							if (rangeValue.getMinimum()!=null)
-								from = rangeValue.getMinimum().toString();
-							if (rangeValue.getMaximum()!=null)
-								to = rangeValue.getMaximum().toString();						
-						}						
+						
+						RangeAttributeDefinition rangeAttrDef = (RangeAttributeDefinition)nodeDef;
+						if (rangeAttrDef.isReal()){
+							RealRange rangeValue = (RealRange)parentEntity.getValue(nodeDef.getName(), 0);
+							if (rangeValue!=null){
+								if (rangeValue.getFrom()!=null)
+									from = rangeValue.getFrom().toString();
+								if (rangeValue.getTo()!=null)
+									to = rangeValue.getTo().toString();						
+							}
+						} else {
+							IntegerRange rangeValue = (IntegerRange)parentEntity.getValue(nodeDef.getName(), 0);
+							if (rangeValue!=null){
+								if (rangeValue.getFrom()!=null)
+									from = rangeValue.getFrom().toString();
+								if (rangeValue.getTo()!=null)
+									to = rangeValue.getTo().toString();						
+							}
+						}
+												
 						RangeField rangeField = (RangeField) ApplicationManager.getUIElement(nodeDef.getId());
 						if (rangeField!=null)
 							rangeField.setValue(0, from+getResources().getString(R.string.rangeSeparator)+to, this.getFormScreenId(), false);
@@ -1217,7 +1263,7 @@ public class FormScreen extends BaseActivity implements OnClickListener, TextWat
 	    					if (memoField!=null)
 	    						memoField.setValue(0, loadedValue, this.getFormScreenId(), false);
 						}    					
-					} else if (nodeDef instanceof NumericAttributeDefinition){
+					} else if (nodeDef instanceof NumberAttributeDefinition){
 						String loadedValue = "";
 						if (((NumberAttributeDefinition) nodeDef).isInteger()){
 							IntegerValue intValue = (IntegerValue)parentEntity.getValue(nodeDef.getName(), 0);
@@ -1270,13 +1316,24 @@ public class FormScreen extends BaseActivity implements OnClickListener, TextWat
 					} else if (nodeDef instanceof RangeAttributeDefinition){
 						String from = "";
 						String to = "";
-						Range rangeValue = (Range)parentEntity.getValue(nodeDef.getName(), 0);
-						if (rangeValue!=null){
-							if (rangeValue.getMinimum()!=null)
-								from = rangeValue.getMinimum().toString();
-							if (rangeValue.getMaximum()!=null)
-								to = rangeValue.getMaximum().toString();						
-						}						
+						RangeAttributeDefinition rangeAttrDef = (RangeAttributeDefinition)nodeDef;
+						if (rangeAttrDef.isReal()){
+							RealRange rangeValue = (RealRange)parentEntity.getValue(nodeDef.getName(), 0);
+							if (rangeValue!=null){
+								if (rangeValue.getFrom()!=null)
+									from = rangeValue.getFrom().toString();
+								if (rangeValue.getTo()!=null)
+									to = rangeValue.getTo().toString();						
+							}
+						} else {
+							IntegerRange rangeValue = (IntegerRange)parentEntity.getValue(nodeDef.getName(), 0);
+							if (rangeValue!=null){
+								if (rangeValue.getFrom()!=null)
+									from = rangeValue.getFrom().toString();
+								if (rangeValue.getTo()!=null)
+									to = rangeValue.getTo().toString();						
+							}
+						}					
 						RangeField rangeField = (RangeField) ApplicationManager.getUIElement(nodeDef.getId());
 						if (rangeField!=null)
 							rangeField.setValue(0, from+getResources().getString(R.string.rangeSeparator)+to, this.getFormScreenId(), false);
@@ -1353,7 +1410,7 @@ public class FormScreen extends BaseActivity implements OnClickListener, TextWat
     					if (textField!=null)
     						textField.setValue(this.currInstanceNo, loadedValue, this.getFormScreenId(), false);
 					} 
-				} else if (nodeDef instanceof NumericAttributeDefinition){
+				} else if (nodeDef instanceof NumberAttributeDefinition){
 					String loadedValue = "";
 					if (((NumberAttributeDefinition) nodeDef).isInteger()){
 						IntegerValue intValue = (IntegerValue)parentEntity.getValue(nodeDef.getName(), this.currInstanceNo);
@@ -1406,15 +1463,28 @@ public class FormScreen extends BaseActivity implements OnClickListener, TextWat
 				} else if (nodeDef instanceof RangeAttributeDefinition){
 					String from = "";
 					String to = "";
-					Range rangeValue = (Range)parentEntity.getValue(nodeDef.getName(), this.currInstanceNo);
-					if (rangeValue!=null){
-						from = rangeValue.getMinimum().toString();
-						if (from==null)
-							from = "";
-						to = rangeValue.getMaximum().toString();
-						if (to == null)
-							to = "";						
-					}						
+					RangeAttributeDefinition rangeAttrDef = (RangeAttributeDefinition)nodeDef;
+					if (rangeAttrDef.isReal()){
+						RealRange rangeValue = (RealRange)parentEntity.getValue(nodeDef.getName(), this.currInstanceNo);
+						if (rangeValue!=null){
+							from = rangeValue.getFrom().toString();
+							if (from==null)
+								from = "";
+							to = rangeValue.getTo().toString();
+							if (to == null)
+								to = "";						
+						}
+					} else {
+						IntegerRange rangeValue = (IntegerRange)parentEntity.getValue(nodeDef.getName(), this.currInstanceNo);
+						if (rangeValue!=null){
+							from = rangeValue.getFrom().toString();
+							if (from==null)
+								from = "";
+							to = rangeValue.getTo().toString();
+							if (to == null)
+								to = "";						
+						}
+					}															
 					RangeField rangeField = (RangeField) ApplicationManager.getUIElement(nodeDef.getId());
 					if (rangeField!=null)
 						rangeField.setValue(this.currInstanceNo, from+getResources().getString(R.string.rangeSeparator)+to, this.getFormScreenId(), false);
