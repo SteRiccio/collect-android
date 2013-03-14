@@ -2,6 +2,7 @@ package org.openforis.collect.android.fields;
 
 import java.util.ArrayList;
 
+import org.openforis.collect.android.R;
 import org.openforis.collect.android.messages.ToastMessage;
 import org.openforis.collect.android.screens.FormScreen;
 import org.openforis.idm.metamodel.BooleanAttributeDefinition;
@@ -16,6 +17,9 @@ import android.graphics.Color;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CheckBox;
+import android.widget.RelativeLayout;
+import android.widget.TableLayout;
+import android.widget.TableRow;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -33,7 +37,7 @@ public class BooleanField extends Field {
 
 		BooleanField.form = (FormScreen)context;
 
-		this.label.setLayoutParams(new LayoutParams(0,ViewGroup.LayoutParams.WRAP_CONTENT, (float) 2));
+		//this.label.setLayoutParams(new LayoutParams(0,ViewGroup.LayoutParams.WRAP_CONTENT, (float) 2));
 		this.label.setOnLongClickListener(new OnLongClickListener() {
 	        @Override
 	        public boolean onLongClick(View v) {
@@ -43,7 +47,7 @@ public class BooleanField extends Field {
 	    });
 		this.chckBox1 = new CheckBox(context);
 		this.chckBox1.setChecked(isChecked1);
-		this.chckBox1.setLayoutParams(new LayoutParams(0,ViewGroup.LayoutParams.WRAP_CONTENT, (float) 1));
+		//this.chckBox1.setLayoutParams(new LayoutParams(0,ViewGroup.LayoutParams.WRAP_CONTENT, (float) 1));
 		this.chckBox1.setOnClickListener(new OnClickListener() {
 			@Override
 			public void onClick(View v) {
@@ -56,12 +60,12 @@ public class BooleanField extends Field {
 	    });		
 		this.label1 = new TextView(context);
 		this.label1.setText(label1Text);
-		this.label1.setLayoutParams(new LayoutParams(0,ViewGroup.LayoutParams.WRAP_CONTENT, (float) 1));
+		//this.label1.setLayoutParams(new LayoutParams(0,ViewGroup.LayoutParams.WRAP_CONTENT, (float) 1));
 		this.label1.setTextColor(Color.BLACK);
 		
 		this.chckBox2 = new CheckBox(context);
 		this.chckBox2.setChecked(isChecked2);
-		this.chckBox2.setLayoutParams(new LayoutParams(0,ViewGroup.LayoutParams.WRAP_CONTENT, (float) 1));
+		//this.chckBox2.setLayoutParams(new LayoutParams(0,ViewGroup.LayoutParams.WRAP_CONTENT, (float) 1));
 		this.chckBox2.setOnClickListener(new OnClickListener() {
 	          @Override
 	          public void onClick(View v) {
@@ -74,7 +78,7 @@ public class BooleanField extends Field {
 	    });
 		this.label2 = new TextView(context);
 		this.label2.setText(label2Text);
-		this.label2.setLayoutParams(new LayoutParams(0,ViewGroup.LayoutParams.WRAP_CONTENT, (float) 1));
+		//this.label2.setLayoutParams(new LayoutParams(0,ViewGroup.LayoutParams.WRAP_CONTENT, (float) 1));
 		this.label2.setTextColor(Color.BLACK);
 		
 		if (((BooleanAttributeDefinition) nodeDef).isAffirmativeOnly()){
@@ -82,11 +86,15 @@ public class BooleanField extends Field {
 			this.label2.setVisibility(View.GONE);
 			this.label1.setVisibility(View.GONE);
 		}
-
-		this.addView(this.chckBox1);
-		this.addView(this.label1);
-		this.addView(this.chckBox2);
-		this.addView(this.label2);
+		
+		TableRow tr = new TableRow(context);
+		TableLayout.LayoutParams tlParams = new TableLayout.LayoutParams(getResources().getInteger(R.integer.field_height),ViewGroup.LayoutParams.MATCH_PARENT);
+		tr.setLayoutParams(tlParams);
+		tr.addView(this.chckBox1);
+		tr.addView(this.label1);
+		tr.addView(this.chckBox2);
+		tr.addView(this.label2);		
+		this.addView(tr);
 	}
 	
 	public void setValue(int position, Boolean boolValue, String path, boolean isSelectionChanged)

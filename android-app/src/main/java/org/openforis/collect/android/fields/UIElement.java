@@ -10,11 +10,11 @@ import org.openforis.idm.model.Entity;
 
 import android.content.Context;
 import android.graphics.Color;
-import android.view.ViewGroup;
 import android.widget.LinearLayout;
+import android.widget.TableLayout;
 import android.widget.TextView;
 
-public class UIElement extends LinearLayout{
+public class UIElement extends TableLayout{
 	
 	protected LinearLayout container;
 	
@@ -64,7 +64,7 @@ public class UIElement extends LinearLayout{
 		this.form = (FormScreen)context;
 		
 		this.container = new LinearLayout(context);
-		this.container.setLayoutParams(new LayoutParams(ViewGroup.LayoutParams.FILL_PARENT, getResources().getInteger(R.integer.field_height)));
+		//this.container.setLayoutParams(new LayoutParams(ViewGroup.LayoutParams.FILL_PARENT, getResources().getInteger(R.integer.field_height)));
 		
 		this.currentInstanceNo = 0;
 	}

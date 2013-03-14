@@ -23,6 +23,9 @@ import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
+import android.widget.TableLayout;
+import android.widget.TableRow;
+import android.widget.TextView;
 import android.widget.Toast;
 
 public class CoordinateField extends InputField {
@@ -53,11 +56,11 @@ public class CoordinateField extends InputField {
 	    });
 		
 		this.txtLongitude = new EditText(context);
-		this.txtLongitude.setLayoutParams(new LayoutParams(0,ViewGroup.LayoutParams.WRAP_CONTENT,(float) 2));
+		//this.txtLongitude.setLayoutParams(new LayoutParams(0,ViewGroup.LayoutParams.WRAP_CONTENT,(float) 2));
 		//this.txtLongitude.setText(initialTextLon);
 		//this.txtLongitude.setHint("LONGITUDEx");
 		this.txtLongitude.addTextChangedListener(this);
-		this.addView(txtLongitude);
+		//this.addView(txtLongitude);
 		
 		this.txtLongitude.setOnFocusChangeListener(new OnFocusChangeListener(){
 			@Override
@@ -80,11 +83,11 @@ public class CoordinateField extends InputField {
 		});
 
 		this.txtLatitude = new EditText(context);
-		this.txtLatitude.setLayoutParams(new LayoutParams(0,ViewGroup.LayoutParams.WRAP_CONTENT,(float) 2));
+		//this.txtLatitude.setLayoutParams(new LayoutParams(0,ViewGroup.LayoutParams.WRAP_CONTENT,(float) 2));
 		//this.txtLatitude.setText(initialTextLat);
 		//this.txtLatitude.setHint("LATITUDEy");
 		this.txtLatitude.addTextChangedListener(this);
-		this.addView(txtLatitude);
+		//this.addView(txtLatitude);
 
 		this.txtLatitude.setOnFocusChangeListener(new OnFocusChangeListener(){
 			@Override
@@ -138,30 +141,15 @@ public class CoordinateField extends InputField {
 					}
 				}				
 			}	
-		});		
-	}
-
-	/*public List<String> getValue(int index){
-		return CoordinateField.this.value.getValue(index);
-	}*/
-	
-	/*public void setValue(int position, String latitude, String longitude, String path, boolean isTextChanged)
-	{
-		if (!isTextChanged){
-			this.txtLatitude.setText(latitude);
-			this.txtLongitude.setText(longitude);	
-		}		
-		ArrayList<String> valueToAdd = new ArrayList<String>();
-		valueToAdd.add(latitude);
-		valueToAdd.add(longitude);		
+		});	
 		
-		try{
-			//Log.e("coordinateAddedVALUE",latitude+"=="+longitude);
-			EntityBuilder.addValue(this.findParentEntity(path), this.nodeDefinition.getName(), new Coordinate(Double.valueOf(latitude),Double.valueOf(longitude),null), position);	
-		} catch (Exception e) {
-			//Log.e("EXCEPTION","WHILE ADDING COORD VALUE");
-		}		
-	}*/
+		TableRow tr = new TableRow(context);
+		TableLayout.LayoutParams tlParams = new TableLayout.LayoutParams(getResources().getInteger(R.integer.field_height),ViewGroup.LayoutParams.MATCH_PARENT);
+		tr.setLayoutParams(tlParams);
+		tr.addView(this.txtLongitude);
+		tr.addView(this.txtLatitude);
+		this.addView(tr);
+	}
 	
 	public void setValue(Integer position, String lon, String lat, String path, boolean isTextChanged)
 	{
@@ -216,8 +204,7 @@ public class CoordinateField extends InputField {
 	
 	@Override
 	public void addTextChangedListener(TextWatcher textWatcher) {
-//		this.txtLatitude.addTextChangedListener(textWatcher);
-//		this.txtLongitude.addTextChangedListener(textWatcher);
+		
 	}
 	
 	//Check is given value a number

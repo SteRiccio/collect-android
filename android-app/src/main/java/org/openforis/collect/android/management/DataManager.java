@@ -41,55 +41,31 @@ public class DataManager {
 			CollectRecord recordToSave = ApplicationManager.currentRecord;
 			
 			if (recordToSave.getId()==null){
-				//Log.e("SAVING", "NEW RECORD");
 				recordToSave.setCreatedBy(this.user);
 				recordToSave.setCreationDate(new Date());
 				recordToSave.setStep(Step.ENTRY);			
 			} else {
-				//Log.e("updating", "existing RECORD");
 				recordToSave.setModifiedDate(new Date());
-				/*DataTreeNode dataRoot = ApplicationManager.valuesTree.getRoot();
-				List<DataTreeNode> childNodesList = dataRoot.getNodeChildren();
-				int childrenNo = childNodesList.size();
-				//Log.e("PRZED","FOR2");
-				for (int i=0;i<childrenNo;i++){
-					Entity rootEntity = recordToSave.getRootEntity();
-					//rootEntity.setId(ApplicationManager.getSurvey().getSchema().getRootEntityDefinitions().get(i).getId());
-					traverseNodeChildren(childNodesList.get(i), rootEntity, true);
-				}*/
 			}
-			
-			Log.e("recordManager==null","=="+(DataManager.recordManager==null));
-			Log.e("recordToSave==null","=="+(recordToSave==null));
-			Log.e("sesssionID","=="+ApplicationManager.getSessionId());
-			//Log.e("isRECORDlocked","=="+DataManager.recordManager.checkIsLocked(recordToSave.getId(), user, "1"/* ApplicationManager.getSessionId()*/));						
-			//Log.e("AFTER","CHECKING LOCKED");
 			DataManager.recordManager.save(recordToSave, ApplicationManager.getSessionId());
 		} catch (RecordUnlockedException e) {
-			Log.e("RecordUnlockedException","=="+e.getMessage());
-			//return 1;
+
 		} catch (RecordPersistenceException e) {
-			Log.e("RecordPersistenceException","=="+e.getMessage());
-			//return 1;
+
 		} catch (NullPointerException e){
-			Log.e("NullPointerException","=="+e.getMessage());
-			//return 1;
+
 		} finally {
-			//Log.e("FINALLY","==");
-			//JdbcDaoSupport.close();
-		}
-		//this.recordManager.getRecordDao().insert(recordToSave);		
+
+		}	
 		Log.e("record","SAVED IN "+(System.currentTimeMillis()-startTime)/1000+"s");
 		return 0;
 	}
 	
 	public List<CollectRecord> loadSummaries(){
-		long startTime = System.currentTimeMillis();
 		JdbcDaoSupport jdbcDao = new JdbcDaoSupport();
 		jdbcDao.getConnection();
 		List<CollectRecord> recordsList = DataManager.recordManager.loadSummaries(survey, rootEntity);		
 		JdbcDaoSupport.close();
-		Log.e("loadingSummaries","=="+(System.currentTimeMillis()-startTime)/1000);	
 		return recordsList;
 	}
 	
@@ -99,20 +75,12 @@ public class DataManager {
 		try {
 			JdbcDaoSupport jdbcDao = new JdbcDaoSupport();
 			jdbcDao.getConnection();
-			Log.e("LOAD",recordId+"==");
-			loadedRecord = this.recordManager.load(survey, recordId, Step.ENTRY.getStepNumber());
-			/*Log.e("clusterNode",node.getId()+"=="+node.getName());
-			Log.e("loadedRecord==null","=="+(loadedRecord==null));
-			Log.e("owner","==="+loadedRecord.getCreatedBy());
-			Log.e("data","==="+loadedRecord.getCreationDate());
-			Log.e("entityiesNo","==="+loadedRecord.getEntityCounts().size());
-			Log.e("root","==="+loadedRecord.getRootEntity().getName());
-			Log.e("printRecord","=="+loadedRecord.toString());*/
+			loadedRecord = DataManager.recordManager.load(survey, recordId, Step.ENTRY.getStepNumber());
 			JdbcDaoSupport.close();
 		} catch (NullPointerException e){
-			Log.e("NullPointerException","=="+e.getMessage());
+
 		} catch (RecordPersistenceException e) {
-			Log.e("RecordPersistenceException","=="+e.getMessage());
+
 		}
 		Log.e("record"+recordId,"LOADED IN "+(System.currentTimeMillis()-startTime)/1000+"s");
 		return loadedRecord;

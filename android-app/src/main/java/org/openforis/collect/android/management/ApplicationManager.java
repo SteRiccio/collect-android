@@ -57,7 +57,6 @@ public class ApplicationManager extends BaseActivity {
 
 	private static UserManager userManager;
 	private static SurveyManager surveyManager;
-	//private static RecordManager recordManager;
 	
 	private static CollectSurvey survey;
 	private static Schema schema;
@@ -120,7 +119,6 @@ public class ApplicationManager extends BaseActivity {
 		    ExpressionFactory expressionFactory = new ExpressionFactory();
         	Validator validator = new Validator();
         	CollectSurveyContext collectSurveyContext = new CollectSurveyContext(expressionFactory, validator, null);
-        	Log.e("collectSurveyContext==null","=="+(collectSurveyContext==null));
         	
         	surveyManager = new SurveyManager();
         	surveyManager.setCollectSurveyContext(collectSurveyContext);
@@ -138,18 +136,16 @@ public class ApplicationManager extends BaseActivity {
         	//reading form definition if it is not available in database
         	//survey = surveyManager.getSurveyDao().load("Archenland NFI");
         	survey = surveyManager.get("Archenland NFI");
-        	Log.e("survey==null","=="+(survey==null));
         	if (survey==null){
-            	long startTimeParsing = System.currentTimeMillis();
-            	Log.e("PARSING","====================");   
+            	//long startTimeParsing = System.currentTimeMillis();
+            	//Log.e("PARSING","====================");   
             	FileInputStream fis = new FileInputStream(sdcardPath+getResources().getString(R.string.formDefinitionFile));        	
             	SurveyIdmlBinder binder = new SurveyIdmlBinder(collectSurveyContext);
         		binder.addApplicationOptionsBinder(new UIOptionsBinder());
         		survey = (CollectSurvey) binder.unmarshal(fis);
         		survey.setName(survey.getProjectName(null));
-        		Log.e(TAG, "Survey after parsing is: " + survey.getName());
         		surveyManager.importModel(survey);
-            	Log.e("TIME","=="+(System.currentTimeMillis()-startTimeParsing));       		
+            	//Log.e("parsingTIME","=="+(System.currentTimeMillis()-startTimeParsing));       		
         	}
         	schema = survey.getSchema();              
         	ApplicationManager.fieldsDefList = new ArrayList<NodeDefinition>();        	
@@ -181,7 +177,7 @@ public class ApplicationManager extends BaseActivity {
     				+System.currentTimeMillis()
     				+getResources().getString(R.string.log_file_extension)));
     		thread.start();
-    		Log.e(this.TAG+"onCREATE","=="+(System.currentTimeMillis()-startTime)+" s");
+    		Log.e(this.TAG+"onCREATE","=="+(System.currentTimeMillis()-startTime)/1000+" s");
         } catch (Exception e){
     		RunnableHandler.reportException(e,getResources().getString(R.string.app_name),TAG+":onCreate",
     				Environment.getExternalStorageDirectory().toString()

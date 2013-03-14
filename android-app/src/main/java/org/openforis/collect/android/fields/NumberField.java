@@ -91,7 +91,6 @@ public class NumberField extends InputField {
 		    			Log.i("VALIDATION FOR NUMBER FIELD", "Real Attribute");
 		    			attribute = new RealAttribute((NumberAttributeDefinition) NumberField.this.numberNodeDef);
 		    		}
-		    		Log.i("VALIDATION FOR NUMBER FIELD", "Parent entity is: " + parentEntity.getName());
 		    		//Log.i("VALIDATION FOR NUMBER FIELD", "Currect record is: " + ApplicationManager.currentRecord);
 		    		
 		    		//GETTING VALUE (Karol code)

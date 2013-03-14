@@ -870,12 +870,8 @@ public class FormScreen extends BaseActivity implements OnClickListener, TextWat
 
 	@Override
 	public void onClick(View arg0) {
-//		Log.e("clickedVIEW",arg0.getClass()+"=="+arg0.getId());
-		if (arg0 instanceof SummaryList){
-			//Log.e("summary","list");
-			SummaryList temp = (SummaryList)arg0;
-			//Log.e("nazwa","=="+temp.getTitle());
-		} else if (arg0 instanceof Button){
+		//Log.e("clickedVIEW",arg0.getClass()+"=="+arg0.getId());
+		if (arg0 instanceof Button){
 			Button btn = (Button)arg0;
 			if (btn.getId()==getResources().getInteger(R.integer.leftButtonMultipleAttribute)){
 				refreshMultipleAttributeScreen(true);
@@ -887,18 +883,13 @@ public class FormScreen extends BaseActivity implements OnClickListener, TextWat
 				refreshEntityScreen(false);
 			}
 		} else if (arg0 instanceof TextView){
-			//Log.e("summary","list row");
 			TextView tv = (TextView)arg0;
-			//Log.e("klikniety","id"+tv.getId()+"=="+tv.getText().toString());
-			//Log.e("parentClass","=="+arg0.getParent().getParent().getParent().getParent());
 			Object parentView = arg0.getParent().getParent().getParent().getParent();
 			if (parentView instanceof SummaryList){
 				SummaryList temp = (SummaryList)arg0.getParent().getParent().getParent().getParent();
-				//Log.e("nazwa","=="+temp.getTitle());	
 				this.startActivity(this.prepareIntentForNewScreen(temp));				
 			} else if (parentView instanceof SummaryTable){
 				SummaryTable temp = (SummaryTable)parentView;
-				//Log.e("nazwa","=="+temp.getTitle());	
 				this.startActivity(this.prepareIntentForMultipleField(temp, tv.getId(), temp.getValues()));
 			}			
 		}
@@ -917,19 +908,8 @@ public class FormScreen extends BaseActivity implements OnClickListener, TextWat
 			intent.putExtra(getResources().getString(R.string.intentType), getResources().getInteger(R.integer.singleEntityIntent));
 		}		
 		intent.putExtra(getResources().getString(R.string.idmlId), summaryList.getId());
-		/*int instanceNo = summaryList.getInstanceNo();
-		Log.e("instanceNoPrepared","=="+instanceNo);
-		/*Log.e("parentFormScreenId","=="+this.parentFormScreenId+"==");
-		if (!this.parentFormScreenId.equals("")){
-			String[] pathToScreenArray = this.parentFormScreenId.split(getResources().getString(R.string.valuesSeparator2));
-			Log.e("pathTOParentScreen"+this.parentFormScreenId,"=="+pathToScreenArray.length);
-			Log.e("EXTRACTEDinstanceNo"+instanceNo,pathToScreenArray[pathToScreenArray.length-1]+"=="+pathToScreenArray[pathToScreenArray.length-1].substring(pathToScreenArray[pathToScreenArray.length-1].indexOf(getResources().getString(R.string.valuesSeparator1))));
-			instanceNo = Integer.valueOf(pathToScreenArray[pathToScreenArray.length-1].substring(pathToScreenArray[pathToScreenArray.length-1].indexOf(getResources().getString(R.string.valuesSeparator1)+1)));
-			Log.e("EXTRACTEDinstanceNo"+instanceNo,pathToScreenArray[pathToScreenArray.length-1]+"==");	
-		}*/
 		intent.putExtra(getResources().getString(R.string.instanceNo), summaryList.getInstanceNo());
 		intent.putExtra(getResources().getString(R.string.parentFormScreenId), this.getFormScreenId());
-        //List<NodeDefinition> formFields = ApplicationManager.fieldsDefList;
         List<NodeDefinition> entityAttributes = summaryList.getEntityDefinition().getChildDefinitions();
         int counter = 0;
         for (NodeDefinition formField : entityAttributes){
