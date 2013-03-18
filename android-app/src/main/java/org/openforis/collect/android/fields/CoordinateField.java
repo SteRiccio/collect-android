@@ -14,6 +14,7 @@ import org.openforis.idm.model.EntityBuilder;
 import org.openforis.idm.model.Node;
 
 import android.content.Context;
+import android.graphics.Color;
 import android.text.Editable;
 import android.text.InputType;
 import android.text.TextWatcher;
@@ -21,11 +22,10 @@ import android.text.method.DigitsKeyListener;
 import android.text.method.KeyListener;
 import android.util.Log;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.TableLayout;
 import android.widget.TableRow;
-import android.widget.TextView;
 import android.widget.Toast;
 
 public class CoordinateField extends InputField {
@@ -40,7 +40,7 @@ public class CoordinateField extends InputField {
 
 		CoordinateField.form = (FormScreen)context;
 		
-		this.label.setLayoutParams(new LayoutParams(0, ViewGroup.LayoutParams.WRAP_CONTENT, (float) 1));
+		//this.label.setLayoutParams(new LayoutParams(0, ViewGroup.LayoutParams.WRAP_CONTENT, 1f));
 		this.label.setOnLongClickListener(new OnLongClickListener() {
 	        @Override
 	        public boolean onLongClick(View v) {
@@ -56,7 +56,7 @@ public class CoordinateField extends InputField {
 	    });
 		
 		this.txtLongitude = new EditText(context);
-		//this.txtLongitude.setLayoutParams(new LayoutParams(0,ViewGroup.LayoutParams.WRAP_CONTENT,(float) 2));
+		//this.txtLongitude.setLayoutParams(new LayoutParams(0,ViewGroup.LayoutParams.WRAP_CONTENT, 1f));
 		//this.txtLongitude.setText(initialTextLon);
 		//this.txtLongitude.setHint("LONGITUDEx");
 		this.txtLongitude.addTextChangedListener(this);
@@ -83,7 +83,7 @@ public class CoordinateField extends InputField {
 		});
 
 		this.txtLatitude = new EditText(context);
-		//this.txtLatitude.setLayoutParams(new LayoutParams(0,ViewGroup.LayoutParams.WRAP_CONTENT,(float) 2));
+		//this.txtLatitude.setLayoutParams(new LayoutParams(0,ViewGroup.LayoutParams.WRAP_CONTENT,3f));
 		//this.txtLatitude.setText(initialTextLat);
 		//this.txtLatitude.setHint("LATITUDEy");
 		this.txtLatitude.addTextChangedListener(this);
@@ -139,16 +139,12 @@ public class CoordinateField extends InputField {
 					}else{
 						Log.i("COORDINATE FIELD", "Value of Longitude: " + s + " is numeric.");
 					}
-				}				
+				}	
 			}	
 		});	
-		
-		TableRow tr = new TableRow(context);
-		TableLayout.LayoutParams tlParams = new TableLayout.LayoutParams(getResources().getInteger(R.integer.field_height),ViewGroup.LayoutParams.MATCH_PARENT);
-		tr.setLayoutParams(tlParams);
-		tr.addView(this.txtLongitude);
-		tr.addView(this.txtLatitude);
-		this.addView(tr);
+
+		this.addView(this.txtLongitude);
+		this.addView(this.txtLatitude);
 	}
 	
 	public void setValue(Integer position, String lon, String lat, String path, boolean isTextChanged)
