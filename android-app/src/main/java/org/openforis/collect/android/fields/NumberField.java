@@ -93,18 +93,6 @@ public class NumberField extends InputField {
 		    		}
 		    		//Log.i("VALIDATION FOR NUMBER FIELD", "Currect record is: " + ApplicationManager.currentRecord);
 		    		
-		    		//GETTING VALUE (Karol code)
-		    		String loadedValue = "";
-		    		if (((NumberAttributeDefinition) NumberField.this.numberNodeDef).isInteger()){
-					    IntegerValue intValue = (IntegerValue)parentEntity.getValue(NumberField.this.numberNodeDef.getName(), NumberField.this.currentInstanceNo);
-					    if (intValue!=null)
-					        loadedValue = intValue.getValue().toString();    
-					} else{
-					        RealValue realValue = (RealValue)parentEntity.getValue(NumberField.this.numberNodeDef.getName(), NumberField.this.currentInstanceNo);
-					        if (realValue!=null)
-					            loadedValue = realValue.getValue().toString();
-					}  
-		    		Log.i("VALIDATION FOR NUMBER FIELD", "Value is: " + loadedValue);
 					Validator validator = new Validator();
 		    		ValidationResults results = validator.validate(attribute);
 					Log.i("VALIDATION FOR NUMBER FIELD", "Value is: " + attribute.getValue());
@@ -114,7 +102,7 @@ public class NumberField extends InputField {
 		    		Log.i("VALIDATION FOR NUMBER FIELD", "Number of ERRORS from Current Record: " + ApplicationManager.currentRecord.getErrors());
 		    	}
 		    }
-	    });		
+	    });
 		
 		//Check for every given character is it number or not
 		this.txtBox.addTextChangedListener(new TextWatcher(){

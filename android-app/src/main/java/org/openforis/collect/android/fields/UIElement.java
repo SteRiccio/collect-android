@@ -36,19 +36,20 @@ public class UIElement extends TableLayout{
 		
 		this.elemId = nodeDef.getId();
 		this.nodeDefinition = nodeDef;
+		this.form = (FormScreen)context;
 		
 		this.isRequired = false;
 		try{
-			FormScreen formScreen = (FormScreen)context;
-			if (!formScreen.getFormScreenId().equals("")){
-				if (formScreen.getFormScreenId().lastIndexOf(getResources().getString(R.string.valuesSeparator2))>0){
-					Entity parentEntity = (Entity)this.findParentEntity(formScreen.getFormScreenId());
+			if (!this.form.getFormScreenId().equals("")){
+				//if (this.form.getFormScreenId().lastIndexOf(getResources().getString(R.string.valuesSeparator2))>0){
+					Entity parentEntity = (Entity)this.findParentEntity(this.form.getFormScreenId());
 					this.isRequired = parentEntity.isRequired(nodeDef.getName());
-				}					
+				//}					
 			}	
 		} catch (Exception e){
 
-		}	
+		}
+
 		this.label = new TextView(context);
 		this.label.setMaxLines(1);
 		this.label.setTextColor(Color.BLACK);
@@ -61,7 +62,7 @@ public class UIElement extends TableLayout{
 		if (!(nodeDef instanceof EntityDefinition)&& !(nodeDef.isMultiple()))
 			this.addView(this.label);
 		
-		this.form = (FormScreen)context;
+		
 		
 		this.container = new LinearLayout(context);
 		//this.container.setLayoutParams(new LayoutParams(ViewGroup.LayoutParams.FILL_PARENT, getResources().getInteger(R.integer.field_height)));

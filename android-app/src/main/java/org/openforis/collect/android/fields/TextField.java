@@ -37,7 +37,7 @@ public class TextField extends InputField {
 	    });
 		this.txtBox = new EditText(context);
 		//this.setHint(hintText);
-		this.txtBox.setLayoutParams(new LayoutParams(0,ViewGroup.LayoutParams.WRAP_CONTENT,(float) 3));
+		//this.txtBox.setLayoutParams(new LayoutParams(0,ViewGroup.LayoutParams.WRAP_CONTENT,(float) 3));
 		//this.txtBox.setLayoutParams(new LayoutParams(LayoutParams.FILL_PARENT,  getResources().getInteger(R.integer.input_field_height)));
 		this.txtBox.addTextChangedListener(this);
 		this.txtBox.setFilters(new InputFilter[]{new InputFilter.AllCaps()});
