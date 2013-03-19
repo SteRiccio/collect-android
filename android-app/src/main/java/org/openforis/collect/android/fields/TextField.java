@@ -16,6 +16,7 @@ import android.text.InputFilter;
 import android.text.InputType;
 import android.text.method.QwertyKeyListener;
 import android.text.method.TextKeyListener;
+import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
@@ -63,9 +64,7 @@ public class TextField extends InputField {
 				        }
 				    	else {
 				    		txtBox.setInputType(InputType.TYPE_NULL);
-//				    		TextField.this.setKeyboardType(null);
-				    	}
-				    	
+				    	}				    	
 			    	}
 		    	}
 		    }
@@ -76,12 +75,14 @@ public class TextField extends InputField {
 	{
 		if (!isTextChanged)
 			this.txtBox.setText(value);
-
+		
 		Node<? extends NodeDefinition> node = this.findParentEntity(path).get(this.nodeDefinition.getName(), position);
 		if (node!=null){
 			TextAttribute textAtr = (TextAttribute)node;
 			textAtr.setValue(new TextValue(value));
+			//Log.e("TEXTvalueSET",path+"=="+position);
 		} else {
+			//Log.e("TEXTvalueADDED",path+"=="+position);
 			EntityBuilder.addValue(this.findParentEntity(path), this.nodeDefinition.getName(), value, position);	
 		}
 	}

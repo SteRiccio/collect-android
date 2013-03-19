@@ -3,13 +3,17 @@ package org.openforis.collect.android.fields;
 import org.openforis.collect.android.R;
 import org.openforis.collect.android.management.ApplicationManager;
 import org.openforis.collect.android.screens.FormScreen;
+import org.openforis.idm.metamodel.CodeAttributeDefinition;
 import org.openforis.idm.metamodel.EntityDefinition;
 import org.openforis.idm.metamodel.NodeDefinition;
 import org.openforis.idm.metamodel.NodeLabel.Type;
+import org.openforis.idm.model.Code;
 import org.openforis.idm.model.Entity;
+import org.openforis.idm.model.EntityBuilder;
 
 import android.content.Context;
 import android.graphics.Color;
+import android.util.Log;
 import android.widget.LinearLayout;
 import android.widget.TableLayout;
 import android.widget.TextView;
@@ -41,10 +45,8 @@ public class UIElement extends TableLayout{
 		this.isRequired = false;
 		try{
 			if (!this.form.getFormScreenId().equals("")){
-				//if (this.form.getFormScreenId().lastIndexOf(getResources().getString(R.string.valuesSeparator2))>0){
-					Entity parentEntity = (Entity)this.findParentEntity(this.form.getFormScreenId());
-					this.isRequired = parentEntity.isRequired(nodeDef.getName());
-				//}					
+				Entity parentEntity = (Entity)this.findParentEntity(this.form.getFormScreenId());
+				this.isRequired = parentEntity.isRequired(nodeDef.getName());				
 			}	
 		} catch (Exception e){
 
@@ -88,14 +90,17 @@ public class UIElement extends TableLayout{
 			String[] entityPath = path.split(getResources().getString(R.string.valuesSeparator2));
 			try{
 				for (int m=1;m<entityPath.length;m++){
+					
 					String[] instancePath = entityPath[m].split(getResources().getString(R.string.valuesSeparator1));
 					
 					int id = Integer.valueOf(instancePath[0]);
 					int instanceNo = Integer.valueOf(instancePath[1]);
-					parentEntity = (Entity) parentEntity.get(ApplicationManager.getSurvey().getSchema().getDefinitionById(id).getName(), instanceNo);
-				}			
-			} catch (ClassCastException e){
-				
+
+					if (parentEntity.get(ApplicationManager.getSurvey().getSchema().getDefinitionById(id).getName(), instanceNo)!=null)
+						parentEntity = (Entity) parentEntity.get(ApplicationManager.getSurvey().getSchema().getDefinitionById(id).getName(), instanceNo);
+				}
+			} catch (Exception e){
+
 			}
 			return parentEntity;
 		}

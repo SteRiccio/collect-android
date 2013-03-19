@@ -14,10 +14,10 @@ import org.openforis.idm.model.Node;
 
 import android.content.Context;
 import android.graphics.Color;
+import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CheckBox;
-import android.widget.RelativeLayout;
 import android.widget.TableLayout;
 import android.widget.TableRow;
 import android.widget.TextView;
@@ -55,7 +55,12 @@ public class BooleanField extends Field {
 				ArrayList<String> value = new ArrayList<String>();
 				value.add(String.valueOf(chckBox1.isChecked()));
 				value.add(String.valueOf(!chckBox1.isChecked()));
-				BooleanField.this.setValue(BooleanField.form.currInstanceNo, chckBox1.isChecked(), BooleanField.form.getFormScreenId(),true);
+				Log.e("onItemSelected1",BooleanField.form.getFormScreenId()+"=="+BooleanField.form.currInstanceNo+"("+BooleanField.this.currentInstanceNo+")");
+				if (BooleanField.this.nodeDefinition.isMultiple()){
+					BooleanField.this.setValue(BooleanField.form.currInstanceNo, !chckBox2.isChecked(), BooleanField.form.getFormScreenId(), true);	
+				} else {
+					BooleanField.this.setValue(0, !chckBox2.isChecked(), BooleanField.form.getFormScreenId(), true);
+				}
   			}
 	    });		
 		this.label1 = new TextView(context);
@@ -73,7 +78,12 @@ public class BooleanField extends Field {
 					ArrayList<String> value = new ArrayList<String>();
 					value.add(String.valueOf(!chckBox2.isChecked()));
 					value.add(String.valueOf(chckBox2.isChecked()));
-					BooleanField.this.setValue(BooleanField.form.currInstanceNo, !chckBox2.isChecked(), BooleanField.form.getFormScreenId(), true);
+					Log.e("onItemSelected2",BooleanField.form.getFormScreenId()+"=="+BooleanField.form.currInstanceNo+"("+BooleanField.this.currentInstanceNo+")");
+					if (BooleanField.this.nodeDefinition.isMultiple()){
+						BooleanField.this.setValue(BooleanField.form.currInstanceNo, !chckBox2.isChecked(), BooleanField.form.getFormScreenId(), true);	
+					} else {
+						BooleanField.this.setValue(0, !chckBox2.isChecked(), BooleanField.form.getFormScreenId(), true);
+					}					
 	          }
 	    });
 		this.label2 = new TextView(context);
@@ -113,9 +123,12 @@ public class BooleanField extends Field {
 	
 		Node<? extends NodeDefinition> node = this.findParentEntity(path).get(this.nodeDefinition.getName(), position);
 		if (node!=null){
+			Log.e("BOOLvalueSET",path+"=="+position);
 			BooleanAttribute boolAtr = (BooleanAttribute)node;
 			boolAtr.setValue(new BooleanValue(boolValue));
+			
 		} else {
+			Log.e("BOOLvalueADDED",path+"=="+position);
 			EntityBuilder.addValue(this.findParentEntity(path), this.nodeDefinition.getName(), boolValue, position);	
 		}
 	}

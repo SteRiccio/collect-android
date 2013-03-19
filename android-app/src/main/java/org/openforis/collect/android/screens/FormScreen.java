@@ -3,7 +3,6 @@ package org.openforis.collect.android.screens;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.commons.lang3.Range;
 import org.openforis.collect.android.R;
 import org.openforis.collect.android.fields.BooleanField;
 import org.openforis.collect.android.fields.CodeField;
@@ -107,7 +106,7 @@ public class FormScreen extends BaseActivity implements OnClickListener, TextWat
     		
     		this.parentEntitySingleAttribute = this.findParentEntity(this.getFormScreenId());
     		this.parentEntityMultipleAttribute = this.findParentEntity(this.parentFormScreenId);
-    		
+
     		this.currentPictureField = null;
     		this.photoPath = null;
         } catch (Exception e){
@@ -142,8 +141,6 @@ public class FormScreen extends BaseActivity implements OnClickListener, TextWat
         		breadcrumb.setTextSize(getResources().getInteger(R.integer.breadcrumbFontSize));
         		this.ll.addView(breadcrumb);
     		}    		
-    		
-
     		
     		for (int i=0;i<this.fieldsNo;i++){
     			NodeDefinition nodeDef = ApplicationManager.getNodeDefinition(this.startingIntent.getIntExtra(getResources().getString(R.string.attributeId)+i, -1));
@@ -230,6 +227,7 @@ public class FormScreen extends BaseActivity implements OnClickListener, TextWat
 		        				final TextField textField= new TextField(this, nodeDef);
 		        				textField.setOnClickListener(this);
 		        				textField.setId(nodeDef.getId());
+		        				//Log.e("this.parentFormScreenId",nodeDef.getName()+"=="+this.parentFormScreenId);
 		        				textField.setValue(this.currInstanceNo, loadedValue, this.parentFormScreenId,false);
 		        				textField.addTextChangedListener(new TextWatcher(){
 		        			        public void afterTextChanged(Editable s) {        			            
@@ -424,6 +422,7 @@ public class FormScreen extends BaseActivity implements OnClickListener, TextWat
 	        				CodeField codeField = new CodeField(this, nodeDef, codes, options, null);
 	        				codeField.setOnClickListener(this);
 	        				codeField.setId(nodeDef.getId());
+	        				//Log.e("onResume",FormScreen.this.getFormScreenId()+"=="+0);
 	        				codeField.setValue(0, loadedValue, FormScreen.this.getFormScreenId(),false);
 	        				ApplicationManager.putUIElement(codeField.getId(), codeField);
 	        				this.ll.addView(codeField);
@@ -438,6 +437,7 @@ public class FormScreen extends BaseActivity implements OnClickListener, TextWat
 	        				CodeField codeField = new CodeField(this, nodeDef, codes, options, null);
 	        				codeField.setOnClickListener(this);
 	        				codeField.setId(nodeDef.getId());
+	        				//Log.e("onResume",this.parentFormScreenId+"=="+this.currInstanceNo);
 	        				codeField.setValue(this.currInstanceNo, loadedValue, this.parentFormScreenId,false);
 	        				ApplicationManager.putUIElement(codeField.getId(), codeField);
 	        				this.ll.addView(codeField);
@@ -1073,6 +1073,7 @@ public class FormScreen extends BaseActivity implements OnClickListener, TextWat
 		}
 		//Log.e("REFRESHING",this.getFormScreenId()+"currentInstanceNo"+this.currInstanceNo);
 		//refreshing values of fields in the entity 
+		//Log.e("REFRESHINGentity","=="+this.getFormScreenId());
 		Entity parentEntity = this.findParentEntity(this.getFormScreenId());
 		if (parentEntity!=null){
 			//Log.e("REFRESHING",parentEntity.getIndex()+"parentEntity"+parentEntity.getName());
@@ -1137,8 +1138,11 @@ public class FormScreen extends BaseActivity implements OnClickListener, TextWat
 							if (codeValue.getCode()!=null)
 								loadedValue = codeValue.getCode();
 						CodeField codeField = (CodeField) ApplicationManager.getUIElement(nodeDef.getId());
-						if (codeField!=null)
+						if (codeField!=null){
+							//Log.e("refreshENTITY",this.getFormScreenId()+"=="+0);
 							codeField.setValue(0, loadedValue, this.getFormScreenId(), false);
+						}
+							
 					} else if (nodeDef instanceof CoordinateAttributeDefinition){
 						String loadedValueLat = "";
 						String loadedValueLon = "";
@@ -1277,8 +1281,11 @@ public class FormScreen extends BaseActivity implements OnClickListener, TextWat
 							if (codeValue.getCode()!=null)
 								loadedValue = codeValue.getCode();
 						CodeField codeField = (CodeField) ApplicationManager.getUIElement(nodeDef.getId());
-						if (codeField!=null)
+						if (codeField!=null){
+							//Log.e("refreshENTITYnull",this.getFormScreenId()+"=="+0);
 							codeField.setValue(0, loadedValue, this.getFormScreenId(), false);
+						}
+							
 					} else if (nodeDef instanceof CoordinateAttributeDefinition){
 						String loadedValueLat = "";
 						String loadedValueLon = "";
@@ -1366,8 +1373,8 @@ public class FormScreen extends BaseActivity implements OnClickListener, TextWat
 		} else {
 			this.currInstanceNo++;
 		}
-		
-		//Entity parentEntity = this.findParentEntity(this.parentFormScreenId);
+		//Log.e("REFRESHINGentity","=="+this.parentFormScreenId);
+		///Entity parentEntity = this.findParentEntity(this.parentFormScreenId);
 		Entity parentEntity = this.parentEntityMultipleAttribute;
 		if (parentEntity!=null){
 			NodeDefinition nodeDef = ApplicationManager.getNodeDefinition(this.startingIntent.getIntExtra(getResources().getString(R.string.attributeId)+0, -1));
@@ -1423,8 +1430,10 @@ public class FormScreen extends BaseActivity implements OnClickListener, TextWat
 					if (codeValue!=null)
 						loadedValue = codeValue.getCode();
 					CodeField codeField = (CodeField) ApplicationManager.getUIElement(nodeDef.getId());
-					if (codeField!=null)
+					if (codeField!=null){
+						//Log.e("refreshMULTattr",this.getFormScreenId()+"=="+this.currInstanceNo);
 						codeField.setValue(this.currInstanceNo, loadedValue, this.getFormScreenId(), false);
+					}						
 				} else if (nodeDef instanceof CoordinateAttributeDefinition){
 					String loadedValueLat = "";
 					String loadedValueLon = "";
@@ -1511,8 +1520,8 @@ public class FormScreen extends BaseActivity implements OnClickListener, TextWat
 		}
 	}
 	
-    public void startCamera(/*Context context, */PhotoField photoField){
-		Intent cameraIntent = new Intent(this/*context*/, CameraScreen.class); 
+    public void startCamera(PhotoField photoField){
+		Intent cameraIntent = new Intent(this, CameraScreen.class); 
 		this.startActivityForResult(cameraIntent,getResources().getInteger(R.integer.cameraStarted));
 	}
     

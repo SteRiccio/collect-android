@@ -11,11 +11,8 @@ import org.openforis.idm.model.Code;
 import org.openforis.idm.model.CodeAttribute;
 import org.openforis.idm.model.EntityBuilder;
 import org.openforis.idm.model.Node;
-import org.openforis.idm.model.TextAttribute;
-import org.openforis.idm.model.TextValue;
 
 import android.content.Context;
-import android.text.InputFilter;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
@@ -92,8 +89,13 @@ public class CodeField extends InputField {
 			    public void onItemSelected(AdapterView<?> parentView, View selectedItemView, int position, long id) {
 			    	ArrayList<String> valueToAdd = new ArrayList<String>();
 			    	valueToAdd.add(CodeField.this.codes.get((CodeField.this.spinner.getSelectedItemPosition())));
-
-			    	CodeField.this.setValue(0, CodeField.this.codes.get(CodeField.this.spinner.getSelectedItemPosition()),CodeField.form.getFormScreenId(),true);
+			    	//Log.e("onItemSelected",CodeField.form.getFormScreenId()+"=="+CodeField.this.currentInstanceNo+"("+CodeField.form.currInstanceNo+")");
+			    	if (CodeField.this.nodeDefinition.isMultiple()){
+			    		CodeField.this.setValue(CodeField.form.currInstanceNo, CodeField.this.codes.get(CodeField.this.spinner.getSelectedItemPosition()),CodeField.form.getFormScreenId(),true);	
+			    	} else {
+			    		CodeField.this.setValue(0, CodeField.this.codes.get(CodeField.this.spinner.getSelectedItemPosition()),CodeField.form.getFormScreenId(),true);
+			    	}			    	
+			    	
 			    	if (!CodeField.this.selectedForTheFirstTime){
 						
 			    	} else {
@@ -152,12 +154,14 @@ public class CodeField extends InputField {
 			if (!isSelectionChanged)
 				this.txtBox.setText(code);
 		}
-		
+
 		Node<? extends NodeDefinition> node = this.findParentEntity(path).get(this.nodeDefinition.getName(), position);
 		if (node!=null){
 			CodeAttribute codeAtr = (CodeAttribute)node;
 			codeAtr.setValue(new Code(code));
+			//Log.e("CODEvalueSET",path+"=="+position);
 		} else {
+			//Log.e("CODEvalueADDED",path+"=="+position);
 			EntityBuilder.addValue(this.findParentEntity(path), this.nodeDefinition.getName(), new Code(code), position);	
 		}
 	}
