@@ -4,14 +4,19 @@ import java.util.ArrayList;
 import java.util.Map;
 
 import org.openforis.collect.android.R;
-import org.openforis.collect.android.dialogs.SearchTaxonActivity;
 import org.openforis.collect.android.management.ApplicationManager;
+import org.openforis.collect.android.misc.SearchTaxonActivity;
 import org.openforis.collect.android.screens.FormScreen;
 import org.openforis.idm.metamodel.NodeDefinition;
+import org.openforis.idm.model.EntityBuilder;
+import org.openforis.idm.model.Node;
+import org.openforis.idm.model.TaxonAttribute;
+import org.openforis.idm.model.TaxonOccurrence;
 
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Color;
+import android.text.Editable;
 import android.text.InputType;
 import android.text.method.QwertyKeyListener;
 import android.text.method.TextKeyListener;
@@ -23,7 +28,7 @@ import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-public class TaxonField extends Field {
+public class TaxonField extends InputField {
 	
 	private TextView codeLabel;
 	private TextView sciNameLabel;
@@ -356,13 +361,23 @@ public class TaxonField extends Field {
 //		this.txtBox.setHint(value);
 	}
 	
-	public void setValue(int position, String code, String sciName, String vernName, String vernLang, String langVariant){
+	public void setValue(int position, String code, String sciName, String vernName, String vernLang, String langVariant, String path, boolean isTextChanged){
 		//Set text to textboxes
-		this.txtCodes.setText(code);
-		this.txtSciName.setText(sciName);
-		this.txtVernacularName.setText(vernName);
-		this.txtVernacularLang.setText(vernLang);
-		this.txtLangVariant.setText(langVariant);
+		if (!isTextChanged){
+			this.txtCodes.setText(code);
+			this.txtSciName.setText(sciName);
+			this.txtVernacularName.setText(vernName);
+			this.txtVernacularLang.setText(vernLang);
+			this.txtLangVariant.setText(langVariant);
+		}
+		
+		Node<? extends NodeDefinition> node = this.findParentEntity(path).get(this.nodeDefinition.getName(), position);
+		if (node!=null){
+			TaxonAttribute taxontAtr = (TaxonAttribute)node;
+			taxontAtr.setValue(new TaxonOccurrence(code, sciName, vernName, vernLang, langVariant));
+		} else {
+			EntityBuilder.addValue(this.findParentEntity(path), this.nodeDefinition.getName(), new TaxonOccurrence(code, sciName, vernName, vernLang, langVariant), position);	
+		}
 	}
 
 	private void startSearchScreen(String strContent, String strCriteria){
@@ -372,8 +387,7 @@ public class TaxonField extends Field {
 		searchTaxonIntent.putExtra("criteria", strCriteria);
 		searchTaxonIntent.putExtra("taxonId", taxonId);
 		searchTaxonIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-    	super.getContext().startActivity(searchTaxonIntent);			
-		
+    	super.getContext().startActivity(searchTaxonIntent);	
 	}
 	
 	public void setFieldsLabelsTextColor(int color){
@@ -382,5 +396,10 @@ public class TaxonField extends Field {
 		this.venacNamesLabel.setTextColor(color);
 		this.venacLangLabel.setTextColor(color);
 		this.langVariantLabel.setTextColor(color);
+	}
+	
+	@Override
+	public void afterTextChanged(Editable s) {
+		this.setValue(0, TaxonField.this.txtCodes.getText().toString(), TaxonField.this.txtSciName.getText().toString(), TaxonField.this.txtVernacularName.getText().toString(), TaxonField.this.txtVernacularLang.getText().toString(), TaxonField.this.txtLangVariant.getText().toString(), TaxonField.form.getFormScreenId(), true);
 	}
 }

@@ -47,9 +47,9 @@ import org.openforis.idm.model.IntegerValue;
 import org.openforis.idm.model.Node;
 import org.openforis.idm.model.RealRange;
 import org.openforis.idm.model.RealValue;
+import org.openforis.idm.model.TaxonOccurrence;
 import org.openforis.idm.model.TextValue;
 import org.openforis.idm.model.Time;
-import org.openforis.idm.model.species.Taxon;
 
 import android.content.Intent;
 import android.graphics.Color;
@@ -744,33 +744,45 @@ public class FormScreen extends BaseActivity implements OnClickListener, TextWat
 	    					options.add(codeListItem.getLabel(null));
 	    				}*/
 	    				
-	    				loadedValue = "";
+	    				String code = "";
+	    				String sciName = "";
+	    				String vernName = "";
+	    				String vernLang = "";
+	    				String langVariant = "";
 	    				if (!nodeDef.isMultiple()){
 	    					Node<?> foundNode = this.parentEntitySingleAttribute.get(nodeDef.getName(), 0);
 		    				if (foundNode!=null){
-		    					Taxon taxonValue = (Taxon)this.parentEntitySingleAttribute.getValue(nodeDef.getName(), 0);
+		    					TaxonOccurrence taxonValue = (TaxonOccurrence)this.parentEntitySingleAttribute.getValue(nodeDef.getName(), 0);
 		    					if (taxonValue!=null){
-		    						//TBI!!!	
+		    						code = taxonValue.getCode();
+		    	    				sciName = taxonValue.getScientificName();
+		    	    				vernName = taxonValue.getVernacularName();
+		    	    				vernLang = taxonValue.getLanguageCode();
+		    	    				langVariant = taxonValue.getLanguageVariety();
 		    					}	    				
 		    				}
 	        				final TaxonField taxonField= new TaxonField(this, nodeDef, codes, options, null);
 	        				taxonField.setOnClickListener(this);
 	        				taxonField.setId(nodeDef.getId());
-	        				//taxonField.setValue(0, loadedValue, FormScreen.this.getFormScreenId(),false);
+	        				taxonField.setValue(0, code, sciName, vernName, vernLang, langVariant, FormScreen.this.getFormScreenId(),false);
 	        				ApplicationManager.putUIElement(taxonField.getId(), taxonField);
 	        				this.ll.addView(taxonField);
 	    				} else if (this.intentType==getResources().getInteger(R.integer.multipleAttributeIntent)){
 	    					Node<?> foundNode = this.parentEntityMultipleAttribute.get(nodeDef.getName(), this.currInstanceNo);
 		    				if (foundNode!=null){
-		    					Taxon taxonValue = (Taxon)this.parentEntityMultipleAttribute.getValue(nodeDef.getName(), this.currInstanceNo);
+		    					TaxonOccurrence taxonValue = (TaxonOccurrence)this.parentEntityMultipleAttribute.getValue(nodeDef.getName(), this.currInstanceNo);
 		    					if (taxonValue!=null){
-		    								    						
+		    						code = taxonValue.getCode();
+		    	    				sciName = taxonValue.getScientificName();
+		    	    				vernName = taxonValue.getVernacularName();
+		    	    				vernLang = taxonValue.getLanguageCode();
+		    	    				langVariant = taxonValue.getLanguageVariety();	    						
 		    					}	   				
 		    				}
 		    				final TaxonField taxonField= new TaxonField(this, nodeDef, codes, options, null);
 		    				taxonField.setOnClickListener(this);
 		    				taxonField.setId(nodeDef.getId());
-		    				//taxonField.setValue(this.currInstanceNo, loadedValue, this.parentFormScreenId,false);
+		    				taxonField.setValue(this.currInstanceNo, code, sciName, vernName, vernLang, langVariant, this.parentFormScreenId,false);
 	        				ApplicationManager.putUIElement(taxonField.getId(), taxonField);
 	        				this.ll.addView(taxonField);
 	    				} else {//multiple attribute summary    			    		
@@ -1213,7 +1225,22 @@ public class FormScreen extends BaseActivity implements OnClickListener, TextWat
 						if (timeField!=null)
 							timeField.setValue(0, hour+getResources().getString(R.string.timeSeparator)+minute, this.getFormScreenId(), false);					
 					} else if (nodeDef instanceof TaxonAttributeDefinition){
-						
+	    				String code = "";
+	    				String sciName = "";
+	    				String vernName = "";
+	    				String vernLang = "";
+	    				String langVariant = "";
+						TaxonOccurrence taxonValue = (TaxonOccurrence)this.parentEntityMultipleAttribute.getValue(nodeDef.getName(), this.currInstanceNo);
+    					if (taxonValue!=null){
+    						code = taxonValue.getCode();
+    	    				sciName = taxonValue.getScientificName();
+    	    				vernName = taxonValue.getVernacularName();
+    	    				vernLang = taxonValue.getLanguageCode();
+    	    				langVariant = taxonValue.getLanguageVariety();	    						
+    					}
+    					TaxonField taxonField = (TaxonField) ApplicationManager.getUIElement(nodeDef.getId());
+						if (taxonField!=null)
+							taxonField.setValue(0, code, sciName, vernName, vernLang, langVariant, this.getFormScreenId(), false);
 					} else if (nodeDef instanceof FileAttributeDefinition){
 						
 					}
@@ -1354,7 +1381,22 @@ public class FormScreen extends BaseActivity implements OnClickListener, TextWat
 						if (timeField!=null)
 							timeField.setValue(0, hour+getResources().getString(R.string.timeSeparator)+minute, this.getFormScreenId(), false);					
 					} else if (nodeDef instanceof TaxonAttributeDefinition){
-						
+						String code = "";
+	    				String sciName = "";
+	    				String vernName = "";
+	    				String vernLang = "";
+	    				String langVariant = "";
+						TaxonOccurrence taxonValue = (TaxonOccurrence)this.parentEntityMultipleAttribute.getValue(nodeDef.getName(), this.currInstanceNo);
+    					if (taxonValue!=null){
+    						code = taxonValue.getCode();
+    	    				sciName = taxonValue.getScientificName();
+    	    				vernName = taxonValue.getVernacularName();
+    	    				vernLang = taxonValue.getLanguageCode();
+    	    				langVariant = taxonValue.getLanguageVariety();	    						
+    					}
+    					TaxonField taxonField = (TaxonField) ApplicationManager.getUIElement(nodeDef.getId());
+						if (taxonField!=null)
+							taxonField.setValue(0, code, sciName, vernName, vernLang, langVariant, this.getFormScreenId(), false);
 					} else if (nodeDef instanceof FileAttributeDefinition){
 						
 					}
@@ -1512,7 +1554,22 @@ public class FormScreen extends BaseActivity implements OnClickListener, TextWat
 					if (timeField!=null)
 						timeField.setValue(this.currInstanceNo, hour+getResources().getString(R.string.timeSeparator)+minute, this.getFormScreenId(), false);					
 				} else if (nodeDef instanceof TaxonAttributeDefinition){
-					
+					String code = "";
+    				String sciName = "";
+    				String vernName = "";
+    				String vernLang = "";
+    				String langVariant = "";
+					TaxonOccurrence taxonValue = (TaxonOccurrence)this.parentEntityMultipleAttribute.getValue(nodeDef.getName(), this.currInstanceNo);
+					if (taxonValue!=null){
+						code = taxonValue.getCode();
+	    				sciName = taxonValue.getScientificName();
+	    				vernName = taxonValue.getVernacularName();
+	    				vernLang = taxonValue.getLanguageCode();
+	    				langVariant = taxonValue.getLanguageVariety();	    						
+					}
+					TaxonField taxonField = (TaxonField) ApplicationManager.getUIElement(nodeDef.getId());
+					if (taxonField!=null)
+						taxonField.setValue(this.currInstanceNo, code, sciName, vernName, vernLang, langVariant, this.getFormScreenId(), false);
 				} else if (nodeDef instanceof FileAttributeDefinition){
 					
 				}
@@ -1529,7 +1586,6 @@ public class FormScreen extends BaseActivity implements OnClickListener, TextWat
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {    	
 	    super.onActivityResult(requestCode, resultCode, data);
 	    try{
-	    	//Log.e("request="+requestCode,"result="+resultCode);
 	 	    if (requestCode==getResources().getInteger(R.integer.cameraStarted)){
 	 	    	if (resultCode==getResources().getInteger(R.integer.photoTaken)){
 	 	    		photoPath = data.getStringExtra(getResources().getString(R.string.photoPath));

@@ -194,7 +194,6 @@ public class CoordinateField extends InputField {
 	
 	@Override
 	public void afterTextChanged(Editable s) {
-		//Check if value is numeric
 		this.setValue(0, CoordinateField.this.txtLongitude.getText().toString(), CoordinateField.this.txtLatitude.getText().toString(), CoordinateField.form.getFormScreenId(),true);
 	}
 	
