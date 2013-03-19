@@ -910,7 +910,7 @@ public class FormScreen extends BaseActivity implements OnClickListener, TextWat
 	private Intent prepareIntentForNewScreen(SummaryList summaryList){
 		Intent intent = new Intent(this,FormScreen.class);
 		if (!this.breadcrumb.equals("")){
-			intent.putExtra(getResources().getString(R.string.breadcrumb), this.breadcrumb+getResources().getString(R.string.breadcrumbSeparator)+summaryList.getTitle());	
+			intent.putExtra(getResources().getString(R.string.breadcrumb), this.breadcrumb+getResources().getString(R.string.breadcrumbSeparator)+summaryList.getTitle()+" "+(this.currInstanceNo+1));	
 		} else {
 			intent.putExtra(getResources().getString(R.string.breadcrumb), summaryList.getTitle());
 		}
