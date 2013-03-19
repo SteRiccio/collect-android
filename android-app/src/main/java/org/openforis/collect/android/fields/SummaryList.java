@@ -20,10 +20,10 @@ import org.openforis.idm.model.File;
 import org.openforis.idm.model.IntegerRange;
 import org.openforis.idm.model.NumberValue;
 import org.openforis.idm.model.RealRange;
+import org.openforis.idm.model.TaxonOccurrence;
 import org.openforis.idm.model.TextValue;
 import org.openforis.idm.model.Time;
 import org.openforis.idm.model.Value;
-import org.openforis.idm.model.species.Taxon;
 
 import android.content.Context;
 import android.graphics.Color;
@@ -279,8 +279,28 @@ public class SummaryList extends UIElement {
 				if (timeValue.getMinute()!=null)
 					minute = timeValue.getMinute().toString();
 				valueToReturn = hour+getResources().getString(R.string.timeSeparator)+minute;
-			} else if (value instanceof Taxon){
-				
+			} else if (value instanceof TaxonOccurrence){
+				TaxonOccurrence taxonValue = (TaxonOccurrence)value;
+				String code = "";
+				String sciName = "";
+				String vernName = "";
+				String vernLang = "";
+				String langVariant = "";
+				if (taxonValue.getCode()!=null)
+					code = taxonValue.getCode();
+				if (taxonValue.getScientificName()!=null)
+					sciName = taxonValue.getScientificName();
+				if (taxonValue.getVernacularName()!=null)
+					vernName = taxonValue.getVernacularName();
+				if (taxonValue.getLanguageCode()!=null)
+					vernLang = taxonValue.getLanguageCode();
+				if (taxonValue.getLanguageVariety()!=null)
+					langVariant = taxonValue.getLanguageVariety();
+				valueToReturn = code+getResources().getString(R.string.taxonSeparator)+
+						sciName+getResources().getString(R.string.taxonSeparator)+
+						vernName+getResources().getString(R.string.taxonSeparator)+
+						vernLang+getResources().getString(R.string.taxonSeparator)+
+						langVariant;
 			} else if (value instanceof File){
 				File fileValue = (File)value;
 				if (fileValue.getFilename()!=null)

@@ -16,7 +16,6 @@ import android.text.InputFilter;
 import android.text.InputType;
 import android.text.method.QwertyKeyListener;
 import android.text.method.TextKeyListener;
-import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
@@ -80,9 +79,7 @@ public class TextField extends InputField {
 		if (node!=null){
 			TextAttribute textAtr = (TextAttribute)node;
 			textAtr.setValue(new TextValue(value));
-			//Log.e("TEXTvalueSET",path+"=="+position);
 		} else {
-			//Log.e("TEXTvalueADDED",path+"=="+position);
 			EntityBuilder.addValue(this.findParentEntity(path), this.nodeDefinition.getName(), value, position);	
 		}
 	}

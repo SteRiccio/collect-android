@@ -63,11 +63,11 @@ public class TaxonField extends InputField {
 		this.codeLabel.setText("Code");
 		this.codeLabel.setTextColor(Color.BLACK);
 
-		this.codeLabel.setLayoutParams(new LayoutParams(0, ViewGroup.LayoutParams.WRAP_CONTENT, (float) 1));
+		//this.codeLabel.setLayoutParams(new LayoutParams(0, ViewGroup.LayoutParams.WRAP_CONTENT, (float) 1));
 		//Add text field where user can type a code
 		this.txtCodes = new EditText(context);
 		this.txtCodes.setText(""/*initialText[0]*/);
-		this.txtCodes.setLayoutParams(new LayoutParams(0, ViewGroup.LayoutParams.WRAP_CONTENT, (float) 3));
+		//this.txtCodes.setLayoutParams(new LayoutParams(0, ViewGroup.LayoutParams.WRAP_CONTENT, (float) 3));
 
 		// When txtCode gets focus
 		this.txtCodes.setOnFocusChangeListener(new OnFocusChangeListener() {
@@ -94,7 +94,7 @@ public class TaxonField extends InputField {
 		//Button "Search By Code"
 		this.btnSearchByCode = new Button(context);
 		this.btnSearchByCode.setText("Search");
-		this.btnSearchByCode.setLayoutParams(new LayoutParams(0, ViewGroup.LayoutParams.WRAP_CONTENT, (float) 1));
+		//this.btnSearchByCode.setLayoutParams(new LayoutParams(0, ViewGroup.LayoutParams.WRAP_CONTENT, (float) 1));
 		this.btnSearchByCode.setOnClickListener(new OnClickListener(){
 			@Override
 			public void onClick(View arg0) {
@@ -129,11 +129,11 @@ public class TaxonField extends InputField {
 		this.sciNameLabel.setMaxLines(1);
 		this.sciNameLabel.setTextColor(Color.BLACK);
 		this.sciNameLabel.setText("Scientific names");
-		this.sciNameLabel.setLayoutParams(new LayoutParams(0, ViewGroup.LayoutParams.WRAP_CONTENT, (float) 1));
+		//this.sciNameLabel.setLayoutParams(new LayoutParams(0, ViewGroup.LayoutParams.WRAP_CONTENT, (float) 1));
 		//Add text box for scientific names
 		this.txtSciName = new EditText(context);
 		this.txtSciName.setText(""/*initialText[1]*/);	
-		this.txtSciName.setLayoutParams(new LayoutParams(0, ViewGroup.LayoutParams.WRAP_CONTENT, (float) 3));
+		//this.txtSciName.setLayoutParams(new LayoutParams(0, ViewGroup.LayoutParams.WRAP_CONTENT, (float) 3));
 
 		// When txtSciName gets focus
 		this.txtSciName.setOnFocusChangeListener(new OnFocusChangeListener() {
@@ -160,7 +160,7 @@ public class TaxonField extends InputField {
 		//Button "Search By Scientific names"
 		this.btnSearchBySciName = new Button(context);
 		this.btnSearchBySciName.setText("Search");
-		this.btnSearchBySciName.setLayoutParams(new LayoutParams(0, ViewGroup.LayoutParams.WRAP_CONTENT, (float) 1));
+		//this.btnSearchBySciName.setLayoutParams(new LayoutParams(0, ViewGroup.LayoutParams.WRAP_CONTENT, (float) 1));
 		this.btnSearchBySciName.setOnClickListener(new OnClickListener(){
 			@Override
 			public void onClick(View arg0) {
@@ -195,12 +195,12 @@ public class TaxonField extends InputField {
 		this.venacNamesLabel.setMaxLines(1);
 		this.venacNamesLabel.setTextColor(Color.BLACK);
 		this.venacNamesLabel.setText("Vernacular name");
-		this.venacNamesLabel.setLayoutParams(new LayoutParams(0, ViewGroup.LayoutParams.WRAP_CONTENT, (float) 1));
+		//this.venacNamesLabel.setLayoutParams(new LayoutParams(0, ViewGroup.LayoutParams.WRAP_CONTENT, (float) 1));
 		//Add textbox for vernacular names
 		this.txtVernacularName = new EditText(context);
 
 		this.txtVernacularName.setText(""/*initialText[2]*/);		
-		this.txtVernacularName.setLayoutParams(new LayoutParams(0, ViewGroup.LayoutParams.WRAP_CONTENT, (float) 3));
+		//this.txtVernacularName.setLayoutParams(new LayoutParams(0, ViewGroup.LayoutParams.WRAP_CONTENT, (float) 3));
 
 		// When txtVernacularName gets focus
 		this.txtVernacularName.setOnFocusChangeListener(new OnFocusChangeListener() {
@@ -227,7 +227,7 @@ public class TaxonField extends InputField {
 		//Button "Search By Vernacular names"
 		this.btnSearchByVernName = new Button(context);
 		this.btnSearchByVernName.setText("Search");
-		this.btnSearchByVernName.setLayoutParams(new LayoutParams(0, ViewGroup.LayoutParams.WRAP_CONTENT, (float) 1));
+		//this.btnSearchByVernName.setLayoutParams(new LayoutParams(0, ViewGroup.LayoutParams.WRAP_CONTENT, (float) 1));
 		this.btnSearchByVernName.setOnClickListener(new OnClickListener(){
 			@Override
 			public void onClick(View arg0) {
@@ -261,11 +261,11 @@ public class TaxonField extends InputField {
 		this.venacLangLabel.setMaxLines(1);
 		this.venacLangLabel.setTextColor(Color.BLACK);
 		this.venacLangLabel.setText("Vernacular language");			
-		this.venacLangLabel.setLayoutParams(new LayoutParams(0, ViewGroup.LayoutParams.WRAP_CONTENT, (float) 2));
+		//this.venacLangLabel.setLayoutParams(new LayoutParams(0, ViewGroup.LayoutParams.WRAP_CONTENT, (float) 2));
 		//Add text box for vernacular languages
 		this.txtVernacularLang = new EditText(context);
 		this.txtVernacularLang.setText(""/*initialText[3]*/);
-		this.txtVernacularLang.setLayoutParams(new LayoutParams(0, ViewGroup.LayoutParams.WRAP_CONTENT, (float) 3));
+		//this.txtVernacularLang.setLayoutParams(new LayoutParams(0, ViewGroup.LayoutParams.WRAP_CONTENT, (float) 3));
 		// When txtLangVariant gets focus
 		this.txtVernacularLang.setOnFocusChangeListener(new OnFocusChangeListener() {
 		    @Override
@@ -298,11 +298,11 @@ public class TaxonField extends InputField {
 		this.langVariantLabel.setMaxLines(1);
 		this.langVariantLabel.setTextColor(Color.BLACK);
 		this.langVariantLabel.setText("Language variant");	
-		this.langVariantLabel.setLayoutParams(new LayoutParams(0, ViewGroup.LayoutParams.WRAP_CONTENT, (float) 2));
+		//this.langVariantLabel.setLayoutParams(new LayoutParams(0, ViewGroup.LayoutParams.WRAP_CONTENT, (float) 2));
 		//Add textbox for language variants
 		this.txtLangVariant = new EditText(context);
 		this.txtLangVariant.setText(""/*initialText[4]*/);	
-		this.txtLangVariant.setLayoutParams(new LayoutParams(0, ViewGroup.LayoutParams.WRAP_CONTENT, (float) 3));
+		//this.txtLangVariant.setLayoutParams(new LayoutParams(0, ViewGroup.LayoutParams.WRAP_CONTENT, (float) 3));
 		// When txtLangVariant gets focus
 		this.txtLangVariant.setOnFocusChangeListener(new OnFocusChangeListener() {
 		    @Override
