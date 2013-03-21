@@ -738,11 +738,6 @@ public class FormScreen extends BaseActivity implements OnClickListener, TextWat
 	    				ArrayList<String> codes = new ArrayList<String>();
 	    				options.add("");
 	    				codes.add("null");
-	    				/*List<CodeListItem> codeListItemsList = taxonAttrDef.getTaxonomy().getItems();
-	    				for (CodeListItem codeListItem : codeListItemsList){
-	    					codes.add(codeListItem.getCode());
-	    					options.add(codeListItem.getLabel(null));
-	    				}*/
 	    				
 	    				String code = "";
 	    				String sciName = "";
@@ -846,18 +841,27 @@ public class FormScreen extends BaseActivity implements OnClickListener, TextWat
     			}    				
     		}
 			if (this.intentType==getResources().getInteger(R.integer.multipleAttributeIntent)){
-				//Log.e("multiple","ATTRIBUTE");
 				this.ll.addView(arrangeButtonsInLine(new Button(this),getResources().getString(R.string.previousInstanceButton),new Button(this),getResources().getString(R.string.nextInstanceButton),this, false));
 			} else if (this.intentType==getResources().getInteger(R.integer.multipleEntityIntent)){ 				
 				if (ApplicationManager.currentRecord.getRootEntity().getId()!=this.idmlId){
-					//Log.e("multiple","ENTITY");
 					this.ll.addView(arrangeButtonsInLine(new Button(this),getResources().getString(R.string.previousInstanceButton),new Button(this),getResources().getString(R.string.nextInstanceButton),this, true));
 				}	
 			}
     		setContentView(this.sv);
 			
 			int backgroundColor = ApplicationManager.appPreferences.getInt(getResources().getString(R.string.backgroundColor), Color.WHITE);		
-    		changeBackgroundColor(backgroundColor);    		
+    		changeBackgroundColor(backgroundColor);
+    		
+            this.sv.post(new Runnable() {
+                public void run() {
+                	if (ApplicationManager.selectedView!=null){
+                		if (ApplicationManager.isToBeScrolled){
+                			sv.scrollTo(0, ApplicationManager.selectedView.getTop());
+                        	ApplicationManager.isToBeScrolled = false;	
+                		}
+                	}
+                }
+            });
 		} catch (Exception e){
     		RunnableHandler.reportException(e,getResources().getString(R.string.app_name),TAG+":onResume",
     				Environment.getExternalStorageDirectory().toString()
@@ -871,6 +875,17 @@ public class FormScreen extends BaseActivity implements OnClickListener, TextWat
     @Override
     public void onPause(){    
 		Log.i(getResources().getString(R.string.app_name),TAG+":onPause");
+		if (ApplicationManager.selectedView instanceof SummaryTable){
+			SummaryTable temp = (SummaryTable)ApplicationManager.selectedView;
+			if (this.idmlId==temp.nodeDefinition.getId()){
+				ApplicationManager.isToBeScrolled = true;	
+			}
+		} else if (ApplicationManager.selectedView instanceof SummaryList){
+			SummaryList temp = (SummaryList)ApplicationManager.selectedView;
+			if (this.idmlId==temp.nodeDefinition.getId()){
+				ApplicationManager.isToBeScrolled = true;	
+			}
+		}
 		super.onPause();
     }
 	
@@ -899,11 +914,16 @@ public class FormScreen extends BaseActivity implements OnClickListener, TextWat
 			Object parentView = arg0.getParent().getParent().getParent().getParent();
 			if (parentView instanceof SummaryList){
 				SummaryList temp = (SummaryList)arg0.getParent().getParent().getParent().getParent();
+				ApplicationManager.selectedView = temp;
+				ApplicationManager.isToBeScrolled = false;
 				this.startActivity(this.prepareIntentForNewScreen(temp));				
 			} else if (parentView instanceof SummaryTable){
 				SummaryTable temp = (SummaryTable)parentView;
+				ApplicationManager.selectedView = temp;
+				ApplicationManager.isToBeScrolled = false;
 				this.startActivity(this.prepareIntentForMultipleField(temp, tv.getId(), temp.getValues()));
-			}			
+			}
+			
 		}
 	}
 	

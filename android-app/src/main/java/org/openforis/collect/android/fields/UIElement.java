@@ -28,7 +28,7 @@ public class UIElement extends TableLayout{
 	
 	protected int elemId;	
 	
-	protected NodeDefinition nodeDefinition;
+	public NodeDefinition nodeDefinition;
 	
 	protected FormScreen form;
 	

@@ -48,6 +48,7 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.util.Log;
 import android.view.KeyEvent;
+import android.view.View;
 
 public class ApplicationManager extends BaseActivity {
 	
@@ -70,6 +71,8 @@ public class ApplicationManager extends BaseActivity {
 	
 	public static CollectRecord currentRecord;
 	public static int currRootEntityId;
+	public static View selectedView;
+	public static boolean isToBeScrolled;
 	
 	public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -83,6 +86,8 @@ public class ApplicationManager extends BaseActivity {
             
             ApplicationManager.currentRecord = null;
             ApplicationManager.currRootEntityId = -1;
+            ApplicationManager.selectedView = null;
+            ApplicationManager.isToBeScrolled = false;
             
             ApplicationManager.appPreferences = getPreferences(MODE_PRIVATE);
 			int backgroundColor = ApplicationManager.appPreferences.getInt(getResources().getString(R.string.backgroundColor), Color.WHITE);
