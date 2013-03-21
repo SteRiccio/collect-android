@@ -39,6 +39,7 @@ public class SearchTaxonActivity extends Activity {
 
 	private String content;
 	private String criteria;
+	private String path;
 	private int taxonFieldId;
 	private TaxonManager taxonManager;
 	private String taxonomy;
@@ -67,6 +68,7 @@ public class SearchTaxonActivity extends Activity {
 	    	this.content = extras.getString("content");
 	    	this.criteria = extras.getString("criteria");  
 	    	this.taxonFieldId = extras.getInt("taxonId");
+	    	this.path = extras.getString("path");
 	    	//Set up species manager
 			this.taxonManager = new TaxonManager();
 			this.taxonManager.setTaxonomyDao(new TaxonomyDao());
@@ -232,7 +234,7 @@ public class SearchTaxonActivity extends Activity {
 				// Set textboxes in TaxonField by given values
 				TaxonField parentTaxonField = (TaxonField)ApplicationManager.getUIElement(parentTaxonFieldId);
 				if(parentTaxonField != null){
-					parentTaxonField.setValue(0, arrItemValues[0], arrItemValues[1], arrItemValues[2], arrItemValues[4], arrItemValues[3],"",false);
+					parentTaxonField.setValue(0, arrItemValues[0], arrItemValues[1], arrItemValues[2], arrItemValues[4], arrItemValues[3], SearchTaxonActivity.this.path,false);
 				}
 				else{
 					Log.i(getResources().getString(R.string.app_name), "Parent taxon field is: NULL");

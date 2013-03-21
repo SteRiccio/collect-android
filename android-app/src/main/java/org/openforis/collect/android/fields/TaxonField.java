@@ -396,6 +396,7 @@ public class TaxonField extends InputField {
 		searchTaxonIntent.putExtra("content", strContent);
 		searchTaxonIntent.putExtra("criteria", strCriteria);
 		searchTaxonIntent.putExtra("taxonId", taxonId);
+		searchTaxonIntent.putExtra("path", TaxonField.form.getFormScreenId());
 		searchTaxonIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
     	super.getContext().startActivity(searchTaxonIntent);	
 	}
