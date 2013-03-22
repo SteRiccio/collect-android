@@ -51,7 +51,9 @@
     <integer name="startingFormScreen">1000</integer>
     <integer name="backButtonPressed">997</integer>
     <integer name="cameraStarted">986</integer>  
-    <integer name="photoTaken">702</integer>    
+    <integer name="internalGpsStarted">985</integer>
+    <integer name="photoTaken">702</integer>
+    <integer name="internalGpsLocationReceived">701</integer>        
    
     <!-- INTENT EXTRAS -->
     <string name="recordId">recordId</string>
@@ -87,6 +89,7 @@
     <string name="timeSeparator">:</string>
     <string name="rangeSeparator">-</string>
     <string name="coordinateSeparator">,</string>
+    <string name="taxonSeparator">,</string>
     
     <!-- ADDITIONAL TEXT MARKERS -->
     <string name="requiredFieldMarker">*</string>

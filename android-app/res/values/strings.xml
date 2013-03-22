@@ -34,6 +34,7 @@
     <string name="okay">OK</string>
     <string name="previousInstanceButton">PREVIOUS</string>
     <string name="nextInstanceButton">NEXT</string>
+    <string name="internalGpsButton">Get from GPS</string>
     
     <!-- images -->
     <string name="faologo">FAO logo</string>
