@@ -64,6 +64,7 @@ public class RangeField extends InputField {
 		    		String strValue = RangeField.this.txtBox.getText().toString();
 		    		if(strValue.contains("-")){
 		    			String[] rangeValues = strValue.split("-");
+		    			Log.i("RANGE NUMBER", "Value is: " + rangeValues[0] + " - " + rangeValues[1]);
 		    			if(!isNumeric(rangeValues[0])){
 		    				Log.i("RANGE FIELD", "Value 'From': " + rangeValues[0] + " is NOT numeric.");
 		    			}
