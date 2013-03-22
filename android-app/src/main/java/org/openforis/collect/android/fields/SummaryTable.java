@@ -3,7 +3,6 @@ package org.openforis.collect.android.fields;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.commons.lang3.Range;
 import org.openforis.collect.android.R;
 import org.openforis.idm.metamodel.BooleanAttributeDefinition;
 import org.openforis.idm.metamodel.CodeAttributeDefinition;
@@ -29,6 +28,7 @@ import org.openforis.idm.model.Node;
 import org.openforis.idm.model.RealAttribute;
 import org.openforis.idm.model.RealRange;
 import org.openforis.idm.model.RealValue;
+import org.openforis.idm.model.TaxonOccurrence;
 import org.openforis.idm.model.TextValue;
 import org.openforis.idm.model.Time;
 
@@ -152,7 +152,16 @@ public class SummaryTable extends UIElement {
 				    newValue.add(loadedValue);
 				    this.values.add(newValue);
 				} else if (nodeDef instanceof TaxonAttributeDefinition){
-					
+					TaxonOccurrence taxonValue = (TaxonOccurrence)parentEntity.getValue(nodeDef.getName(), i);
+					if (taxonValue!=null)
+						loadedValue = taxonValue.getCode()+getResources().getString(R.string.taxonSeparator)+
+						taxonValue.getScientificName()+getResources().getString(R.string.taxonSeparator)+
+						taxonValue.getVernacularName()+getResources().getString(R.string.taxonSeparator)+
+						taxonValue.getLanguageCode()+getResources().getString(R.string.taxonSeparator)+
+						taxonValue.getLanguageVariety();
+				    ArrayList<String> newValue = new ArrayList<String>();
+				    newValue.add(loadedValue);
+				    this.values.add(newValue);
 				} else if (nodeDef instanceof FileAttributeDefinition){
 					File fileValue = (File)parentEntity.getValue(nodeDef.getName(), i);
 					loadedValue = fileValue.getFilename();

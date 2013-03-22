@@ -37,7 +37,7 @@ public class TextField extends InputField {
 	    });
 		this.txtBox = new EditText(context);
 		//this.setHint(hintText);
-		this.txtBox.setLayoutParams(new LayoutParams(0,ViewGroup.LayoutParams.WRAP_CONTENT,(float) 3));
+		//this.txtBox.setLayoutParams(new LayoutParams(0,ViewGroup.LayoutParams.WRAP_CONTENT,(float) 3));
 		//this.txtBox.setLayoutParams(new LayoutParams(LayoutParams.FILL_PARENT,  getResources().getInteger(R.integer.input_field_height)));
 		this.txtBox.addTextChangedListener(this);
 		this.txtBox.setFilters(new InputFilter[]{new InputFilter.AllCaps()});
@@ -63,9 +63,7 @@ public class TextField extends InputField {
 				        }
 				    	else {
 				    		txtBox.setInputType(InputType.TYPE_NULL);
-//				    		TextField.this.setKeyboardType(null);
-				    	}
-				    	
+				    	}				    	
 			    	}
 		    	}
 		    }
@@ -76,7 +74,7 @@ public class TextField extends InputField {
 	{
 		if (!isTextChanged)
 			this.txtBox.setText(value);
-
+		
 		Node<? extends NodeDefinition> node = this.findParentEntity(path).get(this.nodeDefinition.getName(), position);
 		if (node!=null){
 			TextAttribute textAtr = (TextAttribute)node;

@@ -3,7 +3,6 @@ package org.openforis.collect.android.screens;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.commons.lang3.Range;
 import org.openforis.collect.android.R;
 import org.openforis.collect.android.fields.BooleanField;
 import org.openforis.collect.android.fields.CodeField;
@@ -48,9 +47,9 @@ import org.openforis.idm.model.IntegerValue;
 import org.openforis.idm.model.Node;
 import org.openforis.idm.model.RealRange;
 import org.openforis.idm.model.RealValue;
+import org.openforis.idm.model.TaxonOccurrence;
 import org.openforis.idm.model.TextValue;
 import org.openforis.idm.model.Time;
-import org.openforis.idm.model.species.Taxon;
 
 import android.content.Intent;
 import android.graphics.Color;
@@ -107,7 +106,7 @@ public class FormScreen extends BaseActivity implements OnClickListener, TextWat
     		
     		this.parentEntitySingleAttribute = this.findParentEntity(this.getFormScreenId());
     		this.parentEntityMultipleAttribute = this.findParentEntity(this.parentFormScreenId);
-    		
+
     		this.currentPictureField = null;
     		this.photoPath = null;
         } catch (Exception e){
@@ -142,8 +141,6 @@ public class FormScreen extends BaseActivity implements OnClickListener, TextWat
         		breadcrumb.setTextSize(getResources().getInteger(R.integer.breadcrumbFontSize));
         		this.ll.addView(breadcrumb);
     		}    		
-    		
-
     		
     		for (int i=0;i<this.fieldsNo;i++){
     			NodeDefinition nodeDef = ApplicationManager.getNodeDefinition(this.startingIntent.getIntExtra(getResources().getString(R.string.attributeId)+i, -1));
@@ -230,6 +227,7 @@ public class FormScreen extends BaseActivity implements OnClickListener, TextWat
 		        				final TextField textField= new TextField(this, nodeDef);
 		        				textField.setOnClickListener(this);
 		        				textField.setId(nodeDef.getId());
+		        				//Log.e("this.parentFormScreenId",nodeDef.getName()+"=="+this.parentFormScreenId);
 		        				textField.setValue(this.currInstanceNo, loadedValue, this.parentFormScreenId,false);
 		        				textField.addTextChangedListener(new TextWatcher(){
 		        			        public void afterTextChanged(Editable s) {        			            
@@ -424,6 +422,7 @@ public class FormScreen extends BaseActivity implements OnClickListener, TextWat
 	        				CodeField codeField = new CodeField(this, nodeDef, codes, options, null);
 	        				codeField.setOnClickListener(this);
 	        				codeField.setId(nodeDef.getId());
+	        				//Log.e("onResume",FormScreen.this.getFormScreenId()+"=="+0);
 	        				codeField.setValue(0, loadedValue, FormScreen.this.getFormScreenId(),false);
 	        				ApplicationManager.putUIElement(codeField.getId(), codeField);
 	        				this.ll.addView(codeField);
@@ -438,6 +437,7 @@ public class FormScreen extends BaseActivity implements OnClickListener, TextWat
 	        				CodeField codeField = new CodeField(this, nodeDef, codes, options, null);
 	        				codeField.setOnClickListener(this);
 	        				codeField.setId(nodeDef.getId());
+	        				//Log.e("onResume",this.parentFormScreenId+"=="+this.currInstanceNo);
 	        				codeField.setValue(this.currInstanceNo, loadedValue, this.parentFormScreenId,false);
 	        				ApplicationManager.putUIElement(codeField.getId(), codeField);
 	        				this.ll.addView(codeField);
@@ -738,39 +738,46 @@ public class FormScreen extends BaseActivity implements OnClickListener, TextWat
 	    				ArrayList<String> codes = new ArrayList<String>();
 	    				options.add("");
 	    				codes.add("null");
-	    				/*List<CodeListItem> codeListItemsList = taxonAttrDef.getTaxonomy().getItems();
-	    				for (CodeListItem codeListItem : codeListItemsList){
-	    					codes.add(codeListItem.getCode());
-	    					options.add(codeListItem.getLabel(null));
-	    				}*/
 	    				
-	    				loadedValue = "";
+	    				String code = "";
+	    				String sciName = "";
+	    				String vernName = "";
+	    				String vernLang = "";
+	    				String langVariant = "";
 	    				if (!nodeDef.isMultiple()){
 	    					Node<?> foundNode = this.parentEntitySingleAttribute.get(nodeDef.getName(), 0);
 		    				if (foundNode!=null){
-		    					Taxon taxonValue = (Taxon)this.parentEntitySingleAttribute.getValue(nodeDef.getName(), 0);
+		    					TaxonOccurrence taxonValue = (TaxonOccurrence)this.parentEntitySingleAttribute.getValue(nodeDef.getName(), 0);
 		    					if (taxonValue!=null){
-		    						//TBI!!!	
+		    						code = taxonValue.getCode();
+		    	    				sciName = taxonValue.getScientificName();
+		    	    				vernName = taxonValue.getVernacularName();
+		    	    				vernLang = taxonValue.getLanguageCode();
+		    	    				langVariant = taxonValue.getLanguageVariety();
 		    					}	    				
 		    				}
 	        				final TaxonField taxonField= new TaxonField(this, nodeDef, codes, options, null);
 	        				taxonField.setOnClickListener(this);
 	        				taxonField.setId(nodeDef.getId());
-	        				//taxonField.setValue(0, loadedValue, FormScreen.this.getFormScreenId(),false);
+	        				taxonField.setValue(0, code, sciName, vernName, vernLang, langVariant, FormScreen.this.getFormScreenId(),false);
 	        				ApplicationManager.putUIElement(taxonField.getId(), taxonField);
 	        				this.ll.addView(taxonField);
 	    				} else if (this.intentType==getResources().getInteger(R.integer.multipleAttributeIntent)){
 	    					Node<?> foundNode = this.parentEntityMultipleAttribute.get(nodeDef.getName(), this.currInstanceNo);
 		    				if (foundNode!=null){
-		    					Taxon taxonValue = (Taxon)this.parentEntityMultipleAttribute.getValue(nodeDef.getName(), this.currInstanceNo);
+		    					TaxonOccurrence taxonValue = (TaxonOccurrence)this.parentEntityMultipleAttribute.getValue(nodeDef.getName(), this.currInstanceNo);
 		    					if (taxonValue!=null){
-		    								    						
+		    						code = taxonValue.getCode();
+		    	    				sciName = taxonValue.getScientificName();
+		    	    				vernName = taxonValue.getVernacularName();
+		    	    				vernLang = taxonValue.getLanguageCode();
+		    	    				langVariant = taxonValue.getLanguageVariety();	    						
 		    					}	   				
 		    				}
 		    				final TaxonField taxonField= new TaxonField(this, nodeDef, codes, options, null);
 		    				taxonField.setOnClickListener(this);
 		    				taxonField.setId(nodeDef.getId());
-		    				//taxonField.setValue(this.currInstanceNo, loadedValue, this.parentFormScreenId,false);
+		    				taxonField.setValue(this.currInstanceNo, code, sciName, vernName, vernLang, langVariant, this.parentFormScreenId,false);
 	        				ApplicationManager.putUIElement(taxonField.getId(), taxonField);
 	        				this.ll.addView(taxonField);
 	    				} else {//multiple attribute summary    			    		
@@ -834,18 +841,27 @@ public class FormScreen extends BaseActivity implements OnClickListener, TextWat
     			}    				
     		}
 			if (this.intentType==getResources().getInteger(R.integer.multipleAttributeIntent)){
-				//Log.e("multiple","ATTRIBUTE");
 				this.ll.addView(arrangeButtonsInLine(new Button(this),getResources().getString(R.string.previousInstanceButton),new Button(this),getResources().getString(R.string.nextInstanceButton),this, false));
 			} else if (this.intentType==getResources().getInteger(R.integer.multipleEntityIntent)){ 				
 				if (ApplicationManager.currentRecord.getRootEntity().getId()!=this.idmlId){
-					//Log.e("multiple","ENTITY");
 					this.ll.addView(arrangeButtonsInLine(new Button(this),getResources().getString(R.string.previousInstanceButton),new Button(this),getResources().getString(R.string.nextInstanceButton),this, true));
 				}	
 			}
     		setContentView(this.sv);
 			
 			int backgroundColor = ApplicationManager.appPreferences.getInt(getResources().getString(R.string.backgroundColor), Color.WHITE);		
-    		changeBackgroundColor(backgroundColor);    		
+    		changeBackgroundColor(backgroundColor);
+    		
+            this.sv.post(new Runnable() {
+                public void run() {
+                	if (ApplicationManager.selectedView!=null){
+                		if (ApplicationManager.isToBeScrolled){
+                			sv.scrollTo(0, ApplicationManager.selectedView.getTop());
+                        	ApplicationManager.isToBeScrolled = false;	
+                		}
+                	}
+                }
+            });
 		} catch (Exception e){
     		RunnableHandler.reportException(e,getResources().getString(R.string.app_name),TAG+":onResume",
     				Environment.getExternalStorageDirectory().toString()
@@ -859,6 +875,17 @@ public class FormScreen extends BaseActivity implements OnClickListener, TextWat
     @Override
     public void onPause(){    
 		Log.i(getResources().getString(R.string.app_name),TAG+":onPause");
+		if (ApplicationManager.selectedView instanceof SummaryTable){
+			SummaryTable temp = (SummaryTable)ApplicationManager.selectedView;
+			if (this.idmlId==temp.nodeDefinition.getId()){
+				ApplicationManager.isToBeScrolled = true;	
+			}
+		} else if (ApplicationManager.selectedView instanceof SummaryList){
+			SummaryList temp = (SummaryList)ApplicationManager.selectedView;
+			if (this.idmlId==temp.nodeDefinition.getId()){
+				ApplicationManager.isToBeScrolled = true;	
+			}
+		}
 		super.onPause();
     }
 	
@@ -870,12 +897,8 @@ public class FormScreen extends BaseActivity implements OnClickListener, TextWat
 
 	@Override
 	public void onClick(View arg0) {
-//		Log.e("clickedVIEW",arg0.getClass()+"=="+arg0.getId());
-		if (arg0 instanceof SummaryList){
-			//Log.e("summary","list");
-			SummaryList temp = (SummaryList)arg0;
-			//Log.e("nazwa","=="+temp.getTitle());
-		} else if (arg0 instanceof Button){
+		//Log.e("clickedVIEW",arg0.getClass()+"=="+arg0.getId());
+		if (arg0 instanceof Button){
 			Button btn = (Button)arg0;
 			if (btn.getId()==getResources().getInteger(R.integer.leftButtonMultipleAttribute)){
 				refreshMultipleAttributeScreen(true);
@@ -887,27 +910,27 @@ public class FormScreen extends BaseActivity implements OnClickListener, TextWat
 				refreshEntityScreen(false);
 			}
 		} else if (arg0 instanceof TextView){
-			//Log.e("summary","list row");
 			TextView tv = (TextView)arg0;
-			//Log.e("klikniety","id"+tv.getId()+"=="+tv.getText().toString());
-			//Log.e("parentClass","=="+arg0.getParent().getParent().getParent().getParent());
 			Object parentView = arg0.getParent().getParent().getParent().getParent();
 			if (parentView instanceof SummaryList){
 				SummaryList temp = (SummaryList)arg0.getParent().getParent().getParent().getParent();
-				//Log.e("nazwa","=="+temp.getTitle());	
+				ApplicationManager.selectedView = temp;
+				ApplicationManager.isToBeScrolled = false;
 				this.startActivity(this.prepareIntentForNewScreen(temp));				
 			} else if (parentView instanceof SummaryTable){
 				SummaryTable temp = (SummaryTable)parentView;
-				//Log.e("nazwa","=="+temp.getTitle());	
+				ApplicationManager.selectedView = temp;
+				ApplicationManager.isToBeScrolled = false;
 				this.startActivity(this.prepareIntentForMultipleField(temp, tv.getId(), temp.getValues()));
-			}			
+			}
+			
 		}
 	}
 	
 	private Intent prepareIntentForNewScreen(SummaryList summaryList){
 		Intent intent = new Intent(this,FormScreen.class);
 		if (!this.breadcrumb.equals("")){
-			intent.putExtra(getResources().getString(R.string.breadcrumb), this.breadcrumb+getResources().getString(R.string.breadcrumbSeparator)+summaryList.getTitle());	
+			intent.putExtra(getResources().getString(R.string.breadcrumb), this.breadcrumb+getResources().getString(R.string.breadcrumbSeparator)+summaryList.getTitle()+" "+(this.currInstanceNo+1));	
 		} else {
 			intent.putExtra(getResources().getString(R.string.breadcrumb), summaryList.getTitle());
 		}
@@ -917,19 +940,8 @@ public class FormScreen extends BaseActivity implements OnClickListener, TextWat
 			intent.putExtra(getResources().getString(R.string.intentType), getResources().getInteger(R.integer.singleEntityIntent));
 		}		
 		intent.putExtra(getResources().getString(R.string.idmlId), summaryList.getId());
-		/*int instanceNo = summaryList.getInstanceNo();
-		Log.e("instanceNoPrepared","=="+instanceNo);
-		/*Log.e("parentFormScreenId","=="+this.parentFormScreenId+"==");
-		if (!this.parentFormScreenId.equals("")){
-			String[] pathToScreenArray = this.parentFormScreenId.split(getResources().getString(R.string.valuesSeparator2));
-			Log.e("pathTOParentScreen"+this.parentFormScreenId,"=="+pathToScreenArray.length);
-			Log.e("EXTRACTEDinstanceNo"+instanceNo,pathToScreenArray[pathToScreenArray.length-1]+"=="+pathToScreenArray[pathToScreenArray.length-1].substring(pathToScreenArray[pathToScreenArray.length-1].indexOf(getResources().getString(R.string.valuesSeparator1))));
-			instanceNo = Integer.valueOf(pathToScreenArray[pathToScreenArray.length-1].substring(pathToScreenArray[pathToScreenArray.length-1].indexOf(getResources().getString(R.string.valuesSeparator1)+1)));
-			Log.e("EXTRACTEDinstanceNo"+instanceNo,pathToScreenArray[pathToScreenArray.length-1]+"==");	
-		}*/
 		intent.putExtra(getResources().getString(R.string.instanceNo), summaryList.getInstanceNo());
 		intent.putExtra(getResources().getString(R.string.parentFormScreenId), this.getFormScreenId());
-        //List<NodeDefinition> formFields = ApplicationManager.fieldsDefList;
         List<NodeDefinition> entityAttributes = summaryList.getEntityDefinition().getChildDefinitions();
         int counter = 0;
         for (NodeDefinition formField : entityAttributes){
@@ -1093,6 +1105,7 @@ public class FormScreen extends BaseActivity implements OnClickListener, TextWat
 		}
 		//Log.e("REFRESHING",this.getFormScreenId()+"currentInstanceNo"+this.currInstanceNo);
 		//refreshing values of fields in the entity 
+		//Log.e("REFRESHINGentity","=="+this.getFormScreenId());
 		Entity parentEntity = this.findParentEntity(this.getFormScreenId());
 		if (parentEntity!=null){
 			//Log.e("REFRESHING",parentEntity.getIndex()+"parentEntity"+parentEntity.getName());
@@ -1157,8 +1170,11 @@ public class FormScreen extends BaseActivity implements OnClickListener, TextWat
 							if (codeValue.getCode()!=null)
 								loadedValue = codeValue.getCode();
 						CodeField codeField = (CodeField) ApplicationManager.getUIElement(nodeDef.getId());
-						if (codeField!=null)
+						if (codeField!=null){
+							//Log.e("refreshENTITY",this.getFormScreenId()+"=="+0);
 							codeField.setValue(0, loadedValue, this.getFormScreenId(), false);
+						}
+							
 					} else if (nodeDef instanceof CoordinateAttributeDefinition){
 						String loadedValueLat = "";
 						String loadedValueLon = "";
@@ -1229,7 +1245,22 @@ public class FormScreen extends BaseActivity implements OnClickListener, TextWat
 						if (timeField!=null)
 							timeField.setValue(0, hour+getResources().getString(R.string.timeSeparator)+minute, this.getFormScreenId(), false);					
 					} else if (nodeDef instanceof TaxonAttributeDefinition){
-						
+	    				String code = "";
+	    				String sciName = "";
+	    				String vernName = "";
+	    				String vernLang = "";
+	    				String langVariant = "";
+						TaxonOccurrence taxonValue = (TaxonOccurrence)this.parentEntityMultipleAttribute.getValue(nodeDef.getName(), this.currInstanceNo);
+    					if (taxonValue!=null){
+    						code = taxonValue.getCode();
+    	    				sciName = taxonValue.getScientificName();
+    	    				vernName = taxonValue.getVernacularName();
+    	    				vernLang = taxonValue.getLanguageCode();
+    	    				langVariant = taxonValue.getLanguageVariety();	    						
+    					}
+    					TaxonField taxonField = (TaxonField) ApplicationManager.getUIElement(nodeDef.getId());
+						if (taxonField!=null)
+							taxonField.setValue(0, code, sciName, vernName, vernLang, langVariant, this.getFormScreenId(), false);
 					} else if (nodeDef instanceof FileAttributeDefinition){
 						
 					}
@@ -1297,8 +1328,11 @@ public class FormScreen extends BaseActivity implements OnClickListener, TextWat
 							if (codeValue.getCode()!=null)
 								loadedValue = codeValue.getCode();
 						CodeField codeField = (CodeField) ApplicationManager.getUIElement(nodeDef.getId());
-						if (codeField!=null)
+						if (codeField!=null){
+							//Log.e("refreshENTITYnull",this.getFormScreenId()+"=="+0);
 							codeField.setValue(0, loadedValue, this.getFormScreenId(), false);
+						}
+							
 					} else if (nodeDef instanceof CoordinateAttributeDefinition){
 						String loadedValueLat = "";
 						String loadedValueLon = "";
@@ -1367,7 +1401,22 @@ public class FormScreen extends BaseActivity implements OnClickListener, TextWat
 						if (timeField!=null)
 							timeField.setValue(0, hour+getResources().getString(R.string.timeSeparator)+minute, this.getFormScreenId(), false);					
 					} else if (nodeDef instanceof TaxonAttributeDefinition){
-						
+						String code = "";
+	    				String sciName = "";
+	    				String vernName = "";
+	    				String vernLang = "";
+	    				String langVariant = "";
+						TaxonOccurrence taxonValue = (TaxonOccurrence)this.parentEntityMultipleAttribute.getValue(nodeDef.getName(), this.currInstanceNo);
+    					if (taxonValue!=null){
+    						code = taxonValue.getCode();
+    	    				sciName = taxonValue.getScientificName();
+    	    				vernName = taxonValue.getVernacularName();
+    	    				vernLang = taxonValue.getLanguageCode();
+    	    				langVariant = taxonValue.getLanguageVariety();	    						
+    					}
+    					TaxonField taxonField = (TaxonField) ApplicationManager.getUIElement(nodeDef.getId());
+						if (taxonField!=null)
+							taxonField.setValue(0, code, sciName, vernName, vernLang, langVariant, this.getFormScreenId(), false);
 					} else if (nodeDef instanceof FileAttributeDefinition){
 						
 					}
@@ -1386,8 +1435,8 @@ public class FormScreen extends BaseActivity implements OnClickListener, TextWat
 		} else {
 			this.currInstanceNo++;
 		}
-		
-		//Entity parentEntity = this.findParentEntity(this.parentFormScreenId);
+		//Log.e("REFRESHINGentity","=="+this.parentFormScreenId);
+		///Entity parentEntity = this.findParentEntity(this.parentFormScreenId);
 		Entity parentEntity = this.parentEntityMultipleAttribute;
 		if (parentEntity!=null){
 			NodeDefinition nodeDef = ApplicationManager.getNodeDefinition(this.startingIntent.getIntExtra(getResources().getString(R.string.attributeId)+0, -1));
@@ -1443,8 +1492,10 @@ public class FormScreen extends BaseActivity implements OnClickListener, TextWat
 					if (codeValue!=null)
 						loadedValue = codeValue.getCode();
 					CodeField codeField = (CodeField) ApplicationManager.getUIElement(nodeDef.getId());
-					if (codeField!=null)
+					if (codeField!=null){
+						//Log.e("refreshMULTattr",this.getFormScreenId()+"=="+this.currInstanceNo);
 						codeField.setValue(this.currInstanceNo, loadedValue, this.getFormScreenId(), false);
+					}						
 				} else if (nodeDef instanceof CoordinateAttributeDefinition){
 					String loadedValueLat = "";
 					String loadedValueLon = "";
@@ -1523,7 +1574,22 @@ public class FormScreen extends BaseActivity implements OnClickListener, TextWat
 					if (timeField!=null)
 						timeField.setValue(this.currInstanceNo, hour+getResources().getString(R.string.timeSeparator)+minute, this.getFormScreenId(), false);					
 				} else if (nodeDef instanceof TaxonAttributeDefinition){
-					
+					String code = "";
+    				String sciName = "";
+    				String vernName = "";
+    				String vernLang = "";
+    				String langVariant = "";
+					TaxonOccurrence taxonValue = (TaxonOccurrence)this.parentEntityMultipleAttribute.getValue(nodeDef.getName(), this.currInstanceNo);
+					if (taxonValue!=null){
+						code = taxonValue.getCode();
+	    				sciName = taxonValue.getScientificName();
+	    				vernName = taxonValue.getVernacularName();
+	    				vernLang = taxonValue.getLanguageCode();
+	    				langVariant = taxonValue.getLanguageVariety();	    						
+					}
+					TaxonField taxonField = (TaxonField) ApplicationManager.getUIElement(nodeDef.getId());
+					if (taxonField!=null)
+						taxonField.setValue(this.currInstanceNo, code, sciName, vernName, vernLang, langVariant, this.getFormScreenId(), false);
 				} else if (nodeDef instanceof FileAttributeDefinition){
 					
 				}
@@ -1531,8 +1597,8 @@ public class FormScreen extends BaseActivity implements OnClickListener, TextWat
 		}
 	}
 	
-    public void startCamera(/*Context context, */PhotoField photoField){
-		Intent cameraIntent = new Intent(this/*context*/, CameraScreen.class); 
+    public void startCamera(PhotoField photoField){
+		Intent cameraIntent = new Intent(this, CameraScreen.class); 
 		this.startActivityForResult(cameraIntent,getResources().getInteger(R.integer.cameraStarted));
 	}
     
@@ -1540,7 +1606,6 @@ public class FormScreen extends BaseActivity implements OnClickListener, TextWat
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {    	
 	    super.onActivityResult(requestCode, resultCode, data);
 	    try{
-	    	//Log.e("request="+requestCode,"result="+resultCode);
 	 	    if (requestCode==getResources().getInteger(R.integer.cameraStarted)){
 	 	    	if (resultCode==getResources().getInteger(R.integer.photoTaken)){
 	 	    		photoPath = data.getStringExtra(getResources().getString(R.string.photoPath));

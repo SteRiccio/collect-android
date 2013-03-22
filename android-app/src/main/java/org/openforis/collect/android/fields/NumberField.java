@@ -121,6 +121,7 @@ public class NumberField extends InputField {
 		    		Log.i("VALIDATION FOR NUMBER FIELD", "Value from txtbox is: " + loadedValue);
 		    		Log.i("VALIDATION FOR NUMBER FIELD", "Value from attribute is: " + attribute.getValue());
 		    		Log.i("VALIDATION FOR NUMBER FIELD", "Record of attribute is: " + attribute.getRecord());
+		    		//Log.i("VALIDATION FOR NUMBER FIELD", "Currect record is: " + ApplicationManager.currentRecord);
 					Validator validator = new Validator();
 //		    		ValidationResults results = validator.validate(attribute);
 //		    		Log.i("VALIDATION FOR NUMBER FIELD", "Errors: " + results.getErrors().size() + " : " + results.getErrors().toString());
@@ -129,7 +130,7 @@ public class NumberField extends InputField {
 //		    		Log.i("VALIDATION FOR NUMBER FIELD", "Number of ERRORS from Current Record: " + ApplicationManager.currentRecord.getErrors());
 		    	}
 		    }
-	    });		
+	    });
 		
 		//Check for every given character is it number or not
 		this.txtBox.addTextChangedListener(new TextWatcher(){

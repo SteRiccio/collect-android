@@ -14,6 +14,7 @@ import org.openforis.idm.model.EntityBuilder;
 import org.openforis.idm.model.Node;
 
 import android.content.Context;
+import android.graphics.Color;
 import android.text.Editable;
 import android.text.InputType;
 import android.text.TextWatcher;
@@ -21,8 +22,10 @@ import android.text.method.DigitsKeyListener;
 import android.text.method.KeyListener;
 import android.util.Log;
 import android.view.View;
-import android.view.ViewGroup;
 import android.widget.EditText;
+import android.widget.LinearLayout;
+import android.widget.TableLayout;
+import android.widget.TableRow;
 import android.widget.Toast;
 
 public class CoordinateField extends InputField {
@@ -37,7 +40,7 @@ public class CoordinateField extends InputField {
 
 		CoordinateField.form = (FormScreen)context;
 		
-		this.label.setLayoutParams(new LayoutParams(0, ViewGroup.LayoutParams.WRAP_CONTENT, (float) 1));
+		//this.label.setLayoutParams(new LayoutParams(0, ViewGroup.LayoutParams.WRAP_CONTENT, 1f));
 		this.label.setOnLongClickListener(new OnLongClickListener() {
 	        @Override
 	        public boolean onLongClick(View v) {
@@ -53,11 +56,11 @@ public class CoordinateField extends InputField {
 	    });
 		
 		this.txtLongitude = new EditText(context);
-		this.txtLongitude.setLayoutParams(new LayoutParams(0,ViewGroup.LayoutParams.WRAP_CONTENT,(float) 2));
+		//this.txtLongitude.setLayoutParams(new LayoutParams(0,ViewGroup.LayoutParams.WRAP_CONTENT, 1f));
 		//this.txtLongitude.setText(initialTextLon);
 		//this.txtLongitude.setHint("LONGITUDEx");
 		this.txtLongitude.addTextChangedListener(this);
-		this.addView(txtLongitude);
+		//this.addView(txtLongitude);
 		
 		this.txtLongitude.setOnFocusChangeListener(new OnFocusChangeListener(){
 			@Override
@@ -80,11 +83,11 @@ public class CoordinateField extends InputField {
 		});
 
 		this.txtLatitude = new EditText(context);
-		this.txtLatitude.setLayoutParams(new LayoutParams(0,ViewGroup.LayoutParams.WRAP_CONTENT,(float) 2));
+		//this.txtLatitude.setLayoutParams(new LayoutParams(0,ViewGroup.LayoutParams.WRAP_CONTENT,3f));
 		//this.txtLatitude.setText(initialTextLat);
 		//this.txtLatitude.setHint("LATITUDEy");
 		this.txtLatitude.addTextChangedListener(this);
-		this.addView(txtLatitude);
+		//this.addView(txtLatitude);
 
 		this.txtLatitude.setOnFocusChangeListener(new OnFocusChangeListener(){
 			@Override
@@ -136,32 +139,13 @@ public class CoordinateField extends InputField {
 					}else{
 						Log.i("COORDINATE FIELD", "Value of Longitude: " + s + " is numeric.");
 					}
-				}				
+				}	
 			}	
-		});		
-	}
+		});	
 
-	/*public List<String> getValue(int index){
-		return CoordinateField.this.value.getValue(index);
-	}*/
-	
-	/*public void setValue(int position, String latitude, String longitude, String path, boolean isTextChanged)
-	{
-		if (!isTextChanged){
-			this.txtLatitude.setText(latitude);
-			this.txtLongitude.setText(longitude);	
-		}		
-		ArrayList<String> valueToAdd = new ArrayList<String>();
-		valueToAdd.add(latitude);
-		valueToAdd.add(longitude);		
-		
-		try{
-			//Log.e("coordinateAddedVALUE",latitude+"=="+longitude);
-			EntityBuilder.addValue(this.findParentEntity(path), this.nodeDefinition.getName(), new Coordinate(Double.valueOf(latitude),Double.valueOf(longitude),null), position);	
-		} catch (Exception e) {
-			//Log.e("EXCEPTION","WHILE ADDING COORD VALUE");
-		}		
-	}*/
+		this.addView(this.txtLongitude);
+		this.addView(this.txtLatitude);
+	}
 	
 	public void setValue(Integer position, String lon, String lat, String path, boolean isTextChanged)
 	{
@@ -210,14 +194,12 @@ public class CoordinateField extends InputField {
 	
 	@Override
 	public void afterTextChanged(Editable s) {
-		//Check if value is numeric
 		this.setValue(0, CoordinateField.this.txtLongitude.getText().toString(), CoordinateField.this.txtLatitude.getText().toString(), CoordinateField.form.getFormScreenId(),true);
 	}
 	
 	@Override
 	public void addTextChangedListener(TextWatcher textWatcher) {
-//		this.txtLatitude.addTextChangedListener(textWatcher);
-//		this.txtLongitude.addTextChangedListener(textWatcher);
+		
 	}
 	
 	//Check is given value a number
