@@ -14,7 +14,6 @@ import org.openforis.idm.model.EntityBuilder;
 import org.openforis.idm.model.Node;
 
 import android.content.Context;
-import android.graphics.Color;
 import android.text.Editable;
 import android.text.InputType;
 import android.text.TextWatcher;
@@ -22,16 +21,16 @@ import android.text.method.DigitsKeyListener;
 import android.text.method.KeyListener;
 import android.util.Log;
 import android.view.View;
+import android.view.View.OnClickListener;
+import android.widget.Button;
 import android.widget.EditText;
-import android.widget.LinearLayout;
-import android.widget.TableLayout;
-import android.widget.TableRow;
 import android.widget.Toast;
 
-public class CoordinateField extends InputField {
+public class CoordinateField extends InputField implements OnClickListener {
 	
 	private EditText txtLatitude;
 	private EditText txtLongitude;
+	private Button btnGetCoordinates;
 	
 	private static FormScreen form;
 	
@@ -145,6 +144,11 @@ public class CoordinateField extends InputField {
 
 		this.addView(this.txtLongitude);
 		this.addView(this.txtLatitude);
+		
+		this.btnGetCoordinates = new Button(context);
+		this.btnGetCoordinates.setText(getResources().getString(R.string.internalGpsButton));
+		this.btnGetCoordinates.setOnClickListener(this);  
+		this.addView(this.btnGetCoordinates);
 	}
 	
 	public void setValue(Integer position, String lon, String lat, String path, boolean isTextChanged)
@@ -212,5 +216,11 @@ public class CoordinateField extends InputField {
 			result = false;
 		}
 		return result;
-	}	
+	}
+	
+	@Override
+	public void onClick(View arg0) {
+		CoordinateField.form.currentCoordinateField = this;
+		CoordinateField.form.startInternalGps(this);
+	}
 }

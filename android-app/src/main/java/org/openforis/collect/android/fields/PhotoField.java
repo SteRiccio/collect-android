@@ -24,21 +24,8 @@ public class PhotoField extends FileField implements OnClickListener{
 		
 		this.image = new ImageView(context);
 		this.image.setLayoutParams(new LayoutParams(0,ViewGroup.LayoutParams.WRAP_CONTENT,(float) 1));
-		this.image.setOnClickListener(this);
-		/*File imageFile = new File("filePath");
-	    if(imageFile.exists()){
-		    BitmapFactory.Options options = new BitmapFactory.Options();
-		    options.inSampleSize = 10;	    	
-	    	Bitmap myBitmap = BitmapFactory.decodeFile(filePath, options);	
-	    	this.image.setImageBitmap(myBitmap);
-	    	Log.e("USTAWIONO","ZDJECIE");
-	    }
-	    else{
-	    	this.image.setImageResource(R.drawable.emptyimage);
-	    	Log.e("USTAWIONO","TEMPLATE");
-	    }*/	    
-		this.addView(image);
-		
+		this.image.setOnClickListener(this);  
+		this.addView(image);		
 	}
 	
 	public void setValue(Integer position, String photoName, String path, boolean isPhotoChanged)
