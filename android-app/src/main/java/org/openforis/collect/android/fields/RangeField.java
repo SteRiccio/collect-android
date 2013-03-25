@@ -13,12 +13,14 @@ import org.openforis.idm.model.Node;
 import org.openforis.idm.model.RealRange;
 import org.openforis.idm.model.RealRangeAttribute;
 import android.content.Context;
+import android.text.Editable;
 import android.text.InputType;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.Toast;
+import android.text.TextWatcher;
 
 public class RangeField extends InputField {
 	
@@ -60,49 +62,57 @@ public class RangeField extends InputField {
 //				    		RangeField.this.setKeyboardType(null);
 				    	}
 			    	}
-		    	}else{
-		    		String strValue = RangeField.this.txtBox.getText().toString();
-		    		if(strValue.contains("-")){
-		    			String[] rangeValues = strValue.split("-");
-		    			if(!isNumeric(rangeValues[0])){
-		    				Log.i("RANGE FIELD", "Value 'From': " + rangeValues[0] + " is NOT numeric.");
-		    			}
-		    			if(!isNumeric(rangeValues[1])){
-		    				Log.i("RANGE FIELD", "Value 'To': " + rangeValues[1] + " is NOT numeric.");
-		    			}		    			
-		    		}else{
-		    			Log.i("RANGE NUMBER", "Value does not contains separator '-'");
-		    		}
 		    	}
+//		    	else{
+//		    		String strValue = RangeField.this.txtBox.getText().toString();
+//		    		if(strValue.contains("-")){
+//		    			String[] rangeValues = strValue.split(getResources().getString(R.string.rangeSeparator));
+//		    			Log.i("RANGE NUMBER", "Value is: " + rangeValues[0] + " - " + rangeValues[1]);
+//		    			if(!isNumeric(rangeValues[0])){
+//		    				Log.i("RANGE FIELD", "Value 'From': " + rangeValues[0] + " is NOT numeric.");
+//		    			}
+//		    			if(!isNumeric(rangeValues[1])){
+//		    				Log.i("RANGE FIELD", "Value 'To': " + rangeValues[1] + " is NOT numeric.");
+//		    			}		    			
+//		    		}else{
+//		    			Log.i("RANGE FIELD", "Value does not contains separator '-'");
+//		    		}
+//		    	}
 		    }
 	    });
 		
-//		//Check for every given character is it number or not
-//		this.txtBox.addTextChangedListener(new TextWatcher(){
-//			public void afterTextChanged(Editable s) {
-//				if (s.length() > 0){
-//					if(!isNumeric(s.toString())){
-//						Log.i("RANGE FIELD", "Value: " + s + " is NOT numeric.");
-//						String strReplace = s.subSequence(0, s.length()-1).toString();
-//						RangeField.this.txtBox.setText(strReplace);
-//						RangeField.this.txtBox.setSelection(strReplace.length());
-//					}else{
-//						Log.i("RANGE FIELD", "Value: " + s + " is numeric.");
-//					}
-////					Log.i("NUMBER FIELD", "New value is: " + s.charAt(s.length()-1));
-////					if (validateCharacter(s.charAt(s.length()-1)))
-////						Log.i("NUMBER FIELD", "Check character. Result is: TRUE");
-////					else{
-////						Log.i("NUMBER FIELD", "Check character. Result is: FALSE");
-////						String strReplace = s.subSequence(0, s.length()-1).toString(); 
-////						NumberField.this.txtBox.setText(strReplace);
-////					}
-//				}
-//			}
-//			public void beforeTextChanged(CharSequence s, int start,  int count, int after) {}				 
-//			public void onTextChanged(CharSequence s, int start, int before, int count) {}	
-//			
-//		});		
+		//Check for every given character is it number or not
+		this.txtBox.addTextChangedListener(new TextWatcher(){
+			public void afterTextChanged(Editable s) {
+				if (s.length() > 0){
+					char symbol = s.charAt(s.length()-1);
+					Log.i("RANGE FIELD", "Check character: " + symbol);
+					if (validateCharacter(symbol))
+						Log.i("RANGE FIELD", "Result is: TRUE");
+					else{ 
+						Log.i("RANGE FIELD", "Result is: FALSE");
+						String strReplace = s.subSequence(0, s.length()-1).toString(); 
+						RangeField.this.txtBox.setText(strReplace);
+						RangeField.this.txtBox.setSelection(strReplace.length());
+					}	
+				}			
+			}
+			public void beforeTextChanged(CharSequence s, int start,  int count, int after) {}				 
+			public void onTextChanged(CharSequence s, int start, int before, int count) {}	
+			
+		});		
+	}
+	
+	//Check is given symbol number or "." (if type is not "integer")
+	private Boolean validateCharacter(char symbol){
+		Boolean result = false;
+		if (Character.isDigit(symbol) || symbol == '.' || symbol == '-'){
+			result = true;
+		}
+		else{
+			result = false;
+		}
+		return result;
 	}
 	
 	public void setValue(Integer position, String value, String path, boolean isTextChanged)
@@ -118,54 +128,57 @@ public class RangeField extends InputField {
 			if (separatorIndex+1<value.length())
 				valueTo = value.substring(separatorIndex+1);
 		}
-
-		Node<? extends NodeDefinition> node = this.findParentEntity(path).get(this.nodeDefinition.getName(), position);
-		if (node!=null){
-			if (((RangeAttributeDefinition) this.nodeDefinition).isReal()){
-				RealRangeAttribute rangeAtr = (RealRangeAttribute)node;
-				if (valueFrom.equals("") && valueTo.equals("")){
-					rangeAtr.setValue(new RealRange(null,null,null));
-				} else if (valueFrom.equals("")){
-					rangeAtr.setValue(new RealRange(null,Double.valueOf(valueTo),null));
-				} else if (valueTo.equals("")){
-					rangeAtr.setValue(new RealRange(Double.valueOf(valueFrom),null,null));
+		try{
+			Node<? extends NodeDefinition> node = this.findParentEntity(path).get(this.nodeDefinition.getName(), position);
+			if (node!=null){
+				if (((RangeAttributeDefinition) this.nodeDefinition).isReal()){
+					RealRangeAttribute rangeAtr = (RealRangeAttribute)node;
+					if (valueFrom.equals("") && valueTo.equals("")){
+						rangeAtr.setValue(new RealRange(null,null,null));
+					} else if (valueFrom.equals("")){
+						rangeAtr.setValue(new RealRange(null,Double.valueOf(valueTo),null));
+					} else if (valueTo.equals("")){
+						rangeAtr.setValue(new RealRange(Double.valueOf(valueFrom),null,null));
+					} else {
+						rangeAtr.setValue(new RealRange(Double.valueOf(valueFrom),Double.valueOf(valueTo),null));
+					}				
 				} else {
-					rangeAtr.setValue(new RealRange(Double.valueOf(valueFrom),Double.valueOf(valueTo),null));
+					IntegerRangeAttribute rangeAtr = (IntegerRangeAttribute)node;
+					if (valueFrom.equals("") && valueTo.equals("")){
+						rangeAtr.setValue(new IntegerRange(null,null,null));
+					} else if (valueFrom.equals("")){
+						rangeAtr.setValue(new IntegerRange(null,Integer.valueOf(valueTo),null));
+					} else if (valueTo.equals("")){
+						rangeAtr.setValue(new IntegerRange(Integer.valueOf(valueFrom),null,null));
+					} else {
+						rangeAtr.setValue(new IntegerRange(Integer.valueOf(valueFrom),Integer.valueOf(valueTo),null));
+					}	
+				}			
+			} else {
+				if (((RangeAttributeDefinition) this.nodeDefinition).isReal()){
+					if (valueFrom.equals("") && valueTo.equals("")){
+						EntityBuilder.addValue(this.findParentEntity(path), this.nodeDefinition.getName(), new RealRange(null,null,null), position);
+					} else if (valueFrom.equals("")){
+						EntityBuilder.addValue(this.findParentEntity(path), this.nodeDefinition.getName(), new RealRange(null,Double.valueOf(valueTo),null), position);
+					} else if (valueTo.equals("")){
+						EntityBuilder.addValue(this.findParentEntity(path), this.nodeDefinition.getName(), new RealRange(Double.valueOf(valueFrom),null,null), position);
+					} else {
+						EntityBuilder.addValue(this.findParentEntity(path), this.nodeDefinition.getName(), new RealRange(Double.valueOf(valueFrom),Double.valueOf(valueTo),null), position);
+					}		
+				} else {
+					if (valueFrom.equals("") && valueTo.equals("")){
+						EntityBuilder.addValue(this.findParentEntity(path), this.nodeDefinition.getName(), new IntegerRange(null,null,null), position);
+					} else if (valueFrom.equals("")){
+						EntityBuilder.addValue(this.findParentEntity(path), this.nodeDefinition.getName(), new IntegerRange(null,Integer.valueOf(valueTo),null), position);
+					} else if (valueTo.equals("")){
+						EntityBuilder.addValue(this.findParentEntity(path), this.nodeDefinition.getName(), new IntegerRange(Integer.valueOf(valueFrom),null,null), position);
+					} else {
+						EntityBuilder.addValue(this.findParentEntity(path), this.nodeDefinition.getName(), new IntegerRange(Integer.valueOf(valueFrom),Integer.valueOf(valueTo),null), position);
+					}	
 				}				
-			} else {
-				IntegerRangeAttribute rangeAtr = (IntegerRangeAttribute)node;
-				if (valueFrom.equals("") && valueTo.equals("")){
-					rangeAtr.setValue(new IntegerRange(null,null,null));
-				} else if (valueFrom.equals("")){
-					rangeAtr.setValue(new IntegerRange(null,Integer.valueOf(valueTo),null));
-				} else if (valueTo.equals("")){
-					rangeAtr.setValue(new IntegerRange(Integer.valueOf(valueFrom),null,null));
-				} else {
-					rangeAtr.setValue(new IntegerRange(Integer.valueOf(valueFrom),Integer.valueOf(valueTo),null));
-				}	
-			}			
-		} else {
-			if (((RangeAttributeDefinition) this.nodeDefinition).isReal()){
-				if (valueFrom.equals("") && valueTo.equals("")){
-					EntityBuilder.addValue(this.findParentEntity(path), this.nodeDefinition.getName(), new RealRange(null,null,null), position);
-				} else if (valueFrom.equals("")){
-					EntityBuilder.addValue(this.findParentEntity(path), this.nodeDefinition.getName(), new RealRange(null,Double.valueOf(valueTo),null), position);
-				} else if (valueTo.equals("")){
-					EntityBuilder.addValue(this.findParentEntity(path), this.nodeDefinition.getName(), new RealRange(Double.valueOf(valueFrom),null,null), position);
-				} else {
-					EntityBuilder.addValue(this.findParentEntity(path), this.nodeDefinition.getName(), new RealRange(Double.valueOf(valueFrom),Double.valueOf(valueTo),null), position);
-				}		
-			} else {
-				if (valueFrom.equals("") && valueTo.equals("")){
-					EntityBuilder.addValue(this.findParentEntity(path), this.nodeDefinition.getName(), new IntegerRange(null,null,null), position);
-				} else if (valueFrom.equals("")){
-					EntityBuilder.addValue(this.findParentEntity(path), this.nodeDefinition.getName(), new IntegerRange(null,Integer.valueOf(valueTo),null), position);
-				} else if (valueTo.equals("")){
-					EntityBuilder.addValue(this.findParentEntity(path), this.nodeDefinition.getName(), new IntegerRange(Integer.valueOf(valueFrom),null,null), position);
-				} else {
-					EntityBuilder.addValue(this.findParentEntity(path), this.nodeDefinition.getName(), new IntegerRange(Integer.valueOf(valueFrom),Integer.valueOf(valueTo),null), position);
-				}	
-			}				
+			}
+		}catch (Exception e){
+			Log.e("RangeField", "ERROR when try to set value" + e.getMessage());
 		}
 	}
 	
