@@ -232,7 +232,7 @@ public class ApplicationManager extends BaseActivity {
 			        	ApplicationManager.currentRecord = dataManager.loadRecord(recordId);
 			        	Entity rootEntity = ApplicationManager.currentRecord.getRootEntity();
 	    				rootEntity.setId(ApplicationManager.currRootEntityId);
-	 	    		}		
+	 	    		}
 	 	    		showFormRootScreen();
 	 	    	} else if (resultCode==getResources().getInteger(R.integer.backButtonPressed)){
 	 	    		showRootEntitiesListScreen();

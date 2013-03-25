@@ -16,6 +16,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.text.method.QwertyKeyListener;
 import android.text.method.TextKeyListener;
+import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
@@ -37,6 +38,7 @@ public class MemoField extends InputField {
 	    });
 		this.txtBox = new EditText(context);
 		//this.setHint(hintText);
+		this.txtBox.setMaxLines(1);
 		this.txtBox.setLayoutParams(new LayoutParams(0,ViewGroup.LayoutParams.WRAP_CONTENT,(float) 2));
 		this.txtBox.setOnFocusChangeListener(new EditText.OnFocusChangeListener() {
 	        @Override
@@ -65,13 +67,14 @@ public class MemoField extends InputField {
 	                        //do nothing.
 	                    }
 	                }).show();
-
+	            	
 			    	if(valueForText){
 			    		input.setKeyListener(new QwertyKeyListener(TextKeyListener.Capitalize.NONE, false));
 			    		dialog.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE);
 			        }
 			    	else {
-			    		input.setKeyListener(null);
+			    		input.setKeyListener(new QwertyKeyListener(TextKeyListener.Capitalize.NONE, false));
+			    		//input.setKeyListener(null);
 			    		dialog.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
 			    	}
 	            }
