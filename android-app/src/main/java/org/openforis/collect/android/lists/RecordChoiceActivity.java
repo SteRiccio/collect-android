@@ -6,12 +6,14 @@ import org.openforis.collect.android.R;
 import org.openforis.collect.android.management.ApplicationManager;
 import org.openforis.collect.android.management.BaseListActivity;
 import org.openforis.collect.android.management.DataManager;
+import org.openforis.collect.android.messages.AlertMessage;
 import org.openforis.collect.android.misc.RunnableHandler;
 import org.openforis.collect.model.CollectRecord;
 import org.openforis.collect.model.CollectSurvey;
 import org.openforis.idm.metamodel.EntityDefinition;
 import org.openforis.idm.metamodel.NodeLabel.Type;
 
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
@@ -22,11 +24,13 @@ import android.view.KeyEvent;
 import android.view.View;
 import android.view.Window;
 import android.view.WindowManager;
+import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemLongClickListener;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
 
-public class RecordChoiceActivity extends BaseListActivity{
+public class RecordChoiceActivity extends BaseListActivity implements OnItemLongClickListener{
 	
 	private static final String TAG = "RecordChoiceActivity";
 
@@ -48,6 +52,8 @@ public class RecordChoiceActivity extends BaseListActivity{
         	this.activityLabel = (TextView)findViewById(R.id.lblList);
         	this.activityLabel.setText(getResources().getString(R.string.clusterChoiceListLabel));
         	
+        	this.getListView().setLongClickable(true);
+        	this.getListView().setOnItemLongClickListener(this);       	
         	/*ProgressDialog pd = ProgressDialog.show(ClusterChoiceActivity.this, getResources().getString(R.string.workInProgress), getResources().getString(R.string.loading), true, false);
     		pd.dismiss();*/
         } catch (Exception e){
@@ -141,4 +147,29 @@ public class RecordChoiceActivity extends BaseListActivity{
 		getWindow().setBackgroundDrawable(new ColorDrawable(backgroundColor));
 		this.activityLabel.setTextColor((backgroundColor!=Color.WHITE)?Color.WHITE:Color.BLACK);
     }
+
+	@Override
+	public boolean onItemLongClick(AdapterView<?> parent, View view, int position,
+			long id) {
+		if ((recordsList.size()!=0) && (position<recordsList.size())){
+			final int number = position;
+			AlertMessage.createPositiveNegativeDialog(RecordChoiceActivity.this, false, getResources().getDrawable(R.drawable.warningsign),
+					getResources().getString(R.string.exitAppTitle), getResources().getString(R.string.deleteRecord),
+					getResources().getString(R.string.yes), getResources().getString(R.string.no),
+		    		new DialogInterface.OnClickListener() {
+						@Override
+						public void onClick(DialogInterface dialog, int which) {							
+							//ApplicationManager.dataManager.deleteRecord(number);
+						}
+					},
+		    		new DialogInterface.OnClickListener() {
+						@Override
+						public void onClick(DialogInterface dialog, int which) {
+							
+						}
+					},
+					null).show();
+		}		
+		return false;
+	}
 }

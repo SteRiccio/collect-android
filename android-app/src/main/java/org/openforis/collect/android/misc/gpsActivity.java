@@ -17,7 +17,9 @@ import android.os.SystemClock;
 import android.provider.Settings;
 import android.util.Log;
 
-public class gpsActivity extends Activity {
+public class GpsActivity extends Activity {
+	
+	private static final String TAG = "GpsActivity";
 
 	private LocationManager lm;
 	private LocationListener ll;
@@ -25,8 +27,8 @@ public class gpsActivity extends Activity {
 	private Dialog dialog;
 	private int waitingTime;//how long to wait for new GPS coords
 
-	public gpsActivity(){
-		Log.i("5","gpsActivity:constructor");
+	public GpsActivity(){
+		Log.i(TAG,"gpsActivity:constructor");
 		try{
 			String preferredGpsTimeout = "10";
         	if (preferredGpsTimeout.equals("")){
@@ -57,7 +59,7 @@ public class gpsActivity extends Activity {
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		Log.i("5","gpsActivity:onCreate");
+		Log.i(TAG,"gpsActivity:onCreate");
 		loc = null;
 		lm = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
 		if ( !lm.isProviderEnabled( LocationManager.GPS_PROVIDER ) ) {
@@ -72,12 +74,10 @@ public class gpsActivity extends Activity {
 
 				@Override
 				public void run() {
-					Log.e("waiting ","location updates");
 					while ((loc == null) && (SystemClock.currentThreadTimeMillis()<waitingTime)) {
 						// Wait for first GPS coords change (do nothing until loc != null)
 					}
 					if (loc!=null){
-						Log.e("got "+loc.getLatitude(),"location updates"+loc.getLongitude());
 						Intent resultHolder = new Intent();
 						resultHolder.putExtra(getResources().getString(R.string.latitude), String.valueOf(loc.getLatitude()));
 						resultHolder.putExtra(getResources().getString(R.string.longitude), String.valueOf(loc.getLongitude()));
@@ -93,7 +93,7 @@ public class gpsActivity extends Activity {
 			};
 
 			// 	Create a dialog to let the user know that we're waiting for a GPS coordinates
-			dialog = ProgressDialog.show(gpsActivity.this, "Please wait...",
+			dialog = ProgressDialog.show(GpsActivity.this, "Please wait...",
 					"Retrieving GPS data...", true);
 			Thread t = new Thread(showWaitDialog);
 			t.start();
@@ -104,7 +104,7 @@ public class gpsActivity extends Activity {
 	public void onResume()
 	{
 		super.onResume();   
-		Log.i("5","gpsActivity:onResume");
+		Log.i(TAG,"gpsActivity:onResume");
 	}	
 	
 	  private void buildAlertMessageNoGps() {
@@ -155,13 +155,13 @@ public class gpsActivity extends Activity {
 	        				Log.e("lat=="+loc.getLatitude(),"location updates"+loc.getLongitude());
 	        				// After receiving first GPS coordinates dismiss the Progress Dialog
 	        				dialog.dismiss();
-	        				stopUsingGPS();
+	        				stopListeningGpsUpdates();
 	        				// 	and destroy activity which requests location updates	        				
 	        				finish();
 	        			}
 	        		};
 
-	        		dialog = ProgressDialog.show(gpsActivity.this, "Please wait...",
+	        		dialog = ProgressDialog.show(GpsActivity.this, "Please wait...",
 	        			"Retrieving GPS data...", true);
 	        		Thread t = new Thread(showWaitDialog);
 	        		t.start();
@@ -194,8 +194,7 @@ public class gpsActivity extends Activity {
 
 	}
 	
-	public void stopUsingGPS(){
-		Log.e("STOPING GPS","==============");
+	public void stopListeningGpsUpdates(){
         if(lm != null){
         	lm.removeUpdates(ll);
         }

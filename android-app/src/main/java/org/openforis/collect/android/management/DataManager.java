@@ -33,7 +33,7 @@ public class DataManager {
 		this.user = loggedInUser;
 	}
 	
-	public int saveRecord(Context ctx){
+	public int saveRecord(Context ctx) {
 		long startTime = System.currentTimeMillis();
 		try {
 			JdbcDaoSupport jdbcDao = new JdbcDaoSupport();
@@ -49,16 +49,26 @@ public class DataManager {
 			}
 			DataManager.recordManager.save(recordToSave, ApplicationManager.getSessionId());
 		} catch (RecordUnlockedException e) {
-
+			Log.e("RecordUnlockedException","=="+e.getLocalizedMessage());
 		} catch (RecordPersistenceException e) {
-
+			Log.e("RecordPersistenceException",e.getMessage()+"=="+e.getLocalizedMessage());
 		} catch (NullPointerException e){
-
+			Log.e("NullPointerException","=="+e.getLocalizedMessage());
 		} finally {
 
 		}	
 		Log.e("record","SAVED IN "+(System.currentTimeMillis()-startTime)/1000+"s");
 		return 0;
+	}
+	
+	public void deleteRecord(int position){
+		/*try {
+			List<CollectRecord> recordsList = DataManager.recordManager.loadSummaries(survey, rootEntity);
+			Log.e("DELETE record","=="+recordsList.get(position).getId());
+			DataManager.recordManager.delete(recordsList.get(position).getId());			
+		} catch (RecordPersistenceException e) {
+			e.printStackTrace();
+		}*/
 	}
 	
 	public List<CollectRecord> loadSummaries(){

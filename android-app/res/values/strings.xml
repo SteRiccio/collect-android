@@ -24,6 +24,8 @@
     <string name="openingPlotListTitle">Back to list&#8230;</string>    
     <string name="openingPlotListMessage">Do you want to open list of forms?</string>
     <string name="editingMemoField">Editing</string>
+    <string name="deleteRecordTitle">Deleting&#8230;</string>
+    <string name="deleteRecord">Do you want to delete the record?</string>
     
     <!-- buttons -->
     <string name="footerSave">Save</string>

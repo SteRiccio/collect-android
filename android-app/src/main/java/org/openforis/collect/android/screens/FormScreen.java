@@ -22,7 +22,7 @@ import org.openforis.collect.android.fields.UIElement;
 import org.openforis.collect.android.management.ApplicationManager;
 import org.openforis.collect.android.management.BaseActivity;
 import org.openforis.collect.android.misc.RunnableHandler;
-import org.openforis.collect.android.misc.gpsActivity;
+import org.openforis.collect.android.misc.GpsActivity;
 import org.openforis.idm.metamodel.BooleanAttributeDefinition;
 import org.openforis.idm.metamodel.CodeAttributeDefinition;
 import org.openforis.idm.metamodel.CodeListItem;
@@ -1624,7 +1624,7 @@ public class FormScreen extends BaseActivity implements OnClickListener, TextWat
 	}
     
     public void startInternalGps(CoordinateField coordField){
-		Intent gpsIntent = new Intent(this, gpsActivity.class); 
+		Intent gpsIntent = new Intent(this, GpsActivity.class); 
 		this.startActivityForResult(gpsIntent,getResources().getInteger(R.integer.internalGpsStarted));
 	}
     

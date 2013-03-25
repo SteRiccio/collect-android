@@ -134,7 +134,7 @@ public class ApplicationManager extends BaseActivity {
         	userManager.setUserDao(new UserDao());
         	userManager.setRecordDao(new RecordDao());
         	
-        	//opening database connection  
+        	//opening database connection
         	JdbcDaoSupport jdbcDao = new JdbcDaoSupport();
         	jdbcDao.getConnection();
         	
@@ -170,6 +170,8 @@ public class ApplicationManager extends BaseActivity {
         		userManager.insert(defaultUser);
         	}
         	ApplicationManager.loggedInUser = defaultUser;
+        	
+        	//ApplicationManager.dataManager = null;
     		
             JdbcDaoSupport.close();
             
@@ -230,7 +232,7 @@ public class ApplicationManager extends BaseActivity {
 			        	ApplicationManager.currentRecord = dataManager.loadRecord(recordId);
 			        	Entity rootEntity = ApplicationManager.currentRecord.getRootEntity();
 	    				rootEntity.setId(ApplicationManager.currRootEntityId);
-	 	    		}	 	    		
+	 	    		}		
 	 	    		showFormRootScreen();
 	 	    	} else if (resultCode==getResources().getInteger(R.integer.backButtonPressed)){
 	 	    		showRootEntitiesListScreen();
@@ -238,6 +240,7 @@ public class ApplicationManager extends BaseActivity {
 	 	    } else if (requestCode==getResources().getInteger(R.integer.rootEntitySelection)){
 	 	    	if (resultCode==getResources().getInteger(R.integer.rootEntityChoiceSuccessful)){//root entity was selected	    	
 	 	    		ApplicationManager.currRootEntityId = data.getIntExtra(getResources().getString(R.string.rootEntityId), -1);
+	 	    		//ApplicationManager.dataManager = new DataManager(survey,schema.getRootEntityDefinitions().get(0).getName(),ApplicationManager.getLoggedInUser());
 	 	    		showRecordsListScreen(ApplicationManager.currRootEntityId);	
 	 	    	} else if (resultCode==getResources().getInteger(R.integer.backButtonPressed)){
 	 	    		ApplicationManager.this.finish();
