@@ -73,6 +73,8 @@
     <integer name="singleEntityIntent">3</integer>
     <integer name="breadcrumbFontSize">24</integer>
     <string name="photoPath">photoPath</string>
+    <string name="latitude">latitude</string>
+    <string name="longitude">longitude</string>
     
     <!-- BUTTONS IDs -->
     <integer name="leftButtonMultipleAttribute">11</integer>

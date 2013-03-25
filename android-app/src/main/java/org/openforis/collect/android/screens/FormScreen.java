@@ -22,6 +22,7 @@ import org.openforis.collect.android.fields.UIElement;
 import org.openforis.collect.android.management.ApplicationManager;
 import org.openforis.collect.android.management.BaseActivity;
 import org.openforis.collect.android.misc.RunnableHandler;
+import org.openforis.collect.android.misc.gpsActivity;
 import org.openforis.idm.metamodel.BooleanAttributeDefinition;
 import org.openforis.idm.metamodel.CodeAttributeDefinition;
 import org.openforis.idm.metamodel.CodeListItem;
@@ -88,7 +89,10 @@ public class FormScreen extends BaseActivity implements OnClickListener, TextWat
 	public Entity parentEntitySingleAttribute;
 	public Entity parentEntityMultipleAttribute;
 	public PhotoField currentPictureField;
+	public CoordinateField currentCoordinateField;
 	private String photoPath;
+	private String latitude;
+	private String longitude;
 	
 	public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -108,7 +112,10 @@ public class FormScreen extends BaseActivity implements OnClickListener, TextWat
     		this.parentEntityMultipleAttribute = this.findParentEntity(this.parentFormScreenId);
 
     		this.currentPictureField = null;
+    		this.currentCoordinateField = null;
     		this.photoPath = null;
+    		this.latitude = null;
+    		this.longitude = null;
         } catch (Exception e){
     		RunnableHandler.reportException(e,getResources().getString(R.string.app_name),TAG+":onCreate",
     				Environment.getExternalStorageDirectory().toString()
@@ -291,7 +298,7 @@ public class FormScreen extends BaseActivity implements OnClickListener, TextWat
                 				summaryTableView.setId(nodeDef.getId());
                 				this.ll.addView(summaryTableView);
 	        				}
-	    				}	
+	    				}
 	    			} else if (nodeDef instanceof NumberAttributeDefinition){
 	    				loadedValue = "";
 	    				if (!nodeDef.isMultiple()){
@@ -451,6 +458,13 @@ public class FormScreen extends BaseActivity implements OnClickListener, TextWat
 	    				String loadedValueLon = "";
 	    				String loadedValueLat = "";
 	    				if (!nodeDef.isMultiple()){
+	        				final CoordinateField coordField= new CoordinateField(this, nodeDef);
+	        				if (this.currentCoordinateField!=null){
+	        					coordField.setValue(0, this.longitude, this.latitude, this.parentFormScreenId,false);
+	    		    			this.currentCoordinateField = null;
+	    		    			this.longitude = null;
+	    		    			this.latitude = null;
+	    		    		}
 	    					Node<?> foundNode = this.parentEntitySingleAttribute.get(nodeDef.getName(), 0);
 		    				if (foundNode!=null){
 		    					Coordinate coordValue = (Coordinate)this.parentEntitySingleAttribute.getValue(nodeDef.getName(), 0);
@@ -461,13 +475,20 @@ public class FormScreen extends BaseActivity implements OnClickListener, TextWat
 		    							loadedValueLat = coordValue.getY().toString();
 		    					}	    				
 		    				}
-	        				final CoordinateField coordField= new CoordinateField(this, nodeDef);
+		    				//coordField = new CoordinateField(this, nodeDef);
 	        				coordField.setOnClickListener(this);
 	        				coordField.setId(nodeDef.getId());
 	        				coordField.setValue(0, loadedValueLon, loadedValueLat, FormScreen.this.getFormScreenId(),false);
 	        				ApplicationManager.putUIElement(coordField.getId(), coordField);
 	        				this.ll.addView(coordField);
 	    				} else if (this.intentType==getResources().getInteger(R.integer.multipleAttributeIntent)){
+	    					final CoordinateField coordField= new CoordinateField(this, nodeDef);
+	        				if (this.currentCoordinateField!=null){
+	        					coordField.setValue(this.currInstanceNo, this.longitude, this.latitude, this.parentFormScreenId,false);
+	    		    			this.currentCoordinateField = null;
+	    		    			this.longitude = null;
+	    		    			this.latitude = null;
+	    		    		}
 	    					Node<?> foundNode = this.parentEntityMultipleAttribute.get(nodeDef.getName(), this.currInstanceNo);
 		    				if (foundNode!=null){
 		    					Coordinate coordValue = (Coordinate)this.parentEntityMultipleAttribute.getValue(nodeDef.getName(), this.currInstanceNo);
@@ -478,7 +499,7 @@ public class FormScreen extends BaseActivity implements OnClickListener, TextWat
 		    							loadedValueLat = coordValue.getY().toString();
 		    					}   				
 		    				}
-	        				final CoordinateField coordField= new CoordinateField(this, nodeDef);
+	        				//coordField= new CoordinateField(this, nodeDef);
 	        				coordField.setOnClickListener(this);
 	        				coordField.setId(nodeDef.getId());
 	        				coordField.setValue(this.currInstanceNo, loadedValueLon, loadedValueLat, this.parentFormScreenId,false);
@@ -1602,13 +1623,23 @@ public class FormScreen extends BaseActivity implements OnClickListener, TextWat
 		this.startActivityForResult(cameraIntent,getResources().getInteger(R.integer.cameraStarted));
 	}
     
+    public void startInternalGps(CoordinateField coordField){
+		Intent gpsIntent = new Intent(this, gpsActivity.class); 
+		this.startActivityForResult(gpsIntent,getResources().getInteger(R.integer.internalGpsStarted));
+	}
+    
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {    	
 	    super.onActivityResult(requestCode, resultCode, data);
 	    try{
 	 	    if (requestCode==getResources().getInteger(R.integer.cameraStarted)){
 	 	    	if (resultCode==getResources().getInteger(R.integer.photoTaken)){
-	 	    		photoPath = data.getStringExtra(getResources().getString(R.string.photoPath));
+	 	    		this.photoPath = data.getStringExtra(getResources().getString(R.string.photoPath));
+	 	    	}
+	 	    } else if (requestCode==getResources().getInteger(R.integer.internalGpsStarted)){
+	 	    	if (resultCode==getResources().getInteger(R.integer.internalGpsLocationReceived)){
+	 	    		this.latitude = data.getStringExtra(getResources().getString(R.string.latitude));
+	 	    		this.longitude = data.getStringExtra(getResources().getString(R.string.longitude));
 	 	    	}
 	 	    }
 	    } catch (Exception e){
