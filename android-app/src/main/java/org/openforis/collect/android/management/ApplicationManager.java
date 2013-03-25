@@ -74,6 +74,8 @@ public class ApplicationManager extends BaseActivity {
 	public static View selectedView;
 	public static boolean isToBeScrolled;
 	
+	public static DataManager dataManager;
+	
 	public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         try{
@@ -171,7 +173,7 @@ public class ApplicationManager extends BaseActivity {
         	}
         	ApplicationManager.loggedInUser = defaultUser;
         	
-        	//ApplicationManager.dataManager = null;
+        	ApplicationManager.dataManager = null;
     		
             JdbcDaoSupport.close();
             
@@ -223,12 +225,13 @@ public class ApplicationManager extends BaseActivity {
 	 	    		int recordId = data.getIntExtra(getResources().getString(R.string.recordId), -1);
 	 	    		
 	 	    		if (recordId==-1){//new record
-	 	    			ApplicationManager.currentRecord = new CollectRecord(this.survey, this.survey.getVersions().get(this.survey.getVersions().size()-1).getName());//null;	 	    			
+	 	    			ApplicationManager.currentRecord = new CollectRecord(ApplicationManager.survey, ApplicationManager.survey.getVersions().get(this.survey.getVersions().size()-1).getName());//null;	 	    			
 	 					Entity rootEntity = ApplicationManager.currentRecord.createRootEntity(ApplicationManager.getSurvey().getSchema().getRootEntityDefinition(ApplicationManager.currRootEntityId).getName());
 	 					rootEntity.setId(ApplicationManager.currRootEntityId);
 	 	    		} else {//record from database
 	 	    			CollectSurvey collectSurvey = (CollectSurvey)ApplicationManager.getSurvey();	        	
-			        	DataManager dataManager = new DataManager(collectSurvey,collectSurvey.getSchema().getRootEntityDefinitions().get(0).getName(),ApplicationManager.getLoggedInUser());
+			        	//DataManager dataManager = new DataManager(collectSurvey,collectSurvey.getSchema().getRootEntityDefinitions().get(0).getName(),ApplicationManager.getLoggedInUser());
+	 	    			ApplicationManager.dataManager = new DataManager(collectSurvey,collectSurvey.getSchema().getRootEntityDefinitions().get(0).getName(),ApplicationManager.getLoggedInUser());
 			        	ApplicationManager.currentRecord = dataManager.loadRecord(recordId);
 			        	Entity rootEntity = ApplicationManager.currentRecord.getRootEntity();
 	    				rootEntity.setId(ApplicationManager.currRootEntityId);
@@ -240,7 +243,7 @@ public class ApplicationManager extends BaseActivity {
 	 	    } else if (requestCode==getResources().getInteger(R.integer.rootEntitySelection)){
 	 	    	if (resultCode==getResources().getInteger(R.integer.rootEntityChoiceSuccessful)){//root entity was selected	    	
 	 	    		ApplicationManager.currRootEntityId = data.getIntExtra(getResources().getString(R.string.rootEntityId), -1);
-	 	    		//ApplicationManager.dataManager = new DataManager(survey,schema.getRootEntityDefinitions().get(0).getName(),ApplicationManager.getLoggedInUser());
+	 	    		ApplicationManager.dataManager = new DataManager(survey,schema.getRootEntityDefinition(ApplicationManager.currRootEntityId).getName(),ApplicationManager.getLoggedInUser());
 	 	    		showRecordsListScreen(ApplicationManager.currRootEntityId);	
 	 	    	} else if (resultCode==getResources().getInteger(R.integer.backButtonPressed)){
 	 	    		ApplicationManager.this.finish();

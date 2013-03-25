@@ -73,7 +73,7 @@ public class RecordChoiceActivity extends BaseListActivity implements OnItemLong
 		int backgroundColor = ApplicationManager.appPreferences.getInt(getResources().getString(R.string.backgroundColor), Color.WHITE);	
 		changeBackgroundColor(backgroundColor);
 		
-		this.rootEntityDef = ApplicationManager.getSurvey().getSchema().getRootEntityDefinition(getIntent().getIntExtra(getResources().getString(R.string.rootEntityId),1));
+		/*this.rootEntityDef = ApplicationManager.getSurvey().getSchema().getRootEntityDefinition(getIntent().getIntExtra(getResources().getString(R.string.rootEntityId),1));
 		
 		CollectSurvey collectSurvey = (CollectSurvey)ApplicationManager.getSurvey();	        	
     	DataManager dataManager = new DataManager(collectSurvey,this.rootEntityDef.getName(),ApplicationManager.getLoggedInUser());
@@ -101,7 +101,8 @@ public class RecordChoiceActivity extends BaseListActivity implements OnItemLong
 		
 		int layout = (backgroundColor!=Color.WHITE)?R.layout.localclusterrow_white:R.layout.localclusterrow_black;
         this.adapter = new ArrayAdapter<String>(this, layout, R.id.plotlabel, clusterList);
-		this.setListAdapter(this.adapter);
+		this.setListAdapter(this.adapter);*/
+		refreshRecordsList();
     }
     
     @Override
@@ -159,7 +160,8 @@ public class RecordChoiceActivity extends BaseListActivity implements OnItemLong
 		    		new DialogInterface.OnClickListener() {
 						@Override
 						public void onClick(DialogInterface dialog, int which) {							
-							//ApplicationManager.dataManager.deleteRecord(number);
+							ApplicationManager.dataManager.deleteRecord(number);
+							refreshRecordsList();
 						}
 					},
 		    		new DialogInterface.OnClickListener() {
@@ -171,5 +173,37 @@ public class RecordChoiceActivity extends BaseListActivity implements OnItemLong
 					null).show();
 		}		
 		return false;
+	}
+	
+	public void refreshRecordsList(){
+		this.rootEntityDef = ApplicationManager.getSurvey().getSchema().getRootEntityDefinition(getIntent().getIntExtra(getResources().getString(R.string.rootEntityId),1));
+		
+		CollectSurvey collectSurvey = (CollectSurvey)ApplicationManager.getSurvey();	        	
+    	DataManager dataManager = new DataManager(collectSurvey,this.rootEntityDef.getName(),ApplicationManager.getLoggedInUser());
+    	this.recordsList = dataManager.loadSummaries();
+		String[] clusterList;
+		if (this.recordsList.size()==0){
+			clusterList = new String[1];
+		} else {
+			clusterList = new String[recordsList.size()+2];
+		}
+		for (int i=0;i<recordsList.size();i++){
+			CollectRecord record = recordsList.get(i);
+			clusterList[i] = record.getId()+" "+record.getCreatedBy().getName()
+					+"\n"+record.getCreationDate();
+			if (record.getModifiedDate()!=null){
+				clusterList[i] += "\n"+record.getModifiedDate();
+			}
+		}
+		if (this.recordsList.size()==0){			
+			clusterList[0]=getResources().getString(R.string.addNewRecord)+" "+this.rootEntityDef.getLabel(Type.INSTANCE, null);
+		} else {
+			clusterList[recordsList.size()]="";
+			clusterList[recordsList.size()+1]=getResources().getString(R.string.addNewRecord)+" "+this.rootEntityDef.getLabel(Type.INSTANCE, null);
+		}
+		
+		int layout = (backgroundColor!=Color.WHITE)?R.layout.localclusterrow_white:R.layout.localclusterrow_black;
+        this.adapter = new ArrayAdapter<String>(this, layout, R.id.plotlabel, clusterList);
+		this.setListAdapter(this.adapter);
 	}
 }

@@ -62,13 +62,15 @@ public class DataManager {
 	}
 	
 	public void deleteRecord(int position){
-		/*try {
+		try {
+			JdbcDaoSupport jdbcDao = new JdbcDaoSupport();
+			jdbcDao.getConnection();
 			List<CollectRecord> recordsList = DataManager.recordManager.loadSummaries(survey, rootEntity);
 			Log.e("DELETE record","=="+recordsList.get(position).getId());
 			DataManager.recordManager.delete(recordsList.get(position).getId());			
 		} catch (RecordPersistenceException e) {
 			e.printStackTrace();
-		}*/
+		}
 	}
 	
 	public List<CollectRecord> loadSummaries(){
