@@ -21,8 +21,8 @@ import org.openforis.collect.android.fields.TimeField;
 import org.openforis.collect.android.fields.UIElement;
 import org.openforis.collect.android.management.ApplicationManager;
 import org.openforis.collect.android.management.BaseActivity;
-import org.openforis.collect.android.misc.RunnableHandler;
 import org.openforis.collect.android.misc.GpsActivity;
+import org.openforis.collect.android.misc.RunnableHandler;
 import org.openforis.idm.metamodel.BooleanAttributeDefinition;
 import org.openforis.idm.metamodel.CodeAttributeDefinition;
 import org.openforis.idm.metamodel.CodeListItem;
@@ -1271,7 +1271,7 @@ public class FormScreen extends BaseActivity implements OnClickListener, TextWat
 	    				String vernName = "";
 	    				String vernLang = "";
 	    				String langVariant = "";
-						TaxonOccurrence taxonValue = (TaxonOccurrence)this.parentEntityMultipleAttribute.getValue(nodeDef.getName(), this.currInstanceNo);
+						TaxonOccurrence taxonValue = (TaxonOccurrence)parentEntity.getValue(nodeDef.getName(), this.currInstanceNo);
     					if (taxonValue!=null){
     						code = taxonValue.getCode();
     	    				sciName = taxonValue.getScientificName();
@@ -1283,7 +1283,15 @@ public class FormScreen extends BaseActivity implements OnClickListener, TextWat
 						if (taxonField!=null)
 							taxonField.setValue(0, code, sciName, vernName, vernLang, langVariant, this.getFormScreenId(), false);
 					} else if (nodeDef instanceof FileAttributeDefinition){
-						
+						String fileName = "";
+						File fileValue = (File)parentEntity.getValue(nodeDef.getName(), 0);
+						if (fileValue!=null){
+							if (fileValue.getFilename()!=null)
+								fileName = fileValue.getFilename();
+						}						
+						PhotoField photoField = (PhotoField) ApplicationManager.getUIElement(nodeDef.getId());
+						if (photoField!=null)
+							photoField.setValue(0, fileName, this.getFormScreenId(), false);					
 					}
 				}
 			}
@@ -1427,7 +1435,7 @@ public class FormScreen extends BaseActivity implements OnClickListener, TextWat
 	    				String vernName = "";
 	    				String vernLang = "";
 	    				String langVariant = "";
-						TaxonOccurrence taxonValue = (TaxonOccurrence)this.parentEntityMultipleAttribute.getValue(nodeDef.getName(), this.currInstanceNo);
+						TaxonOccurrence taxonValue = (TaxonOccurrence)parentEntity.getValue(nodeDef.getName(), this.currInstanceNo);
     					if (taxonValue!=null){
     						code = taxonValue.getCode();
     	    				sciName = taxonValue.getScientificName();
@@ -1439,7 +1447,15 @@ public class FormScreen extends BaseActivity implements OnClickListener, TextWat
 						if (taxonField!=null)
 							taxonField.setValue(0, code, sciName, vernName, vernLang, langVariant, this.getFormScreenId(), false);
 					} else if (nodeDef instanceof FileAttributeDefinition){
-						
+						String fileName = "";
+						File fileValue = (File)parentEntity.getValue(nodeDef.getName(), 0);
+						if (fileValue!=null){
+							if (fileValue.getFilename()!=null)
+								fileName = fileValue.getFilename();
+						}						
+						PhotoField photoField = (PhotoField) ApplicationManager.getUIElement(nodeDef.getId());
+						if (photoField!=null)
+							photoField.setValue(0, fileName, this.getFormScreenId(), false);					
 					}
 				}
 			}
