@@ -31,7 +31,6 @@ import org.openforis.idm.metamodel.DateAttributeDefinition;
 import org.openforis.idm.metamodel.EntityDefinition;
 import org.openforis.idm.metamodel.FileAttributeDefinition;
 import org.openforis.idm.metamodel.NodeDefinition;
-import org.openforis.idm.metamodel.NodeLabel.Type;
 import org.openforis.idm.metamodel.NumberAttributeDefinition;
 import org.openforis.idm.metamodel.RangeAttributeDefinition;
 import org.openforis.idm.metamodel.TaxonAttributeDefinition;
@@ -985,7 +984,6 @@ public class FormScreen extends BaseActivity implements OnClickListener, TextWat
         int numberOfInstances = values.size();
         intent.putExtra(getResources().getString(R.string.numberOfInstances), numberOfInstances);
         for (int i=0;i<numberOfInstances;i++){
-        	//ArrayList<String> instanceValues = (ArrayList<String>)values.get(i);
         	ArrayList<String> instanceValues = (ArrayList<String>)values.get(i);
         	intent.putStringArrayListExtra(getResources().getString(R.string.instanceValues)+i,instanceValues);
         }

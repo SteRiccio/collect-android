@@ -75,14 +75,149 @@ public class ApplicationManager extends BaseActivity {
 	public static boolean isToBeScrolled;
 	
 	public static DataManager dataManager;
-	
+	private Thread creationThread = new Thread() {
+		@Override
+		public void run() {
+			try {
+				super.run();
+				Log.i(getResources().getString(R.string.app_name),TAG+":run");
+	        	
+	            initSession();
+	            
+	            ApplicationManager.currentRecord = null;
+	            ApplicationManager.currRootEntityId = -1;
+	            ApplicationManager.selectedView = null;
+	            ApplicationManager.isToBeScrolled = false;
+	            
+//	            ApplicationManager.appPreferences = getPreferences(MODE_PRIVATE);
+//				int backgroundColor = ApplicationManager.appPreferences.getInt(getResources().getString(R.string.backgroundColor), Color.WHITE);
+//				SharedPreferences.Editor editor = ApplicationManager.appPreferences.edit();
+//				editor.putInt(getResources().getString(R.string.backgroundColor), backgroundColor);
+//				//editor.commit();
+//	            
+//				//Set virtual keyboard to 'false' if it's NULL
+//		    	Map<String, ?> settings = ApplicationManager.appPreferences.getAll();
+//		    	Boolean valueForNum = (Boolean)settings.get(getResources().getString(R.string.showSoftKeyboardOnNumericField));			
+//		    	Boolean valueForText = (Boolean)settings.get(getResources().getString(R.string.showSoftKeyboardOnTextField));
+//		    	if(valueForNum == null)
+//		    		editor.putBoolean(getResources().getString(R.string.showSoftKeyboardOnNumericField), false);
+//		    	if(valueForText == null)
+//		    		editor.putBoolean(getResources().getString(R.string.showSoftKeyboardOnTextField), false);	    	
+//		    	editor.commit();			
+				
+				//creating file structure used by the application
+	        	String sdcardPath = Environment.getExternalStorageDirectory().toString();
+				File folder = new File(sdcardPath+getResources().getString(R.string.application_folder));
+				folder.mkdirs();
+				folder = new File(sdcardPath+getResources().getString(R.string.data_folder));
+			    folder.mkdirs();
+			    folder = new File(sdcardPath+getResources().getString(R.string.backup_folder));
+			    folder.mkdirs();
+			    folder = new File(sdcardPath+getResources().getString(R.string.logs_folder));
+			    folder.mkdirs();
+			    
+			    //creating database
+			    //new DatabaseWrapper(ApplicationManager.this);
+			    //CollectDatabase collectDB = new CollectDatabase(DatabaseWrapper.db);	
+			    
+			    //instantiating managers
+			    ExpressionFactory expressionFactory = new ExpressionFactory();
+	        	Validator validator = new Validator();
+	        	CollectSurveyContext collectSurveyContext = new CollectSurveyContext(expressionFactory, validator, null);
+	        	
+	        	surveyManager = new SurveyManager();
+	        	surveyManager.setCollectSurveyContext(collectSurveyContext);
+	        	surveyManager.setSurveyDao(new SurveyDao(collectSurveyContext));
+	        	surveyManager.setSurveyWorkDao(new SurveyWorkDao());
+	        	
+	        	userManager = new UserManager();
+	        	userManager.setUserDao(new UserDao());
+	        	userManager.setRecordDao(new RecordDao());
+	        	
+	        	//reading form definition if it is not available in database
+	        	//survey = surveyManager.getSurveyDao().load("Archenland NFI");
+	        	survey = surveyManager.get("Archenland NFI");
+	        	if (survey==null){
+	            	//long startTimeParsing = System.currentTimeMillis();
+	            	//Log.e("PARSING","====================");   
+	            	FileInputStream fis = new FileInputStream(sdcardPath+getResources().getString(R.string.formDefinitionFile));        	
+	            	SurveyIdmlBinder binder = new SurveyIdmlBinder(collectSurveyContext);
+	        		binder.addApplicationOptionsBinder(new UIOptionsBinder());
+	        		survey = (CollectSurvey) binder.unmarshal(fis);
+	        		survey.setName(survey.getProjectName(null));
+	        		surveyManager.importModel(survey);
+	            	//Log.e("parsingTIME","=="+(System.currentTimeMillis()-startTimeParsing));       		
+	        	}
+	        	schema = survey.getSchema();              
+	        	ApplicationManager.fieldsDefList = new ArrayList<NodeDefinition>();        	
+	        	List<EntityDefinition> rootEntitiesDefsList = schema.getRootEntityDefinitions();
+	        	getAllFormFields(rootEntitiesDefsList);
+	        	
+	        	ApplicationManager.uiElementsMap = new HashMap<Integer,UIElement>();        	
+	        	
+	        	//adding default user to database if not exists        	
+	        	User defaultUser = new User();
+	        	defaultUser.setName(getResources().getString(R.string.defaultUsername));
+	        	defaultUser.setPassword(getResources().getString(R.string.defaultUserPassword));
+	        	defaultUser.setEnabled(true);
+	        	defaultUser.setId(getResources().getInteger(R.integer.defaulUsertId));
+	        	defaultUser.addRole(getResources().getString(R.string.defaultUserRole));
+	        	if (!userExists(defaultUser)){
+	        		userManager.insert(defaultUser);
+	        	}
+	        	ApplicationManager.loggedInUser = defaultUser;
+	        	
+	        	ApplicationManager.dataManager = null;
+	    		
+	            JdbcDaoSupport.close();
+	            
+	            showRootEntitiesListScreen();
+			} catch (Exception e) {
+				RunnableHandler.reportException(e,getResources().getString(R.string.app_name),TAG+":run",
+	    				Environment.getExternalStorageDirectory().toString()
+	    				+getResources().getString(R.string.logs_folder)
+	    				+getResources().getString(R.string.logs_file_name)
+	    				+System.currentTimeMillis()
+	    				+getResources().getString(R.string.log_file_extension));
+			} 	 finally {
+				finish();
+			}
+		}
+	};
 	public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         try{
-        	Log.i(getResources().getString(R.string.app_name),TAG+":onCreate");       
-            //setContentView(R.layout.applicationwindow);
-        	//setContentView(R.layout.welcomescreen);
+        	Log.i(getResources().getString(R.string.app_name),TAG+":onCreate");
+        	setContentView(R.layout.welcomescreen)
+        	;
+		    //creating database
+        	Log.e("creating","DATABASE");
         	long startTime = System.currentTimeMillis();
+		    new DatabaseWrapper(ApplicationManager.this);
+		    CollectDatabase collectDB = new CollectDatabase(DatabaseWrapper.db);
+		    Log.e("CREATED","in "+(System.currentTimeMillis()-startTime)/1000+"s");
+        	//opening database connection		    
+        	JdbcDaoSupport jdbcDao = new JdbcDaoSupport();
+        	jdbcDao.getConnection();
+        	
+        	ApplicationManager.appPreferences = getPreferences(MODE_PRIVATE);
+			int backgroundColor = ApplicationManager.appPreferences.getInt(getResources().getString(R.string.backgroundColor), Color.WHITE);
+			SharedPreferences.Editor editor = ApplicationManager.appPreferences.edit();
+			editor.putInt(getResources().getString(R.string.backgroundColor), backgroundColor);
+			//editor.commit();
+            
+			//Set virtual keyboard to 'false' if it's NULL
+	    	Map<String, ?> settings = ApplicationManager.appPreferences.getAll();
+	    	Boolean valueForNum = (Boolean)settings.get(getResources().getString(R.string.showSoftKeyboardOnNumericField));			
+	    	Boolean valueForText = (Boolean)settings.get(getResources().getString(R.string.showSoftKeyboardOnTextField));
+	    	if(valueForNum == null)
+	    		editor.putBoolean(getResources().getString(R.string.showSoftKeyboardOnNumericField), false);
+	    	if(valueForText == null)
+	    		editor.putBoolean(getResources().getString(R.string.showSoftKeyboardOnTextField), false);	    	
+	    	editor.commit();			
+	    	
+        	creationThread.start();
+        /*	long startTime = System.currentTimeMillis();
         	
             initSession();
             
@@ -177,8 +312,8 @@ public class ApplicationManager extends BaseActivity {
     		
             JdbcDaoSupport.close();
             
-            showRootEntitiesListScreen();
-            
+           /showRootEntitiesListScreen();
+           */ 
     		Thread thread = new Thread(new RunnableHandler(0, Environment.getExternalStorageDirectory().toString()
     				+getResources().getString(R.string.logs_folder)
     				+getResources().getString(R.string.logs_file_name)
@@ -186,7 +321,7 @@ public class ApplicationManager extends BaseActivity {
     				+System.currentTimeMillis()
     				+getResources().getString(R.string.log_file_extension)));
     		thread.start();
-    		Log.e(this.TAG+"onCREATE","=="+(System.currentTimeMillis()-startTime)/1000+" s");
+    	//	Log.e(this.TAG+"onCREATE","=="+(System.currentTimeMillis()-startTime)/1000+" s");
         } catch (Exception e){
     		RunnableHandler.reportException(e,getResources().getString(R.string.app_name),TAG+":onCreate",
     				Environment.getExternalStorageDirectory().toString()

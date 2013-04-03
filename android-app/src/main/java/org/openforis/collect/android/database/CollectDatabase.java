@@ -1,5 +1,6 @@
 package org.openforis.collect.android.database;
 
+import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.util.Log;
 
@@ -10,10 +11,7 @@ public class CollectDatabase{
 	public CollectDatabase(SQLiteDatabase database){
 		this.db = database;
 		this.createTables();
-		//For test issues
-//		Log.i("COLLECT DATABASE", "INSERT DATA TO DATABASE");
 		this.insertTaxonomyDataForTest();
-//		this.insertVernacularNamesDataForTest();
 	}
 	
 	public void createTables(){
@@ -133,6 +131,10 @@ public class CollectDatabase{
 		db.execSQL("INSERT OR IGNORE INTO ofc_taxonomy(id, name, metadata) VALUES(1, 'trees', ' ');");
 		db.execSQL("INSERT OR IGNORE INTO ofc_taxonomy(id, name, metadata) VALUES(2, 'bamboo', ' ');");
 		//Taxons
+		Cursor mCursor =  db.rawQuery("select * from ofc_taxon where taxonomy_id='1'", null);
+		int rowCount = mCursor.getCount();
+		mCursor.close();
+		if (rowCount==0){
 		db.execSQL("INSERT OR IGNORE INTO ofc_taxon(id, taxon_id, code, scientific_name, taxon_rank, taxonomy_id, step, parent_id) VALUES(1, 1, 'ACA', 'Acacia sp.', 'Genus', 1, 9, NULL);");
 		db.execSQL("INSERT OR IGNORE INTO ofc_taxon(id, taxon_id, code, scientific_name, taxon_rank, taxonomy_id, step, parent_id) VALUES(2, 2, 'ACA/ADE', 'Acacia adenocalyx', 'Species', 1, 9, 1);");
 		db.execSQL("INSERT OR IGNORE INTO ofc_taxon(id, taxon_id, code, scientific_name, taxon_rank, taxonomy_id, step, parent_id) VALUES(3, 3, 'ACA/AUR', 'Acacia auriculiformis', 'Species', 1, 9, 1);");
@@ -2236,6 +2238,8 @@ public class CollectDatabase{
 		db.execSQL("INSERT OR IGNORE INTO ofc_taxon(id, taxon_id, code, scientific_name, taxon_rank, taxonomy_id, step, parent_id) VALUES(2101, 2101, 'CLP/SPA', 'Calycosphonia spathicalix', 'Species', 1, 9, 2100);");
 		db.execSQL("INSERT OR IGNORE INTO ofc_taxon(id, taxon_id, code, scientific_name, taxon_rank, taxonomy_id, step, parent_id) VALUES(2102, 2102, 'ARC', 'Areca sp.', 'Genus', 1, 9, NULL);");
 		db.execSQL("INSERT OR IGNORE INTO ofc_taxon(id, taxon_id, code, scientific_name, taxon_rank, taxonomy_id, step, parent_id) VALUES(2103, 2103, 'ARC/CAT', 'Areca catechu', 'Species', 1, 9, 2102);");
+	}
+		//bamboo
 		db.execSQL("INSERT OR IGNORE INTO ofc_taxon(id, taxon_id, code, scientific_name, taxon_rank, taxonomy_id, step, parent_id) VALUES(2104, 1, 'ARU', 'Arundinaria sp.', 'Genus', 2, 9, NULL);");
 		db.execSQL("INSERT OR IGNORE INTO ofc_taxon(id, taxon_id, code, scientific_name, taxon_rank, taxonomy_id, step, parent_id) VALUES(2105, 2, 'ARU/ALP', 'Arundinaria alpina', 'Species', 2, 9, 2104);");
 		db.execSQL("INSERT OR IGNORE INTO ofc_taxon(id, taxon_id, code, scientific_name, taxon_rank, taxonomy_id, step, parent_id) VALUES(2106, 3, 'ARU/TOL', 'Arundinaria tolange', 'Species', 2, 9, 2104);");
