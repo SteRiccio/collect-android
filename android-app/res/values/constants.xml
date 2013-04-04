@@ -12,6 +12,8 @@
     <!-- FILE SYSTEM -->
     <string name="application_folder">/mofc</string>
     <string name="data_folder">/mofc/data</string>
+    <string name="exported_data_folder">/mofc/data/exported</string>
+    <string name="imported_data_folder">/mofc/data/imported</string>
     <string name="logs_folder">/mofc/logs</string>
     <string name="logs_file_name">/log_</string>
     <string name="log_file_extension">.txt</string>

@@ -974,7 +974,7 @@ public class FormScreen extends BaseActivity implements OnClickListener, TextWat
 
 	private Intent prepareIntentForMultipleField(SummaryTable summaryTable, int clickedInstanceNo, List<List<String>> data){
 		Intent intent = new Intent(this,FormScreen.class);
-		intent.putExtra(getResources().getString(R.string.breadcrumb), this.breadcrumb+getResources().getString(R.string.breadcrumbSeparator)+summaryTable.getTitle()+" "+(clickedInstanceNo+1));
+		intent.putExtra(getResources().getString(R.string.breadcrumb), this.breadcrumb+getResources().getString(R.string.breadcrumbSeparator)+summaryTable.getTitle());
 		intent.putExtra(getResources().getString(R.string.intentType), getResources().getInteger(R.integer.multipleAttributeIntent));
         intent.putExtra(getResources().getString(R.string.attributeId)+"0", summaryTable.getId());
         intent.putExtra(getResources().getString(R.string.idmlId), summaryTable.getId());
@@ -1123,22 +1123,10 @@ public class FormScreen extends BaseActivity implements OnClickListener, TextWat
 		} else {//scroll right to next (or new) entity
 			this.currInstanceNo++;
 		}
-		
-		Entity parentEntity = this.findParentEntity(this.getFormScreenId());
-		if (parentEntity==null){
-			String path = this.getFormScreenId().substring(0,this.getFormScreenId().lastIndexOf(getResources().getString(R.string.valuesSeparator2)));
-			parentEntity = this.findParentEntity(path);
-			EntityBuilder.addEntity(parentEntity, ApplicationManager.getSurvey().getSchema().getDefinitionById(this.idmlId).getName());
-			parentEntity = this.findParentEntity(this.getFormScreenId());
-		}
-		
-		View tempView = this.ll.getChildAt(0);
-		if (tempView instanceof TextView){
-			TextView tv = (TextView)tempView;
-			tv.setText(this.breadcrumb.substring(0, this.breadcrumb.lastIndexOf(" "))+" "+(this.currInstanceNo+1));
-		}
 		//Log.e("REFRESHING",this.getFormScreenId()+"currentInstanceNo"+this.currInstanceNo);
-		//refreshing values of fields in the entity
+		//refreshing values of fields in the entity 
+		//Log.e("REFRESHINGentity","=="+this.getFormScreenId());
+		Entity parentEntity = this.findParentEntity(this.getFormScreenId());
 		if (parentEntity!=null){
 			//Log.e("REFRESHING",parentEntity.getIndex()+"parentEntity"+parentEntity.getName());
 			//Log.e("REFRESHING1","parentEntity"+parentEntity.getName());
@@ -1307,10 +1295,10 @@ public class FormScreen extends BaseActivity implements OnClickListener, TextWat
 				}
 			}
 		} else{//parentEntity is null, because there is no entity added with this instance number in current record
-//			String path = this.getFormScreenId().substring(0,this.getFormScreenId().lastIndexOf(getResources().getString(R.string.valuesSeparator2)));
-//			parentEntity = this.findParentEntity(path);
-//			EntityBuilder.addEntity(parentEntity, ApplicationManager.getSurvey().getSchema().getDefinitionById(this.idmlId).getName());
-//			parentEntity = this.findParentEntity(this.getFormScreenId());
+			String path = this.getFormScreenId().substring(0,this.getFormScreenId().lastIndexOf(getResources().getString(R.string.valuesSeparator2)));
+			parentEntity = this.findParentEntity(path);
+			EntityBuilder.addEntity(parentEntity, ApplicationManager.getSurvey().getSchema().getDefinitionById(this.idmlId).getName());
+			parentEntity = this.findParentEntity(this.getFormScreenId());
 			for (int i=0;i<this.fieldsNo;i++){
 				NodeDefinition nodeDef = ApplicationManager.getNodeDefinition(this.startingIntent.getIntExtra(getResources().getString(R.string.attributeId)+i, -1));
 				if (nodeDef!=null){
@@ -1483,15 +1471,9 @@ public class FormScreen extends BaseActivity implements OnClickListener, TextWat
 		} else {
 			this.currInstanceNo++;
 		}
-
-		Entity parentEntity = this.findParentEntity(this.getFormScreenId());
-		
-		View tempView = this.ll.getChildAt(0);
-		if (tempView instanceof TextView){
-			TextView tv = (TextView)tempView;
-			tv.setText(this.breadcrumb.substring(0, this.breadcrumb.lastIndexOf(" "))+" "+(this.currInstanceNo+1));
-		}
-		
+		//Log.e("REFRESHINGentity","=="+this.parentFormScreenId);
+		///Entity parentEntity = this.findParentEntity(this.parentFormScreenId);
+		Entity parentEntity = this.parentEntityMultipleAttribute;
 		if (parentEntity!=null){
 			NodeDefinition nodeDef = ApplicationManager.getNodeDefinition(this.startingIntent.getIntExtra(getResources().getString(R.string.attributeId)+0, -1));
 			

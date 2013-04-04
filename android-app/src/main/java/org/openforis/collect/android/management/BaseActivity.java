@@ -67,10 +67,15 @@ public class BaseActivity extends Activity {
         switch (item.getItemId())
         {
 	        case R.id.menu_save:
-	        	CollectSurvey collectSurvey = (CollectSurvey)ApplicationManager.getSurvey();	        	
-	        	DataManager dataManager = new DataManager(collectSurvey,collectSurvey.getSchema().getRootEntityDefinitions().get(0).getName(),ApplicationManager.getLoggedInUser());
-	        	dataManager.saveRecord(this);
-	        	return true;	        	
+	        	CollectSurvey collectSurveySave = (CollectSurvey)ApplicationManager.getSurvey();	        	
+	        	DataManager dataManagerSave = new DataManager(collectSurveySave,collectSurveySave.getSchema().getRootEntityDefinitions().get(0).getName(),ApplicationManager.getLoggedInUser());
+	        	dataManagerSave.saveRecord(this);
+	        	return true;
+	        case R.id.menu_export:
+	        	CollectSurvey collectSurveyExport = (CollectSurvey)ApplicationManager.getSurvey();	        	
+	        	DataManager dataManagerExport = new DataManager(collectSurveyExport,collectSurveyExport.getSchema().getRootEntityDefinitions().get(0).getName(),ApplicationManager.getLoggedInUser());
+	        	dataManagerExport.saveRecordToXml(ApplicationManager.currentRecord, Environment.getExternalStorageDirectory().toString()+getResources().getString(R.string.exported_data_folder));
+	        	return true;	        		
 			case R.id.menu_settings:
 				startActivity(new Intent(BaseActivity.this,SettingsScreen.class));
 			    return true;			    

@@ -105,7 +105,7 @@ public class RootEntityChoiceActivity extends BaseListActivity{
 		super.onListItemClick(l, v, position, id);
 		Log.i(getResources().getString(R.string.app_name),TAG+":onListItemClick");
 		Intent resultHolder = new Intent();
-		resultHolder.putExtra(getResources().getString(R.string.rootEntityId), this.rootEntitiesList.get(position).getId());		
+		resultHolder.putExtra(getResources().getString(R.string.rootEntityId), this.rootEntitiesList.get(position).getId());
 		setResult(getResources().getInteger(R.integer.rootEntityChoiceSuccessful),resultHolder);
 		RootEntityChoiceActivity.this.finish();
 	}

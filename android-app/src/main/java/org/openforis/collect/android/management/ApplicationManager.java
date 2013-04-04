@@ -75,6 +75,7 @@ public class ApplicationManager extends BaseActivity {
 	public static boolean isToBeScrolled;
 	
 	public static DataManager dataManager;
+	
 	private Thread creationThread = new Thread() {
 		@Override
 		public void run() {
@@ -110,6 +111,8 @@ public class ApplicationManager extends BaseActivity {
 				File folder = new File(sdcardPath+getResources().getString(R.string.application_folder));
 				folder.mkdirs();
 				folder = new File(sdcardPath+getResources().getString(R.string.data_folder));
+			    folder.mkdirs();
+				folder = new File(sdcardPath+getResources().getString(R.string.exported_data_folder));
 			    folder.mkdirs();
 			    folder = new File(sdcardPath+getResources().getString(R.string.backup_folder));
 			    folder.mkdirs();
@@ -180,16 +183,16 @@ public class ApplicationManager extends BaseActivity {
 	    				+System.currentTimeMillis()
 	    				+getResources().getString(R.string.log_file_extension));
 			} 	 finally {
-				finish();
+				//finish();
 			}
 		}
 	};
+	
 	public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         try{
         	Log.i(getResources().getString(R.string.app_name),TAG+":onCreate");
-        	setContentView(R.layout.welcomescreen)
-        	;
+        	setContentView(R.layout.welcomescreen);
 		    //creating database
         	Log.e("creating","DATABASE");
         	long startTime = System.currentTimeMillis();

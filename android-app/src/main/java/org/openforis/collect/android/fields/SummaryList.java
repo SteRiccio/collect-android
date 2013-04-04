@@ -59,7 +59,7 @@ public class SummaryList extends UIElement {
 		this.entityDefinition = entityDef;
 		
 		TextView titleView = new TextView(context);
-		titleView.setText(this.createSummaryListHeader());
+		titleView.setText(this.label.getText()+" "+(this.instanceNo+1));
 		this.tableLayout.addView(titleView);
 		
 		//adding the entity and its nodes if do not exist yet
@@ -312,9 +312,5 @@ public class SummaryList extends UIElement {
 	
 	public int getInstanceNo(){
 		return this.instanceNo;
-	}
-	
-	public String createSummaryListHeader(){
-		return this.label.getText()+" "+(this.instanceNo+1);
 	}
 }
