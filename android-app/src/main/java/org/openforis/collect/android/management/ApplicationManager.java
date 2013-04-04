@@ -40,6 +40,7 @@ import org.openforis.idm.model.Entity;
 import org.openforis.idm.model.expression.ExpressionFactory;
 import org.springframework.jdbc.core.support.JdbcDaoSupport;
 
+import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -75,6 +76,8 @@ public class ApplicationManager extends BaseActivity {
 	public static boolean isToBeScrolled;
 	
 	public static DataManager dataManager;
+	
+	public static ProgressDialog pd;
 	
 	private Thread creationThread = new Thread() {
 		@Override
@@ -174,7 +177,9 @@ public class ApplicationManager extends BaseActivity {
 	    		
 	            JdbcDaoSupport.close();
 	            
-	            showRootEntitiesListScreen();
+	            ApplicationManager.pd.dismiss();
+	            
+	            showRootEntitiesListScreen();	           	            
 			} catch (Exception e) {
 				RunnableHandler.reportException(e,getResources().getString(R.string.app_name),TAG+":run",
 	    				Environment.getExternalStorageDirectory().toString()
@@ -191,14 +196,13 @@ public class ApplicationManager extends BaseActivity {
 	public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         try{
+        	ApplicationManager.pd = ProgressDialog.show(this, getResources().getString(R.string.workInProgress), getResources().getString(R.string.launchAppMessage));
         	Log.i(getResources().getString(R.string.app_name),TAG+":onCreate");
         	setContentView(R.layout.welcomescreen);
 		    //creating database
-        	Log.e("creating","DATABASE");
         	long startTime = System.currentTimeMillis();
 		    new DatabaseWrapper(ApplicationManager.this);
 		    CollectDatabase collectDB = new CollectDatabase(DatabaseWrapper.db);
-		    Log.e("CREATED","in "+(System.currentTimeMillis()-startTime)/1000+"s");
         	//opening database connection		    
         	JdbcDaoSupport jdbcDao = new JdbcDaoSupport();
         	jdbcDao.getConnection();
@@ -218,7 +222,7 @@ public class ApplicationManager extends BaseActivity {
 	    	if(valueForText == null)
 	    		editor.putBoolean(getResources().getString(R.string.showSoftKeyboardOnTextField), false);	    	
 	    	editor.commit();			
-	    	
+	    		    
         	creationThread.start();
         /*	long startTime = System.currentTimeMillis();
         	

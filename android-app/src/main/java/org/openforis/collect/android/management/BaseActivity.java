@@ -35,7 +35,6 @@ public class BaseActivity extends Activity {
         requestWindowFeature(Window.FEATURE_NO_TITLE);
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
-        //setContentView(R.layout.welcomescreen);
 	}
 	
     @Override
@@ -78,7 +77,7 @@ public class BaseActivity extends Activity {
 	        	return true;	        		
 			case R.id.menu_settings:
 				startActivity(new Intent(BaseActivity.this,SettingsScreen.class));
-			    return true;			    
+			    return true;	    
 			case R.id.menu_about:
 				String versionName;
 				try {

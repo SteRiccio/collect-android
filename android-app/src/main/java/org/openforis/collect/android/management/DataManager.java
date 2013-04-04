@@ -3,7 +3,9 @@ package org.openforis.collect.android.management;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.openforis.collect.manager.RecordManager;
 import org.openforis.collect.model.CollectRecord;
@@ -13,7 +15,11 @@ import org.openforis.collect.model.User;
 import org.openforis.collect.persistence.RecordDao;
 import org.openforis.collect.persistence.RecordPersistenceException;
 import org.openforis.collect.persistence.RecordUnlockedException;
+import org.openforis.collect.persistence.xml.DataHandler;
 import org.openforis.collect.persistence.xml.DataMarshaller;
+import org.openforis.collect.persistence.xml.DataUnmarshaller;
+import org.openforis.collect.persistence.xml.DataUnmarshaller.ParseRecordResult;
+import org.openforis.collect.persistence.xml.DataUnmarshallerException;
 import org.springframework.jdbc.core.support.JdbcDaoSupport;
 import org.xmlpull.v1.XmlPullParserException;
 
@@ -29,6 +35,7 @@ public class DataManager {
 	private User user;
 	
 	private DataMarshaller dataMarshaller;
+	private DataUnmarshaller dataUnmarshaller;
 	
 	public DataManager(CollectSurvey survey, String rootEntity, User loggedInUser){
 		if (DataManager.recordManager==null){
@@ -40,6 +47,10 @@ public class DataManager {
 		this.user = loggedInUser;
 		
 		this.dataMarshaller = new DataMarshaller();
+		HashMap<String,User> users = new HashMap<String, User>();
+		users.put(loggedInUser.getName(), loggedInUser);
+		DataHandler dataHandler = new DataHandler(survey, users);
+		this.dataUnmarshaller = new DataUnmarshaller(dataHandler);
 	}
 	
 	public int saveRecord(Context ctx) {
@@ -81,7 +92,7 @@ public class DataManager {
 				recordToSave.setModifiedDate(new Date());
 			}
 			
-			FileWriter fwr = new FileWriter(folderToSave+"/"+ApplicationManager.currentRecord.getId()+"_"+ApplicationManager.currRootEntityId+"_"+ApplicationManager.currentRecord.getCreationDate()+"_"+ApplicationManager.currentRecord.getCreatedBy()+".xml");
+			FileWriter fwr = new FileWriter(folderToSave+"/testowyRekord.xml"/*"/"+ApplicationManager.currentRecord.getId()+"_"+ApplicationManager.currRootEntityId+"_"+ApplicationManager.currentRecord.getCreationDate()+"_"+ApplicationManager.currentRecord.getCreatedBy()+".xml"*/);
 			this.dataMarshaller.write(recordToSave, fwr);
 		} catch (IOException e) {
 			e.printStackTrace();
@@ -92,6 +103,25 @@ public class DataManager {
 		}	
 		Log.e("record","SAVED IN XML IN "+(System.currentTimeMillis()-startTime)/1000+"s");
 		return 0;
+	}
+	
+	public CollectRecord loadRecordFromXml(String filename) {
+		filename = Environment.getExternalStorageDirectory().toString()+"/mofc/data/exported/testowyRekord.xml";
+		long startTime = System.currentTimeMillis();
+		CollectRecord loadedRecord = null;
+		try {
+			ParseRecordResult result = this.dataUnmarshaller.parse(filename);
+			loadedRecord = result.getRecord();
+			Log.e("isSuccess","=="+result.isSuccess());
+			Log.e("message","=="+result.getMessage());
+			Log.e("warningsNO","=="+result.getWarnings().size());
+			Log.e("loadedResult"+(result==null),"LOADED FROM XML IN "+(System.currentTimeMillis()-startTime)/1000+"s");
+		} catch (NullPointerException e){
+			e.printStackTrace();
+		} catch (DataUnmarshallerException e) {
+			e.printStackTrace();
+		}		
+		return loadedRecord;
 	}
 	
 	public void deleteRecord(int position){

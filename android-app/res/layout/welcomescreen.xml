@@ -5,8 +5,17 @@ android:layout_height="fill_parent"
 xmlns:android="http://schemas.android.com/apk/res/android"
 android:background="#000000">
 
- 	<ImageView 
-   		android:id="@+id/companylogo"
+ 	<!--<ImageView 
+   		android:id="@+id/companylogo1"
+   		android:layout_width="fill_parent"
+   		android:layout_height="wrap_content"
+   		android:layout_centerInParent="true"
+   		android:contentDescription="@string/arbonautlogo"
+   		android:src="@drawable/arbonautlogo"
+   		 />-->
+ 	
+ 	 	<ImageView 
+   		android:id="@+id/companylogo2"
    		android:layout_width="fill_parent"
    		android:layout_height="wrap_content"
    		android:layout_centerInParent="true"
@@ -18,7 +27,7 @@ android:background="#000000">
    		android:id="@+id/productlogo"
    		android:layout_width="fill_parent"
    		android:layout_height="wrap_content"
-   		android:layout_below="@id/companylogo"
+   		android:layout_below="@id/companylogo2"
    		android:contentDescription="@string/ofclogo"
    		android:src="@drawable/ofclogo"
    		 />
