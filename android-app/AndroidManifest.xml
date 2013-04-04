@@ -17,7 +17,7 @@
     
     <application android:icon="@drawable/applicationicon" android:label="@string/app_name">
 		<uses-library android:name="android.test.runner" />
-		
+		<!--android:theme="@android:style/Theme.Translucent.NoTitleBar"-->
  		<activity android:name=".management.ApplicationManager"
 		          android:label="@string/app_name"
 		          android:theme="@android:style/Theme.Translucent.NoTitleBar"
@@ -99,13 +99,6 @@
 					<category android:name="android.intent.category.DEFAULT" />
 					<category android:name="android.intent.category.BROWSABLE" />
 				</intent-filter>
-		</activity>
-		
-		<activity android:name=".misc.GpsReaderActivity"
-          android:label="@string/app_name"
-          android:theme="@android:style/Theme.NoTitleBar"
-          android:configChanges="orientation|keyboardHidden"
-          >
 		</activity>
 		
 		<activity android:name="org.openforis.collect.android.misc.GpsActivity"
