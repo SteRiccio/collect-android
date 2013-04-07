@@ -53,13 +53,10 @@ public class RangeField extends InputField {
 				    	Boolean valueForNum = (Boolean)settings.get(getResources().getString(R.string.showSoftKeyboardOnNumericField));
 				    	//Switch on or off Software keyboard depend of settings
 				    	if(valueForNum){
-				    		Log.i(getResources().getString(R.string.app_name), "Setting range field is: " + valueForNum);
 				    		RangeField.this.makeReal();			    		
 				        }
 				    	else {
-				    		Log.i(getResources().getString(R.string.app_name), "Setting range field is: " + valueForNum);
 				    		txtBox.setInputType(InputType.TYPE_NULL);
-//				    		RangeField.this.setKeyboardType(null);
 				    	}
 			    	}
 		    	}

@@ -59,7 +59,8 @@ public class GpsActivity extends Activity {
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		Log.i(TAG,"gpsActivity:onCreate");
+		Log.i(getResources().getString(R.string.app_name),TAG+":onCreate");
+		setContentView(R.layout.welcomescreen);
 		loc = null;
 		lm = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
 		if ( !lm.isProviderEnabled( LocationManager.GPS_PROVIDER ) ) {

@@ -199,8 +199,8 @@ public class ApplicationManager extends BaseActivity {
         	ApplicationManager.pd = ProgressDialog.show(this, getResources().getString(R.string.workInProgress), getResources().getString(R.string.launchAppMessage));
         	Log.i(getResources().getString(R.string.app_name),TAG+":onCreate");
         	setContentView(R.layout.welcomescreen);
+        	
 		    //creating database
-        	long startTime = System.currentTimeMillis();
 		    new DatabaseWrapper(ApplicationManager.this);
 		    CollectDatabase collectDB = new CollectDatabase(DatabaseWrapper.db);
         	//opening database connection		    

@@ -144,7 +144,15 @@ public class FormScreen extends BaseActivity implements OnClickListener, TextWat
     		
     		if (!this.breadcrumb.equals("")){
     			TextView breadcrumb = new TextView(this);
-    			breadcrumb.setText(this.breadcrumb);
+    			if (this.intentType != getResources().getInteger(R.integer.singleEntityIntent)){
+    				if (this.intentType == getResources().getInteger(R.integer.multipleEntityIntent)){
+    					breadcrumb.setText(this.breadcrumb.substring(0, this.breadcrumb.lastIndexOf(" "))+" "+(this.currInstanceNo+1));	
+    				} else{
+    					breadcrumb.setText(this.breadcrumb+" "+(this.currInstanceNo+1));	
+    				}    				
+    			}    				
+    			else
+    				breadcrumb.setText(this.breadcrumb);
         		breadcrumb.setTextSize(getResources().getInteger(R.integer.breadcrumbFontSize));
         		this.ll.addView(breadcrumb);
     		}    		
@@ -460,6 +468,10 @@ public class FormScreen extends BaseActivity implements OnClickListener, TextWat
 	    				if (!nodeDef.isMultiple()){
 	        				final CoordinateField coordField= new CoordinateField(this, nodeDef);
 	        				if (this.currentCoordinateField!=null){
+	        					if (this.longitude==null)
+	        						this.longitude = "";
+	        					if (this.latitude==null)
+	        						this.latitude = "";
 	        					coordField.setValue(0, this.longitude, this.latitude, this.parentFormScreenId,false);
 	    		    			this.currentCoordinateField = null;
 	    		    			this.longitude = null;
@@ -484,6 +496,10 @@ public class FormScreen extends BaseActivity implements OnClickListener, TextWat
 	    				} else if (this.intentType==getResources().getInteger(R.integer.multipleAttributeIntent)){
 	    					final CoordinateField coordField= new CoordinateField(this, nodeDef);
 	        				if (this.currentCoordinateField!=null){
+	        					if (this.longitude==null)
+	        						this.longitude = "";
+	        					if (this.latitude==null)
+	        						this.latitude = "";
 	        					coordField.setValue(this.currInstanceNo, this.longitude, this.latitude, this.parentFormScreenId,false);
 	    		    			this.currentCoordinateField = null;
 	    		    			this.longitude = null;
@@ -1123,6 +1139,12 @@ public class FormScreen extends BaseActivity implements OnClickListener, TextWat
 		} else {//scroll right to next (or new) entity
 			this.currInstanceNo++;
 		}
+		
+		View firstView = this.ll.getChildAt(0);
+		if (firstView instanceof TextView){
+			TextView screenTitle = (TextView)firstView;
+			screenTitle.setText(this.breadcrumb.substring(0, this.breadcrumb.lastIndexOf(" "))+" "+(this.currInstanceNo+1));
+		}
 		//Log.e("REFRESHING",this.getFormScreenId()+"currentInstanceNo"+this.currInstanceNo);
 		//refreshing values of fields in the entity 
 		//Log.e("REFRESHINGentity","=="+this.getFormScreenId());
@@ -1470,6 +1492,12 @@ public class FormScreen extends BaseActivity implements OnClickListener, TextWat
 			}	
 		} else {
 			this.currInstanceNo++;
+		}
+		
+		View firstView = this.ll.getChildAt(0);
+		if (firstView instanceof TextView){
+			TextView screenTitle = (TextView)firstView;
+			screenTitle.setText(this.breadcrumb+" "+(this.currInstanceNo+1));
 		}
 		//Log.e("REFRESHINGentity","=="+this.parentFormScreenId);
 		///Entity parentEntity = this.findParentEntity(this.parentFormScreenId);

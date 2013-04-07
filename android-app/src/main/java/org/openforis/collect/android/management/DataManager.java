@@ -92,7 +92,7 @@ public class DataManager {
 				recordToSave.setModifiedDate(new Date());
 			}
 			
-			FileWriter fwr = new FileWriter(folderToSave+"/testowyRekord.xml"/*"/"+ApplicationManager.currentRecord.getId()+"_"+ApplicationManager.currRootEntityId+"_"+ApplicationManager.currentRecord.getCreationDate()+"_"+ApplicationManager.currentRecord.getCreatedBy()+".xml"*/);
+			FileWriter fwr = new FileWriter(folderToSave+"/"+ApplicationManager.currentRecord.getId()+"_"+ApplicationManager.currRootEntityId+"_"+ApplicationManager.currentRecord.getCreationDate().getDay()+"_"+ApplicationManager.currentRecord.getCreationDate().getMonth()+"_"+ApplicationManager.currentRecord.getCreationDate().getYear()+"_"+ApplicationManager.currentRecord.getCreationDate().getHours()+"_"+ApplicationManager.currentRecord.getCreationDate().getMinutes()+"_"+ApplicationManager.currentRecord.getCreatedBy().getName()+".xml");
 			this.dataMarshaller.write(recordToSave, fwr);
 		} catch (IOException e) {
 			e.printStackTrace();
@@ -114,7 +114,7 @@ public class DataManager {
 			loadedRecord = result.getRecord();
 			Log.e("isSuccess","=="+result.isSuccess());
 			Log.e("message","=="+result.getMessage());
-			Log.e("warningsNO","=="+result.getWarnings().size());
+			Log.e("warningsNO","=="+result.getWarnings());
 			Log.e("loadedResult"+(result==null),"LOADED FROM XML IN "+(System.currentTimeMillis()-startTime)/1000+"s");
 		} catch (NullPointerException e){
 			e.printStackTrace();

@@ -131,12 +131,9 @@ public class CoordinateField extends InputField implements OnClickListener {
 			public void onTextChanged(CharSequence s, int start, int before, int count) {
 				if (s.length() > 0){
 					if(!isNumeric(s.toString())){
-						Log.i("COORDINATE FIELD", "Value of Longitude: " + s + " is NOT numeric.");
 						String strReplace = s.subSequence(0, s.length()-1).toString();
 						CoordinateField.this.txtLongitude.setText(strReplace);
 						CoordinateField.this.txtLongitude.setSelection(strReplace.length());
-					}else{
-						Log.i("COORDINATE FIELD", "Value of Longitude: " + s + " is numeric.");
 					}
 				}	
 			}	

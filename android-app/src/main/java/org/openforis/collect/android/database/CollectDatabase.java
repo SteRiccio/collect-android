@@ -2260,7 +2260,6 @@ public class CollectDatabase{
 	}
 		
 	public void insertVernacularNamesDataForTest(){
-		Log.i("COLLECT DATABASE", "START INSERTING DATA TO VERNACULAR NAMES");
 		//Vernacular names
 		db.execSQL("INSERT OR IGNORE INTO ofc_taxon_vernacular_name(id, vernacular_name, language_code, language_variety, taxon_id, step) VALUES(1, 'Livindwe', 'nym', 'Nyamwezi', 1, 9);");
 		db.execSQL("INSERT OR IGNORE INTO ofc_taxon_vernacular_name(id, vernacular_name, language_code, language_variety, taxon_id, step) VALUES(2, 'Mgamadume', 'ksb', 'Shambaa', 1, 9);");
