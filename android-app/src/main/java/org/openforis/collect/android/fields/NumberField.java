@@ -89,20 +89,19 @@ public class NumberField extends InputField {
 		    	}else{
 		    		Log.i("NUMBER FIELD info", "Number field lost focus");		    		
 		    		Log.i("VALIDATION FOR NUMBER FIELD", "Attribute defenition: " + NumberField.this.numberNodeDef.toString());
+		    		//Get attribute
+//		    		NumberField.this.setValue(form.currInstanceNo, NumberField.this.txtBox.getText().toString(), form.getFormScreenId(), true);	
+		    		Node<? extends NodeDefinition> node = NumberField.this.findParentEntity(form.getFormScreenId()).get(NumberField.this.nodeDefinition.getName(), form.currInstanceNo);		    		
 		    		@SuppressWarnings("rawtypes")
-					NumberAttribute attribute;
+		    		NumberAttribute attribute;
 		    		if (NumberField.this.type.toLowerCase().equals("integer")){
 		    			Log.i("VALIDATION FOR NUMBER FIELD", "Integer Attribute");
-		    			attribute = new IntegerAttribute((NumberAttributeDefinition) NumberField.this.numberNodeDef);
+		    			attribute = (IntegerAttribute)node;
 		    		} else{
 		    			Log.i("VALIDATION FOR NUMBER FIELD", "Real Attribute");
-		    			attribute = new RealAttribute((NumberAttributeDefinition) NumberField.this.numberNodeDef);
+		    			attribute = (RealAttribute)node;
 		    		}
-		    		if(parentEntity == null)
-		    			Log.i("VALIDATION FOR NUMBER FIELD", "Parent entity is: NULL");
-		    		Log.i("VALIDATION FOR NUMBER FIELD", "Parent entity is: " + parentEntity.getName());
-		    		//Log.i("VALIDATION FOR NUMBER FIELD", "Currect record is: " + ApplicationManager.currentRecord);
-		    		
+
 		    		//GETTING VALUE (Karol code)
 		    		String loadedValue = "";
 		    		if (((NumberAttributeDefinition) NumberField.this.numberNodeDef).isInteger()){
@@ -118,16 +117,12 @@ public class NumberField extends InputField {
 					            attribute.setValue(realValue);    
 					        }
 					}  
-		    		Log.i("VALIDATION FOR NUMBER FIELD", "Value from txtbox is: " + loadedValue);
-		    		Log.i("VALIDATION FOR NUMBER FIELD", "Value from attribute is: " + attribute.getValue());
 		    		Log.i("VALIDATION FOR NUMBER FIELD", "Record of attribute is: " + attribute.getRecord());
-		    		//Log.i("VALIDATION FOR NUMBER FIELD", "Currect record is: " + ApplicationManager.currentRecord);
-//					Validator validator = new Validator();
-//		    		ValidationResults results = validator.validate(attribute);
-//		    		Log.i("VALIDATION FOR NUMBER FIELD", "Errors: " + results.getErrors().size() + " : " + results.getErrors().toString());
-//		    		Log.i("VALIDATION FOR NUMBER FIELD", "Warnings: "  + results.getWarnings().size() + " : " + results.getWarnings().toString());
-//		    		Log.i("VALIDATION FOR NUMBER FIELD", "Fails: "  + results.getFailed().size() + " : " +  results.getFailed().toString());
-//		    		Log.i("VALIDATION FOR NUMBER FIELD", "Number of ERRORS from Current Record: " + ApplicationManager.currentRecord.getErrors());
+					Validator validator = new Validator();
+		    		ValidationResults results = validator.validate(attribute); 
+		    		Log.e("VALIDATION FOR NUMBER FIELD", "Errors: " + results.getErrors().size() + " : " + results.getErrors().toString());
+		    		Log.d("VALIDATION FOR NUMBER FIELD", "Warnings: "  + results.getWarnings().size() + " : " + results.getWarnings().toString());
+		    		Log.e("VALIDATION FOR NUMBER FIELD", "Fails: "  + results.getFailed().size() + " : " +  results.getFailed().toString());
 		    	}
 		    }
 	    });
@@ -164,9 +159,11 @@ public class NumberField extends InputField {
 					if (((NumberAttributeDefinition) this.nodeDefinition).isInteger()){
 						IntegerAttribute intAttr = (IntegerAttribute)node;
 						intAttr.setValue(new IntegerValue(Integer.valueOf(value), null));
+//						Log.i("Number field","From setValue. Integer node' record is: " + node.getRecord());
 					} else {
 						RealAttribute intAttr = (RealAttribute)node;
 						intAttr.setValue(new RealValue(Double.valueOf(value), null));
+//						Log.i("Number field","From setValue. Real node' record is: " + node.getRecord());
 					}
 				}
 			} else {
@@ -182,7 +179,7 @@ public class NumberField extends InputField {
 			if (!isTextChanged)
 				this.txtBox.setText(value);
 		} catch (Exception e){
-			
+			Log.e("Number value got exception", e.getMessage());
 		}		
 	}
 	
