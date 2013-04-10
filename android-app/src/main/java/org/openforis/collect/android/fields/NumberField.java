@@ -20,6 +20,7 @@ import org.openforis.idm.model.RealAttribute;
 import org.openforis.idm.model.RealValue;
 
 import android.content.Context;
+import android.graphics.Color;
 import android.text.Editable;
 import android.text.InputType;
 import android.text.TextWatcher;
@@ -64,7 +65,6 @@ public class NumberField extends InputField {
 		
 		// When NumberField got focus
 		this.txtBox.setOnFocusChangeListener(new OnFocusChangeListener() {
-		    @SuppressWarnings("unchecked")
 			@Override
 		    public void onFocusChange(View v, boolean hasFocus) {
 		    	//Get current settings about software keyboard for text fields
@@ -87,42 +87,7 @@ public class NumberField extends InputField {
 				    	}
 			    	}
 		    	}else{
-		    		Log.i("NUMBER FIELD info", "Number field lost focus");		    		
-		    		Log.i("VALIDATION FOR NUMBER FIELD", "Attribute defenition: " + NumberField.this.numberNodeDef.toString());
-		    		//Get attribute
-//		    		NumberField.this.setValue(form.currInstanceNo, NumberField.this.txtBox.getText().toString(), form.getFormScreenId(), true);	
-		    		Node<? extends NodeDefinition> node = NumberField.this.findParentEntity(form.getFormScreenId()).get(NumberField.this.nodeDefinition.getName(), form.currInstanceNo);		    		
-		    		@SuppressWarnings("rawtypes")
-		    		NumberAttribute attribute;
-		    		if (NumberField.this.type.toLowerCase().equals("integer")){
-		    			Log.i("VALIDATION FOR NUMBER FIELD", "Integer Attribute");
-		    			attribute = (IntegerAttribute)node;
-		    		} else{
-		    			Log.i("VALIDATION FOR NUMBER FIELD", "Real Attribute");
-		    			attribute = (RealAttribute)node;
-		    		}
-
-		    		//GETTING VALUE (Karol code)
-		    		String loadedValue = "";
-		    		if (((NumberAttributeDefinition) NumberField.this.numberNodeDef).isInteger()){
-					    IntegerValue intValue = (IntegerValue)parentEntity.getValue(NumberField.this.numberNodeDef.getName(), NumberField.this.currentInstanceNo);
-					    if (intValue!=null){
-					        loadedValue = intValue.getValue().toString();    
-					    	attribute.setValue(intValue);
-					    }
-					} else{
-					        RealValue realValue = (RealValue)parentEntity.getValue(NumberField.this.numberNodeDef.getName(), NumberField.this.currentInstanceNo);
-					        if (realValue!=null){
-					            loadedValue = realValue.getValue().toString();
-					            attribute.setValue(realValue);    
-					        }
-					}  
-		    		Log.i("VALIDATION FOR NUMBER FIELD", "Record of attribute is: " + attribute.getRecord());
-					Validator validator = new Validator();
-		    		ValidationResults results = validator.validate(attribute); 
-		    		Log.e("VALIDATION FOR NUMBER FIELD", "Errors: " + results.getErrors().size() + " : " + results.getErrors().toString());
-		    		Log.d("VALIDATION FOR NUMBER FIELD", "Warnings: "  + results.getWarnings().size() + " : " + results.getWarnings().toString());
-		    		Log.e("VALIDATION FOR NUMBER FIELD", "Fails: "  + results.getFailed().size() + " : " +  results.getFailed().toString());
+		    		NumberField.this.validateResult();
 		    	}
 		    }
 	    });
@@ -148,7 +113,37 @@ public class NumberField extends InputField {
 		});
 	}
 	
-	
+	private void validateResult(){
+		Log.i("NUMBER FIELD info", "Start to validate NumberField value");		    		
+		String value = NumberField.this.txtBox.getText().toString();
+		if ((value!=null) && (!value.equals("")) && (!value.equals("null"))){
+    		//Get attribute
+    		Node<? extends NodeDefinition> node = NumberField.this.findParentEntity(form.getFormScreenId()).get(NumberField.this.nodeDefinition.getName(), form.currInstanceNo);		    		
+    		@SuppressWarnings("rawtypes")
+    		NumberAttribute attribute;
+    		if (NumberField.this.type.toLowerCase().equals("integer")){
+    			Log.i("VALIDATION FOR NUMBER FIELD", "Integer Attribute");
+    			attribute = (IntegerAttribute)node;
+    		} else{
+    			Log.i("VALIDATION FOR NUMBER FIELD", "Real Attribute");
+    			attribute = (RealAttribute)node;
+    		}
+    		Log.i("VALIDATION FOR NUMBER FIELD", "Record of attribute is: " + attribute.getRecord());
+			//Validate value into field and change color if it's not valid
+    		Validator validator = new Validator();
+    		ValidationResults results = validator.validate(attribute); 
+    		if(results.getErrors().size() > 0 || results.getFailed().size() > 0){
+    			NumberField.this.txtBox.setBackgroundColor(Color.RED);
+    		}else if (results.getWarnings().size() > 0){
+    			NumberField.this.txtBox.setBackgroundColor(Color.YELLOW);
+    		}else{
+    			NumberField.this.txtBox.setBackgroundColor(Color.TRANSPARENT);
+    		}
+    		Log.e("VALIDATION FOR NUMBER FIELD", "Errors: " + results.getErrors().size() + " : " + results.getErrors().toString());
+    		Log.d("VALIDATION FOR NUMBER FIELD", "Warnings: "  + results.getWarnings().size() + " : " + results.getWarnings().toString());
+    		Log.e("VALIDATION FOR NUMBER FIELD", "Fails: "  + results.getFailed().size() + " : " +  results.getFailed().toString());
+		}		
+	}
 	
 	public void setValue(int position, String value, String path, boolean isTextChanged)
 	{		
@@ -159,11 +154,9 @@ public class NumberField extends InputField {
 					if (((NumberAttributeDefinition) this.nodeDefinition).isInteger()){
 						IntegerAttribute intAttr = (IntegerAttribute)node;
 						intAttr.setValue(new IntegerValue(Integer.valueOf(value), null));
-//						Log.i("Number field","From setValue. Integer node' record is: " + node.getRecord());
 					} else {
 						RealAttribute intAttr = (RealAttribute)node;
 						intAttr.setValue(new RealValue(Double.valueOf(value), null));
-//						Log.i("Number field","From setValue. Real node' record is: " + node.getRecord());
 					}
 				}
 			} else {
