@@ -78,13 +78,17 @@ public class SettingsScreen extends Activity{
     		    		
 			this.tvGpsMaxWaitingTime = (TextView)findViewById(R.id.lblGpsTimeout);
 			this.txtGpsMaxWaitingTime = (EditText)findViewById(R.id.txtGpsTimeout);
-            this.txtGpsMaxWaitingTime.setText(String.valueOf(ApplicationManager.appPreferences.getInt("gpsTimeout"/*getResources().getString(R.string.gpsTimeout)*/, 600)));
+            this.txtGpsMaxWaitingTime.setText(String.valueOf(ApplicationManager.appPreferences.getInt(getResources().getString(R.string.gpsTimeout), getResources().getInteger(R.integer.gpsTimeoutInMs))));
             this.txtGpsMaxWaitingTime.addTextChangedListener(new TextWatcher(){
 		        public void afterTextChanged(Editable s) {        			            
-					int gpsTimeout = ApplicationManager.appPreferences.getInt(getResources().getString(R.string.gpsTimeout), getResources().getInteger(R.integer.gpsTimeoutInMs));
 					SharedPreferences.Editor editor = ApplicationManager.appPreferences.edit();
 					editor = ApplicationManager.appPreferences.edit();
-					editor.putInt(getResources().getString(R.string.gpsTimeout), gpsTimeout);
+					try{
+						editor.putInt(getResources().getString(R.string.gpsTimeout), Integer.valueOf(s.toString()));
+					} catch (Exception e){
+						int gpsTimeout = ApplicationManager.appPreferences.getInt(getResources().getString(R.string.gpsTimeout), getResources().getInteger(R.integer.gpsTimeoutInMs));
+						editor.putInt(getResources().getString(R.string.gpsTimeout), gpsTimeout);	
+					}
 					editor.commit();
 		        }
 		        public void beforeTextChanged(CharSequence s, int start, int count, int after){}
