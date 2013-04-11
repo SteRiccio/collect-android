@@ -34,6 +34,7 @@ import org.openforis.idm.model.Time;
 
 import android.content.Context;
 import android.graphics.Color;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.ViewGroup;
 import android.widget.TableLayout;
@@ -50,6 +51,9 @@ public class SummaryTable extends UIElement {
 			OnClickListener listener) {
 		super(context, nodeDef);
 		
+		Log.e("SummaryTable","node=="+nodeDef.getName()+"==");
+		Log.e("SummaryTable","parent=="+parentEntity.getName()+"=="+parentEntity.getIndex());
+		
 		this.tableLayout  = new TableLayout(context);
 		this.tableLayout.setStretchAllColumns(true);  
 	    this.tableLayout.setShrinkAllColumns(true);
@@ -64,6 +68,7 @@ public class SummaryTable extends UIElement {
 		    this.values.add(newValue);
 			//EntityBuilder.addValue(parentEntity, nodeDef.getName(), newValue, 0);
 	    }
+	    Log.e("SummaryTable","iloscDzieci=="+listOfNodes.size());
 	    for (int i=0;i<listOfNodes.size();i++){
 	    	Node<?> foundNode = parentEntity.get(nodeDef.getName(), i);
 		    String loadedValue = "";
