@@ -1137,6 +1137,15 @@ public class FormScreen extends BaseActivity implements OnClickListener, TextWat
 			parentEntity = this.findParentEntity(this.getFormScreenId());
 		}
 		
+		Log.e("refreshEntityScreen","this.getFormScreenId()=="+this.getFormScreenId());
+		Log.e("refreshEntityScreen","this.parentFormScreenId=="+this.parentFormScreenId);
+		this.parentEntitySingleAttribute = this.findParentEntity(this.getFormScreenId());
+		this.parentEntityMultipleAttribute = this.findParentEntity(this.parentFormScreenId);
+		if (parentEntitySingleAttribute!=null)
+			Log.e("refreshEntityScreen","parentEntitySingleAttribute=="+parentEntitySingleAttribute.getName()+"=="+parentEntitySingleAttribute.getIndex());
+		if (parentEntityMultipleAttribute!=null)
+			Log.e("refreshEntityScreen","parentEntityMultipleAttribute=="+parentEntityMultipleAttribute.getName()+"=="+parentEntityMultipleAttribute.getIndex());
+		
 		String loadedValue = "";
 		ArrayList<String> tableColHeaders = new ArrayList<String>();
 		tableColHeaders.add("Value");
@@ -1407,8 +1416,7 @@ public class FormScreen extends BaseActivity implements OnClickListener, TextWat
         				//codeField.setValue(this.currInstanceNo, loadedValue, this.parentFormScreenId,false);
         				ApplicationManager.putUIElement(codeField.getId(), codeField);
         				this.ll.addView(codeField);
-    				} else {//multiple attribute summary 
-    					Log.e("next","SummaryTable");
+    				} else {//multiple attribute summary
 						SummaryTable summaryTableView = new SummaryTable(this, nodeDef, tableColHeaders, parentEntitySingleAttribute, this);
     					summaryTableView.setOnClickListener(this);
         				summaryTableView.setId(nodeDef.getId());
@@ -1837,6 +1845,9 @@ public class FormScreen extends BaseActivity implements OnClickListener, TextWat
 				this.ll.addView(arrangeButtonsInLine(new Button(this),getResources().getString(R.string.previousInstanceButton),new Button(this),getResources().getString(R.string.nextInstanceButton),this, true));
 			}	
 		}
+		
+		int backgroundColor = ApplicationManager.appPreferences.getInt(getResources().getString(R.string.backgroundColor), Color.WHITE);		
+		changeBackgroundColor(backgroundColor);
 		
 		for (int i=0;i<this.fieldsNo;i++){
 			NodeDefinition nodeDef = ApplicationManager.getNodeDefinition(this.startingIntent.getIntExtra(getResources().getString(R.string.attributeId)+i, -1));
