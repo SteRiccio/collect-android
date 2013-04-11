@@ -132,14 +132,14 @@ public class FormScreen extends BaseActivity implements OnClickListener, TextWat
 		super.onResume();
 		Log.i(getResources().getString(R.string.app_name),TAG+":onResume");
 		try{
-			Log.e("onresume","this.getFormScreenId()=="+this.getFormScreenId());
-			Log.e("onresume","this.parentFormScreenId=="+this.parentFormScreenId);
+//			Log.e("onresume","this.getFormScreenId()=="+this.getFormScreenId());
+//			Log.e("onresume","this.parentFormScreenId=="+this.parentFormScreenId);
     		this.parentEntitySingleAttribute = this.findParentEntity(this.getFormScreenId());
     		this.parentEntityMultipleAttribute = this.findParentEntity(this.parentFormScreenId);
-    		if (parentEntitySingleAttribute!=null)
-    			Log.e("onresume","parentEntitySingleAttribute=="+parentEntitySingleAttribute.getName()+"=="+parentEntitySingleAttribute.getIndex());
-    		if (parentEntityMultipleAttribute!=null)
-    			Log.e("onresume","parentEntityMultipleAttribute=="+parentEntityMultipleAttribute.getName()+"=="+parentEntityMultipleAttribute.getIndex());
+//    		if (parentEntitySingleAttribute!=null)
+//    			Log.e("onresume","parentEntitySingleAttribute=="+parentEntitySingleAttribute.getName()+"=="+parentEntitySingleAttribute.getIndex());
+//    		if (parentEntityMultipleAttribute!=null)
+//    			Log.e("onresume","parentEntityMultipleAttribute=="+parentEntityMultipleAttribute.getName()+"=="+parentEntityMultipleAttribute.getIndex());
     		
 			String loadedValue = "";
 
@@ -1137,14 +1137,14 @@ public class FormScreen extends BaseActivity implements OnClickListener, TextWat
 			parentEntity = this.findParentEntity(this.getFormScreenId());
 		}
 		
-		Log.e("refreshEntityScreen","this.getFormScreenId()=="+this.getFormScreenId());
-		Log.e("refreshEntityScreen","this.parentFormScreenId=="+this.parentFormScreenId);
+//		Log.e("refreshEntityScreen","this.getFormScreenId()=="+this.getFormScreenId());
+//		Log.e("refreshEntityScreen","this.parentFormScreenId=="+this.parentFormScreenId);
 		this.parentEntitySingleAttribute = this.findParentEntity(this.getFormScreenId());
 		this.parentEntityMultipleAttribute = this.findParentEntity(this.parentFormScreenId);
-		if (parentEntitySingleAttribute!=null)
+		/*if (parentEntitySingleAttribute!=null)
 			Log.e("refreshEntityScreen","parentEntitySingleAttribute=="+parentEntitySingleAttribute.getName()+"=="+parentEntitySingleAttribute.getIndex());
 		if (parentEntityMultipleAttribute!=null)
-			Log.e("refreshEntityScreen","parentEntityMultipleAttribute=="+parentEntityMultipleAttribute.getName()+"=="+parentEntityMultipleAttribute.getIndex());
+			Log.e("refreshEntityScreen","parentEntityMultipleAttribute=="+parentEntityMultipleAttribute.getName()+"=="+parentEntityMultipleAttribute.getIndex());*/
 		
 		String loadedValue = "";
 		ArrayList<String> tableColHeaders = new ArrayList<String>();

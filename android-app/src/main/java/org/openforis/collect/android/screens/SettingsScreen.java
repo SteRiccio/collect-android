@@ -10,10 +10,13 @@ import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.os.Environment;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.CheckBox;
+import android.widget.EditText;
 import android.widget.TextView;
 
 public class SettingsScreen extends Activity{
@@ -25,6 +28,8 @@ public class SettingsScreen extends Activity{
 	private CheckBox chckSoftKeyboardOnText;
 	private CheckBox chckSoftKeyboardOnNumeric;
 	private CheckBox chckWhiteBackground;
+	
+	private EditText txtGpsMaxWaitingTime;
 	
 	public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);       
@@ -70,7 +75,19 @@ public class SettingsScreen extends Activity{
     		this.chckSoftKeyboardOnText.setChecked(ApplicationManager.appPreferences.getBoolean(getResources().getString(R.string.showSoftKeyboardOnTextField), false));
     		this.chckSoftKeyboardOnNumeric.setChecked(ApplicationManager.appPreferences.getBoolean(getResources().getString(R.string.showSoftKeyboardOnNumericField), false));
     		
-            
+            this.txtGpsMaxWaitingTime = (EditText)findViewById(R.id.txtGpsTimeout);
+            this.txtGpsMaxWaitingTime.setText(ApplicationManager.appPreferences.getInt(getResources().getString(R.string.gpsPreferredWaitingTime), getResources().getInteger(R.integer.gpsPreferredWaitingTime)));
+            this.txtGpsMaxWaitingTime.addTextChangedListener(new TextWatcher(){
+		        public void afterTextChanged(Editable s) {        			            
+					int gpsTimeout = ApplicationManager.appPreferences.getInt(getResources().getString(R.string.gpsPreferredWaitingTime), getResources().getInteger(R.integer.gpsPreferredWaitingTime));
+					SharedPreferences.Editor editor = ApplicationManager.appPreferences.edit();
+					editor = ApplicationManager.appPreferences.edit();
+					editor.putInt(getResources().getString(R.string.gpsPreferredWaitingTime), gpsTimeout);
+					editor.commit();
+		        }
+		        public void beforeTextChanged(CharSequence s, int start, int count, int after){}
+		        public void onTextChanged(CharSequence s, int start, int before, int count){}
+		    });
         } catch (Exception e){
     		RunnableHandler.reportException(e,getResources().getString(R.string.app_name),TAG+":onCreate",
     				Environment.getExternalStorageDirectory().toString()
