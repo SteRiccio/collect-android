@@ -75,17 +75,20 @@ public class SettingsScreen extends Activity{
     		    	  	
     		this.chckSoftKeyboardOnText.setChecked(ApplicationManager.appPreferences.getBoolean(getResources().getString(R.string.showSoftKeyboardOnTextField), false));
     		this.chckSoftKeyboardOnNumeric.setChecked(ApplicationManager.appPreferences.getBoolean(getResources().getString(R.string.showSoftKeyboardOnNumericField), false));
-    		    		
+
 			this.tvGpsMaxWaitingTime = (TextView)findViewById(R.id.lblGpsTimeout);
 			this.txtGpsMaxWaitingTime = (EditText)findViewById(R.id.txtGpsTimeout);
-            this.txtGpsMaxWaitingTime.setText(String.valueOf(ApplicationManager.appPreferences.getInt(getResources().getString(R.string.gpsTimeout), getResources().getInteger(R.integer.gpsTimeoutInMs))));
+			Log.e("valueToSet","=="+ApplicationManager.appPreferences.getInt(getResources().getString(R.string.gpsTimeout), getResources().getInteger(R.integer.gpsTimeoutInMs)));
+			this.txtGpsMaxWaitingTime.setText(String.valueOf(ApplicationManager.appPreferences.getInt(getResources().getString(R.string.gpsTimeout), getResources().getInteger(R.integer.gpsTimeoutInMs))/1000));
             this.txtGpsMaxWaitingTime.addTextChangedListener(new TextWatcher(){
 		        public void afterTextChanged(Editable s) {        			            
 					SharedPreferences.Editor editor = ApplicationManager.appPreferences.edit();
 					editor = ApplicationManager.appPreferences.edit();
 					try{
-						editor.putInt(getResources().getString(R.string.gpsTimeout), Integer.valueOf(s.toString()));
+						Log.e("valueToSetTextChnaged","=="+Integer.valueOf(s.toString())*1000);
+						editor.putInt(getResources().getString(R.string.gpsTimeout), Integer.valueOf(s.toString())*1000);
 					} catch (Exception e){
+						Log.e("valueToSetTextChnagedEXC","=="+ApplicationManager.appPreferences.getInt(getResources().getString(R.string.gpsTimeout), getResources().getInteger(R.integer.gpsTimeoutInMs)));
 						int gpsTimeout = ApplicationManager.appPreferences.getInt(getResources().getString(R.string.gpsTimeout), getResources().getInteger(R.integer.gpsTimeoutInMs));
 						editor.putInt(getResources().getString(R.string.gpsTimeout), gpsTimeout);	
 					}
