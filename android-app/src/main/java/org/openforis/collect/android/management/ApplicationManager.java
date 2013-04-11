@@ -212,9 +212,9 @@ public class ApplicationManager extends BaseActivity {
 			SharedPreferences.Editor editor = ApplicationManager.appPreferences.edit();
 			editor.putInt(getResources().getString(R.string.backgroundColor), backgroundColor);
 			
-			int gpsTimeout = ApplicationManager.appPreferences.getInt(getResources().getString(R.string.gpsPreferredWaitingTime), getResources().getInteger(R.integer.gpsPreferredWaitingTime));
+			int gpsTimeout = ApplicationManager.appPreferences.getInt(getResources().getString(R.string.gpsTimeout), getResources().getInteger(R.integer.gpsTimeoutInMs));
 			editor = ApplicationManager.appPreferences.edit();
-			editor.putInt(getResources().getString(R.string.gpsPreferredWaitingTime), gpsTimeout);
+			editor.putInt(getResources().getString(R.string.gpsTimeout), gpsTimeout);
 			//editor.commit();
             
 			//Set virtual keyboard to 'false' if it's NULL

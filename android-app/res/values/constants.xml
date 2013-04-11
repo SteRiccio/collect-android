@@ -25,8 +25,8 @@
     <string name="showSoftKeyboardOnTextField">showSoftKeyboardOnText</string>
     <string name="showSoftKeyboardOnNumericField">showSoftKeyboardOnNumeric</string>
     <string name="backgroundColor">backgroundColor</string>
-	<string name="gpsPreferredWaitingTime">gps_timeout</string>
-    <integer name="gpsPreferredWaitingTime">60000</integer>
+    <string name="gpsTimeout">gpsTimeout</string>
+	<integer name="gpsTimeoutInMs">60000</integer>
     <integer name="gpsMinUpdateTime">60000</integer>
     <integer name="gpsMinUpdateDistance">10</integer>
     
