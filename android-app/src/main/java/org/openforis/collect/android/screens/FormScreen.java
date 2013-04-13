@@ -1155,7 +1155,7 @@ public class FormScreen extends BaseActivity implements OnClickListener, TextWat
 				if (ApplicationManager.currentRecord.getRootEntity().getId()!=nodeDef.getId()){
     				Node<?> foundNode = this.parentEntitySingleAttribute.get(nodeDef.getName(), this.currInstanceNo);
     				if (foundNode==null){
-    					EntityBuilder.addEntity(this.parentEntitySingleAttribute, ApplicationManager.getSurvey().getSchema().getDefinitionById(nodeDef.getId()).getName(), this.currInstanceNo);
+    					EntityBuilder.addEntity(this.parentEntitySingleAttribute, ApplicationManager.getSurvey().getSchema().getDefinitionById(nodeDef.getId()).getName()/*, this.currInstanceNo*/);
     				}
 				}
 				

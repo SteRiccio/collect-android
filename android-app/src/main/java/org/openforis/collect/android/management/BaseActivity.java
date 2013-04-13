@@ -1,6 +1,7 @@
 package org.openforis.collect.android.management;
 
 import org.openforis.collect.android.R;
+import org.openforis.collect.android.lists.UploadActivity;
 import org.openforis.collect.android.messages.AlertMessage;
 import org.openforis.collect.android.misc.RunnableHandler;
 import org.openforis.collect.android.screens.SettingsScreen;
@@ -74,7 +75,10 @@ public class BaseActivity extends Activity {
 	        	CollectSurvey collectSurveyExport = (CollectSurvey)ApplicationManager.getSurvey();	        	
 	        	DataManager dataManagerExport = new DataManager(collectSurveyExport,collectSurveyExport.getSchema().getRootEntityDefinitions().get(0).getName(),ApplicationManager.getLoggedInUser());
 	        	dataManagerExport.saveRecordToXml(ApplicationManager.currentRecord, Environment.getExternalStorageDirectory().toString()+getResources().getString(R.string.exported_data_folder));
-	        	return true;	        		
+	        	return true;	    
+			case R.id.menu_upload:
+				startActivity(new Intent(BaseActivity.this, UploadActivity.class));
+			    return true;
 			case R.id.menu_settings:
 				startActivity(new Intent(BaseActivity.this,SettingsScreen.class));
 			    return true;	    
