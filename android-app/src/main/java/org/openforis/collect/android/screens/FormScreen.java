@@ -19,7 +19,6 @@ import org.openforis.collect.android.fields.TaxonField;
 import org.openforis.collect.android.fields.TextField;
 import org.openforis.collect.android.fields.TimeField;
 import org.openforis.collect.android.fields.UIElement;
-import org.openforis.collect.android.lists.UploadActivity;
 import org.openforis.collect.android.management.ApplicationManager;
 import org.openforis.collect.android.management.BaseActivity;
 import org.openforis.collect.android.messages.AlertMessage;
@@ -1122,21 +1121,24 @@ public class FormScreen extends BaseActivity implements OnClickListener, TextWat
 			this.currInstanceNo++;
 		}
 		
-		NodeDefinition currentScreenNodeDef = ApplicationManager.getSurvey().getSchema().getDefinitionById(this.idmlId);		
-		if (currentScreenNodeDef.getMaxCount()<=this.currInstanceNo){
-			this.currInstanceNo--;
-			AlertMessage.createPositiveDialog(FormScreen.this, true, null,
-					getResources().getString(R.string.maxCountTitle), 
-					getResources().getString(R.string.maxCountMessage),
-						getResources().getString(R.string.okay),
-			    		new DialogInterface.OnClickListener() {
-							@Override
-							public void onClick(DialogInterface dialog, int which) {
-								
-							}
-						},
-						null).show();
-			return;
+		NodeDefinition currentScreenNodeDef = ApplicationManager.getSurvey().getSchema().getDefinitionById(this.idmlId);
+		Log.e("pole=="+currentScreenNodeDef.getName(),currentScreenNodeDef.getMaxCount()+"=="+this.currInstanceNo);
+		if (currentScreenNodeDef.getMaxCount()!=null){
+			if (currentScreenNodeDef.getMaxCount()<=this.currInstanceNo){			
+				this.currInstanceNo--;
+				AlertMessage.createPositiveDialog(FormScreen.this, true, null,
+						getResources().getString(R.string.maxCountTitle), 
+						getResources().getString(R.string.maxCountMessage),
+							getResources().getString(R.string.okay),
+				    		new DialogInterface.OnClickListener() {
+								@Override
+								public void onClick(DialogInterface dialog, int which) {
+									
+								}
+							},
+							null).show();
+				return;
+			}	
 		}
 		
 		View firstView = this.ll.getChildAt(0);

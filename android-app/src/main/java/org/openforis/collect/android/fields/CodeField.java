@@ -13,6 +13,7 @@ import org.openforis.idm.model.EntityBuilder;
 import org.openforis.idm.model.Node;
 
 import android.content.Context;
+import android.text.Editable;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
@@ -164,5 +165,10 @@ public class CodeField extends InputField {
 			//Log.e("CODEvalueADDED",path+"=="+position);
 			EntityBuilder.addValue(this.findParentEntity(path), this.nodeDefinition.getName(), new Code(code), position);	
 		}
+	}
+	
+	@Override
+	public void afterTextChanged(Editable s) {
+		this.setValue(0, s.toString(), CodeField.form.getFormScreenId(),true);
 	}
 }
