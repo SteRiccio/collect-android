@@ -152,7 +152,7 @@ public class FormScreen extends BaseActivity implements OnClickListener, TextWat
     		this.ll = new LinearLayout(this);
     		this.ll.setOrientation(android.widget.LinearLayout.VERTICAL);
     		this.sv.addView(ll);
-    		
+
     		if (!this.breadcrumb.equals("")){
     			TextView breadcrumb = new TextView(this);
     			if (this.intentType != getResources().getInteger(R.integer.singleEntityIntent)){
@@ -166,7 +166,7 @@ public class FormScreen extends BaseActivity implements OnClickListener, TextWat
     				breadcrumb.setText(this.breadcrumb);
         		breadcrumb.setTextSize(getResources().getInteger(R.integer.breadcrumbFontSize));
         		this.ll.addView(breadcrumb);
-    		}		
+    		}
     		
     		for (int i=0;i<this.fieldsNo;i++){
     			NodeDefinition nodeDef = ApplicationManager.getNodeDefinition(this.startingIntent.getIntExtra(getResources().getString(R.string.attributeId)+i, -1));
@@ -948,10 +948,17 @@ public class FormScreen extends BaseActivity implements OnClickListener, TextWat
 	private Intent prepareIntentForNewScreen(SummaryList summaryList){
 		Intent intent = new Intent(this,FormScreen.class);
 		if (!this.breadcrumb.equals("")){
-			intent.putExtra(getResources().getString(R.string.breadcrumb), this.breadcrumb+getResources().getString(R.string.breadcrumbSeparator)+summaryList.getTitle()+" "+(this.currInstanceNo+1));	
+			String title = "";
+			if (summaryList.getEntityDefinition().isMultiple()){
+				title = this.breadcrumb+getResources().getString(R.string.breadcrumbSeparator)+summaryList.getTitle()+" "+(this.currInstanceNo+1);		
+			} else {
+				title = this.breadcrumb+getResources().getString(R.string.breadcrumbSeparator)+summaryList.getTitle();
+			}
+			intent.putExtra(getResources().getString(R.string.breadcrumb), title);
 		} else {
 			intent.putExtra(getResources().getString(R.string.breadcrumb), summaryList.getTitle());
 		}
+		
 		if (summaryList.getEntityDefinition().isMultiple()){
 			intent.putExtra(getResources().getString(R.string.intentType), getResources().getInteger(R.integer.multipleEntityIntent));	
 		} else {
@@ -1122,7 +1129,6 @@ public class FormScreen extends BaseActivity implements OnClickListener, TextWat
 		}
 		
 		NodeDefinition currentScreenNodeDef = ApplicationManager.getSurvey().getSchema().getDefinitionById(this.idmlId);
-		Log.e("pole=="+currentScreenNodeDef.getName(),currentScreenNodeDef.getMaxCount()+"=="+this.currInstanceNo);
 		if (currentScreenNodeDef.getMaxCount()!=null){
 			if (currentScreenNodeDef.getMaxCount()<=this.currInstanceNo){			
 				this.currInstanceNo--;
@@ -1146,6 +1152,7 @@ public class FormScreen extends BaseActivity implements OnClickListener, TextWat
 			TextView screenTitle = (TextView)firstView;
 			screenTitle.setText(this.breadcrumb.substring(0, this.breadcrumb.lastIndexOf(" "))+" "+(this.currInstanceNo+1));
 		}
+		this.breadcrumb = this.breadcrumb.substring(0, this.breadcrumb.lastIndexOf(" "))+" "+(this.currInstanceNo+1);
 		
 		this.ll.removeAllViews();
 		this.ll.addView(firstView,0);

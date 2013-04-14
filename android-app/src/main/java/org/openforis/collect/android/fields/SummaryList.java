@@ -59,7 +59,10 @@ public class SummaryList extends UIElement {
 		this.entityDefinition = entityDef;
 		
 		TextView titleView = new TextView(context);
-		titleView.setText(this.label.getText()+" "+(this.instanceNo+1));
+		if (this.entityDefinition.isMultiple())
+			titleView.setText(this.label.getText()+" "+(this.instanceNo+1));
+		else
+			titleView.setText(this.label.getText());
 		this.tableLayout.addView(titleView);
 		
 		//adding the entity and its nodes if do not exist yet
@@ -239,7 +242,11 @@ public class SummaryList extends UIElement {
 				Code codeValue = (Code)value;
 				CodeAttributeDefinition codeDef = (CodeAttributeDefinition)nodeDef;
 				if (codeValue.getCode()!=null && !codeValue.getCode().equals("null") && !codeValue.getCode().equals("")){
-					valueToReturn = ApplicationManager.getSurvey().getCodeList(codeDef.getList().getName()).findItem(codeValue.getCode()).getLabel(null);//codeValue.getCode();	
+					try{
+						valueToReturn = ApplicationManager.getSurvey().getCodeList(codeDef.getList().getName()).findItem(codeValue.getCode()).getLabel(null);//codeValue.getCode();		
+					} catch (NullPointerException e){
+						valueToReturn = codeValue.getCode();	
+					}
 				}
 			} else if (value instanceof RealRange){
 				RealRange rangeValue = (RealRange)value;
