@@ -28,6 +28,8 @@
     <string name="deleteRecord">Do you want to delete the record?</string>
     <string name="noInternetTitle">No connection&#8230;</string>    
     <string name="noInternetMessage">There is no connection to Internet available. Make sure you are connected to network and then try to upload data again.</string>
+    <string name="maxCountTitle">Too many&#8230;</string>
+    <string name="maxCountMessage">Number of instances of this element has reached maximum.</string>    
     
     <!-- buttons -->
     <string name="footerSave">Save</string>

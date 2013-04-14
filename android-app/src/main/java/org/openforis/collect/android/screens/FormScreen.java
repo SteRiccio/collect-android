@@ -19,8 +19,10 @@ import org.openforis.collect.android.fields.TaxonField;
 import org.openforis.collect.android.fields.TextField;
 import org.openforis.collect.android.fields.TimeField;
 import org.openforis.collect.android.fields.UIElement;
+import org.openforis.collect.android.lists.UploadActivity;
 import org.openforis.collect.android.management.ApplicationManager;
 import org.openforis.collect.android.management.BaseActivity;
+import org.openforis.collect.android.messages.AlertMessage;
 import org.openforis.collect.android.misc.GpsActivity;
 import org.openforis.collect.android.misc.RunnableHandler;
 import org.openforis.idm.metamodel.BooleanAttributeDefinition;
@@ -52,6 +54,7 @@ import org.openforis.idm.model.TaxonOccurrence;
 import org.openforis.idm.model.TextValue;
 import org.openforis.idm.model.Time;
 
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
@@ -1117,6 +1120,23 @@ public class FormScreen extends BaseActivity implements OnClickListener, TextWat
 			}
 		} else {//scroll right to next (or new) entity
 			this.currInstanceNo++;
+		}
+		
+		NodeDefinition currentScreenNodeDef = ApplicationManager.getSurvey().getSchema().getDefinitionById(this.idmlId);		
+		if (currentScreenNodeDef.getMaxCount()<=this.currInstanceNo){
+			this.currInstanceNo--;
+			AlertMessage.createPositiveDialog(FormScreen.this, true, null,
+					getResources().getString(R.string.maxCountTitle), 
+					getResources().getString(R.string.maxCountMessage),
+						getResources().getString(R.string.okay),
+			    		new DialogInterface.OnClickListener() {
+							@Override
+							public void onClick(DialogInterface dialog, int which) {
+								
+							}
+						},
+						null).show();
+			return;
 		}
 		
 		View firstView = this.ll.getChildAt(0);
@@ -2358,6 +2378,23 @@ public class FormScreen extends BaseActivity implements OnClickListener, TextWat
 			}	
 		} else {
 			this.currInstanceNo++;
+		}
+		
+		NodeDefinition currentScreenNodeDef = ApplicationManager.getSurvey().getSchema().getDefinitionById(this.idmlId);
+		if (currentScreenNodeDef.getMaxCount()<=this.currInstanceNo){
+			this.currInstanceNo--;
+			AlertMessage.createPositiveDialog(FormScreen.this, true, null,
+					getResources().getString(R.string.maxCountTitle), 
+					getResources().getString(R.string.maxCountMessage),
+						getResources().getString(R.string.okay),
+			    		new DialogInterface.OnClickListener() {
+							@Override
+							public void onClick(DialogInterface dialog, int which) {
+								
+							}
+						},
+						null).show();
+			return;
 		}
 		
 		View firstView = this.ll.getChildAt(0);
