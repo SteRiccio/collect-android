@@ -1,7 +1,11 @@
 package org.openforis.collect.android.lists;
 
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
-import java.util.List;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 
 import org.apache.http.HttpResponse;
 import org.apache.http.client.ClientProtocolException;
@@ -14,20 +18,22 @@ import org.openforis.collect.android.management.ApplicationManager;
 import org.openforis.collect.android.management.BaseListActivity;
 import org.openforis.collect.android.messages.AlertMessage;
 import org.openforis.collect.android.misc.RunnableHandler;
-import org.openforis.collect.model.CollectSurvey;
-import org.openforis.idm.metamodel.EntityDefinition;
-import org.openforis.idm.metamodel.NodeLabel.Type;
 
+import android.content.Context;
 import android.content.DialogInterface;
-import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Bundle;
 import android.os.Environment;
 import android.util.Log;
+import android.util.SparseBooleanArray;
 import android.view.KeyEvent;
 import android.view.View;
+import android.view.View.OnClickListener;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.ListView;
 import android.widget.TextView;
 
@@ -37,8 +43,15 @@ public class UploadActivity extends BaseListActivity{
 
 	private TextView activityLabel;
 	
-	private List<EntityDefinition> rootEntitiesList;
 	private ArrayAdapter<String> adapter;
+	
+	private Boolean[] selections;
+	
+	private String[] filesList;
+	
+	private ListView lv; 
+	
+	private String path;
 	
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -46,35 +59,43 @@ public class UploadActivity extends BaseListActivity{
         Log.i(getResources().getString(R.string.app_name),TAG+":onCreate");
         setContentView(R.layout.uploadactivity);
         try{
-        	this.activityLabel = (TextView)findViewById(R.id.lblList);
-        	this.activityLabel.setText(getResources().getString(R.string.dataToUpload));
-        	
-        	/*ProgressDialog pd = ProgressDialog.show(ClusterChoiceActivity.this, getResources().getString(R.string.workInProgress), getResources().getString(R.string.loading), true, false);
-            //populating available cluster list
-			JdbcDaoSupport jdbcDao = new JdbcDaoSupport();
-			jdbcDao.getConnection();
-			
-			long startTime = System.currentTimeMillis();
-			recordsList = TabManager.getRecordManager().loadSummaries(TabManager.getSurvey(), "cluster");
-			Log.e("loadingSummaries","=="+(System.currentTimeMillis()-startTime)/1000);
-			clusterList = new String[recordsList.size()];
-			for (int i=0;i<recordsList.size();i++){
-				clusterList[i] = recordsList.get(i).getId()+" "+recordsList.get(i).getCreatedBy().getName()
-						+" "+recordsList.get(i).getCreationDate().toLocaleString();
-			}			
-			JdbcDaoSupport.close();
-			
-            this.adapter = new ArrayAdapter<String>(this, R.layout.localclusterrow, R.id.plotlabel, clusterList);
-    		this.setListAdapter(this.adapter);
-    		this.isFirstClick = false;
-    		this.firstClickPosition = -1;
-    		this.firstClickTime = 0;
-    		pd.dismiss();
-    		if (recordsList.size()==0){
-    			//no data saved in database
-    			setResult(getResources().getInteger(R.integer.clusterChoiceFailed), new Intent());
-    			ClusterChoiceActivity.this.finish();
-    		}*/
+        	if (isNetworkAvailable()){
+        		this.activityLabel = (TextView)findViewById(R.id.lblList);
+            	this.activityLabel.setText(getResources().getString(R.string.dataToUpload));
+            	
+            	this.lv = getListView();
+            	
+            	path = Environment.getExternalStorageDirectory().toString()+getResources().getString(R.string.exported_data_folder);
+            	
+            	Button btn =(Button) findViewById(R.id.btnUpload);
+                btn.setOnClickListener(new OnClickListener() {
+    			    @Override
+    			    public void onClick(View v) {
+    			    	SparseBooleanArray checkedItems = lv.getCheckedItemPositions();
+    			    	for (int i=0;i<lv.getChildCount();i++){
+    			    		if (checkedItems.get(i)){
+    			    			try {
+    			    				//postData(getStringFromFile(path+"/"+filesList[i]));
+    							} catch (Exception e) {
+    								e.printStackTrace();
+    							}
+    			    		}
+    			    	}			    	
+    			    }
+    		    });
+        	} else {
+        		AlertMessage.createPositiveDialog(UploadActivity.this, true, null,
+						getResources().getString(R.string.noInternetTitle), 
+						getResources().getString(R.string.noInternetMessage),
+							getResources().getString(R.string.okay),
+				    		new DialogInterface.OnClickListener() {
+								@Override
+								public void onClick(DialogInterface dialog, int which) {
+									UploadActivity.this.finish();
+								}
+							},
+							null).show();
+        	}
         } catch (Exception e){
     		RunnableHandler.reportException(e,getResources().getString(R.string.app_name),TAG+":onCreate",
     				Environment.getExternalStorageDirectory().toString()
@@ -92,17 +113,19 @@ public class UploadActivity extends BaseListActivity{
 		int backgroundColor = ApplicationManager.appPreferences.getInt(getResources().getString(R.string.backgroundColor), Color.WHITE);	
 		changeBackgroundColor(backgroundColor);
 		
-		CollectSurvey collectSurvey = (CollectSurvey)ApplicationManager.getSurvey();	        	
-		this.rootEntitiesList = collectSurvey.getSchema().getRootEntityDefinitions();
-		String[] clusterList = new String[rootEntitiesList.size()];
-		for (int i=0;i<rootEntitiesList.size();i++){
-			EntityDefinition rootEntity = rootEntitiesList.get(i);
-			//clusterList[i] = rootEntity.getId()+" "+rootEntity.getName();
-			clusterList[i] = rootEntity.getLabel(Type.INSTANCE, null);
+		File dataFilesFolder = new File(path);
+		File[] dataFiles = dataFilesFolder.listFiles();
+		int filesNo = dataFiles.length;
+		filesList = new String[filesNo];
+		this.selections = new Boolean[filesNo];
+		for (int i=0;i<filesNo;i++) {
+			File inFile = dataFiles[i];
+	        filesList[i] = inFile.getName();
+	        this.selections[i] = false;
 		}
 		
-		int layout = (backgroundColor!=Color.WHITE)?R.layout.localclusterrow_white:R.layout.localclusterrow_black;
-        this.adapter = new ArrayAdapter<String>(this, layout, R.id.plotlabel, clusterList);
+		int layout = (backgroundColor!=Color.WHITE)?R.layout.selectableitem_white:R.layout.selectableitem_black;
+		this.adapter = new ArrayAdapter<String>(this,layout,filesList);
 		this.setListAdapter(this.adapter);
     }
     
@@ -110,10 +133,6 @@ public class UploadActivity extends BaseListActivity{
 	protected void onListItemClick(ListView l, View v, int position, long id) {
 		super.onListItemClick(l, v, position, id);
 		Log.i(getResources().getString(R.string.app_name),TAG+":onListItemClick");
-		/*Intent resultHolder = new Intent();
-		resultHolder.putExtra(getResources().getString(R.string.rootEntityId), this.rootEntitiesList.get(position).getId());
-		setResult(getResources().getInteger(R.integer.rootEntityChoiceSuccessful),resultHolder);
-		UploadActivity.this.finish();*/
 	}
     
 	@Override
@@ -129,23 +148,6 @@ public class UploadActivity extends BaseListActivity{
 	@Override
 	public void onBackPressed() {
 		UploadActivity.this.finish();
-		/*AlertMessage.createPositiveNegativeDialog(UploadActivity.this, false, getResources().getDrawable(R.drawable.warningsign),
-				getResources().getString(R.string.exitAppTitle), getResources().getString(R.string.exitAppMessage),
-				getResources().getString(R.string.yes), getResources().getString(R.string.no),
-	    		new DialogInterface.OnClickListener() {
-					@Override
-					public void onClick(DialogInterface dialog, int which) {
-						setResult(getResources().getInteger(R.integer.backButtonPressed), new Intent());
-						UploadActivity.this.finish();
-					}
-				},
-	    		new DialogInterface.OnClickListener() {
-					@Override
-					public void onClick(DialogInterface dialog, int which) {
-						
-					}
-				},
-				null).show();*/
 	}
 	
     private void changeBackgroundColor(int backgroundColor){
@@ -154,23 +156,50 @@ public class UploadActivity extends BaseListActivity{
     }
     
     public void postData(String sendData) {
-        Log.e("postDATA","=="+sendData);
         HttpClient httpclient = new DefaultHttpClient();
-        HttpPost httppost = new HttpPost("http://ar5.arbonaut.com/xxxwebforest/formis-mobile/save-received-data");
+        HttpPost httppost = new HttpPost(getResources().getString(R.string.serverAddress));
 
         try {
             StringEntity se = new StringEntity(sendData);
             httppost.setEntity(se);
             HttpResponse response = httpclient.execute(httppost);
-            Log.e("SENT MESSAGE","=="+response.getEntity().getContent().toString());
+            Log.e("response","=="+response.getEntity().getContent().toString());
         } 
         catch (ClientProtocolException e) 
         {
-            Log.e("ClientProtocolException","=="+e.getMessage());            
+            Log.e("ClientProtocolException","==");     
+            e.printStackTrace();
         } 
         catch (IOException e) 
         {
-            Log.e("IOException","=="+e.getMessage());
+            Log.e("IOException","==");
+            e.printStackTrace();
         }
+    }
+    
+    private static String convertStreamToString(InputStream is) throws Exception {
+        BufferedReader reader = new BufferedReader(new InputStreamReader(is));
+        StringBuilder sb = new StringBuilder();
+        String line = null;
+        while ((line = reader.readLine()) != null) {
+        	sb.append(line).append("\n");
+        }
+        //Log.e("koniec","=="+sb.toString().substring(sb.length()-20,sb.length()-1));
+        return sb.toString();
+    }
+
+    private static String getStringFromFile (String filePath) throws Exception {
+        File fl = new File(filePath);
+        FileInputStream fin = new FileInputStream(fl);
+        String ret = convertStreamToString(fin);
+        fin.close();        
+        return ret;
+    }
+    
+    private boolean isNetworkAvailable() {
+        ConnectivityManager connectivityManager 
+              = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
+        return activeNetworkInfo != null && activeNetworkInfo.isConnected();
     }
 }

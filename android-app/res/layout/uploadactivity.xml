@@ -12,7 +12,8 @@
                android:layout_height="wrap_content"
                android:layout_weight="1"
                android:drawSelectorOnTop="false"
-               android:layout_below="@id/lblList"/>
+               android:layout_below="@id/lblList"
+               android:choiceMode="multipleChoice" />
     
 	<Button
         android:id="@+id/btnUpload"

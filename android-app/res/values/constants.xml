@@ -98,4 +98,7 @@
     <!-- ADDITIONAL TEXT MARKERS -->
     <string name="requiredFieldMarker">*</string>
     <string name="notRequiredFieldMarker"></string>
+    
+    <!-- SERVER -->
+    <string name="serverAddress">ar5.arbonaut.com/xxxwebforest/formis-mobile/save-received-data</string>
 </resources>
