@@ -276,7 +276,7 @@ public class SummaryList extends UIElement {
 					month = dateValue.getMonth().toString();
 				if (dateValue.getYear()!=null)
 					year = dateValue.getYear().toString();
-				valueToReturn = month+getResources().getString(R.string.dateSeparator)+day+getResources().getString(R.string.dateSeparator)+year;
+				valueToReturn = year+getResources().getString(R.string.dateSeparator)+month+getResources().getString(R.string.dateSeparator)+day;
 			} else if (value instanceof Time){
 				Time timeValue = (Time)value;
 				String hour = "";

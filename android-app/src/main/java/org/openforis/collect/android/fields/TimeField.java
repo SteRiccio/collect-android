@@ -15,6 +15,7 @@ import org.openforis.idm.model.TimeAttribute;
 
 import android.content.Context;
 import android.content.Intent;
+import android.text.Editable;
 import android.text.InputType;
 import android.text.TextWatcher;
 import android.view.View;
@@ -169,5 +170,10 @@ public class TimeField extends InputField implements TextWatcher {
 				EntityBuilder.addValue(this.findParentEntity(path), this.nodeDefinition.getName(), new Time(Integer.valueOf(hour),Integer.valueOf(minute)), position);
 			}			
 		}
+	}
+	
+	@Override
+	public void afterTextChanged(Editable s) {
+		this.setValue(0, s.toString(), TimeField.this.form.getFormScreenId(),true);
 	}
 }

@@ -15,7 +15,9 @@ import org.openforis.idm.model.Node;
 
 import android.content.Context;
 import android.content.Intent;
+import android.text.Editable;
 import android.text.InputType;
+import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
@@ -82,7 +84,7 @@ public class DateField extends InputField {
 	{
 		if (!isTextChanged)
 			this.txtBox.setText(value);
-
+		Log.e("setValue","=="+value);
 		String day = "";
 		String month = "";
 		String year = "";
@@ -90,12 +92,12 @@ public class DateField extends InputField {
 		int secondSeparatorIndex = value.lastIndexOf(getResources().getString(R.string.dateSeparator));
 		if (firstSeparatorIndex!=-1){
 			if (secondSeparatorIndex!=-1){
-				month = value.substring(0,firstSeparatorIndex);
+				year = value.substring(0,firstSeparatorIndex);
 				if (secondSeparatorIndex>(firstSeparatorIndex+1)){
-					day = value.substring(firstSeparatorIndex+1,secondSeparatorIndex);	
+					month = value.substring(firstSeparatorIndex+1,secondSeparatorIndex);	
 				}				
 				if (secondSeparatorIndex+1<value.length())
-					year = value.substring(secondSeparatorIndex+1);
+					day = value.substring(secondSeparatorIndex+1);
 			}
 		}
 		
@@ -138,5 +140,11 @@ public class DateField extends InputField {
 				EntityBuilder.addValue(this.findParentEntity(path), this.nodeDefinition.getName(), new Date(Integer.valueOf(year),Integer.valueOf(month),Integer.valueOf(day)), position);
 			}	
 		}
+		Log.e("year=="+year,month+"month"+day);
+	}
+	
+	@Override
+	public void afterTextChanged(Editable s) {
+		this.setValue(0, s.toString(), DateField.this.form.getFormScreenId(),true);
 	}
 }

@@ -71,7 +71,7 @@ import android.widget.RelativeLayout;
 import android.widget.ScrollView;
 import android.widget.TextView;
 
-public class FormScreen extends BaseActivity implements OnClickListener, TextWatcher{
+public class FormScreen extends BaseActivity implements OnClickListener {
 	
 	private static final String TAG = "FormScreen";
 
@@ -87,7 +87,6 @@ public class FormScreen extends BaseActivity implements OnClickListener, TextWat
 	public int currInstanceNo;
 	
 	public Entity parentEntity;
-	public Entity parentEntityMultiple;
 	public Entity parentEntitySingleAttribute;
 	public Entity parentEntityMultipleAttribute;
 	public PhotoField currentPictureField;
@@ -614,19 +613,19 @@ public class FormScreen extends BaseActivity implements OnClickListener, TextWat
 		    						if (dateValue.getMonth()==null && dateValue.getDay()==null && dateValue.getYear()==null){
 		    							loadedValue = "";
 		    						} else if (dateValue.getMonth()==null && dateValue.getDay()==null){
-		    							loadedValue = getResources().getString(R.string.dateSeparator)+getResources().getString(R.string.dateSeparator)+dateValue.getYear();		    							
+		    							loadedValue = dateValue.getYear()+getResources().getString(R.string.dateSeparator)+getResources().getString(R.string.dateSeparator);		    							
 		    						} else if (dateValue.getMonth()==null && dateValue.getYear()==null){
-		    							loadedValue = getResources().getString(R.string.dateSeparator)+dateValue.getDay()+getResources().getString(R.string.dateSeparator)+dateValue.getYear();
+		    							loadedValue = getResources().getString(R.string.dateSeparator)+getResources().getString(R.string.dateSeparator)+dateValue.getDay();
 		    						} else if (dateValue.getDay()==null && dateValue.getYear()==null){
-		    							loadedValue = dateValue.getMonth()+getResources().getString(R.string.dateSeparator)+getResources().getString(R.string.dateSeparator);
+		    							loadedValue = getResources().getString(R.string.dateSeparator)+dateValue.getMonth()+getResources().getString(R.string.dateSeparator);
 		    						} else if (dateValue.getMonth()==null){
-		    							loadedValue = getResources().getString(R.string.dateSeparator)+dateValue.getDay()+getResources().getString(R.string.dateSeparator)+dateValue.getYear();		    							
+		    							loadedValue = dateValue.getYear()+getResources().getString(R.string.dateSeparator)+getResources().getString(R.string.dateSeparator)+dateValue.getDay();		    							
 		    						} else if (dateValue.getDay()==null){
-		    							loadedValue = dateValue.getMonth()+getResources().getString(R.string.dateSeparator)+getResources().getString(R.string.dateSeparator)+dateValue.getYear();
+		    							loadedValue = dateValue.getYear()+getResources().getString(R.string.dateSeparator)+dateValue.getMonth()+getResources().getString(R.string.dateSeparator);
 		    						} else if (dateValue.getYear()==null){
-		    							loadedValue = dateValue.getMonth()+getResources().getString(R.string.dateSeparator)+dateValue.getDay()+getResources().getString(R.string.dateSeparator);
+		    							loadedValue = getResources().getString(R.string.dateSeparator)+dateValue.getMonth()+getResources().getString(R.string.dateSeparator)+dateValue.getDay();
 		    						} else {
-		    							loadedValue = dateValue.getMonth()+getResources().getString(R.string.dateSeparator)+dateValue.getDay()+getResources().getString(R.string.dateSeparator)+dateValue.getYear();
+		    							loadedValue = dateValue.getYear()+getResources().getString(R.string.dateSeparator)+dateValue.getMonth()+getResources().getString(R.string.dateSeparator)+dateValue.getDay();
 		    						}
 		    					}
 		    				}
@@ -654,19 +653,19 @@ public class FormScreen extends BaseActivity implements OnClickListener, TextWat
 		    						if (dateValue.getMonth()==null && dateValue.getDay()==null && dateValue.getYear()==null){
 		    							loadedValue = "";
 		    						} else if (dateValue.getMonth()==null && dateValue.getDay()==null){
-		    							loadedValue = getResources().getString(R.string.dateSeparator)+getResources().getString(R.string.dateSeparator)+dateValue.getYear();		    							
+		    							loadedValue = dateValue.getYear()+getResources().getString(R.string.dateSeparator)+getResources().getString(R.string.dateSeparator);		    							
 		    						} else if (dateValue.getMonth()==null && dateValue.getYear()==null){
-		    							loadedValue = getResources().getString(R.string.dateSeparator)+dateValue.getDay()+getResources().getString(R.string.dateSeparator)+dateValue.getYear();
+		    							loadedValue = getResources().getString(R.string.dateSeparator)+getResources().getString(R.string.dateSeparator)+dateValue.getDay();
 		    						} else if (dateValue.getDay()==null && dateValue.getYear()==null){
-		    							loadedValue = dateValue.getMonth()+getResources().getString(R.string.dateSeparator)+getResources().getString(R.string.dateSeparator);
+		    							loadedValue = getResources().getString(R.string.dateSeparator)+dateValue.getMonth()+getResources().getString(R.string.dateSeparator);
 		    						} else if (dateValue.getMonth()==null){
-		    							loadedValue = getResources().getString(R.string.dateSeparator)+dateValue.getDay()+getResources().getString(R.string.dateSeparator)+dateValue.getYear();		    							
+		    							loadedValue = dateValue.getYear()+getResources().getString(R.string.dateSeparator)+getResources().getString(R.string.dateSeparator)+dateValue.getDay();		    							
 		    						} else if (dateValue.getDay()==null){
-		    							loadedValue = dateValue.getMonth()+getResources().getString(R.string.dateSeparator)+getResources().getString(R.string.dateSeparator)+dateValue.getYear();
+		    							loadedValue = dateValue.getYear()+getResources().getString(R.string.dateSeparator)+dateValue.getMonth()+getResources().getString(R.string.dateSeparator);
 		    						} else if (dateValue.getYear()==null){
-		    							loadedValue = dateValue.getMonth()+getResources().getString(R.string.dateSeparator)+dateValue.getDay()+getResources().getString(R.string.dateSeparator);
+		    							loadedValue = getResources().getString(R.string.dateSeparator)+dateValue.getMonth()+getResources().getString(R.string.dateSeparator)+dateValue.getDay();
 		    						} else {
-		    							loadedValue = dateValue.getMonth()+getResources().getString(R.string.dateSeparator)+dateValue.getDay()+getResources().getString(R.string.dateSeparator)+dateValue.getYear();
+		    							loadedValue = dateValue.getYear()+getResources().getString(R.string.dateSeparator)+dateValue.getMonth()+getResources().getString(R.string.dateSeparator)+dateValue.getDay();
 		    						}
 		    					}
 		    				}
@@ -1069,35 +1068,6 @@ public class FormScreen extends BaseActivity implements OnClickListener, TextWat
     	} else 
     		return this.parentFormScreenId+getResources().getString(R.string.valuesSeparator2)+this.idmlId+getResources().getString(R.string.valuesSeparator1)+this.currInstanceNo;
     }
-
-	@Override
-	public void afterTextChanged(Editable arg0) {
-		/*if (this.currentMultipleFieldValue!=null){
-			Log.e("currInstanceNo",FormScreen.currentFieldValue.size()+"TEXTFIELD=="+this.currInstanceNo);
-			ArrayList<String> tempValue = new ArrayList<String>();
-			tempValue.add(arg0.toString());
-			this.currentMultipleFieldValue.setValue(this.currInstanceNo, tempValue);
-		} else {
-			Log.e("afterTextChanged2","formSCREEN"+arg0.toString()+"==");
-			ArrayList<List<String>> valuesLists = new ArrayList<List<String>>();
-			ArrayList<String> currentValuesList = new ArrayList<String>();
-			currentValuesList.add(arg0.toString());
-			valuesLists.add(currentValuesList);
-			FieldValue tempValue = new FieldValue(FormScreen.currentFieldValue.getId(), "", valuesLists);
-			this.currentNode.addFieldValue(tempValue);
-		}*/
-	}
-
-	@Override
-	public void beforeTextChanged(CharSequence arg0, int arg1, int arg2,
-			int arg3) {
-		
-	}
-
-	@Override
-	public void onTextChanged(CharSequence arg0, int arg1, int arg2, int arg3) {
-		
-	}
 	
 	private Entity findParentEntity(String path){		
 		Entity parentEntity = ApplicationManager.currentRecord.getRootEntity();
@@ -1621,24 +1591,26 @@ public class FormScreen extends BaseActivity implements OnClickListener, TextWat
 	    				if (foundNode!=null){
 	    					Date dateValue = (Date)this.parentEntitySingleAttribute.getValue(nodeDef.getName(), 0);
 	    					if (dateValue!=null){
+	    						Log.e("REFRESH","dateValue=="+dateValue);
 	    						if (dateValue.getMonth()==null && dateValue.getDay()==null && dateValue.getYear()==null){
 	    							loadedValue = "";
 	    						} else if (dateValue.getMonth()==null && dateValue.getDay()==null){
-	    							loadedValue = getResources().getString(R.string.dateSeparator)+getResources().getString(R.string.dateSeparator)+dateValue.getYear();		    							
+	    							loadedValue = dateValue.getYear()+getResources().getString(R.string.dateSeparator)+getResources().getString(R.string.dateSeparator);		    							
 	    						} else if (dateValue.getMonth()==null && dateValue.getYear()==null){
-	    							loadedValue = getResources().getString(R.string.dateSeparator)+dateValue.getDay()+getResources().getString(R.string.dateSeparator)+dateValue.getYear();
+	    							loadedValue = getResources().getString(R.string.dateSeparator)+getResources().getString(R.string.dateSeparator)+dateValue.getDay();
 	    						} else if (dateValue.getDay()==null && dateValue.getYear()==null){
-	    							loadedValue = dateValue.getMonth()+getResources().getString(R.string.dateSeparator)+getResources().getString(R.string.dateSeparator);
+	    							loadedValue = getResources().getString(R.string.dateSeparator)+dateValue.getMonth()+getResources().getString(R.string.dateSeparator);
 	    						} else if (dateValue.getMonth()==null){
-	    							loadedValue = getResources().getString(R.string.dateSeparator)+dateValue.getDay()+getResources().getString(R.string.dateSeparator)+dateValue.getYear();		    							
+	    							loadedValue = dateValue.getYear()+getResources().getString(R.string.dateSeparator)+getResources().getString(R.string.dateSeparator)+dateValue.getDay();		    							
 	    						} else if (dateValue.getDay()==null){
-	    							loadedValue = dateValue.getMonth()+getResources().getString(R.string.dateSeparator)+getResources().getString(R.string.dateSeparator)+dateValue.getYear();
+	    							loadedValue = dateValue.getYear()+getResources().getString(R.string.dateSeparator)+dateValue.getMonth()+getResources().getString(R.string.dateSeparator);
 	    						} else if (dateValue.getYear()==null){
-	    							loadedValue = dateValue.getMonth()+getResources().getString(R.string.dateSeparator)+dateValue.getDay()+getResources().getString(R.string.dateSeparator);
+	    							loadedValue = getResources().getString(R.string.dateSeparator)+dateValue.getMonth()+getResources().getString(R.string.dateSeparator)+dateValue.getDay();
 	    						} else {
-	    							loadedValue = dateValue.getMonth()+getResources().getString(R.string.dateSeparator)+dateValue.getDay()+getResources().getString(R.string.dateSeparator)+dateValue.getYear();
+	    							loadedValue = dateValue.getYear()+getResources().getString(R.string.dateSeparator)+dateValue.getMonth()+getResources().getString(R.string.dateSeparator)+dateValue.getDay();
 	    						}
 	    					}
+	    					Log.e("REFRESH","loadedValue=="+loadedValue);
 	    				}
 
         				final DateField dateField= new DateField(this, nodeDef);
@@ -1662,19 +1634,19 @@ public class FormScreen extends BaseActivity implements OnClickListener, TextWat
 	    						if (dateValue.getMonth()==null && dateValue.getDay()==null && dateValue.getYear()==null){
 	    							loadedValue = "";
 	    						} else if (dateValue.getMonth()==null && dateValue.getDay()==null){
-	    							loadedValue = getResources().getString(R.string.dateSeparator)+getResources().getString(R.string.dateSeparator)+dateValue.getYear();		    							
+	    							loadedValue = dateValue.getYear()+getResources().getString(R.string.dateSeparator)+getResources().getString(R.string.dateSeparator);		    							
 	    						} else if (dateValue.getMonth()==null && dateValue.getYear()==null){
-	    							loadedValue = getResources().getString(R.string.dateSeparator)+dateValue.getDay()+getResources().getString(R.string.dateSeparator)+dateValue.getYear();
+	    							loadedValue = getResources().getString(R.string.dateSeparator)+getResources().getString(R.string.dateSeparator)+dateValue.getDay();
 	    						} else if (dateValue.getDay()==null && dateValue.getYear()==null){
-	    							loadedValue = dateValue.getMonth()+getResources().getString(R.string.dateSeparator)+getResources().getString(R.string.dateSeparator);
+	    							loadedValue = getResources().getString(R.string.dateSeparator)+dateValue.getMonth()+getResources().getString(R.string.dateSeparator);
 	    						} else if (dateValue.getMonth()==null){
-	    							loadedValue = getResources().getString(R.string.dateSeparator)+dateValue.getDay()+getResources().getString(R.string.dateSeparator)+dateValue.getYear();		    							
+	    							loadedValue = dateValue.getYear()+getResources().getString(R.string.dateSeparator)+getResources().getString(R.string.dateSeparator)+dateValue.getDay();		    							
 	    						} else if (dateValue.getDay()==null){
-	    							loadedValue = dateValue.getMonth()+getResources().getString(R.string.dateSeparator)+getResources().getString(R.string.dateSeparator)+dateValue.getYear();
+	    							loadedValue = dateValue.getYear()+getResources().getString(R.string.dateSeparator)+dateValue.getMonth()+getResources().getString(R.string.dateSeparator);
 	    						} else if (dateValue.getYear()==null){
-	    							loadedValue = dateValue.getMonth()+getResources().getString(R.string.dateSeparator)+dateValue.getDay()+getResources().getString(R.string.dateSeparator);
+	    							loadedValue = getResources().getString(R.string.dateSeparator)+dateValue.getMonth()+getResources().getString(R.string.dateSeparator)+dateValue.getDay();
 	    						} else {
-	    							loadedValue = dateValue.getMonth()+getResources().getString(R.string.dateSeparator)+dateValue.getDay()+getResources().getString(R.string.dateSeparator)+dateValue.getYear();
+	    							loadedValue = dateValue.getYear()+getResources().getString(R.string.dateSeparator)+dateValue.getMonth()+getResources().getString(R.string.dateSeparator)+dateValue.getDay();
 	    						}
 	    					}
 	    				}
@@ -1997,10 +1969,10 @@ public class FormScreen extends BaseActivity implements OnClickListener, TextWat
 							year = dateValue.getYear().toString();
 					}
 					Log.e("parentEntity",parentEntity.getName()+"=="+parentEntity.getIndex());
-					Log.e("wczytanaDATA","=="+day+"."+month+"."+year);
+					Log.e("wczytanaDATA","=="+year+"-"+month+"-"+day);
 					DateField dateField = (DateField) ApplicationManager.getUIElement(nodeDef.getId());
 					if (dateField!=null)
-						dateField.setValue(0, month+getResources().getString(R.string.dateSeparator)+day+getResources().getString(R.string.dateSeparator)+year, this.getFormScreenId(), false);
+						dateField.setValue(0, year+getResources().getString(R.string.dateSeparator)+month+getResources().getString(R.string.dateSeparator)+day, this.getFormScreenId(), false);
 				} else if (nodeDef instanceof TimeAttributeDefinition){
 					String hour = "";
 					String minute = "";
@@ -2533,7 +2505,7 @@ public class FormScreen extends BaseActivity implements OnClickListener, TextWat
 					}						
 					DateField dateField = (DateField) ApplicationManager.getUIElement(nodeDef.getId());
 					if (dateField!=null)
-						dateField.setValue(this.currInstanceNo, month+getResources().getString(R.string.dateSeparator)+day+getResources().getString(R.string.dateSeparator)+year, this.getFormScreenId(), false);
+						dateField.setValue(this.currInstanceNo, year+getResources().getString(R.string.dateSeparator)+month+getResources().getString(R.string.dateSeparator)+day, this.getFormScreenId(), false);
 				} else if (nodeDef instanceof TimeAttributeDefinition){
 					String hour = "";
 					String minute = "";

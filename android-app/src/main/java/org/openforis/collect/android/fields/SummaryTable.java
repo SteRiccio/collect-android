@@ -34,7 +34,6 @@ import org.openforis.idm.model.Time;
 
 import android.content.Context;
 import android.graphics.Color;
-import android.util.Log;
 import android.view.Gravity;
 import android.view.ViewGroup;
 import android.widget.TableLayout;
@@ -143,7 +142,7 @@ public class SummaryTable extends UIElement {
 				    this.values.add(newValue);
 				} else if (nodeDef instanceof DateAttributeDefinition){
 					Date dateValue = (Date)parentEntity.getValue(nodeDef.getName(), i);
-					loadedValue = dateValue.getMonth()+getResources().getString(R.string.dateSeparator)+dateValue.getDay()+getResources().getString(R.string.dateSeparator)+dateValue.getYear();
+					loadedValue = dateValue.getYear()+getResources().getString(R.string.dateSeparator)+dateValue.getMonth()+getResources().getString(R.string.dateSeparator)+dateValue.getDay();
 				    ArrayList<String> newValue = new ArrayList<String>();
 				    newValue.add(loadedValue);
 				    this.values.add(newValue);
