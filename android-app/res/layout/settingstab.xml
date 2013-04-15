@@ -23,12 +23,31 @@
 		android:layout_height="wrap_content"
 		android:layout_below="@id/chkSoftKeyboardOnText"
 		android:text="@string/showSoftKeyboardOnNumeric" />
-	 	 <CheckBox
+	 <CheckBox
 		android:id="@+id/chckWhiteBackground"
 		android:layout_width="wrap_content"
 		android:layout_height="wrap_content"
 		android:layout_below="@id/chkSoftKeyboardOnNumeric"
 		android:text="@string/whiteBackground" />
+	 	 
+    <TextView 
+   		android:id="@+id/lblGpsTimeout"
+   		android:layout_width="wrap_content"
+   		android:layout_height="wrap_content"
+   		android:layout_below="@id/chckWhiteBackground"
+   		android:text="@string/lblGpsTimeout"
+   		 >
+   	</TextView>
+   	
+    <EditText 
+   		android:id="@+id/txtGpsTimeout"
+   		android:layout_width="fill_parent"
+   		android:layout_height="wrap_content"
+   		android:inputType="number"
+   		android:layout_toRightOf="@id/lblGpsTimeout"
+   		android:layout_below="@id/chckWhiteBackground"
+   		 >
+   	</EditText>	 	 
 <!--      <TextView 
    		android:id="@+id/lblApplicationName"
    		android:layout_width="wrap_content"

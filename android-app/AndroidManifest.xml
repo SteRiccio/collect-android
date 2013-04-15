@@ -5,11 +5,11 @@
 	<uses-sdk android:minSdkVersion="10" android:targetSdkVersion="10" />
     <uses-permission android:name="android.permission.READ_LOGS" />
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
-	<!--<uses-permission android:name="android.permission.INTERNET" /> 
+	<uses-permission android:name="android.permission.INTERNET" /> 
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_MOCK_LOCATION" />
-    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />-->
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission-group android:name="android.permission-group.STORAGE" />
     <instrumentation android:name="android.test.InstrumentationTestRunner"
@@ -71,6 +71,12 @@
 		          android:theme="@android:style/Theme.NoTitleBar"
 		          android:configChanges="orientation|keyboardHidden">
 		</activity>		
+		
+		<activity android:name=".lists.UploadActivity"
+		          android:label="@string/app_name"
+		          android:theme="@android:style/Theme.NoTitleBar"
+		          android:configChanges="orientation|keyboardHidden">
+		</activity>	
 				
 		<activity android:name="org.openforis.collect.android.dialogs.DateSetDialog"
 		          android:label="@string/app_name"

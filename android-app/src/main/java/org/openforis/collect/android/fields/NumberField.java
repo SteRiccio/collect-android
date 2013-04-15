@@ -8,19 +8,15 @@ import org.openforis.collect.android.management.ApplicationManager;
 import org.openforis.collect.android.messages.ToastMessage;
 import org.openforis.idm.metamodel.NodeDefinition;
 import org.openforis.idm.metamodel.NumberAttributeDefinition;
-import org.openforis.idm.metamodel.validation.ValidationResults;
-import org.openforis.idm.metamodel.validation.Validator;
 import org.openforis.idm.model.Entity;
 import org.openforis.idm.model.EntityBuilder;
 import org.openforis.idm.model.IntegerAttribute;
 import org.openforis.idm.model.IntegerValue;
 import org.openforis.idm.model.Node;
-import org.openforis.idm.model.NumberAttribute;
 import org.openforis.idm.model.RealAttribute;
 import org.openforis.idm.model.RealValue;
 
 import android.content.Context;
-import android.graphics.Color;
 import android.text.Editable;
 import android.text.InputType;
 import android.text.TextWatcher;
@@ -98,12 +94,9 @@ public class NumberField extends InputField {
 			public void afterTextChanged(Editable s) {
 				if (s.length() > 0){
 					if(!isNumeric(s.toString())){
-						Log.i("NUMBER FIELD", "Value: " + s + " is NOT numeric.");
 						String strReplace = s.subSequence(0, s.length()-1).toString();
 						NumberField.this.txtBox.setText(strReplace);
 						NumberField.this.txtBox.setSelection(strReplace.length());
-					}else{
-						Log.i("NUMBER FIELD", "Value: " + s + " is numeric.");
 					}
 				}
 			}
@@ -114,7 +107,7 @@ public class NumberField extends InputField {
 	}
 	
 	private void validateResult(){
-		Log.i("NUMBER FIELD info", "Start to validate NumberField value");		    		
+		/*Log.i("NUMBER FIELD info", "Start to validate NumberField value");		    		
 		String value = NumberField.this.txtBox.getText().toString();
 		if ((value!=null) && (!value.equals("")) && (!value.equals("null"))){
     		//Get attribute
@@ -142,7 +135,7 @@ public class NumberField extends InputField {
     		Log.e("VALIDATION FOR NUMBER FIELD", "Errors: " + results.getErrors().size() + " : " + results.getErrors().toString());
     		Log.d("VALIDATION FOR NUMBER FIELD", "Warnings: "  + results.getWarnings().size() + " : " + results.getWarnings().toString());
     		Log.e("VALIDATION FOR NUMBER FIELD", "Fails: "  + results.getFailed().size() + " : " +  results.getFailed().toString());
-		}		
+		}*/
 	}
 	
 	public void setValue(int position, String value, String path, boolean isTextChanged)

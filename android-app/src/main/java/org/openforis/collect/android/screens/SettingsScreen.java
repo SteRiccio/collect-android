@@ -10,10 +10,13 @@ import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.os.Environment;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.CheckBox;
+import android.widget.EditText;
 import android.widget.TextView;
 
 public class SettingsScreen extends Activity{
@@ -25,6 +28,9 @@ public class SettingsScreen extends Activity{
 	private CheckBox chckSoftKeyboardOnText;
 	private CheckBox chckSoftKeyboardOnNumeric;
 	private CheckBox chckWhiteBackground;
+	
+	private TextView tvGpsMaxWaitingTime;
+	private EditText txtGpsMaxWaitingTime;
 	
 	public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);       
@@ -69,8 +75,28 @@ public class SettingsScreen extends Activity{
     		    	  	
     		this.chckSoftKeyboardOnText.setChecked(ApplicationManager.appPreferences.getBoolean(getResources().getString(R.string.showSoftKeyboardOnTextField), false));
     		this.chckSoftKeyboardOnNumeric.setChecked(ApplicationManager.appPreferences.getBoolean(getResources().getString(R.string.showSoftKeyboardOnNumericField), false));
-    		
-            
+
+			this.tvGpsMaxWaitingTime = (TextView)findViewById(R.id.lblGpsTimeout);
+			this.txtGpsMaxWaitingTime = (EditText)findViewById(R.id.txtGpsTimeout);
+			Log.e("valueToSet","=="+ApplicationManager.appPreferences.getInt(getResources().getString(R.string.gpsTimeout), getResources().getInteger(R.integer.gpsTimeoutInMs)));
+			this.txtGpsMaxWaitingTime.setText(String.valueOf(ApplicationManager.appPreferences.getInt(getResources().getString(R.string.gpsTimeout), getResources().getInteger(R.integer.gpsTimeoutInMs))/1000));
+            this.txtGpsMaxWaitingTime.addTextChangedListener(new TextWatcher(){
+		        public void afterTextChanged(Editable s) {        			            
+					SharedPreferences.Editor editor = ApplicationManager.appPreferences.edit();
+					editor = ApplicationManager.appPreferences.edit();
+					try{
+						Log.e("valueToSetTextChnaged","=="+Integer.valueOf(s.toString())*1000);
+						editor.putInt(getResources().getString(R.string.gpsTimeout), Integer.valueOf(s.toString())*1000);
+					} catch (Exception e){
+						Log.e("valueToSetTextChnagedEXC","=="+ApplicationManager.appPreferences.getInt(getResources().getString(R.string.gpsTimeout), getResources().getInteger(R.integer.gpsTimeoutInMs)));
+						int gpsTimeout = ApplicationManager.appPreferences.getInt(getResources().getString(R.string.gpsTimeout), getResources().getInteger(R.integer.gpsTimeoutInMs));
+						editor.putInt(getResources().getString(R.string.gpsTimeout), gpsTimeout);	
+					}
+					editor.commit();
+		        }
+		        public void beforeTextChanged(CharSequence s, int start, int count, int after){}
+		        public void onTextChanged(CharSequence s, int start, int before, int count){}
+		    });
         } catch (Exception e){
     		RunnableHandler.reportException(e,getResources().getString(R.string.app_name),TAG+":onCreate",
     				Environment.getExternalStorageDirectory().toString()
@@ -98,5 +124,7 @@ public class SettingsScreen extends Activity{
 		this.chckSoftKeyboardOnText.setTextColor((backgroundColor!=Color.WHITE)?Color.WHITE:Color.BLACK);
 		this.chckSoftKeyboardOnNumeric.setTextColor((backgroundColor!=Color.WHITE)?Color.WHITE:Color.BLACK);
 		this.chckWhiteBackground.setTextColor((backgroundColor!=Color.WHITE)?Color.WHITE:Color.BLACK);
+		this.tvGpsMaxWaitingTime.setTextColor((backgroundColor!=Color.WHITE)?Color.WHITE:Color.BLACK);
+		//this.txtGpsMaxWaitingTime.setBackgroundColor((backgroundColor!=Color.WHITE)?Color.WHITE:Color.BLACK);
     }
 }

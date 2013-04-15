@@ -7,8 +7,6 @@ import org.openforis.collect.android.messages.ToastMessage;
 import org.openforis.collect.android.screens.FormScreen;
 import org.openforis.idm.metamodel.BooleanAttributeDefinition;
 import org.openforis.idm.metamodel.NodeDefinition;
-import org.openforis.idm.metamodel.validation.ValidationResults;
-import org.openforis.idm.metamodel.validation.Validator;
 import org.openforis.idm.model.BooleanAttribute;
 import org.openforis.idm.model.BooleanValue;
 import org.openforis.idm.model.EntityBuilder;
@@ -16,7 +14,6 @@ import org.openforis.idm.model.Node;
 
 import android.content.Context;
 import android.graphics.Color;
-import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CheckBox;
@@ -110,7 +107,7 @@ public class BooleanField extends Field {
 	}
 	
 	private void validateResults(BooleanAttribute attribute){
-		Log.i("BooleanField info", "Start to validate BooleanField's value");		    		
+		/*Log.i("BooleanField info", "Start to validate BooleanField's value");		    		
 //		Log.i("VALIDATION FOR BOOLEAN FIELD", "Record of attribute is: " + attribute.getRecord());
 		//Validate value into field and change color if it's not valid
 		Validator validator = new Validator();
@@ -125,7 +122,7 @@ public class BooleanField extends Field {
 		Log.e("VALIDATION FOR BOOLEAN FIELD", "Errors: " + results.getErrors().size() + " : " + results.getErrors().toString());
 		Log.d("VALIDATION FOR BOOLEAN FIELD", "Warnings: "  + results.getWarnings().size() + " : " + results.getWarnings().toString());
 		Log.e("VALIDATION FOR BOOLEAN FIELD", "Fails: "  + results.getFailed().size() + " : " +  results.getFailed().toString());	    				
-			
+		*/
 	}
 	
 	public void setValue(int position, Boolean boolValue, String path, boolean isSelectionChanged)

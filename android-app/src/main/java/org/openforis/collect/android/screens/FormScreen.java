@@ -21,6 +21,7 @@ import org.openforis.collect.android.fields.TimeField;
 import org.openforis.collect.android.fields.UIElement;
 import org.openforis.collect.android.management.ApplicationManager;
 import org.openforis.collect.android.management.BaseActivity;
+import org.openforis.collect.android.messages.AlertMessage;
 import org.openforis.collect.android.misc.GpsActivity;
 import org.openforis.collect.android.misc.RunnableHandler;
 import org.openforis.idm.metamodel.BooleanAttributeDefinition;
@@ -52,6 +53,7 @@ import org.openforis.idm.model.TaxonOccurrence;
 import org.openforis.idm.model.TextValue;
 import org.openforis.idm.model.Time;
 
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
@@ -69,7 +71,7 @@ import android.widget.RelativeLayout;
 import android.widget.ScrollView;
 import android.widget.TextView;
 
-public class FormScreen extends BaseActivity implements OnClickListener, TextWatcher{
+public class FormScreen extends BaseActivity implements OnClickListener {
 	
 	private static final String TAG = "FormScreen";
 
@@ -85,7 +87,6 @@ public class FormScreen extends BaseActivity implements OnClickListener, TextWat
 	public int currInstanceNo;
 	
 	public Entity parentEntity;
-	public Entity parentEntityMultiple;
 	public Entity parentEntitySingleAttribute;
 	public Entity parentEntityMultipleAttribute;
 	public PhotoField currentPictureField;
@@ -108,8 +109,8 @@ public class FormScreen extends BaseActivity implements OnClickListener, TextWat
     		this.parentFormScreenId = this.startingIntent.getStringExtra(getResources().getString(R.string.parentFormScreenId));;
     		this.fieldsNo = this.startingIntent.getExtras().size()-5;
     		
-    		this.parentEntitySingleAttribute = this.findParentEntity(this.getFormScreenId());
-    		this.parentEntityMultipleAttribute = this.findParentEntity(this.parentFormScreenId);
+    		//this.parentEntitySingleAttribute = this.findParentEntity(this.getFormScreenId());
+    		//this.parentEntityMultipleAttribute = this.findParentEntity(this.parentFormScreenId);
 
     		this.currentPictureField = null;
     		this.currentCoordinateField = null;
@@ -132,6 +133,15 @@ public class FormScreen extends BaseActivity implements OnClickListener, TextWat
 		super.onResume();
 		Log.i(getResources().getString(R.string.app_name),TAG+":onResume");
 		try{
+//			Log.e("onresume","this.getFormScreenId()=="+this.getFormScreenId());
+//			Log.e("onresume","this.parentFormScreenId=="+this.parentFormScreenId);
+    		this.parentEntitySingleAttribute = this.findParentEntity(this.getFormScreenId());
+    		this.parentEntityMultipleAttribute = this.findParentEntity(this.parentFormScreenId);
+//    		if (parentEntitySingleAttribute!=null)
+//    			Log.e("onresume","parentEntitySingleAttribute=="+parentEntitySingleAttribute.getName()+"=="+parentEntitySingleAttribute.getIndex());
+//    		if (parentEntityMultipleAttribute!=null)
+//    			Log.e("onresume","parentEntityMultipleAttribute=="+parentEntityMultipleAttribute.getName()+"=="+parentEntityMultipleAttribute.getIndex());
+    		
 			String loadedValue = "";
 
     		ArrayList<String> tableColHeaders = new ArrayList<String>();
@@ -141,7 +151,7 @@ public class FormScreen extends BaseActivity implements OnClickListener, TextWat
     		this.ll = new LinearLayout(this);
     		this.ll.setOrientation(android.widget.LinearLayout.VERTICAL);
     		this.sv.addView(ll);
-    		
+
     		if (!this.breadcrumb.equals("")){
     			TextView breadcrumb = new TextView(this);
     			if (this.intentType != getResources().getInteger(R.integer.singleEntityIntent)){
@@ -155,59 +165,27 @@ public class FormScreen extends BaseActivity implements OnClickListener, TextWat
     				breadcrumb.setText(this.breadcrumb);
         		breadcrumb.setTextSize(getResources().getInteger(R.integer.breadcrumbFontSize));
         		this.ll.addView(breadcrumb);
-    		}    		
+    		}
     		
     		for (int i=0;i<this.fieldsNo;i++){
     			NodeDefinition nodeDef = ApplicationManager.getNodeDefinition(this.startingIntent.getIntExtra(getResources().getString(R.string.attributeId)+i, -1));
     			if (nodeDef instanceof EntityDefinition){
-    				//Entity parentEntity = ApplicationManager.currentRecord.getRootEntity();
     				if (ApplicationManager.currentRecord.getRootEntity().getId()!=nodeDef.getId()){
-    					//this.parentEntity = this.findParentEntity(this.getFormScreenId());
-
         				Node<?> foundNode = this.parentEntitySingleAttribute.get(nodeDef.getName(), this.currInstanceNo);
         				if (foundNode==null){
-        					EntityBuilder.addEntity(this.parentEntitySingleAttribute, ApplicationManager.getSurvey().getSchema().getDefinitionById(nodeDef.getId()).getName());
+        					EntityBuilder.addEntity(this.parentEntitySingleAttribute, ApplicationManager.getSurvey().getSchema().getDefinitionById(nodeDef.getId()).getName(), 0);
         				}
     				}
     				
     				EntityDefinition entityDef = (EntityDefinition)nodeDef;
-    				//if (ApplicationManager.currentRecord.getRootEntity().getId()!=nodeDef.getId()){    					
-        				//Log.e("multipleENTITY"+parentEntity.getName(),parentEntity.getIndex()+""+entityDef.getName()+parentEntity.getCount(entityDef.getName()));
-        				for (int e=0;e<this.parentEntitySingleAttribute.getCount(entityDef.getName());e++){
-        					SummaryList summaryListView = new SummaryList(this, entityDef, calcNoOfCharsFitInOneLine(),
-            						this,e);
-            				summaryListView.setOnClickListener(this);
-            				summaryListView.setId(nodeDef.getId());
-            				this.ll.addView(summaryListView);	
-        				}
-    				/*} else {
+    				for (int e=0;e<this.parentEntitySingleAttribute.getCount(entityDef.getName());e++){
     					SummaryList summaryListView = new SummaryList(this, entityDef, calcNoOfCharsFitInOneLine(),
-        						this,0);
+        						this,e);
         				summaryListView.setOnClickListener(this);
         				summaryListView.setId(nodeDef.getId());
-        				this.ll.addView(summaryListView);
-    				}   */ 				  				
-    			}else {
-					/*Entity parentEntity = ApplicationManager.currentRecord.getRootEntity();
-					String screenPath = this.getFormScreenId();
-					String[] entityPath = screenPath.split(getResources().getString(R.string.valuesSeparator2));
-					int pathLength = entityPath.length;
-					if (this.intentType==getResources().getInteger(R.integer.multipleAttributeIntent)){
-						pathLength--;
-					}
-					for (int m=2;m<pathLength;m++){
-						String[] instancePath = entityPath[m].split(getResources().getString(R.string.valuesSeparator1));
-						int id = Integer.valueOf(instancePath[0]);
-						int instanceNo = Integer.valueOf(instancePath[1]);
-						parentEntity = (Entity) parentEntity.get(ApplicationManager.getSurvey().getSchema().getDefinitionById(id).getName(), instanceNo);
-						if (parentEntity!=null){
-							Log.e("formScreenParentEnt",parentEntity.getName()+id+"=="+instanceNo);
-						} else{
-							Log.e("formScreenParentEnt","NULL");
-						}
-						parentEntity.setId(id);
-					}*/
-					
+        				this.ll.addView(summaryListView);	
+    				}			  				
+    			}else {					
 					if (nodeDef instanceof TextAttributeDefinition){
 	    				loadedValue = "";	    				
 
@@ -635,19 +613,19 @@ public class FormScreen extends BaseActivity implements OnClickListener, TextWat
 		    						if (dateValue.getMonth()==null && dateValue.getDay()==null && dateValue.getYear()==null){
 		    							loadedValue = "";
 		    						} else if (dateValue.getMonth()==null && dateValue.getDay()==null){
-		    							loadedValue = getResources().getString(R.string.dateSeparator)+getResources().getString(R.string.dateSeparator)+dateValue.getYear();		    							
+		    							loadedValue = dateValue.getYear()+getResources().getString(R.string.dateSeparator)+getResources().getString(R.string.dateSeparator);		    							
 		    						} else if (dateValue.getMonth()==null && dateValue.getYear()==null){
-		    							loadedValue = getResources().getString(R.string.dateSeparator)+dateValue.getDay()+getResources().getString(R.string.dateSeparator)+dateValue.getYear();
+		    							loadedValue = getResources().getString(R.string.dateSeparator)+getResources().getString(R.string.dateSeparator)+dateValue.getDay();
 		    						} else if (dateValue.getDay()==null && dateValue.getYear()==null){
-		    							loadedValue = dateValue.getMonth()+getResources().getString(R.string.dateSeparator)+getResources().getString(R.string.dateSeparator);
+		    							loadedValue = getResources().getString(R.string.dateSeparator)+dateValue.getMonth()+getResources().getString(R.string.dateSeparator);
 		    						} else if (dateValue.getMonth()==null){
-		    							loadedValue = getResources().getString(R.string.dateSeparator)+dateValue.getDay()+getResources().getString(R.string.dateSeparator)+dateValue.getYear();		    							
+		    							loadedValue = dateValue.getYear()+getResources().getString(R.string.dateSeparator)+getResources().getString(R.string.dateSeparator)+dateValue.getDay();		    							
 		    						} else if (dateValue.getDay()==null){
-		    							loadedValue = dateValue.getMonth()+getResources().getString(R.string.dateSeparator)+getResources().getString(R.string.dateSeparator)+dateValue.getYear();
+		    							loadedValue = dateValue.getYear()+getResources().getString(R.string.dateSeparator)+dateValue.getMonth()+getResources().getString(R.string.dateSeparator);
 		    						} else if (dateValue.getYear()==null){
-		    							loadedValue = dateValue.getMonth()+getResources().getString(R.string.dateSeparator)+dateValue.getDay()+getResources().getString(R.string.dateSeparator);
+		    							loadedValue = getResources().getString(R.string.dateSeparator)+dateValue.getMonth()+getResources().getString(R.string.dateSeparator)+dateValue.getDay();
 		    						} else {
-		    							loadedValue = dateValue.getMonth()+getResources().getString(R.string.dateSeparator)+dateValue.getDay()+getResources().getString(R.string.dateSeparator)+dateValue.getYear();
+		    							loadedValue = dateValue.getYear()+getResources().getString(R.string.dateSeparator)+dateValue.getMonth()+getResources().getString(R.string.dateSeparator)+dateValue.getDay();
 		    						}
 		    					}
 		    				}
@@ -655,6 +633,8 @@ public class FormScreen extends BaseActivity implements OnClickListener, TextWat
 	        				final DateField dateField= new DateField(this, nodeDef);
 	        				dateField.setOnClickListener(this);
 	        				dateField.setId(nodeDef.getId());
+	        				Log.e("parentEntity2",this.parentEntitySingleAttribute.getName()+"=="+this.parentEntitySingleAttribute.getIndex());
+	    					Log.e("wczytanaDATA2","=="+loadedValue);
 	        				dateField.setValue(0, loadedValue, FormScreen.this.getFormScreenId(),false);
 	        				dateField.addTextChangedListener(new TextWatcher(){
 	        			        public void afterTextChanged(Editable s) {        			            
@@ -673,19 +653,19 @@ public class FormScreen extends BaseActivity implements OnClickListener, TextWat
 		    						if (dateValue.getMonth()==null && dateValue.getDay()==null && dateValue.getYear()==null){
 		    							loadedValue = "";
 		    						} else if (dateValue.getMonth()==null && dateValue.getDay()==null){
-		    							loadedValue = getResources().getString(R.string.dateSeparator)+getResources().getString(R.string.dateSeparator)+dateValue.getYear();		    							
+		    							loadedValue = dateValue.getYear()+getResources().getString(R.string.dateSeparator)+getResources().getString(R.string.dateSeparator);		    							
 		    						} else if (dateValue.getMonth()==null && dateValue.getYear()==null){
-		    							loadedValue = getResources().getString(R.string.dateSeparator)+dateValue.getDay()+getResources().getString(R.string.dateSeparator)+dateValue.getYear();
+		    							loadedValue = getResources().getString(R.string.dateSeparator)+getResources().getString(R.string.dateSeparator)+dateValue.getDay();
 		    						} else if (dateValue.getDay()==null && dateValue.getYear()==null){
-		    							loadedValue = dateValue.getMonth()+getResources().getString(R.string.dateSeparator)+getResources().getString(R.string.dateSeparator);
+		    							loadedValue = getResources().getString(R.string.dateSeparator)+dateValue.getMonth()+getResources().getString(R.string.dateSeparator);
 		    						} else if (dateValue.getMonth()==null){
-		    							loadedValue = getResources().getString(R.string.dateSeparator)+dateValue.getDay()+getResources().getString(R.string.dateSeparator)+dateValue.getYear();		    							
+		    							loadedValue = dateValue.getYear()+getResources().getString(R.string.dateSeparator)+getResources().getString(R.string.dateSeparator)+dateValue.getDay();		    							
 		    						} else if (dateValue.getDay()==null){
-		    							loadedValue = dateValue.getMonth()+getResources().getString(R.string.dateSeparator)+getResources().getString(R.string.dateSeparator)+dateValue.getYear();
+		    							loadedValue = dateValue.getYear()+getResources().getString(R.string.dateSeparator)+dateValue.getMonth()+getResources().getString(R.string.dateSeparator);
 		    						} else if (dateValue.getYear()==null){
-		    							loadedValue = dateValue.getMonth()+getResources().getString(R.string.dateSeparator)+dateValue.getDay()+getResources().getString(R.string.dateSeparator);
+		    							loadedValue = getResources().getString(R.string.dateSeparator)+dateValue.getMonth()+getResources().getString(R.string.dateSeparator)+dateValue.getDay();
 		    						} else {
-		    							loadedValue = dateValue.getMonth()+getResources().getString(R.string.dateSeparator)+dateValue.getDay()+getResources().getString(R.string.dateSeparator)+dateValue.getYear();
+		    							loadedValue = dateValue.getYear()+getResources().getString(R.string.dateSeparator)+dateValue.getMonth()+getResources().getString(R.string.dateSeparator)+dateValue.getDay();
 		    						}
 		    					}
 		    				}
@@ -967,10 +947,17 @@ public class FormScreen extends BaseActivity implements OnClickListener, TextWat
 	private Intent prepareIntentForNewScreen(SummaryList summaryList){
 		Intent intent = new Intent(this,FormScreen.class);
 		if (!this.breadcrumb.equals("")){
-			intent.putExtra(getResources().getString(R.string.breadcrumb), this.breadcrumb+getResources().getString(R.string.breadcrumbSeparator)+summaryList.getTitle()+" "+(this.currInstanceNo+1));	
+			String title = "";
+			if (summaryList.getEntityDefinition().isMultiple()){
+				title = this.breadcrumb+getResources().getString(R.string.breadcrumbSeparator)+summaryList.getTitle()+" "+(this.currInstanceNo+1);		
+			} else {
+				title = this.breadcrumb+getResources().getString(R.string.breadcrumbSeparator)+summaryList.getTitle();
+			}
+			intent.putExtra(getResources().getString(R.string.breadcrumb), title);
 		} else {
 			intent.putExtra(getResources().getString(R.string.breadcrumb), summaryList.getTitle());
 		}
+		
 		if (summaryList.getEntityDefinition().isMultiple()){
 			intent.putExtra(getResources().getString(R.string.intentType), getResources().getInteger(R.integer.multipleEntityIntent));	
 		} else {
@@ -1081,35 +1068,6 @@ public class FormScreen extends BaseActivity implements OnClickListener, TextWat
     	} else 
     		return this.parentFormScreenId+getResources().getString(R.string.valuesSeparator2)+this.idmlId+getResources().getString(R.string.valuesSeparator1)+this.currInstanceNo;
     }
-
-	@Override
-	public void afterTextChanged(Editable arg0) {
-		/*if (this.currentMultipleFieldValue!=null){
-			Log.e("currInstanceNo",FormScreen.currentFieldValue.size()+"TEXTFIELD=="+this.currInstanceNo);
-			ArrayList<String> tempValue = new ArrayList<String>();
-			tempValue.add(arg0.toString());
-			this.currentMultipleFieldValue.setValue(this.currInstanceNo, tempValue);
-		} else {
-			Log.e("afterTextChanged2","formSCREEN"+arg0.toString()+"==");
-			ArrayList<List<String>> valuesLists = new ArrayList<List<String>>();
-			ArrayList<String> currentValuesList = new ArrayList<String>();
-			currentValuesList.add(arg0.toString());
-			valuesLists.add(currentValuesList);
-			FieldValue tempValue = new FieldValue(FormScreen.currentFieldValue.getId(), "", valuesLists);
-			this.currentNode.addFieldValue(tempValue);
-		}*/
-	}
-
-	@Override
-	public void beforeTextChanged(CharSequence arg0, int arg1, int arg2,
-			int arg3) {
-		
-	}
-
-	@Override
-	public void onTextChanged(CharSequence arg0, int arg1, int arg2, int arg3) {
-		
-	}
 	
 	private Entity findParentEntity(String path){		
 		Entity parentEntity = ApplicationManager.currentRecord.getRootEntity();
@@ -1140,16 +1098,925 @@ public class FormScreen extends BaseActivity implements OnClickListener, TextWat
 			this.currInstanceNo++;
 		}
 		
+		NodeDefinition currentScreenNodeDef = ApplicationManager.getSurvey().getSchema().getDefinitionById(this.idmlId);
+		if (currentScreenNodeDef.getMaxCount()!=null){
+			if (currentScreenNodeDef.getMaxCount()<=this.currInstanceNo){			
+				this.currInstanceNo--;
+				AlertMessage.createPositiveDialog(FormScreen.this, true, null,
+						getResources().getString(R.string.maxCountTitle), 
+						getResources().getString(R.string.maxCountMessage),
+							getResources().getString(R.string.okay),
+				    		new DialogInterface.OnClickListener() {
+								@Override
+								public void onClick(DialogInterface dialog, int which) {
+									
+								}
+							},
+							null).show();
+				return;
+			}	
+		}
+		
 		View firstView = this.ll.getChildAt(0);
 		if (firstView instanceof TextView){
 			TextView screenTitle = (TextView)firstView;
 			screenTitle.setText(this.breadcrumb.substring(0, this.breadcrumb.lastIndexOf(" "))+" "+(this.currInstanceNo+1));
 		}
-		//Log.e("REFRESHING",this.getFormScreenId()+"currentInstanceNo"+this.currInstanceNo);
+		this.breadcrumb = this.breadcrumb.substring(0, this.breadcrumb.lastIndexOf(" "))+" "+(this.currInstanceNo+1);
+		
+		this.ll.removeAllViews();
+		this.ll.addView(firstView,0);
+		
 		//refreshing values of fields in the entity 
-		//Log.e("REFRESHINGentity","=="+this.getFormScreenId());
 		Entity parentEntity = this.findParentEntity(this.getFormScreenId());
-		if (parentEntity!=null){
+		if (parentEntity==null){
+			String path = this.getFormScreenId().substring(0,this.getFormScreenId().lastIndexOf(getResources().getString(R.string.valuesSeparator2)));
+			parentEntity = this.findParentEntity(path);
+			EntityBuilder.addEntity(parentEntity, ApplicationManager.getSurvey().getSchema().getDefinitionById(this.idmlId).getName());
+			parentEntity = this.findParentEntity(this.getFormScreenId());
+		}
+		
+//		Log.e("refreshEntityScreen","this.getFormScreenId()=="+this.getFormScreenId());
+//		Log.e("refreshEntityScreen","this.parentFormScreenId=="+this.parentFormScreenId);
+		this.parentEntitySingleAttribute = this.findParentEntity(this.getFormScreenId());
+		this.parentEntityMultipleAttribute = this.findParentEntity(this.parentFormScreenId);
+		/*if (parentEntitySingleAttribute!=null)
+			Log.e("refreshEntityScreen","parentEntitySingleAttribute=="+parentEntitySingleAttribute.getName()+"=="+parentEntitySingleAttribute.getIndex());
+		if (parentEntityMultipleAttribute!=null)
+			Log.e("refreshEntityScreen","parentEntityMultipleAttribute=="+parentEntityMultipleAttribute.getName()+"=="+parentEntityMultipleAttribute.getIndex());*/
+		
+		String loadedValue = "";
+		ArrayList<String> tableColHeaders = new ArrayList<String>();
+		tableColHeaders.add("Value");
+		for (int i=0;i<this.fieldsNo;i++){
+			NodeDefinition nodeDef = ApplicationManager.getNodeDefinition(this.startingIntent.getIntExtra(getResources().getString(R.string.attributeId)+i, -1));
+			if (nodeDef instanceof EntityDefinition){
+				if (ApplicationManager.currentRecord.getRootEntity().getId()!=nodeDef.getId()){
+    				Node<?> foundNode = this.parentEntitySingleAttribute.get(nodeDef.getName(), this.currInstanceNo);
+    				if (foundNode==null){
+    					EntityBuilder.addEntity(this.parentEntitySingleAttribute, ApplicationManager.getSurvey().getSchema().getDefinitionById(nodeDef.getId()).getName()/*, this.currInstanceNo*/);
+    				}
+				}
+				
+				EntityDefinition entityDef = (EntityDefinition)nodeDef;
+				for (int e=0;e<this.parentEntitySingleAttribute.getCount(entityDef.getName());e++){
+					SummaryList summaryListView = new SummaryList(this, entityDef, calcNoOfCharsFitInOneLine(),
+    						this,e);
+    				summaryListView.setOnClickListener(this);
+    				summaryListView.setId(nodeDef.getId());
+    				this.ll.addView(summaryListView);	
+				}			  				
+			}else {					
+				if (nodeDef instanceof TextAttributeDefinition){
+    				loadedValue = "";	    				
+
+    				if (((TextAttributeDefinition) nodeDef).getType().toString().toLowerCase().equals("short")){
+	    				if (!nodeDef.isMultiple()){
+	    					Node<?> foundNode = this.parentEntitySingleAttribute.get(nodeDef.getName(), 0);
+		    				if (foundNode!=null){
+		    					TextValue textValue = (TextValue)this.parentEntitySingleAttribute.getValue(nodeDef.getName(), 0);
+		    					if (textValue!=null)
+		    						loadedValue = textValue.getValue();	    				
+		    				}
+	        				final TextField textField= new TextField(this, nodeDef);
+	        				textField.setOnClickListener(this);
+	        				textField.setId(nodeDef.getId());
+	        				//textField.setValue(0, loadedValue, FormScreen.this.getFormScreenId(),false);
+	        				textField.addTextChangedListener(new TextWatcher(){
+	        			        public void afterTextChanged(Editable s) {        			            
+	        			        	textField.setValue(0, s.toString(), FormScreen.this.getFormScreenId(),true);
+	        			        }
+	        			        public void beforeTextChanged(CharSequence s, int start, int count, int after){}
+	        			        public void onTextChanged(CharSequence s, int start, int before, int count){}
+	        			    });
+	        				ApplicationManager.putUIElement(textField.getId(), textField);
+	        				this.ll.addView(textField);
+	    				} else if (this.intentType==getResources().getInteger(R.integer.multipleAttributeIntent)){
+	    					Node<?> foundNode = this.parentEntityMultipleAttribute.get(nodeDef.getName(), this.currInstanceNo);
+		    				if (foundNode!=null){
+		    					TextValue textValue = (TextValue)this.parentEntityMultipleAttribute.getValue(nodeDef.getName(), this.currInstanceNo);
+		    					if (textValue!=null)
+		    						loadedValue = textValue.getValue();	    				
+		    				}
+	        				final TextField textField= new TextField(this, nodeDef);
+	        				textField.setOnClickListener(this);
+	        				textField.setId(nodeDef.getId());
+	        				//Log.e("this.parentFormScreenId",nodeDef.getName()+"=="+this.parentFormScreenId);
+	        				//textField.setValue(this.currInstanceNo, loadedValue, this.parentFormScreenId,false);
+	        				textField.addTextChangedListener(new TextWatcher(){
+	        			        public void afterTextChanged(Editable s) {        			            
+	        			        	textField.setValue(FormScreen.this.currInstanceNo, s.toString(), FormScreen.this.parentFormScreenId,true);
+	        			        }
+	        			        public void beforeTextChanged(CharSequence s, int start, int count, int after){}
+	        			        public void onTextChanged(CharSequence s, int start, int before, int count){}
+	        			    });
+	        				ApplicationManager.putUIElement(textField.getId(), textField);
+	        				this.ll.addView(textField);
+	    				} else {//multiple attribute summary    			    		
+    						SummaryTable summaryTableView = new SummaryTable(this, nodeDef, tableColHeaders, parentEntitySingleAttribute, this);
+        					summaryTableView.setOnClickListener(this);
+            				summaryTableView.setId(nodeDef.getId());
+            				this.ll.addView(summaryTableView);
+        				}
+    				} else {//memo field
+    					if (!nodeDef.isMultiple()){
+	    					Node<?> foundNode = this.parentEntitySingleAttribute.get(nodeDef.getName(), 0);
+		    				if (foundNode!=null){
+		    					TextValue textValue = (TextValue)this.parentEntitySingleAttribute.getValue(nodeDef.getName(), 0);
+		    					if (textValue!=null)
+		    						loadedValue = textValue.getValue();	    				
+		    				}
+	        				final MemoField memoField= new MemoField(this, nodeDef);
+	        				memoField.setOnClickListener(this);
+	        				memoField.setId(nodeDef.getId());
+	        				//memoField.setValue(0, loadedValue, FormScreen.this.getFormScreenId(),false);
+	        				memoField.addTextChangedListener(new TextWatcher(){
+	        			        public void afterTextChanged(Editable s) {        			            
+	        			        	memoField.setValue(0, s.toString(), FormScreen.this.getFormScreenId(),true);
+	        			        }
+	        			        public void beforeTextChanged(CharSequence s, int start, int count, int after){}
+	        			        public void onTextChanged(CharSequence s, int start, int before, int count){}
+	        			    });
+	        				ApplicationManager.putUIElement(memoField.getId(), memoField);
+	        				this.ll.addView(memoField);
+	    				} else if (this.intentType==getResources().getInteger(R.integer.multipleAttributeIntent)){
+	    					Node<?> foundNode = this.parentEntityMultipleAttribute.get(nodeDef.getName(), this.currInstanceNo);
+		    				if (foundNode!=null){
+		    					TextValue textValue = (TextValue)this.parentEntityMultipleAttribute.getValue(nodeDef.getName(), this.currInstanceNo);
+		    					if (textValue!=null)
+		    						loadedValue = textValue.getValue();	    				
+		    				}
+	        				final MemoField memoField= new MemoField(this, nodeDef);
+	        				memoField.setOnClickListener(this);
+	        				memoField.setId(nodeDef.getId());
+	        				//memoField.setValue(this.currInstanceNo, loadedValue, this.parentFormScreenId,false);
+	        				memoField.addTextChangedListener(new TextWatcher(){
+	        			        public void afterTextChanged(Editable s) {        			            
+	        			        	memoField.setValue(FormScreen.this.currInstanceNo, s.toString(), FormScreen.this.parentFormScreenId,true);
+	        			        }
+	        			        public void beforeTextChanged(CharSequence s, int start, int count, int after){}
+	        			        public void onTextChanged(CharSequence s, int start, int before, int count){}
+	        			    });
+	        				ApplicationManager.putUIElement(memoField.getId(), memoField);
+	        				this.ll.addView(memoField);
+	    				} else {//multiple attribute summary    			    		
+    						SummaryTable summaryTableView = new SummaryTable(this, nodeDef, tableColHeaders, parentEntitySingleAttribute, this);
+        					summaryTableView.setOnClickListener(this);
+            				summaryTableView.setId(nodeDef.getId());
+            				this.ll.addView(summaryTableView);
+        				}
+    				}
+    			} else if (nodeDef instanceof NumberAttributeDefinition){
+    				loadedValue = "";
+    				if (!nodeDef.isMultiple()){
+    					Node<?> foundNode = this.parentEntitySingleAttribute.get(nodeDef.getName(), 0);
+	    				if (foundNode!=null){
+	    					if (((NumberAttributeDefinition) nodeDef).isInteger()){
+	    						IntegerValue intValue = (IntegerValue)this.parentEntitySingleAttribute.getValue(nodeDef.getName(), 0);
+	    						if (intValue!=null)
+		    						loadedValue = intValue.getValue().toString();
+	    					} else {
+	    						RealValue realValue = (RealValue)this.parentEntitySingleAttribute.getValue(nodeDef.getName(), 0);
+	    						if (realValue!=null)
+		    						loadedValue = realValue.getValue().toString();
+	    					}
+	    				}
+        				final NumberField numberField= new NumberField(this, nodeDef);
+        				numberField.setOnClickListener(this);
+        				numberField.setId(nodeDef.getId());
+        				//numberField.setValue(0, loadedValue, FormScreen.this.getFormScreenId(),false);
+        				numberField.addTextChangedListener(new TextWatcher(){
+        			        public void afterTextChanged(Editable s) {        			            
+        			        	numberField.setValue(0, s.toString(), FormScreen.this.getFormScreenId(),true);
+        			        }
+        			        public void beforeTextChanged(CharSequence s, int start, int count, int after){}
+        			        public void onTextChanged(CharSequence s, int start, int before, int count){}
+        			    });
+        				ApplicationManager.putUIElement(numberField.getId(), numberField);
+        				this.ll.addView(numberField);
+    				} else if (this.intentType==getResources().getInteger(R.integer.multipleAttributeIntent)){
+    					Node<?> foundNode = this.parentEntityMultipleAttribute.get(nodeDef.getName(), this.currInstanceNo);
+	    				if (foundNode!=null){
+	    					if (((NumberAttributeDefinition) nodeDef).isInteger()){
+	    						IntegerValue intValue = (IntegerValue)this.parentEntityMultipleAttribute.getValue(nodeDef.getName(), this.currInstanceNo);
+	    						if (intValue!=null)
+		    						loadedValue = intValue.getValue().toString();
+	    					} else {
+	    						RealValue realValue = (RealValue)this.parentEntityMultipleAttribute.getValue(nodeDef.getName(), this.currInstanceNo);
+	    						if (realValue!=null)
+		    						loadedValue = realValue.getValue().toString();
+	    					}
+	    				}
+        				final NumberField numberField= new NumberField(this, nodeDef);
+        				numberField.setOnClickListener(this);
+        				numberField.setId(nodeDef.getId());
+        				//numberField.setValue(this.currInstanceNo, loadedValue, this.parentFormScreenId,false);
+        				numberField.addTextChangedListener(new TextWatcher(){
+        			        public void afterTextChanged(Editable s) {        			            
+        			        	numberField.setValue(FormScreen.this.currInstanceNo, s.toString(), FormScreen.this.parentFormScreenId,true);
+        			        }
+        			        public void beforeTextChanged(CharSequence s, int start, int count, int after){}
+        			        public void onTextChanged(CharSequence s, int start, int before, int count){}
+        			    });
+        				ApplicationManager.putUIElement(numberField.getId(), numberField);
+        				this.ll.addView(numberField);
+    				} else {//multiple attribute summary    			    		
+						SummaryTable summaryTableView = new SummaryTable(this, nodeDef, tableColHeaders, parentEntitySingleAttribute, this);
+    					summaryTableView.setOnClickListener(this);
+        				summaryTableView.setId(nodeDef.getId());
+        				this.ll.addView(summaryTableView);
+    				}
+    			} else if (nodeDef instanceof BooleanAttributeDefinition){
+    				loadedValue = "";
+    				if (!nodeDef.isMultiple()){
+    					Node<?> foundNode = this.parentEntitySingleAttribute.get(nodeDef.getName(), 0);
+	    				if (foundNode!=null){
+	    					BooleanValue boolValue = (BooleanValue)this.parentEntitySingleAttribute.getValue(nodeDef.getName(), 0);
+        					if (boolValue!=null){
+        						if (boolValue.getValue()!=null)
+        							loadedValue = boolValue.getValue().toString();
+        					}
+	    				}
+        				BooleanField boolField = new BooleanField(this, nodeDef, false, false, getResources().getString(R.string.yes), getResources().getString(R.string.no));
+        				boolField.setOnClickListener(this);
+        				boolField.setId(nodeDef.getId());
+        				if (loadedValue.equals("")){
+        					//boolField.setValue(0, null, FormScreen.this.getFormScreenId(),false);	
+        				} else {
+        					//boolField.setValue(0, Boolean.valueOf(loadedValue), FormScreen.this.getFormScreenId(),false);	
+        				}	        				
+        				ApplicationManager.putUIElement(boolField.getId(), boolField);
+        				this.ll.addView(boolField);
+    				} else if (this.intentType==getResources().getInteger(R.integer.multipleAttributeIntent)){
+    					Node<?> foundNode = this.parentEntityMultipleAttribute.get(nodeDef.getName(), this.currInstanceNo);
+    					if (foundNode!=null){
+    						BooleanValue boolValue = (BooleanValue)this.parentEntityMultipleAttribute.getValue(nodeDef.getName(), this.currInstanceNo);
+	    					if (boolValue!=null){
+        						if (boolValue.getValue()!=null)
+        							loadedValue = boolValue.getValue().toString();
+        					}
+	    				}
+    					BooleanField boolField = new BooleanField(this, nodeDef, false, false, getResources().getString(R.string.yes), getResources().getString(R.string.no));
+    					boolField.setOnClickListener(this);
+    					boolField.setId(nodeDef.getId());
+    					if (loadedValue.equals("")){
+    						//boolField.setValue(this.currInstanceNo, null, this.parentFormScreenId,false);
+    					} else {
+    						//boolField.setValue(this.currInstanceNo, Boolean.valueOf(loadedValue), this.parentFormScreenId,false);
+    					}
+        				ApplicationManager.putUIElement(boolField.getId(), boolField);
+        				this.ll.addView(boolField);
+    				} else {//multiple attribute summary    			    		
+						SummaryTable summaryTableView = new SummaryTable(this, nodeDef, tableColHeaders, parentEntitySingleAttribute, this);
+    					summaryTableView.setOnClickListener(this);
+        				summaryTableView.setId(nodeDef.getId());
+        				this.ll.addView(summaryTableView);
+    				}
+    			} else if (nodeDef instanceof CodeAttributeDefinition){
+    				loadedValue = "";
+    				CodeAttributeDefinition codeAttrDef = (CodeAttributeDefinition)nodeDef;
+    				ArrayList<String> options = new ArrayList<String>();
+    				ArrayList<String> codes = new ArrayList<String>();
+    				options.add("");
+    				codes.add("null");
+    				List<CodeListItem> codeListItemsList = codeAttrDef.getList().getItems();
+    				for (CodeListItem codeListItem : codeListItemsList){
+    					codes.add(codeListItem.getCode());
+    					options.add(codeListItem.getLabel(null));
+    				}
+    				
+    				if (!nodeDef.isMultiple()){
+    					Node<?> foundNode = this.parentEntitySingleAttribute.get(nodeDef.getName(), 0);
+	    				if (foundNode!=null){
+	    					Code codeValue = (Code)this.parentEntitySingleAttribute.getValue(nodeDef.getName(), 0);
+        					if (codeValue!=null){
+        						loadedValue = codeValue.getCode();
+        					}
+	    				}
+        				CodeField codeField = new CodeField(this, nodeDef, codes, options, null);
+        				codeField.setOnClickListener(this);
+        				codeField.setId(nodeDef.getId());
+        				//Log.e("onResume",FormScreen.this.getFormScreenId()+"=="+0);
+        				//codeField.setValue(0, loadedValue, FormScreen.this.getFormScreenId(),false);
+        				ApplicationManager.putUIElement(codeField.getId(), codeField);
+        				this.ll.addView(codeField);
+    				} else if (this.intentType==getResources().getInteger(R.integer.multipleAttributeIntent)){
+    					Node<?> foundNode = this.parentEntityMultipleAttribute.get(nodeDef.getName(), this.currInstanceNo);
+    					if (foundNode!=null){
+	    					Code codeValue = (Code)this.parentEntityMultipleAttribute.getValue(nodeDef.getName(), this.currInstanceNo);
+        					if (codeValue!=null){
+        						loadedValue = codeValue.getCode();
+        					}
+	    				}
+        				CodeField codeField = new CodeField(this, nodeDef, codes, options, null);
+        				codeField.setOnClickListener(this);
+        				codeField.setId(nodeDef.getId());
+        				//Log.e("onResume",this.parentFormScreenId+"=="+this.currInstanceNo);
+        				//codeField.setValue(this.currInstanceNo, loadedValue, this.parentFormScreenId,false);
+        				ApplicationManager.putUIElement(codeField.getId(), codeField);
+        				this.ll.addView(codeField);
+    				} else {//multiple attribute summary
+						SummaryTable summaryTableView = new SummaryTable(this, nodeDef, tableColHeaders, parentEntitySingleAttribute, this);
+    					summaryTableView.setOnClickListener(this);
+        				summaryTableView.setId(nodeDef.getId());
+        				this.ll.addView(summaryTableView);
+    				}
+    			} else if (nodeDef instanceof CoordinateAttributeDefinition){
+    				String loadedValueLon = "";
+    				String loadedValueLat = "";
+    				if (!nodeDef.isMultiple()){
+        				final CoordinateField coordField= new CoordinateField(this, nodeDef);
+        				if (this.currentCoordinateField!=null){
+        					if (this.longitude==null)
+        						this.longitude = "";
+        					if (this.latitude==null)
+        						this.latitude = "";
+        					coordField.setValue(0, this.longitude, this.latitude, this.parentFormScreenId,false);
+    		    			this.currentCoordinateField = null;
+    		    			this.longitude = null;
+    		    			this.latitude = null;
+    		    		}
+    					Node<?> foundNode = this.parentEntitySingleAttribute.get(nodeDef.getName(), 0);
+	    				if (foundNode!=null){
+	    					Coordinate coordValue = (Coordinate)this.parentEntitySingleAttribute.getValue(nodeDef.getName(), 0);
+	    					if (coordValue!=null){
+	    						if (coordValue.getX()!=null)
+	    							loadedValueLon = coordValue.getX().toString();
+	    						if (coordValue.getY()!=null)
+	    							loadedValueLat = coordValue.getY().toString();
+	    					}	    				
+	    				}
+	    				//coordField = new CoordinateField(this, nodeDef);
+        				coordField.setOnClickListener(this);
+        				coordField.setId(nodeDef.getId());
+        				//coordField.setValue(0, loadedValueLon, loadedValueLat, FormScreen.this.getFormScreenId(),false);
+        				ApplicationManager.putUIElement(coordField.getId(), coordField);
+        				this.ll.addView(coordField);
+    				} else if (this.intentType==getResources().getInteger(R.integer.multipleAttributeIntent)){
+    					final CoordinateField coordField= new CoordinateField(this, nodeDef);
+        				if (this.currentCoordinateField!=null){
+        					if (this.longitude==null)
+        						this.longitude = "";
+        					if (this.latitude==null)
+        						this.latitude = "";
+        					coordField.setValue(this.currInstanceNo, this.longitude, this.latitude, this.parentFormScreenId,false);
+    		    			this.currentCoordinateField = null;
+    		    			this.longitude = null;
+    		    			this.latitude = null;
+    		    		}
+    					Node<?> foundNode = this.parentEntityMultipleAttribute.get(nodeDef.getName(), this.currInstanceNo);
+	    				if (foundNode!=null){
+	    					Coordinate coordValue = (Coordinate)this.parentEntityMultipleAttribute.getValue(nodeDef.getName(), this.currInstanceNo);
+	    					if (coordValue!=null){
+	    						if (coordValue.getX()!=null)
+	    							loadedValueLon = coordValue.getX().toString();
+	    						if (coordValue.getY()!=null)
+	    							loadedValueLat = coordValue.getY().toString();
+	    					}   				
+	    				}
+        				//coordField= new CoordinateField(this, nodeDef);
+        				coordField.setOnClickListener(this);
+        				coordField.setId(nodeDef.getId());
+        				//coordField.setValue(this.currInstanceNo, loadedValueLon, loadedValueLat, this.parentFormScreenId,false);
+        				ApplicationManager.putUIElement(coordField.getId(), coordField);
+        				this.ll.addView(coordField);
+    				} else {//multiple attribute summary    			    		
+						SummaryTable summaryTableView = new SummaryTable(this, nodeDef, tableColHeaders, parentEntitySingleAttribute, this);
+    					summaryTableView.setOnClickListener(this);
+        				summaryTableView.setId(nodeDef.getId());
+        				this.ll.addView(summaryTableView);
+    				}
+    			} else if (nodeDef instanceof RangeAttributeDefinition){
+    				loadedValue = "";
+    				if (!nodeDef.isMultiple()){
+    					Node<?> foundNode = this.parentEntitySingleAttribute.get(nodeDef.getName(), 0);
+	    				if (foundNode!=null){
+	    					RangeAttributeDefinition rangeAttrDef = (RangeAttributeDefinition)nodeDef;
+	    					if (rangeAttrDef.isReal()){
+	    						RealRange rangeValue = (RealRange)this.parentEntitySingleAttribute.getValue(nodeDef.getName(), 0);
+	    						if (rangeValue!=null){
+		    						if (rangeValue.getFrom()==null && rangeValue.getTo()==null){
+		    							loadedValue = "";
+		    						} else if (rangeValue.getFrom()==null){
+		    							loadedValue = getResources().getString(R.string.rangeSeparator)+rangeValue.getTo();
+		    						} else if (rangeValue.getTo()==null){
+		    							loadedValue = rangeValue.getFrom()+getResources().getString(R.string.rangeSeparator);
+		    						} else {
+		    							loadedValue = rangeValue.getFrom()+getResources().getString(R.string.rangeSeparator)+rangeValue.getTo();
+		    						}		    						
+		    					}	
+	    					} else {
+	    						IntegerRange rangeValue = (IntegerRange)this.parentEntitySingleAttribute.getValue(nodeDef.getName(), 0);
+	    						if (rangeValue!=null){
+		    						if (rangeValue.getFrom()==null && rangeValue.getTo()==null){
+		    							loadedValue = "";
+		    						} else if (rangeValue.getFrom()==null){
+		    							loadedValue = getResources().getString(R.string.rangeSeparator)+rangeValue.getTo();
+		    						} else if (rangeValue.getTo()==null){
+		    							loadedValue = rangeValue.getFrom()+getResources().getString(R.string.rangeSeparator);
+		    						} else {
+		    							loadedValue = rangeValue.getFrom()+getResources().getString(R.string.rangeSeparator)+rangeValue.getTo();
+		    						}		    						
+		    					}	
+	    					}		    							
+	    				}
+        				final RangeField rangeField= new RangeField(this, nodeDef);
+        				rangeField.setOnClickListener(this);
+        				rangeField.setId(nodeDef.getId());
+        				//rangeField.setValue(0, loadedValue, FormScreen.this.getFormScreenId(),false);
+        				rangeField.addTextChangedListener(new TextWatcher(){
+        			        public void afterTextChanged(Editable s) {        			            
+        			        	rangeField.setValue(0, s.toString(),  FormScreen.this.getFormScreenId(),true);
+        			        }
+        			        public void beforeTextChanged(CharSequence s, int start, int count, int after){}
+        			        public void onTextChanged(CharSequence s, int start, int before, int count){}
+        			    });
+        				ApplicationManager.putUIElement(rangeField.getId(), rangeField);
+        				this.ll.addView(rangeField);
+    				} else if (this.intentType==getResources().getInteger(R.integer.multipleAttributeIntent)){
+    					Node<?> foundNode = this.parentEntityMultipleAttribute.get(nodeDef.getName(), this.currInstanceNo);
+	    				if (foundNode!=null){
+	    					RangeAttributeDefinition rangeAttrDef = (RangeAttributeDefinition)nodeDef;
+	    					if (rangeAttrDef.isReal()){
+	    						RealRange rangeValue = (RealRange)this.parentEntitySingleAttribute.getValue(nodeDef.getName(), 0);
+	    						if (rangeValue!=null){
+		    						if (rangeValue.getFrom()==null && rangeValue.getTo()==null){
+		    							loadedValue = "";
+		    						} else if (rangeValue.getFrom()==null){
+		    							loadedValue = getResources().getString(R.string.rangeSeparator)+rangeValue.getTo();
+		    						} else if (rangeValue.getTo()==null){
+		    							loadedValue = rangeValue.getFrom()+getResources().getString(R.string.rangeSeparator);
+		    						} else {
+		    							loadedValue = rangeValue.getFrom()+getResources().getString(R.string.rangeSeparator)+rangeValue.getTo();
+		    						}		    						
+		    					}	
+	    					} else {
+	    						IntegerRange rangeValue = (IntegerRange)this.parentEntitySingleAttribute.getValue(nodeDef.getName(), 0);
+	    						if (rangeValue!=null){
+		    						if (rangeValue.getFrom()==null && rangeValue.getTo()==null){
+		    							loadedValue = "";
+		    						} else if (rangeValue.getFrom()==null){
+		    							loadedValue = getResources().getString(R.string.rangeSeparator)+rangeValue.getTo();
+		    						} else if (rangeValue.getTo()==null){
+		    							loadedValue = rangeValue.getFrom()+getResources().getString(R.string.rangeSeparator);
+		    						} else {
+		    							loadedValue = rangeValue.getFrom()+getResources().getString(R.string.rangeSeparator)+rangeValue.getTo();
+		    						}		    						
+		    					}	
+	    					}  				
+	    				}
+        				final RangeField rangeField= new RangeField(this, nodeDef);
+        				rangeField.setOnClickListener(this);
+        				rangeField.setId(nodeDef.getId());
+        				//rangeField.setValue(this.currInstanceNo, loadedValue, this.parentFormScreenId,false);
+        				rangeField.addTextChangedListener(new TextWatcher(){
+        			        public void afterTextChanged(Editable s) {        			            
+        			        	rangeField.setValue(FormScreen.this.currInstanceNo, s.toString(), FormScreen.this.parentFormScreenId,true);
+        			        }
+        			        public void beforeTextChanged(CharSequence s, int start, int count, int after){}
+        			        public void onTextChanged(CharSequence s, int start, int before, int count){}
+        			    });
+        				ApplicationManager.putUIElement(rangeField.getId(), rangeField);
+        				this.ll.addView(rangeField);
+    				} else {//multiple attribute summary    			    		
+						SummaryTable summaryTableView = new SummaryTable(this, nodeDef, tableColHeaders, parentEntitySingleAttribute, this);
+    					summaryTableView.setOnClickListener(this);
+        				summaryTableView.setId(nodeDef.getId());
+        				this.ll.addView(summaryTableView);
+    				}
+    			} else if (nodeDef instanceof DateAttributeDefinition){
+    				loadedValue = "";
+    				if (!nodeDef.isMultiple()){
+    					Node<?> foundNode = this.parentEntitySingleAttribute.get(nodeDef.getName(), 0);
+	    				if (foundNode!=null){
+	    					Date dateValue = (Date)this.parentEntitySingleAttribute.getValue(nodeDef.getName(), 0);
+	    					if (dateValue!=null){
+	    						Log.e("REFRESH","dateValue=="+dateValue);
+	    						if (dateValue.getMonth()==null && dateValue.getDay()==null && dateValue.getYear()==null){
+	    							loadedValue = "";
+	    						} else if (dateValue.getMonth()==null && dateValue.getDay()==null){
+	    							loadedValue = dateValue.getYear()+getResources().getString(R.string.dateSeparator)+getResources().getString(R.string.dateSeparator);		    							
+	    						} else if (dateValue.getMonth()==null && dateValue.getYear()==null){
+	    							loadedValue = getResources().getString(R.string.dateSeparator)+getResources().getString(R.string.dateSeparator)+dateValue.getDay();
+	    						} else if (dateValue.getDay()==null && dateValue.getYear()==null){
+	    							loadedValue = getResources().getString(R.string.dateSeparator)+dateValue.getMonth()+getResources().getString(R.string.dateSeparator);
+	    						} else if (dateValue.getMonth()==null){
+	    							loadedValue = dateValue.getYear()+getResources().getString(R.string.dateSeparator)+getResources().getString(R.string.dateSeparator)+dateValue.getDay();		    							
+	    						} else if (dateValue.getDay()==null){
+	    							loadedValue = dateValue.getYear()+getResources().getString(R.string.dateSeparator)+dateValue.getMonth()+getResources().getString(R.string.dateSeparator);
+	    						} else if (dateValue.getYear()==null){
+	    							loadedValue = getResources().getString(R.string.dateSeparator)+dateValue.getMonth()+getResources().getString(R.string.dateSeparator)+dateValue.getDay();
+	    						} else {
+	    							loadedValue = dateValue.getYear()+getResources().getString(R.string.dateSeparator)+dateValue.getMonth()+getResources().getString(R.string.dateSeparator)+dateValue.getDay();
+	    						}
+	    					}
+	    					Log.e("REFRESH","loadedValue=="+loadedValue);
+	    				}
+
+        				final DateField dateField= new DateField(this, nodeDef);
+        				dateField.setOnClickListener(this);
+        				dateField.setId(nodeDef.getId());
+        				//dateField.setValue(0, loadedValue, FormScreen.this.getFormScreenId(),false);
+        				dateField.addTextChangedListener(new TextWatcher(){
+        			        public void afterTextChanged(Editable s) {        			            
+        			        	dateField.setValue(0, s.toString(), FormScreen.this.getFormScreenId(),true);
+        			        }
+        			        public void beforeTextChanged(CharSequence s, int start, int count, int after){}
+        			        public void onTextChanged(CharSequence s, int start, int before, int count){}
+        			    });
+        				ApplicationManager.putUIElement(dateField.getId(), dateField);
+        				this.ll.addView(dateField);
+    				} else if (this.intentType==getResources().getInteger(R.integer.multipleAttributeIntent)){
+    					Node<?> foundNode = this.parentEntityMultipleAttribute.get(nodeDef.getName(), this.currInstanceNo);
+	    				if (foundNode!=null){
+	    					Date dateValue = (Date)this.parentEntitySingleAttribute.getValue(nodeDef.getName(), 0);
+	    					if (dateValue!=null){
+	    						if (dateValue.getMonth()==null && dateValue.getDay()==null && dateValue.getYear()==null){
+	    							loadedValue = "";
+	    						} else if (dateValue.getMonth()==null && dateValue.getDay()==null){
+	    							loadedValue = dateValue.getYear()+getResources().getString(R.string.dateSeparator)+getResources().getString(R.string.dateSeparator);		    							
+	    						} else if (dateValue.getMonth()==null && dateValue.getYear()==null){
+	    							loadedValue = getResources().getString(R.string.dateSeparator)+getResources().getString(R.string.dateSeparator)+dateValue.getDay();
+	    						} else if (dateValue.getDay()==null && dateValue.getYear()==null){
+	    							loadedValue = getResources().getString(R.string.dateSeparator)+dateValue.getMonth()+getResources().getString(R.string.dateSeparator);
+	    						} else if (dateValue.getMonth()==null){
+	    							loadedValue = dateValue.getYear()+getResources().getString(R.string.dateSeparator)+getResources().getString(R.string.dateSeparator)+dateValue.getDay();		    							
+	    						} else if (dateValue.getDay()==null){
+	    							loadedValue = dateValue.getYear()+getResources().getString(R.string.dateSeparator)+dateValue.getMonth()+getResources().getString(R.string.dateSeparator);
+	    						} else if (dateValue.getYear()==null){
+	    							loadedValue = getResources().getString(R.string.dateSeparator)+dateValue.getMonth()+getResources().getString(R.string.dateSeparator)+dateValue.getDay();
+	    						} else {
+	    							loadedValue = dateValue.getYear()+getResources().getString(R.string.dateSeparator)+dateValue.getMonth()+getResources().getString(R.string.dateSeparator)+dateValue.getDay();
+	    						}
+	    					}
+	    				}
+        				final DateField dateField= new DateField(this, nodeDef);
+        				dateField.setOnClickListener(this);
+        				dateField.setId(nodeDef.getId());
+        				Log.e("parentEntity1",this.parentEntitySingleAttribute.getName()+"=="+this.parentEntitySingleAttribute.getIndex());
+    					Log.e("wczytanaDATA1","=="+loadedValue);
+        				//dateField.setValue(this.currInstanceNo, loadedValue, this.parentFormScreenId,false);
+        				dateField.addTextChangedListener(new TextWatcher(){
+        			        public void afterTextChanged(Editable s) {        			            
+        			        	dateField.setValue(FormScreen.this.currInstanceNo, s.toString(), FormScreen.this.parentFormScreenId,true);
+        			        }
+        			        public void beforeTextChanged(CharSequence s, int start, int count, int after){}
+        			        public void onTextChanged(CharSequence s, int start, int before, int count){}
+        			    });
+        				ApplicationManager.putUIElement(dateField.getId(), dateField);
+        				this.ll.addView(dateField);
+    				}
+    			} else if (nodeDef instanceof TimeAttributeDefinition){
+    				loadedValue = "";
+    				if (!nodeDef.isMultiple()){
+    					Node<?> foundNode = this.parentEntitySingleAttribute.get(nodeDef.getName(), 0);
+	    				if (foundNode!=null){
+	    					Time timeValue = (Time)this.parentEntitySingleAttribute.getValue(nodeDef.getName(), 0);
+	    					if (timeValue!=null){
+	    						if (timeValue.getHour()==null && timeValue.getMinute()==null){
+	    							loadedValue = "";
+	    						} else if (timeValue.getHour()==null){
+	    							loadedValue = getResources().getString(R.string.timeSeparator)+timeValue.getMinute();
+	    						} else if (timeValue.getMinute()==null){
+	    							loadedValue = timeValue.getHour()+getResources().getString(R.string.timeSeparator);
+	    						} else {
+	    							loadedValue = timeValue.getHour()+getResources().getString(R.string.timeSeparator)+timeValue.getMinute();
+	    						}		    						
+	    					}	    				
+	    				}
+        				final TimeField timeField= new TimeField(this, nodeDef);
+        				timeField.setOnClickListener(this);
+        				timeField.setId(nodeDef.getId());
+        				//timeField.setValue(0, loadedValue, FormScreen.this.getFormScreenId(),false);
+        				timeField.addTextChangedListener(new TextWatcher(){
+        			        public void afterTextChanged(Editable s) {
+        			        	timeField.setValue(0, s.toString(), FormScreen.this.getFormScreenId(),true);
+        			        }
+        			        public void beforeTextChanged(CharSequence s, int start, int count, int after){}
+        			        public void onTextChanged(CharSequence s, int start, int before, int count){}
+        			    });
+        				ApplicationManager.putUIElement(timeField.getId(), timeField);
+        				this.ll.addView(timeField);
+    				} else if (this.intentType==getResources().getInteger(R.integer.multipleAttributeIntent)){
+    					Node<?> foundNode = this.parentEntityMultipleAttribute.get(nodeDef.getName(), this.currInstanceNo);
+	    				if (foundNode!=null){
+	    					Time timeValue = (Time)this.parentEntityMultipleAttribute.getValue(nodeDef.getName(), this.currInstanceNo);
+	    					if (timeValue!=null){
+	    						if (timeValue.getHour()==null && timeValue.getMinute()==null){
+	    							loadedValue = "";
+	    						} else if (timeValue.getHour()==null){
+	    							loadedValue = getResources().getString(R.string.timeSeparator)+timeValue.getMinute();
+	    						} else if (timeValue.getMinute()==null){
+	    							loadedValue = timeValue.getHour()+getResources().getString(R.string.timeSeparator);
+	    						} else {
+	    							loadedValue = timeValue.getHour()+getResources().getString(R.string.timeSeparator)+timeValue.getMinute();
+	    						}		    						
+	    					}	   				
+	    				}
+        				final TimeField timeField= new TimeField(this, nodeDef);
+        				timeField.setOnClickListener(this);
+        				timeField.setId(nodeDef.getId());
+        				//timeField.setValue(this.currInstanceNo, loadedValue, this.parentFormScreenId,false);
+        				timeField.addTextChangedListener(new TextWatcher(){
+        			        public void afterTextChanged(Editable s) {        			            
+        			        	timeField.setValue(FormScreen.this.currInstanceNo, s.toString(), FormScreen.this.parentFormScreenId,true);
+        			        }
+        			        public void beforeTextChanged(CharSequence s, int start, int count, int after){}
+        			        public void onTextChanged(CharSequence s, int start, int before, int count){}
+        			    });
+        				ApplicationManager.putUIElement(timeField.getId(), timeField);
+        				this.ll.addView(timeField);
+    				} else {//multiple attribute summary    			    		
+						SummaryTable summaryTableView = new SummaryTable(this, nodeDef, tableColHeaders, parentEntitySingleAttribute, this);
+    					summaryTableView.setOnClickListener(this);
+        				summaryTableView.setId(nodeDef.getId());
+        				this.ll.addView(summaryTableView);
+    				}
+    			} else if (nodeDef instanceof TaxonAttributeDefinition){
+    				TaxonAttributeDefinition taxonAttrDef = (TaxonAttributeDefinition)nodeDef;
+    				ArrayList<String> options = new ArrayList<String>();
+    				ArrayList<String> codes = new ArrayList<String>();
+    				options.add("");
+    				codes.add("null");
+    				
+    				String code = "";
+    				String sciName = "";
+    				String vernName = "";
+    				String vernLang = "";
+    				String langVariant = "";
+    				if (!nodeDef.isMultiple()){
+    					Node<?> foundNode = this.parentEntitySingleAttribute.get(nodeDef.getName(), 0);
+	    				if (foundNode!=null){
+	    					TaxonOccurrence taxonValue = (TaxonOccurrence)this.parentEntitySingleAttribute.getValue(nodeDef.getName(), 0);
+	    					if (taxonValue!=null){
+	    						code = taxonValue.getCode();
+	    	    				sciName = taxonValue.getScientificName();
+	    	    				vernName = taxonValue.getVernacularName();
+	    	    				vernLang = taxonValue.getLanguageCode();
+	    	    				langVariant = taxonValue.getLanguageVariety();
+	    					}	    				
+	    				}
+        				final TaxonField taxonField= new TaxonField(this, nodeDef, codes, options, null);
+        				taxonField.setOnClickListener(this);
+        				taxonField.setId(nodeDef.getId());
+        				//taxonField.setValue(0, code, sciName, vernName, vernLang, langVariant, FormScreen.this.getFormScreenId(),false);
+        				ApplicationManager.putUIElement(taxonField.getId(), taxonField);
+        				this.ll.addView(taxonField);
+    				} else if (this.intentType==getResources().getInteger(R.integer.multipleAttributeIntent)){
+    					Node<?> foundNode = this.parentEntityMultipleAttribute.get(nodeDef.getName(), this.currInstanceNo);
+	    				if (foundNode!=null){
+	    					TaxonOccurrence taxonValue = (TaxonOccurrence)this.parentEntityMultipleAttribute.getValue(nodeDef.getName(), this.currInstanceNo);
+	    					if (taxonValue!=null){
+	    						code = taxonValue.getCode();
+	    	    				sciName = taxonValue.getScientificName();
+	    	    				vernName = taxonValue.getVernacularName();
+	    	    				vernLang = taxonValue.getLanguageCode();
+	    	    				langVariant = taxonValue.getLanguageVariety();	    						
+	    					}	   				
+	    				}
+	    				final TaxonField taxonField= new TaxonField(this, nodeDef, codes, options, null);
+	    				taxonField.setOnClickListener(this);
+	    				taxonField.setId(nodeDef.getId());
+	    				//taxonField.setValue(this.currInstanceNo, code, sciName, vernName, vernLang, langVariant, this.parentFormScreenId,false);
+        				ApplicationManager.putUIElement(taxonField.getId(), taxonField);
+        				this.ll.addView(taxonField);
+    				} else {//multiple attribute summary    			    		
+						SummaryTable summaryTableView = new SummaryTable(this, nodeDef, tableColHeaders, parentEntitySingleAttribute, this);
+    					summaryTableView.setOnClickListener(this);
+        				summaryTableView.setId(nodeDef.getId());
+        				this.ll.addView(summaryTableView);
+    				}
+				} else if (nodeDef instanceof FileAttributeDefinition){
+					FileAttributeDefinition fileDef = (FileAttributeDefinition)nodeDef;
+					List<String> extensionsList = fileDef.getExtensions();
+					
+					if (extensionsList.contains("jpg")||extensionsList.contains("jpeg")){
+						loadedValue = "";
+	    				if (!nodeDef.isMultiple()){
+	        				final PhotoField photoField= new PhotoField(this, nodeDef);
+	        				if (this.currentPictureField!=null){
+	    		    			photoField.setValue(0, this.photoPath, FormScreen.this.getFormScreenId(),false);
+	    		    			this.currentPictureField = null;
+	    		    			this.photoPath = null;
+	    		    		}
+	        				Node<?> foundNode = this.parentEntitySingleAttribute.get(nodeDef.getName(), 0);
+		    				if (foundNode!=null){
+		    					File fileValue = (File)this.parentEntitySingleAttribute.getValue(nodeDef.getName(), 0);
+		    					if (fileValue!=null){
+		    						loadedValue = fileValue.getFilename();
+		    					}
+		    				}
+	        				photoField.setOnClickListener(this);
+	        				photoField.setId(nodeDef.getId());
+	        				//photoField.setValue(0, loadedValue, FormScreen.this.getFormScreenId(),false);
+	        				ApplicationManager.putUIElement(photoField.getId(), photoField);
+	        				this.ll.addView(photoField);
+	    				} else if (this.intentType==getResources().getInteger(R.integer.multipleAttributeIntent)){
+	        				final PhotoField photoField= new PhotoField(this, nodeDef);
+	        				if (this.currentPictureField!=null){
+	        					photoField.setValue(this.currInstanceNo, this.photoPath, this.parentFormScreenId,false);
+	    		    			this.currentPictureField = null;
+	    		    			this.photoPath = null;
+	    		    		}
+	        				Node<?> foundNode = this.parentEntityMultipleAttribute.get(nodeDef.getName(), this.currInstanceNo);
+		    				if (foundNode!=null){
+		    					File fileValue = (File)this.parentEntityMultipleAttribute.getValue(nodeDef.getName(), this.currInstanceNo);
+		    					if (fileValue!=null){
+		    						loadedValue = fileValue.getFilename();
+		    					}
+		    				}
+	        				photoField.setOnClickListener(this);
+	        				photoField.setId(nodeDef.getId());
+	        				//photoField.setValue(this.currInstanceNo, loadedValue, this.parentFormScreenId,false);
+	        				ApplicationManager.putUIElement(photoField.getId(), photoField);
+	        				this.ll.addView(photoField);
+	    				} else {//multiple attribute summary    			    		
+    						SummaryTable summaryTableView = new SummaryTable(this, nodeDef, tableColHeaders, parentEntitySingleAttribute, this);
+        					summaryTableView.setOnClickListener(this);
+            				summaryTableView.setId(nodeDef.getId());
+            				this.ll.addView(summaryTableView);
+        				}
+					}
+				}
+			}    				
+		}
+		
+		if (this.intentType==getResources().getInteger(R.integer.multipleEntityIntent)){ 				
+			if (ApplicationManager.currentRecord.getRootEntity().getId()!=this.idmlId){
+				this.ll.addView(arrangeButtonsInLine(new Button(this),getResources().getString(R.string.previousInstanceButton),new Button(this),getResources().getString(R.string.nextInstanceButton),this, true));
+			}	
+		}
+		
+		int backgroundColor = ApplicationManager.appPreferences.getInt(getResources().getString(R.string.backgroundColor), Color.WHITE);		
+		changeBackgroundColor(backgroundColor);
+		
+		for (int i=0;i<this.fieldsNo;i++){
+			NodeDefinition nodeDef = ApplicationManager.getNodeDefinition(this.startingIntent.getIntExtra(getResources().getString(R.string.attributeId)+i, -1));
+			if (nodeDef!=null){
+				//Log.e("refreshing existing field","=="+nodeDef.getName());
+				if (nodeDef instanceof TextAttributeDefinition){
+					loadedValue = "";
+					if (((TextAttributeDefinition) nodeDef).getType().toString().toLowerCase().equals("short")){
+						TextValue textValue = (TextValue)parentEntity.getValue(nodeDef.getName(), 0);							
+						if (textValue!=null)
+							if (textValue.getValue()!=null)
+								loadedValue = textValue.getValue();
+    					TextField textField = (TextField) ApplicationManager.getUIElement(nodeDef.getId());
+    					if (textField!=null)
+    						textField.setValue(0, loadedValue, this.getFormScreenId(), false);
+					} else {
+						TextValue textValue = (TextValue)parentEntity.getValue(nodeDef.getName(), 0);							
+						if (textValue!=null)
+							if (textValue.getValue()!=null)
+								loadedValue = textValue.getValue();
+    					MemoField memoField = (MemoField) ApplicationManager.getUIElement(nodeDef.getId());
+    					if (memoField!=null)
+    						memoField.setValue(0, loadedValue, this.getFormScreenId(), false);
+					}								
+				} else if (nodeDef instanceof NumberAttributeDefinition){
+					loadedValue = "";
+					if (((NumberAttributeDefinition) nodeDef).isInteger()){
+						IntegerValue intValue = (IntegerValue)parentEntity.getValue(nodeDef.getName(), 0);
+						if (intValue!=null)
+							if (intValue.getValue()!=null)
+								loadedValue = intValue.getValue().toString();	
+					} else {
+						RealValue realValue = (RealValue)parentEntity.getValue(nodeDef.getName(), 0);					
+						if (realValue!=null)
+							if (realValue.getValue()!=null)
+								loadedValue = realValue.getValue().toString();
+					}					
+					NumberField numberField = (NumberField) ApplicationManager.getUIElement(nodeDef.getId());
+					if (numberField!=null)
+						numberField.setValue(0, loadedValue, this.getFormScreenId(), false);
+				}  else if (nodeDef instanceof BooleanAttributeDefinition){
+					loadedValue = "";
+					BooleanValue boolValue = (BooleanValue)parentEntity.getValue(nodeDef.getName(), this.currInstanceNo);
+					if (boolValue!=null)
+						if (boolValue.getValue()!=null)
+							loadedValue = boolValue.getValue().toString();
+					BooleanField boolField = (BooleanField) ApplicationManager.getUIElement(nodeDef.getId());
+					if (boolField!=null){
+						if (loadedValue.equals("")){
+							boolField.setValue(0, null, this.getFormScreenId(), false);
+						} else {
+							boolField.setValue(0, Boolean.valueOf(loadedValue), this.getFormScreenId(), false);
+						}
+					}					
+				} else if (nodeDef instanceof CodeAttributeDefinition){
+					loadedValue = "";
+					Code codeValue = (Code)parentEntity.getValue(nodeDef.getName(), 0);
+					if (codeValue!=null)
+						if (codeValue.getCode()!=null)
+							loadedValue = codeValue.getCode();
+					CodeField codeField = (CodeField) ApplicationManager.getUIElement(nodeDef.getId());
+					if (codeField!=null){
+						//Log.e("refreshENTITY",this.getFormScreenId()+"=="+0);
+						codeField.setValue(0, loadedValue, this.getFormScreenId(), false);
+					}
+						
+				} else if (nodeDef instanceof CoordinateAttributeDefinition){
+					String loadedValueLat = "";
+					String loadedValueLon = "";
+					Coordinate coordValue = (Coordinate)parentEntity.getValue(nodeDef.getName(), 0);
+					if (coordValue!=null){
+						if (coordValue.getX()!=null)
+							loadedValueLon = coordValue.getX().toString();
+						if (coordValue.getY()!=null)
+							loadedValueLat = coordValue.getY().toString();
+					}
+						
+					CoordinateField coordField = (CoordinateField) ApplicationManager.getUIElement(nodeDef.getId());
+					if (coordField!=null)
+						coordField.setValue(0, loadedValueLon, loadedValueLat, this.getFormScreenId(), false);
+				} else if (nodeDef instanceof RangeAttributeDefinition){
+					String from = "";
+					String to = "";
+					
+					RangeAttributeDefinition rangeAttrDef = (RangeAttributeDefinition)nodeDef;
+					if (rangeAttrDef.isReal()){
+						RealRange rangeValue = (RealRange)parentEntity.getValue(nodeDef.getName(), 0);
+						if (rangeValue!=null){
+							if (rangeValue.getFrom()!=null)
+								from = rangeValue.getFrom().toString();
+							if (rangeValue.getTo()!=null)
+								to = rangeValue.getTo().toString();						
+						}
+					} else {
+						IntegerRange rangeValue = (IntegerRange)parentEntity.getValue(nodeDef.getName(), 0);
+						if (rangeValue!=null){
+							if (rangeValue.getFrom()!=null)
+								from = rangeValue.getFrom().toString();
+							if (rangeValue.getTo()!=null)
+								to = rangeValue.getTo().toString();						
+						}
+					}
+											
+					RangeField rangeField = (RangeField) ApplicationManager.getUIElement(nodeDef.getId());
+					if (rangeField!=null)
+						rangeField.setValue(0, from+getResources().getString(R.string.rangeSeparator)+to, this.getFormScreenId(), false);
+				} else if (nodeDef instanceof DateAttributeDefinition){
+					String day = "";
+					String month = "";
+					String year = "";
+					Date dateValue = (Date)parentEntity.getValue(nodeDef.getName(), 0);
+					if (dateValue!=null){
+						if (dateValue.getDay()!=null)
+							day = dateValue.getDay().toString();
+						if (dateValue.getMonth()!=null)
+							month = dateValue.getMonth().toString();
+						if (dateValue.getYear()!=null)
+							year = dateValue.getYear().toString();
+					}
+					Log.e("parentEntity",parentEntity.getName()+"=="+parentEntity.getIndex());
+					Log.e("wczytanaDATA","=="+year+"-"+month+"-"+day);
+					DateField dateField = (DateField) ApplicationManager.getUIElement(nodeDef.getId());
+					if (dateField!=null)
+						dateField.setValue(0, year+getResources().getString(R.string.dateSeparator)+month+getResources().getString(R.string.dateSeparator)+day, this.getFormScreenId(), false);
+				} else if (nodeDef instanceof TimeAttributeDefinition){
+					String hour = "";
+					String minute = "";
+					Time timeValue = (Time)parentEntity.getValue(nodeDef.getName(), 0);
+					if (timeValue!=null){
+						if (timeValue.getHour()!=null)
+							hour = timeValue.getHour().toString();
+						if (timeValue.getMinute()!=null)
+							minute = timeValue.getMinute().toString();
+					}						
+					TimeField timeField = (TimeField) ApplicationManager.getUIElement(nodeDef.getId());
+					if (timeField!=null)
+						timeField.setValue(0, hour+getResources().getString(R.string.timeSeparator)+minute, this.getFormScreenId(), false);					
+				} else if (nodeDef instanceof TaxonAttributeDefinition){
+    				String code = "";
+    				String sciName = "";
+    				String vernName = "";
+    				String vernLang = "";
+    				String langVariant = "";
+					TaxonOccurrence taxonValue = (TaxonOccurrence)parentEntity.getValue(nodeDef.getName(), this.currInstanceNo);
+					if (taxonValue!=null){
+						code = taxonValue.getCode();
+	    				sciName = taxonValue.getScientificName();
+	    				vernName = taxonValue.getVernacularName();
+	    				vernLang = taxonValue.getLanguageCode();
+	    				langVariant = taxonValue.getLanguageVariety();	    						
+					}
+					TaxonField taxonField = (TaxonField) ApplicationManager.getUIElement(nodeDef.getId());
+					if (taxonField!=null)
+						taxonField.setValue(0, code, sciName, vernName, vernLang, langVariant, this.getFormScreenId(), false);
+				} else if (nodeDef instanceof FileAttributeDefinition){
+					String fileName = "";
+					File fileValue = (File)parentEntity.getValue(nodeDef.getName(), 0);
+					if (fileValue!=null){
+						if (fileValue.getFilename()!=null)
+							fileName = fileValue.getFilename();
+					}						
+					PhotoField photoField = (PhotoField) ApplicationManager.getUIElement(nodeDef.getId());
+					if (photoField!=null)
+						photoField.setValue(0, fileName, this.getFormScreenId(), false);					
+				}
+			}
+		}
+		/*if (parentEntity!=null){
 			//Log.e("REFRESHING",parentEntity.getIndex()+"parentEntity"+parentEntity.getName());
 			//Log.e("REFRESHING1","parentEntity"+parentEntity.getName());
 			for (int i=0;i<this.fieldsNo;i++){
@@ -1480,7 +2347,7 @@ public class FormScreen extends BaseActivity implements OnClickListener, TextWat
 					}
 				}
 			}
-		}
+		}*/
 	}
 	
 	private void refreshMultipleAttributeScreen(boolean isPreviousField){
@@ -1492,6 +2359,23 @@ public class FormScreen extends BaseActivity implements OnClickListener, TextWat
 			}	
 		} else {
 			this.currInstanceNo++;
+		}
+		
+		NodeDefinition currentScreenNodeDef = ApplicationManager.getSurvey().getSchema().getDefinitionById(this.idmlId);
+		if (currentScreenNodeDef.getMaxCount()<=this.currInstanceNo){
+			this.currInstanceNo--;
+			AlertMessage.createPositiveDialog(FormScreen.this, true, null,
+					getResources().getString(R.string.maxCountTitle), 
+					getResources().getString(R.string.maxCountMessage),
+						getResources().getString(R.string.okay),
+			    		new DialogInterface.OnClickListener() {
+							@Override
+							public void onClick(DialogInterface dialog, int which) {
+								
+							}
+						},
+						null).show();
+			return;
 		}
 		
 		View firstView = this.ll.getChildAt(0);
@@ -1621,7 +2505,7 @@ public class FormScreen extends BaseActivity implements OnClickListener, TextWat
 					}						
 					DateField dateField = (DateField) ApplicationManager.getUIElement(nodeDef.getId());
 					if (dateField!=null)
-						dateField.setValue(this.currInstanceNo, month+getResources().getString(R.string.dateSeparator)+day+getResources().getString(R.string.dateSeparator)+year, this.getFormScreenId(), false);
+						dateField.setValue(this.currInstanceNo, year+getResources().getString(R.string.dateSeparator)+month+getResources().getString(R.string.dateSeparator)+day, this.getFormScreenId(), false);
 				} else if (nodeDef instanceof TimeAttributeDefinition){
 					String hour = "";
 					String minute = "";

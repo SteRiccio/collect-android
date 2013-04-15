@@ -1,6 +1,7 @@
 package org.openforis.collect.android.fields;
 
 import java.util.Map;
+
 import org.openforis.collect.android.R;
 import org.openforis.collect.android.management.ApplicationManager;
 import org.openforis.collect.android.messages.ToastMessage;
@@ -12,15 +13,16 @@ import org.openforis.idm.model.IntegerRangeAttribute;
 import org.openforis.idm.model.Node;
 import org.openforis.idm.model.RealRange;
 import org.openforis.idm.model.RealRangeAttribute;
+
 import android.content.Context;
 import android.text.Editable;
 import android.text.InputType;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.Toast;
-import android.text.TextWatcher;
 
 public class RangeField extends InputField {
 	
@@ -60,21 +62,6 @@ public class RangeField extends InputField {
 				    	}
 			    	}
 		    	}
-//		    	else{
-//		    		String strValue = RangeField.this.txtBox.getText().toString();
-//		    		if(strValue.contains("-")){
-//		    			String[] rangeValues = strValue.split(getResources().getString(R.string.rangeSeparator));
-//		    			Log.i("RANGE NUMBER", "Value is: " + rangeValues[0] + " - " + rangeValues[1]);
-//		    			if(!isNumeric(rangeValues[0])){
-//		    				Log.i("RANGE FIELD", "Value 'From': " + rangeValues[0] + " is NOT numeric.");
-//		    			}
-//		    			if(!isNumeric(rangeValues[1])){
-//		    				Log.i("RANGE FIELD", "Value 'To': " + rangeValues[1] + " is NOT numeric.");
-//		    			}		    			
-//		    		}else{
-//		    			Log.i("RANGE FIELD", "Value does not contains separator '-'");
-//		    		}
-//		    	}
 		    }
 	    });
 		
@@ -83,11 +70,7 @@ public class RangeField extends InputField {
 			public void afterTextChanged(Editable s) {
 				if (s.length() > 0){
 					char symbol = s.charAt(s.length()-1);
-					Log.i("RANGE FIELD", "Check character: " + symbol);
-					if (validateCharacter(symbol))
-						Log.i("RANGE FIELD", "Result is: TRUE");
-					else{ 
-						Log.i("RANGE FIELD", "Result is: FALSE");
+					if (!validateCharacter(symbol)){
 						String strReplace = s.subSequence(0, s.length()-1).toString(); 
 						RangeField.this.txtBox.setText(strReplace);
 						RangeField.this.txtBox.setSelection(strReplace.length());
@@ -116,7 +99,7 @@ public class RangeField extends InputField {
 	{
 		if (!isTextChanged)
 			this.txtBox.setText(value);
-		
+
 		String valueFrom = "";
 		String valueTo = "";
 		int separatorIndex = value.indexOf(getResources().getString(R.string.rangeSeparator));
@@ -124,6 +107,8 @@ public class RangeField extends InputField {
 			valueFrom = value.substring(0,separatorIndex);
 			if (separatorIndex+1<value.length())
 				valueTo = value.substring(separatorIndex+1);
+		} else {
+			valueFrom = value;
 		}
 		try{
 			Node<? extends NodeDefinition> node = this.findParentEntity(path).get(this.nodeDefinition.getName(), position);
@@ -177,17 +162,5 @@ public class RangeField extends InputField {
 		}catch (Exception e){
 			Log.e("RangeField", "ERROR when try to set value" + e.getMessage());
 		}
-	}
-	
-	//Check is given value a number
-	private Boolean isNumeric(String strValue){
-		Boolean result = false;
-		try{
-			Double.parseDouble(strValue);
-			result = true;
-		} catch(NumberFormatException e){
-			result = false;
-		}
-		return result;
 	}
 }

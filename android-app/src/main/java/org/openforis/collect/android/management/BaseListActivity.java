@@ -1,6 +1,7 @@
 package org.openforis.collect.android.management;
 
 import org.openforis.collect.android.R;
+import org.openforis.collect.android.lists.UploadActivity;
 import org.openforis.collect.android.messages.AlertMessage;
 import org.openforis.collect.android.misc.RunnableHandler;
 import org.openforis.collect.android.screens.SettingsScreen;
@@ -65,8 +66,11 @@ public class BaseListActivity extends ListActivity {
     { 
         switch (item.getItemId())
         {       	
+			case R.id.menu_upload:
+				startActivity(new Intent(BaseListActivity.this, UploadActivity.class));
+			    return true;
 			case R.id.menu_settings:
-				startActivity(new Intent(BaseListActivity.this,SettingsScreen.class));
+				startActivity(new Intent(BaseListActivity.this, SettingsScreen.class));
 			    return true;			    
 			case R.id.menu_about:
 				String versionName;

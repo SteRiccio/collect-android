@@ -1,6 +1,7 @@
 package org.openforis.collect.android.misc;
 
 import org.openforis.collect.android.R;
+import org.openforis.collect.android.management.ApplicationManager;
 
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -26,41 +27,13 @@ public class GpsActivity extends Activity {
 	public Location loc;
 	private Dialog dialog;
 	private int waitingTime;//how long to wait for new GPS coords
-
-	public GpsActivity(){
-		Log.i(TAG,"gpsActivity:constructor");
-		try{
-			String preferredGpsTimeout = "10";
-        	if (preferredGpsTimeout.equals("")){
-        		waitingTime = Integer.parseInt("5");
-        	} else{
-        		try{
-        			waitingTime = Integer.parseInt(preferredGpsTimeout);
-        			if (waitingTime<=0){
-        				waitingTime = Integer.parseInt("5");
-        			}
-        			else{//waitingTime is correct, so do nothing   	
-        				
-        			}
-        		}catch (NumberFormatException e){
-        			waitingTime = Integer.parseInt("5");
-        		}
-        	}
-        	if (waitingTime>Integer.parseInt("60")){//do not wait more than 5 minutes
-        		waitingTime = Integer.parseInt("60"); 
-        	}
-        	waitingTime *= 1000;
-		}
-		catch (Exception e){
-			waitingTime = Integer.parseInt("5");
-		}		
-	}
 	
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		Log.i(getResources().getString(R.string.app_name),TAG+":onCreate");
 		setContentView(R.layout.welcomescreen);
+		this.waitingTime = ApplicationManager.appPreferences.getInt(getResources().getString(R.string.gpsTimeout), getResources().getInteger(R.integer.gpsTimeoutInMs));
 		loc = null;
 		lm = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
 		if ( !lm.isProviderEnabled( LocationManager.GPS_PROVIDER ) ) {
@@ -75,6 +48,7 @@ public class GpsActivity extends Activity {
 
 				@Override
 				public void run() {
+					Log.e("setWaitingTime","=="+waitingTime);
 					while ((loc == null) && (SystemClock.currentThreadTimeMillis()<waitingTime)) {
 						// Wait for first GPS coords change (do nothing until loc != null)
 					}

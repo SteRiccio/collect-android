@@ -26,6 +26,10 @@
     <string name="editingMemoField">Editing</string>
     <string name="deleteRecordTitle">Deleting&#8230;</string>
     <string name="deleteRecord">Do you want to delete the record?</string>
+    <string name="noInternetTitle">No connection&#8230;</string>    
+    <string name="noInternetMessage">There is no connection to Internet available. Make sure you are connected to network and then try to upload data again.</string>
+    <string name="maxCountTitle">Too many&#8230;</string>
+    <string name="maxCountMessage">Number of instances of this element has reached maximum.</string>    
     
     <!-- buttons -->
     <string name="footerSave">Save</string>
@@ -47,6 +51,7 @@
     <string name="open">Back to list</string>
     <string name="save">Save</string>
     <string name="export_to_xml">Save in XML</string>
+    <string name="upload_to_server">Upload</string>
     <string name="settings">Settings</string>
     <string name="about">About</string>
     
@@ -69,10 +74,11 @@
     <string name="loading">Loading&#8230;</string>   
     <string name="launchAppMessage">Launching application&#8230;</string>
     
-    <!-- root and record selection -->
+    <!-- lists -->
     <string name="clusterChoiceFailedBecauseNoDataSaved">No data saved in local database</string>
-    <string name="clusterChoiceListLabel">Available records:</string>
+    <string name="clusterChoiceListLabel">Available records</string>
     <string name="rootEntityChoiceListLabel">Select root entity</string>
+    <string name="dataToUpload">Select data to upload</string>
     
     <!-- others -->
     <string name="entityMarker">[]</string>

@@ -3,17 +3,13 @@ package org.openforis.collect.android.fields;
 import org.openforis.collect.android.R;
 import org.openforis.collect.android.management.ApplicationManager;
 import org.openforis.collect.android.screens.FormScreen;
-import org.openforis.idm.metamodel.CodeAttributeDefinition;
 import org.openforis.idm.metamodel.EntityDefinition;
 import org.openforis.idm.metamodel.NodeDefinition;
 import org.openforis.idm.metamodel.NodeLabel.Type;
-import org.openforis.idm.model.Code;
 import org.openforis.idm.model.Entity;
-import org.openforis.idm.model.EntityBuilder;
 
 import android.content.Context;
 import android.graphics.Color;
-import android.util.Log;
 import android.widget.LinearLayout;
 import android.widget.TableLayout;
 import android.widget.TextView;

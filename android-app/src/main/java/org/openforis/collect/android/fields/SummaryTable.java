@@ -49,7 +49,7 @@ public class SummaryTable extends UIElement {
 	public SummaryTable(Context context, NodeDefinition nodeDef, List<String> columnHeader, Entity parentEntity/*List<List<String>> rows*/,
 			OnClickListener listener) {
 		super(context, nodeDef);
-		
+				
 		this.tableLayout  = new TableLayout(context);
 		this.tableLayout.setStretchAllColumns(true);  
 	    this.tableLayout.setShrinkAllColumns(true);
@@ -64,6 +64,7 @@ public class SummaryTable extends UIElement {
 		    this.values.add(newValue);
 			//EntityBuilder.addValue(parentEntity, nodeDef.getName(), newValue, 0);
 	    }
+
 	    for (int i=0;i<listOfNodes.size();i++){
 	    	Node<?> foundNode = parentEntity.get(nodeDef.getName(), i);
 		    String loadedValue = "";
@@ -141,7 +142,7 @@ public class SummaryTable extends UIElement {
 				    this.values.add(newValue);
 				} else if (nodeDef instanceof DateAttributeDefinition){
 					Date dateValue = (Date)parentEntity.getValue(nodeDef.getName(), i);
-					loadedValue = dateValue.getMonth()+getResources().getString(R.string.dateSeparator)+dateValue.getDay()+getResources().getString(R.string.dateSeparator)+dateValue.getYear();
+					loadedValue = dateValue.getYear()+getResources().getString(R.string.dateSeparator)+dateValue.getMonth()+getResources().getString(R.string.dateSeparator)+dateValue.getDay();
 				    ArrayList<String> newValue = new ArrayList<String>();
 				    newValue.add(loadedValue);
 				    this.values.add(newValue);
