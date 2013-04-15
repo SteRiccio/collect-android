@@ -72,22 +72,14 @@ public class DateSetDialog extends FragmentActivity {
 			Calendar cal = new GregorianCalendar(year, month, day);
 			//String strDate = DateFormat.getDateFormat(getActivity()).format(cal.getTime());
 			//String strDate = (String) DateFormat.format("yyyy"+getResources().getString(R.string.dateSeparator)+"MM"+getResources().getString(R.string.dateSeparator)+"dd", cal);
-			String strDate = cal.get(Calendar.YEAR)+getResources().getString(R.string.dateSeparator)+(cal.get(Calendar.MONTH)+1)+getResources().getString(R.string.dateSeparator)+cal.get(Calendar.DAY_OF_MONTH);
+//			String strDate = cal.get(Calendar.YEAR)+getResources().getString(R.string.dateSeparator)+(cal.get(Calendar.MONTH)+1)+getResources().getString(R.string.dateSeparator)+cal.get(Calendar.DAY_OF_MONTH);
+			//!!! BECAUSE IN FORM SCREEN FORMAT IS "mm-dd-yyy" 
+			String strDate = (cal.get(Calendar.MONTH)+1) + getResources().getString(R.string.dateSeparator) + cal.get(Calendar.DAY_OF_MONTH) + getResources().getString(R.string.dateSeparator)+cal.get(Calendar.YEAR);
 			//activity_edittext.txtBox.setText(strDate);
 			activity_edittext.setValue(0, strDate, this.pathToParentScreen, false);
 		    //Finish activity
 		    finish();
 		}		
-		
-//		public boolean onKeyDown(int keyCode, KeyEvent event) {
-//		    if ((keyCode == KeyEvent.KEYCODE_BACK)) {
-//		    	Log.i(getResources().getString(R.string.app_name), "Button BACK pressed form DateSettingsDialog");
-//			    //Finish activity
-//			    finish();	    	
-//		    }
-//		    return false;
-//		}
-
 	}
 	
 	//Main class
@@ -111,15 +103,5 @@ public class DateSetDialog extends FragmentActivity {
 	    newFragment.setCancelable(false);
 //	    newFragment.getFragmentManager().popBackStack();
 	    newFragment.show(getSupportFragmentManager(), "datePicker");
-	}	
-	
-//	@Override
-//	public boolean onKeyDown(int keyCode, KeyEvent event) {
-//	    if ((keyCode == KeyEvent.KEYCODE_BACK)) {
-//	    	Log.i(getResources().getString(R.string.app_name), "Button BACK pressed form DataSet activity");
-//		    //Finish activity
-//		    finish();	    	
-//	    }
-//	    return super.onKeyDown(keyCode, event);
-//	}	
+	}		
 }

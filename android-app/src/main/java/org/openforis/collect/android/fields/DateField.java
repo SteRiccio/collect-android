@@ -72,6 +72,25 @@ public class DateField extends InputField {
 	    });
 	}
 
+	private void validateResult(DateAttribute attribute){
+		/*Log.i("DateField info", "Start to validate DateField's value");		    		
+//		Log.i("VALIDATION FOR DATE FIELD", "Record of attribute is: " + attribute.getRecord());
+		//Validate value into field and change color if it's not valid
+		Validator validator = new Validator();
+		ValidationResults results = validator.validate(attribute); 
+		if(results.getErrors().size() > 0 || results.getFailed().size() > 0){
+			DateField.this.txtBox.setBackgroundColor(Color.RED);
+		}else if (results.getWarnings().size() > 0){
+			DateField.this.txtBox.setBackgroundColor(Color.YELLOW);
+		}else{
+			DateField.this.txtBox.setBackgroundColor(Color.TRANSPARENT);
+		}
+		Log.e("VALIDATION FOR DATE FIELD", "Errors: " + results.getErrors().size() + " : " + results.getErrors().toString());
+		Log.d("VALIDATION FOR DATE FIELD", "Warnings: "  + results.getWarnings().size() + " : " + results.getWarnings().toString());
+		Log.e("VALIDATION FOR DATE FIELD", "Fails: "  + results.getFailed().size() + " : " +  results.getFailed().toString());	    		
+		*/
+	}
+	
 	private void showDatePickerDialog(int id) {
 		Intent datePickerIntent = new Intent(DateField.this.getContext(), DateSetDialog.class);
     	datePickerIntent.putExtra("datefield_id", id);
@@ -84,7 +103,7 @@ public class DateField extends InputField {
 	{
 		if (!isTextChanged)
 			this.txtBox.setText(value);
-		Log.e("setValue","=="+value);
+
 		String day = "";
 		String month = "";
 		String year = "";
@@ -95,12 +114,12 @@ public class DateField extends InputField {
 				year = value.substring(0,firstSeparatorIndex);
 				if (secondSeparatorIndex>(firstSeparatorIndex+1)){
 					month = value.substring(firstSeparatorIndex+1,secondSeparatorIndex);	
-				}				
+				}
 				if (secondSeparatorIndex+1<value.length())
 					day = value.substring(secondSeparatorIndex+1);
 			}
 		}
-		
+
 		Node<? extends NodeDefinition> node = this.findParentEntity(path).get(this.nodeDefinition.getName(), position);
 		if (node!=null){
 			DateAttribute dateAtr = (DateAttribute)node;
@@ -121,6 +140,7 @@ public class DateField extends InputField {
 			} else {
 				dateAtr.setValue(new Date(Integer.valueOf(year),Integer.valueOf(month),Integer.valueOf(day)));
 			}
+			this.validateResult(dateAtr);
 		} else {
 			if (month.equals("") && day.equals("") && year.equals("")){
 				EntityBuilder.addValue(this.findParentEntity(path), this.nodeDefinition.getName(), new Date(null,null,null), position);

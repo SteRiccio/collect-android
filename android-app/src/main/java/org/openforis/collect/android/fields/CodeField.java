@@ -160,9 +160,7 @@ public class CodeField extends InputField {
 		if (node!=null){
 			CodeAttribute codeAtr = (CodeAttribute)node;
 			codeAtr.setValue(new Code(code));
-			//Log.e("CODEvalueSET",path+"=="+position);
 		} else {
-			//Log.e("CODEvalueADDED",path+"=="+position);
 			EntityBuilder.addValue(this.findParentEntity(path), this.nodeDefinition.getName(), new Code(code), position);	
 		}
 	}

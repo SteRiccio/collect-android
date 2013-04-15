@@ -70,10 +70,7 @@ public class RangeField extends InputField {
 			public void afterTextChanged(Editable s) {
 				if (s.length() > 0){
 					char symbol = s.charAt(s.length()-1);
-					if (validateCharacter(symbol))
-						Log.i("RANGE FIELD", "Result is: TRUE");
-					else{ 
-						Log.i("RANGE FIELD", "Result is: FALSE");
+					if (!validateCharacter(symbol)){
 						String strReplace = s.subSequence(0, s.length()-1).toString(); 
 						RangeField.this.txtBox.setText(strReplace);
 						RangeField.this.txtBox.setSelection(strReplace.length());

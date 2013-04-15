@@ -74,6 +74,25 @@ public class TimeField extends InputField implements TextWatcher {
 	    });
 	}
 	
+	private void validateResult(TimeAttribute attribute){
+		/*Log.i("TimeField info", "Start to validate TimeField's value");		    		
+//		Log.i("VALIDATION FOR TIME FIELD", "Record of attribute is: " + attribute.getRecord());
+		//Validate value into field and change color if it's not valid
+		Validator validator = new Validator();
+		ValidationResults results = validator.validate(attribute); 
+		if(results.getErrors().size() > 0 || results.getFailed().size() > 0){
+			TimeField.this.txtBox.setBackgroundColor(Color.RED);
+		}else if (results.getWarnings().size() > 0){
+			TimeField.this.txtBox.setBackgroundColor(Color.YELLOW);
+		}else{
+			TimeField.this.txtBox.setBackgroundColor(Color.TRANSPARENT);
+		}
+		Log.e("VALIDATION FOR TIME FIELD", "Errors: " + results.getErrors().size() + " : " + results.getErrors().toString());
+		Log.d("VALIDATION FOR TIME FIELD", "Warnings: "  + results.getWarnings().size() + " : " + results.getWarnings().toString());
+		Log.e("VALIDATION FOR TIME FIELD", "Fails: "  + results.getFailed().size() + " : " +  results.getFailed().toString());
+		*/	    				
+	}
+	
 	private void showTimePickerDialog(int id) {  	
 //		Log.i(getResources().getString(R.string.app_name), "Id from date field was: " + id);
 		Intent timePickerIntent = new Intent(TimeField.this.getContext(), TimeSetDialog.class);
@@ -159,6 +178,8 @@ public class TimeField extends InputField implements TextWatcher {
 			} else {
 				timeAttr.setValue(new Time(Integer.valueOf(hour),Integer.valueOf(minute)));
 			}
+			//Validate results
+			this.validateResult(timeAttr);
 		} else {
 			if (hour.equals("") && minute.equals("")){
 				EntityBuilder.addValue(this.findParentEntity(path), this.nodeDefinition.getName(), new Time(null,null), position);

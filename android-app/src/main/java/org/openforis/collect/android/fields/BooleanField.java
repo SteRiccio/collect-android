@@ -106,6 +106,25 @@ public class BooleanField extends Field {
 		this.addView(tr);
 	}
 	
+	private void validateResults(BooleanAttribute attribute){
+		/*Log.i("BooleanField info", "Start to validate BooleanField's value");		    		
+//		Log.i("VALIDATION FOR BOOLEAN FIELD", "Record of attribute is: " + attribute.getRecord());
+		//Validate value into field and change color if it's not valid
+		Validator validator = new Validator();
+		ValidationResults results = validator.validate(attribute); 
+		if(results.getErrors().size() > 0 || results.getFailed().size() > 0){
+			this.setBackgroundColor(Color.RED);
+		}else if (results.getWarnings().size() > 0){
+			this.setBackgroundColor(Color.YELLOW);
+		}else{
+			this.setBackgroundColor(Color.TRANSPARENT);
+		}
+		Log.e("VALIDATION FOR BOOLEAN FIELD", "Errors: " + results.getErrors().size() + " : " + results.getErrors().toString());
+		Log.d("VALIDATION FOR BOOLEAN FIELD", "Warnings: "  + results.getWarnings().size() + " : " + results.getWarnings().toString());
+		Log.e("VALIDATION FOR BOOLEAN FIELD", "Fails: "  + results.getFailed().size() + " : " +  results.getFailed().toString());	    				
+		*/
+	}
+	
 	public void setValue(int position, Boolean boolValue, String path, boolean isSelectionChanged)
 	{
 		if (boolValue==null){
@@ -125,7 +144,8 @@ public class BooleanField extends Field {
 			//Log.e("BOOLvalueSET",path+"=="+position);
 			BooleanAttribute boolAtr = (BooleanAttribute)node;
 			boolAtr.setValue(new BooleanValue(boolValue));
-			
+			//Validate results 
+			this.validateResults(boolAtr);
 		} else {
 			//Log.e("BOOLvalueADDED",path+"=="+position);
 			EntityBuilder.addValue(this.findParentEntity(path), this.nodeDefinition.getName(), boolValue, position);	
