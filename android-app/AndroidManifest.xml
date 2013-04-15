@@ -84,7 +84,7 @@
 		          android:configChanges="orientation|keyboardHidden">
 		</activity>	
 		
-		<activity android:name="org.openforis.collect.android.dialogs.SearchTaxonActivity"
+		<activity android:name="org.openforis.collect.android.misc.SearchTaxonActivity"
           android:label="@string/app_name"
           android:theme="@android:style/Theme.NoTitleBar"
           android:configChanges="orientation|keyboardHidden">

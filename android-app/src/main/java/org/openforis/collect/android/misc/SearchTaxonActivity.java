@@ -74,6 +74,7 @@ public class SearchTaxonActivity extends Activity {
 			this.taxonManager.setTaxonomyDao(new TaxonomyDao());
 			this.taxonManager.setTaxonDao(new TaxonDao());
 			this.taxonManager.setTaxonVernacularNameDao(new TaxonVernacularNameDao());
+			this.taxonManager.setSurveyId(ApplicationManager.getSurvey().getId());
 			this.taxonomy = "trees";	  
 	    }
 	    else{
