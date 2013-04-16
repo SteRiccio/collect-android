@@ -3,10 +3,12 @@ package org.openforis.collect.android.fields;
 import java.util.ArrayList;
 
 import org.openforis.collect.android.R;
+import org.openforis.collect.android.management.ValidationManager;
 import org.openforis.collect.android.messages.ToastMessage;
 import org.openforis.collect.android.screens.FormScreen;
 import org.openforis.idm.metamodel.BooleanAttributeDefinition;
 import org.openforis.idm.metamodel.NodeDefinition;
+import org.openforis.idm.metamodel.validation.ValidationResults;
 import org.openforis.idm.model.BooleanAttribute;
 import org.openforis.idm.model.BooleanValue;
 import org.openforis.idm.model.EntityBuilder;
@@ -106,23 +108,15 @@ public class BooleanField extends Field {
 		this.addView(tr);
 	}
 	
-	private void validateResults(BooleanAttribute attribute){
-		/*Log.i("BooleanField info", "Start to validate BooleanField's value");		    		
-//		Log.i("VALIDATION FOR BOOLEAN FIELD", "Record of attribute is: " + attribute.getRecord());
-		//Validate value into field and change color if it's not valid
-		Validator validator = new Validator();
-		ValidationResults results = validator.validate(attribute); 
+	private void validateResults(Node<? extends NodeDefinition> node){
+		ValidationResults results = ValidationManager.validateField(node); 
 		if(results.getErrors().size() > 0 || results.getFailed().size() > 0){
 			this.setBackgroundColor(Color.RED);
 		}else if (results.getWarnings().size() > 0){
 			this.setBackgroundColor(Color.YELLOW);
 		}else{
 			this.setBackgroundColor(Color.TRANSPARENT);
-		}
-		Log.e("VALIDATION FOR BOOLEAN FIELD", "Errors: " + results.getErrors().size() + " : " + results.getErrors().toString());
-		Log.d("VALIDATION FOR BOOLEAN FIELD", "Warnings: "  + results.getWarnings().size() + " : " + results.getWarnings().toString());
-		Log.e("VALIDATION FOR BOOLEAN FIELD", "Fails: "  + results.getFailed().size() + " : " +  results.getFailed().toString());	    				
-		*/
+		}		
 	}
 	
 	public void setValue(int position, Boolean boolValue, String path, boolean isSelectionChanged)
@@ -145,7 +139,7 @@ public class BooleanField extends Field {
 			BooleanAttribute boolAtr = (BooleanAttribute)node;
 			boolAtr.setValue(new BooleanValue(boolValue));
 			//Validate results 
-			this.validateResults(boolAtr);
+//			this.validateResults(node);
 		} else {
 			//Log.e("BOOLvalueADDED",path+"=="+position);
 			EntityBuilder.addValue(this.findParentEntity(path), this.nodeDefinition.getName(), boolValue, position);	

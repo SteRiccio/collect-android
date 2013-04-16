@@ -5,9 +5,11 @@ import java.util.Map;
 
 import org.openforis.collect.android.R;
 import org.openforis.collect.android.management.ApplicationManager;
+import org.openforis.collect.android.management.ValidationManager;
 import org.openforis.collect.android.messages.ToastMessage;
 import org.openforis.idm.metamodel.NodeDefinition;
 import org.openforis.idm.metamodel.NumberAttributeDefinition;
+import org.openforis.idm.metamodel.validation.ValidationResults;
 import org.openforis.idm.model.Entity;
 import org.openforis.idm.model.EntityBuilder;
 import org.openforis.idm.model.IntegerAttribute;
@@ -17,6 +19,7 @@ import org.openforis.idm.model.RealAttribute;
 import org.openforis.idm.model.RealValue;
 
 import android.content.Context;
+import android.graphics.Color;
 import android.text.Editable;
 import android.text.InputType;
 import android.text.TextWatcher;
@@ -107,35 +110,18 @@ public class NumberField extends InputField {
 	}
 	
 	private void validateResult(){
-		/*Log.i("NUMBER FIELD info", "Start to validate NumberField value");		    		
 		String value = NumberField.this.txtBox.getText().toString();
 		if ((value!=null) && (!value.equals("")) && (!value.equals("null"))){
-    		//Get attribute
-    		Node<? extends NodeDefinition> node = NumberField.this.findParentEntity(form.getFormScreenId()).get(NumberField.this.nodeDefinition.getName(), form.currInstanceNo);		    		
-    		@SuppressWarnings("rawtypes")
-    		NumberAttribute attribute;
-    		if (NumberField.this.type.toLowerCase().equals("integer")){
-    			Log.i("VALIDATION FOR NUMBER FIELD", "Integer Attribute");
-    			attribute = (IntegerAttribute)node;
-    		} else{
-    			Log.i("VALIDATION FOR NUMBER FIELD", "Real Attribute");
-    			attribute = (RealAttribute)node;
-    		}
-    		Log.i("VALIDATION FOR NUMBER FIELD", "Record of attribute is: " + attribute.getRecord());
-			//Validate value into field and change color if it's not valid
-    		Validator validator = new Validator();
-    		ValidationResults results = validator.validate(attribute); 
-    		if(results.getErrors().size() > 0 || results.getFailed().size() > 0){
-    			NumberField.this.txtBox.setBackgroundColor(Color.RED);
-    		}else if (results.getWarnings().size() > 0){
-    			NumberField.this.txtBox.setBackgroundColor(Color.YELLOW);
-    		}else{
-    			NumberField.this.txtBox.setBackgroundColor(Color.TRANSPARENT);
-    		}
-    		Log.e("VALIDATION FOR NUMBER FIELD", "Errors: " + results.getErrors().size() + " : " + results.getErrors().toString());
-    		Log.d("VALIDATION FOR NUMBER FIELD", "Warnings: "  + results.getWarnings().size() + " : " + results.getWarnings().toString());
-    		Log.e("VALIDATION FOR NUMBER FIELD", "Fails: "  + results.getFailed().size() + " : " +  results.getFailed().toString());
-		}*/
+			Node<? extends NodeDefinition> node = NumberField.this.findParentEntity(form.getFormScreenId()).get(NumberField.this.nodeDefinition.getName(), form.currInstanceNo);
+			ValidationResults results = ValidationManager.validateField(node);
+			if(results.getErrors().size() > 0 || results.getFailed().size() > 0){
+				NumberField.this.txtBox.setBackgroundColor(Color.RED);
+			}else if (results.getWarnings().size() > 0){
+				NumberField.this.txtBox.setBackgroundColor(Color.YELLOW);
+			}else{
+				NumberField.this.txtBox.setBackgroundColor(Color.TRANSPARENT);
+			}
+		}
 	}
 	
 	public void setValue(int position, String value, String path, boolean isTextChanged)

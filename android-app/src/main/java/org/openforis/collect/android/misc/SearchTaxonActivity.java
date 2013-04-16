@@ -141,7 +141,7 @@ public class SearchTaxonActivity extends Activity {
 			@Override
 			public void onClick(View arg0) {
 				Log.i(getResources().getString(R.string.app_name), "Search started");
-				doSearch(txtSearch.getText().toString(), taxonFieldId);
+//				doSearch(txtSearch.getText().toString(), taxonFieldId);
 				
 			}});
 //		this.doSearch(this.txtSearch.getText().toString(), this.taxonFieldId);	
