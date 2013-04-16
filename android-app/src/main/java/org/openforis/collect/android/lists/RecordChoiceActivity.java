@@ -196,10 +196,10 @@ public class RecordChoiceActivity extends BaseListActivity implements OnItemLong
 			}
 		}
 		if (this.recordsList.size()==0){			
-			clusterList[0]=getResources().getString(R.string.addNewRecord)+" "+this.rootEntityDef.getLabel(Type.INSTANCE, null);
+			clusterList[0]=getResources().getString(R.string.addNewRecord)+" "+ApplicationManager.getLabel(this.rootEntityDef, null);;
 		} else {
 			clusterList[recordsList.size()]="";
-			clusterList[recordsList.size()+1]=getResources().getString(R.string.addNewRecord)+" "+this.rootEntityDef.getLabel(Type.INSTANCE, null);
+			clusterList[recordsList.size()+1]=getResources().getString(R.string.addNewRecord)+" "+ApplicationManager.getLabel(this.rootEntityDef, null);;
 		}
 		
 		int layout = (backgroundColor!=Color.WHITE)?R.layout.localclusterrow_white:R.layout.localclusterrow_black;

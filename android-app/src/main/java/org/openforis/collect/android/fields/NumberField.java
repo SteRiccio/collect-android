@@ -1,6 +1,5 @@
 package org.openforis.collect.android.fields;
 
-import java.util.List;
 import java.util.Map;
 
 import org.openforis.collect.android.R;
@@ -28,7 +27,6 @@ import android.widget.Toast;
 
 public class NumberField extends InputField {
 	
-	private List<String> values;
 	private NumberAttributeDefinition numberNodeDef;
 	private String type;
 	private Entity parentEntity;

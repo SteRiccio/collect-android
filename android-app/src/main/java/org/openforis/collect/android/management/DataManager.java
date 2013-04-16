@@ -5,7 +5,6 @@ import java.io.IOException;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import org.openforis.collect.manager.RecordManager;
 import org.openforis.collect.model.CollectRecord;
@@ -152,9 +151,9 @@ public class DataManager {
 			loadedRecord = DataManager.recordManager.load(survey, recordId, Step.ENTRY.getStepNumber());
 			JdbcDaoSupport.close();
 		} catch (NullPointerException e){
-
+			e.printStackTrace();
 		} catch (RecordPersistenceException e) {
-
+			e.printStackTrace();
 		}
 		Log.e("record"+recordId,"LOADED IN "+(System.currentTimeMillis()-startTime)/1000+"s");
 		return loadedRecord;

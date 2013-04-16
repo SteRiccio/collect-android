@@ -9,9 +9,7 @@ import org.openforis.collect.android.messages.AlertMessage;
 import org.openforis.collect.android.misc.RunnableHandler;
 import org.openforis.collect.model.CollectSurvey;
 import org.openforis.idm.metamodel.EntityDefinition;
-import org.openforis.idm.metamodel.NodeLabel.Type;
 
-import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
@@ -27,7 +25,7 @@ import android.widget.TextView;
 
 public class RootEntityChoiceActivity extends BaseListActivity{
 	
-	private static final String TAG = "ClusterChoiceActivity";
+	private static final String TAG = "RootEntityChoiceActivity";
 
 	private TextView activityLabel;
 	
@@ -82,19 +80,20 @@ public class RootEntityChoiceActivity extends BaseListActivity{
     public void onResume(){
 		super.onResume();
 		Log.i(getResources().getString(R.string.app_name),TAG+":onResume");
-		
 		int backgroundColor = ApplicationManager.appPreferences.getInt(getResources().getString(R.string.backgroundColor), Color.WHITE);	
 		changeBackgroundColor(backgroundColor);
-		
-		CollectSurvey collectSurvey = (CollectSurvey)ApplicationManager.getSurvey();	        	
+		CollectSurvey collectSurvey = (CollectSurvey)ApplicationManager.getSurvey();
 		this.rootEntitiesList = collectSurvey.getSchema().getRootEntityDefinitions();
 		String[] clusterList = new String[rootEntitiesList.size()];
 		for (int i=0;i<rootEntitiesList.size();i++){
 			EntityDefinition rootEntity = rootEntitiesList.get(i);
 			//clusterList[i] = rootEntity.getId()+" "+rootEntity.getName();
-			clusterList[i] = rootEntity.getLabel(Type.INSTANCE, null);
+			/*String label = rootEntity.getLabel(Type.INSTANCE, null);
+			if (label==null){
+				label = rootEntity.getLabel(Type.INSTANCE, "en").toString();
+			}*/
+			clusterList[i] = ApplicationManager.getLabel(rootEntity, null);
 		}
-		
 		int layout = (backgroundColor!=Color.WHITE)?R.layout.localclusterrow_white:R.layout.localclusterrow_black;
         this.adapter = new ArrayAdapter<String>(this, layout, R.id.plotlabel, clusterList);
 		this.setListAdapter(this.adapter);

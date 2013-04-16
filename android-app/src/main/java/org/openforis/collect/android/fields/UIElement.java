@@ -51,7 +51,7 @@ public class UIElement extends TableLayout{
 		this.label = new TextView(context);
 		this.label.setMaxLines(1);
 		this.label.setTextColor(Color.BLACK);
-		String labelText = nodeDef.getLabel(Type.INSTANCE, null);
+		String labelText = ApplicationManager.getLabel(nodeDef, null);
 		if (labelText==null){
 			if (nodeDef.getLabels().size()>0)
 				labelText = nodeDef.getLabels().get(0).getText();

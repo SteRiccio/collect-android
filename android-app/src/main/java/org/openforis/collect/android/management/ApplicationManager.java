@@ -2,9 +2,6 @@ package org.openforis.collect.android.management;
 
 import java.io.File;
 import java.io.FileInputStream;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -30,6 +27,7 @@ import org.openforis.collect.persistence.SurveyWorkDao;
 import org.openforis.collect.persistence.UserDao;
 import org.openforis.collect.persistence.xml.UIOptionsBinder;
 import org.openforis.idm.metamodel.EntityDefinition;
+import org.openforis.idm.metamodel.LanguageSpecificText;
 import org.openforis.idm.metamodel.NodeDefinition;
 import org.openforis.idm.metamodel.NodeLabel.Type;
 import org.openforis.idm.metamodel.Schema;
@@ -64,7 +62,7 @@ public class ApplicationManager extends BaseActivity {
 	private static Schema schema;
 	private static User loggedInUser;
 	
-	public static List<NodeDefinition> fieldsDefList;
+	//public static List<NodeDefinition> fieldsDefList;
 	
 	public static SharedPreferences appPreferences;
 	
@@ -130,10 +128,13 @@ public class ApplicationManager extends BaseActivity {
 			    ExpressionFactory expressionFactory = new ExpressionFactory();
 	        	Validator validator = new Validator();
 	        	CollectSurveyContext collectSurveyContext = new CollectSurveyContext(expressionFactory, validator, null);
+	        	//CollectSurveyContext collectSurveyContext = new CollectSurveyContext(expressionFactory, validator);
 	        	
 	        	surveyManager = new SurveyManager();
 	        	surveyManager.setCollectSurveyContext(collectSurveyContext);
 	        	surveyManager.setSurveyDao(new SurveyDao(collectSurveyContext));
+	        	/*SurveyDao surveyDao = new SurveyDao();
+	        	surveyDao.setSurveyContext(collectSurveyContext);*/
 	        	surveyManager.setSurveyWorkDao(new SurveyWorkDao());
 	        	
 	        	userManager = new UserManager();
@@ -142,22 +143,29 @@ public class ApplicationManager extends BaseActivity {
 	        	
 	        	//reading form definition if it is not available in database
 	        	//survey = surveyManager.getSurveyDao().load("Archenland NFI");
-	        	survey = surveyManager.get("Archenland NFI");
+	        	survey = surveyManager.get("Archenland NFI");//default survey
 	        	if (survey==null){
-	            	//long startTimeParsing = System.currentTimeMillis();
-	            	//Log.e("PARSING","====================");   
+	            	long startTimeParsing = System.currentTimeMillis();
 	            	FileInputStream fis = new FileInputStream(sdcardPath+getResources().getString(R.string.formDefinitionFile));        	
 	            	SurveyIdmlBinder binder = new SurveyIdmlBinder(collectSurveyContext);
 	        		binder.addApplicationOptionsBinder(new UIOptionsBinder());
-	        		survey = (CollectSurvey) binder.unmarshal(fis);
-	        		survey.setName(survey.getProjectName(null));
-	        		surveyManager.importModel(survey);
-	            	//Log.e("parsingTIME","=="+(System.currentTimeMillis()-startTimeParsing));       		
+	        		survey = (CollectSurvey) binder.unmarshal(fis);	        		
+	        		List<LanguageSpecificText> projectNamesList = survey.getProjectNames();
+	        		if (projectNamesList.size()>0){
+	        			survey.setName(projectNamesList.get(0).getText());
+	        		} else {
+	        			survey.setName("defaultSurveyName");
+	        		}
+	        		if (surveyManager.get(survey.getName())==null){
+		        		surveyManager.importModel(survey);
+		        		Log.e("new survey added","==");
+	        		}
+	            	Log.e("parsingTIME","=="+(System.currentTimeMillis()-startTimeParsing));       		
 	        	}
-	        	schema = survey.getSchema();              
-	        	ApplicationManager.fieldsDefList = new ArrayList<NodeDefinition>();        	
-	        	List<EntityDefinition> rootEntitiesDefsList = schema.getRootEntityDefinitions();
-	        	getAllFormFields(rootEntitiesDefsList);
+	        	schema = survey.getSchema();           
+	        	//ApplicationManager.fieldsDefList = new ArrayList<NodeDefinition>();        	
+	        	//List<EntityDefinition> rootEntitiesDefsList = schema.getRootEntityDefinitions();
+	        	//getAllFormFields(rootEntitiesDefsList);
 	        	
 	        	ApplicationManager.uiElementsMap = new HashMap<Integer,UIElement>();        	
 	        	
@@ -486,7 +494,7 @@ public class ApplicationManager extends BaseActivity {
 		//List<EntityDefinition> rootEntitiesDefsList = schema.getRootEntityDefinitions();		
 		Intent intent = new Intent(this,FormScreen.class);
 		EntityDefinition rootEntityDef = (EntityDefinition)ApplicationManager.getSurvey().getSchema().getDefinitionById(ApplicationManager.currRootEntityId);
-		intent.putExtra(getResources().getString(R.string.breadcrumb), rootEntityDef.getLabel(Type.INSTANCE, null));
+		intent.putExtra(getResources().getString(R.string.breadcrumb), ApplicationManager.getLabel(rootEntityDef, null));
 		intent.putExtra(getResources().getString(R.string.intentType), getResources().getInteger(R.integer.singleEntityIntent));
 		intent.putExtra(getResources().getString(R.string.parentFormScreenId), "");
 		intent.putExtra(getResources().getString(R.string.idmlId), ApplicationManager.currRootEntityId);
@@ -526,7 +534,7 @@ public class ApplicationManager extends BaseActivity {
     	return survey;
     }
     
-    private void getAllFormFields(List<EntityDefinition> rootEntitiesDefsList){
+    /*private void getAllFormFields(List<EntityDefinition> rootEntitiesDefsList){
     	for (int i=0;i<rootEntitiesDefsList.size();i++){
     		fieldsDefList.add(rootEntitiesDefsList.get(i));
     		getFields(rootEntitiesDefsList.get(i).getChildDefinitions());
@@ -544,9 +552,9 @@ public class ApplicationManager extends BaseActivity {
     			getFields(entityDef.getChildDefinitions());
     		}
     	}
-    }
+    }*/
     
-	private List<NodeDefinition> sortById(List<NodeDefinition> nodes){
+	/*private List<NodeDefinition> sortById(List<NodeDefinition> nodes){
 		NodeDefinition[] nodesArray = new NodeDefinition[nodes.size()];
 		nodes.toArray(nodesArray);
 		List<NodeDefinition> nodesList = new ArrayList<NodeDefinition>();
@@ -562,7 +570,7 @@ public class ApplicationManager extends BaseActivity {
 		public int compare(NodeDefinition lhs, NodeDefinition rhs) {				
 			return Integer.valueOf(lhs.getId()).compareTo(rhs.getId());//lhs.getId().compareTo(rhs.getId());
 		}
-	}
+	}*/
 	
 	public static UIElement getUIElement(int elementId){
 		return ApplicationManager.uiElementsMap.get(elementId);
@@ -574,5 +582,13 @@ public class ApplicationManager extends BaseActivity {
 	
 	public static String getSessionId(){
 		return ApplicationManager.sessionId;
+	}
+	
+	public static String getLabel(NodeDefinition nodeDef, String language){
+		String label = nodeDef.getLabel(Type.INSTANCE, null);
+		if (label==null){
+			label = nodeDef.getLabel(Type.INSTANCE, "en");
+		}
+		return label;
 	}
 }

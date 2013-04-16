@@ -19,6 +19,7 @@
     <string name="log_file_extension">.txt</string>
     <string name="backup_folder">/mofc/backups</string>
     <string name="formDefinitionFile">/test.idm.xml</string>
+    <string name="formDefinitionFileTest">/test.idm_petri.xml</string>
     
     <!-- PREFERENCES -->
     <string name="sleepTime">sleepTime</string>
@@ -100,5 +101,5 @@
     <string name="notRequiredFieldMarker"></string>
     
     <!-- SERVER -->
-    <string name="serverAddress">ar5.arbonaut.com/xxxwebforest/formis-mobile/save-received-data</string>
+    <string name="serverAddress">ar5.arbonaut.com/webforest/fao-mobile/save-received-data-file</string>
 </resources>

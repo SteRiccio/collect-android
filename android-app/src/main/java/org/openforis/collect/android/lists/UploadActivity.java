@@ -3,21 +3,16 @@ package org.openforis.collect.android.lists;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.util.StringTokenizer;
 
-import org.apache.http.HttpResponse;
-import org.apache.http.client.ClientProtocolException;
-import org.apache.http.client.HttpClient;
-import org.apache.http.client.methods.HttpPost;
-import org.apache.http.entity.StringEntity;
-import org.apache.http.impl.client.DefaultHttpClient;
 import org.openforis.collect.android.R;
 import org.openforis.collect.android.management.ApplicationManager;
 import org.openforis.collect.android.management.BaseListActivity;
 import org.openforis.collect.android.messages.AlertMessage;
 import org.openforis.collect.android.misc.RunnableHandler;
+import org.openforis.collect.android.misc.ServerInterface;
 
 import android.content.Context;
 import android.content.DialogInterface;
@@ -25,6 +20,7 @@ import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Environment;
 import android.util.Log;
@@ -49,9 +45,11 @@ public class UploadActivity extends BaseListActivity{
 	
 	private String[] filesList;
 	
-	private ListView lv; 
+	private ListView lv;
 	
 	private String path;
+	
+	private UploadActivity mainActivity = null;
 	
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -76,6 +74,7 @@ public class UploadActivity extends BaseListActivity{
     			    		if (checkedItems.get(i)){
     			    			try {
     			    				//postData(getStringFromFile(path+"/"+filesList[i]));
+    			    				(new SendData()).execute("parametrMOJ");
     							} catch (Exception e) {
     								e.printStackTrace();
     							}
@@ -96,6 +95,8 @@ public class UploadActivity extends BaseListActivity{
 							},
 							null).show();
         	}
+        	
+        	mainActivity = this;
         } catch (Exception e){
     		RunnableHandler.reportException(e,getResources().getString(R.string.app_name),TAG+":onCreate",
     				Environment.getExternalStorageDirectory().toString()
@@ -155,10 +156,10 @@ public class UploadActivity extends BaseListActivity{
 		this.activityLabel.setTextColor((backgroundColor!=Color.WHITE)?Color.WHITE:Color.BLACK);
     }
     
-    public void postData(String sendData) {
+    /*public void postData(String sendData) {
         HttpClient httpclient = new DefaultHttpClient();
         HttpPost httppost = new HttpPost(getResources().getString(R.string.serverAddress));
-
+        
         try {
             StringEntity se = new StringEntity(sendData);
             httppost.setEntity(se);
@@ -175,7 +176,7 @@ public class UploadActivity extends BaseListActivity{
             Log.e("IOException","==");
             e.printStackTrace();
         }
-    }
+    }*/
     
     private static String convertStreamToString(InputStream is) throws Exception {
         BufferedReader reader = new BufferedReader(new InputStreamReader(is));
@@ -201,5 +202,74 @@ public class UploadActivity extends BaseListActivity{
               = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo activeNetworkInfo = connectivityManager.getActiveNetworkInfo();
         return activeNetworkInfo != null && activeNetworkInfo.isConnected();
+    }
+    
+    /*protected String addParamsToUrl(String url){
+        if(!url.endsWith("?"))
+            url += "?";
+
+        List<NameValuePair> params = new LinkedList<NameValuePair>();
+
+        if (lat != 0.0 && lon != 0.0){
+            params.add(new BasicNameValuePair("lat", String.valueOf(lat)));
+            params.add(new BasicNameValuePair("lon", String.valueOf(lon)));
+        }
+
+        if (address != null && address.getPostalCode() != null)
+            params.add(new BasicNameValuePair("postalCode", address.getPostalCode()));
+        if (address != null && address.getCountryCode() != null)
+            params.add(new BasicNameValuePair("country",address.getCountryCode()));
+
+        params.add(new BasicNameValuePair("user", agent.uniqueId));
+
+        String paramString = URLEncodedUtils.format(params, "utf-8");
+
+        url += paramString;
+        return url;
+    }*/
+    
+    private class SendData extends AsyncTask {
+    	 
+        /**
+         * Let's make the http request and return the result as a String.
+         */
+        protected String doInBackground(Object... args) {
+        	Log.e("iloscPARAMETROW","=="+args.length);
+        	Log.e("parametr","=="+args[0]);
+            return ServerInterface.sendDataFiles();
+        }
+     
+        /**
+         * Parse the String result, and create a new array adapter for the list
+         * view.
+         */
+        protected void onPostExecute(/*void result*/Object objResult) {
+        	Log.e("zakonczono","egzekucje"+objResult);
+            /*wywolujaceActivity.removeDialog(MainActivity.PLEASE_WAIT_DIALOG);
+            Toast.makeText(wywolujaceActivity, "Obliczono!", Toast.LENGTH_SHORT).show();*/
+            // check to make sure we're dealing with a string
+            if(objResult != null && objResult instanceof String) {
+                String result = (String) objResult;
+                // this is used to hold the string array, after tokenizing
+                String[] responseList;
+     
+                // we'll use a string tokenizer, with "," (comma) as the delimiter
+                StringTokenizer tk = new StringTokenizer(result, ",");
+     
+                // now we know how long the string array is
+                responseList = new String[tk.countTokens()];
+     
+                // let's build the string array
+                int i = 0;
+                while(tk.hasMoreTokens()) {
+                    responseList[i++] = tk.nextToken();
+                }
+     
+                // now we'll supply the data structure needed by this ListActivity
+                //ArrayAdapter<String> newAdapter = new ArrayAdapter<String>(mainActivity, R.layout.list, responseList);
+                //mainActivity.setListAdapter(newAdapter);
+            }
+        }
+     
     }
 }
