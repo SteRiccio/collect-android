@@ -128,8 +128,8 @@ public class ApplicationManager extends BaseActivity {
 			    folder.mkdirs();
 			    
 			    //creating database
-			    //new DatabaseWrapper(ApplicationManager.this);
-			    //CollectDatabase collectDB = new CollectDatabase(DatabaseWrapper.db);	
+//			    new DatabaseWrapper(ApplicationManager.this);
+//			    CollectDatabase collectDB = new CollectDatabase(DatabaseWrapper.db);	
 			    
 			    //instantiating managers
 			    ExpressionFactory expressionFactory = new ExpressionFactory();

@@ -4,18 +4,22 @@ import java.util.Map;
 
 import org.openforis.collect.android.R;
 import org.openforis.collect.android.management.ApplicationManager;
+import org.openforis.collect.android.management.ValidationManager;
 import org.openforis.collect.android.messages.ToastMessage;
 import org.openforis.idm.metamodel.NodeDefinition;
+import org.openforis.idm.metamodel.validation.ValidationResults;
 import org.openforis.idm.model.EntityBuilder;
 import org.openforis.idm.model.Node;
 import org.openforis.idm.model.TextAttribute;
 import org.openforis.idm.model.TextValue;
 
 import android.content.Context;
+import android.graphics.Color;
 import android.text.InputFilter;
 import android.text.InputType;
 import android.text.method.QwertyKeyListener;
 import android.text.method.TextKeyListener;
+import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
@@ -73,25 +77,17 @@ public class TextField extends InputField {
 	}
 	
 	private void validateResults(){
-		/*Log.i("TextField info", "Start to validate TextField's value");		    		
-		//Get attribute
-		Node<? extends NodeDefinition> node = TextField.this.findParentEntity(form.getFormScreenId()).get(TextField.this.nodeDefinition.getName(), form.currInstanceNo);		    		
-		TextAttribute attribute;
-		attribute = (TextAttribute)node;
-//		Log.i("VALIDATION FOR TEXT FIELD", "Record of attribute is: " + attribute.getRecord());
-		//Validate value into field and change color if it's not valid
-		Validator validator = new Validator();
-		ValidationResults results = validator.validate(attribute); 
+		
+		Log.i("TextField info", "Start to validate TextField's value");
+		Node<? extends NodeDefinition> node = TextField.this.findParentEntity(form.getFormScreenId()).get(TextField.this.nodeDefinition.getName(), form.currInstanceNo);
+		ValidationResults results = ValidationManager.validateField(node);
 		if(results.getErrors().size() > 0 || results.getFailed().size() > 0){
 			TextField.this.txtBox.setBackgroundColor(Color.RED);
 		}else if (results.getWarnings().size() > 0){
 			TextField.this.txtBox.setBackgroundColor(Color.YELLOW);
 		}else{
 			TextField.this.txtBox.setBackgroundColor(Color.TRANSPARENT);
-		}
-		Log.e("VALIDATION FOR TEXT FIELD", "Errors: " + results.getErrors().size() + " : " + results.getErrors().toString());
-		Log.d("VALIDATION FOR TEXT FIELD", "Warnings: "  + results.getWarnings().size() + " : " + results.getWarnings().toString());
-		Log.e("VALIDATION FOR TEXT FIELD", "Fails: "  + results.getFailed().size() + " : " +  results.getFailed().toString());*/	    				
+		}   				
 	}
 	
 	public void setValue(Integer position, String value, String path, boolean isTextChanged)

@@ -5,6 +5,7 @@ import java.util.Map;
 
 import org.openforis.collect.android.R;
 import org.openforis.collect.android.management.ApplicationManager;
+import org.openforis.collect.android.management.ValidationManager;
 import org.openforis.collect.android.messages.ToastMessage;
 import org.openforis.collect.android.screens.FormScreen;
 import org.openforis.idm.metamodel.NodeDefinition;
@@ -81,15 +82,9 @@ public class CoordinateField extends InputField implements OnClickListener {
 			    	}
 
 		    	}else{
-		    		/*Log.i("COORDINATE FIELD info", "Coordinate Field lost focus. Start validate its value");		    		
-		    		//Get attribute
+		    		Log.i("COORDINATE FIELD info", "Coordinate Field lost focus. Start validate its value");		    		
 		    		Node<? extends NodeDefinition> node = CoordinateField.this.findParentEntity(form.getFormScreenId()).get(CoordinateField.this.nodeDefinition.getName(), form.currInstanceNo);		    		
-		    		CoordinateAttribute attribute;
-		    		attribute = (CoordinateAttribute)node;
-		    		Log.i("VALIDATION FOR COORDINATE FIELD", "Record of attribute is: " + attribute.getRecord());
-					//Validate value into field and change color if it's not valid
-		    		Validator validator = new Validator();
-		    		ValidationResults results = validator.validate(attribute); 
+		    		ValidationResults results = ValidationManager.validateField(node);
 		    		if(results.getErrors().size() > 0 || results.getFailed().size() > 0){
 		    			txtLongitude.setBackgroundColor(Color.RED);
 		    		}else if (results.getWarnings().size() > 0){
@@ -99,7 +94,7 @@ public class CoordinateField extends InputField implements OnClickListener {
 		    		}
 		    		Log.e("VALIDATION FOR COORDINATE FIELD", "Errors: " + results.getErrors().size() + " : " + results.getErrors().toString());
 		    		Log.d("VALIDATION FOR COORDINATE FIELD", "Warnings: "  + results.getWarnings().size() + " : " + results.getWarnings().toString());
-		    		Log.e("VALIDATION FOR COORDINATE FIELD", "Fails: "  + results.getFailed().size() + " : " +  results.getFailed().toString());*/    		
+		    		Log.e("VALIDATION FOR COORDINATE FIELD", "Fails: "  + results.getFailed().size() + " : " +  results.getFailed().toString());    		
 		    	}		    	
 			}
 		});
@@ -128,24 +123,15 @@ public class CoordinateField extends InputField implements OnClickListener {
 			    	}
 		    	}else{
 		    		Log.i("COORDINATE FIELD info", "Coordinate Field lost focus. Start validate its value");		    		
-		    		//Get attribute
 		    		Node<? extends NodeDefinition> node = CoordinateField.this.findParentEntity(form.getFormScreenId()).get(CoordinateField.this.nodeDefinition.getName(), form.currInstanceNo);		    		
-		    		CoordinateAttribute attribute;
-		    		attribute = (CoordinateAttribute)node;
-		    		Log.i("VALIDATION FOR COORDINATE FIELD", "Record of attribute is: " + attribute.getRecord());
-					//Validate value into field and change color if it's not valid
-		    		Validator validator = new Validator();
-		    		ValidationResults results = validator.validate(attribute); 
+		    		ValidationResults results = ValidationManager.validateField(node);
 		    		if(results.getErrors().size() > 0 || results.getFailed().size() > 0){
 		    			txtLatitude.setBackgroundColor(Color.RED);
 		    		}else if (results.getWarnings().size() > 0){
 		    			txtLatitude.setBackgroundColor(Color.YELLOW);
 		    		}else{
 		    			txtLatitude.setBackgroundColor(Color.TRANSPARENT);
-		    		}
-		    		Log.e("VALIDATION FOR COORDINATE FIELD", "Errors: " + results.getErrors().size() + " : " + results.getErrors().toString());
-		    		Log.d("VALIDATION FOR COORDINATE FIELD", "Warnings: "  + results.getWarnings().size() + " : " + results.getWarnings().toString());
-		    		Log.e("VALIDATION FOR COORDINATE FIELD", "Fails: "  + results.getFailed().size() + " : " +  results.getFailed().toString());    		
+		    		}   		
 		    	}	
 		    	
 			}

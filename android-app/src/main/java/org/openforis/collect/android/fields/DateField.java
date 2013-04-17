@@ -6,8 +6,10 @@ import java.util.Random;
 import org.openforis.collect.android.R;
 import org.openforis.collect.android.dialogs.DateSetDialog;
 import org.openforis.collect.android.management.ApplicationManager;
+import org.openforis.collect.android.management.ValidationManager;
 import org.openforis.collect.android.messages.ToastMessage;
 import org.openforis.idm.metamodel.NodeDefinition;
+import org.openforis.idm.metamodel.validation.ValidationResults;
 import org.openforis.idm.model.Date;
 import org.openforis.idm.model.DateAttribute;
 import org.openforis.idm.model.EntityBuilder;
@@ -15,6 +17,7 @@ import org.openforis.idm.model.Node;
 
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Color;
 import android.text.Editable;
 import android.text.InputType;
 import android.util.Log;
@@ -72,7 +75,15 @@ public class DateField extends InputField {
 	    });
 	}
 
-	private void validateResult(DateAttribute attribute){
+	private void validateResult(Node<? extends NodeDefinition> node){
+		ValidationResults results = ValidationManager.validateField(node);
+		if(results.getErrors().size() > 0 || results.getFailed().size() > 0){
+			DateField.this.txtBox.setBackgroundColor(Color.RED);
+		}else if (results.getWarnings().size() > 0){
+			DateField.this.txtBox.setBackgroundColor(Color.YELLOW);
+		}else{
+			DateField.this.txtBox.setBackgroundColor(Color.TRANSPARENT);
+		}
 		/*Log.i("DateField info", "Start to validate DateField's value");		    		
 //		Log.i("VALIDATION FOR DATE FIELD", "Record of attribute is: " + attribute.getRecord());
 		//Validate value into field and change color if it's not valid
@@ -140,7 +151,7 @@ public class DateField extends InputField {
 			} else {
 				dateAtr.setValue(new Date(Integer.valueOf(year),Integer.valueOf(month),Integer.valueOf(day)));
 			}
-			this.validateResult(dateAtr);
+			this.validateResult(node);
 		} else {
 			if (month.equals("") && day.equals("") && year.equals("")){
 				EntityBuilder.addValue(this.findParentEntity(path), this.nodeDefinition.getName(), new Date(null,null,null), position);
