@@ -227,7 +227,7 @@ public class ApplicationManager extends BaseActivity {
         	liquibase.setChangeLog("classpath:org/openforis/collect/db/changelog/db.changelog-master.xml");
         	*/
         	
-        	JdbcDaoSupport jdbcDao = new JdbcDaoSupport();
+        	/*JdbcDaoSupport jdbcDao = new JdbcDaoSupport();
         	jdbcDao.getConnection();
             Connection c = jdbcDao.getConnection();
             Liquibase liquibase = null;
@@ -235,9 +235,7 @@ public class ApplicationManager extends BaseActivity {
                 Database database = DatabaseFactory.getInstance().findCorrectDatabaseImplementation(new JdbcConnection(DriverManager.getConnection("jdbc:sqldroid:"+"/data/data/org.openforis.collect.android/databases/collect.db")) );
                 liquibase = new Liquibase("classpath:org/openforis/collect/db/changelog/db.changelog-master.xml", new FileSystemResourceAccessor(), database);
                 liquibase.update(null);
-            } /*catch (SQLException e) {
-                //throw new DatabaseException(e);
-            } */finally {
+            } finally {
                 if (c != null) {
                     try {
                         c.rollback();
@@ -246,13 +244,13 @@ public class ApplicationManager extends BaseActivity {
                         //nothing to do
                     }
                 }
-            }
+            }*/
 		    //creating database
 		    //new DatabaseWrapper(ApplicationManager.this);
 		    //CollectDatabase collectDB = new CollectDatabase(DatabaseWrapper.db);
         	//opening database connection		    
-        	/*JdbcDaoSupport jdbcDao = new JdbcDaoSupport();
-        	jdbcDao.getConnection();*/
+        	JdbcDaoSupport jdbcDao = new JdbcDaoSupport();
+        	jdbcDao.getConnection();
         	
         	ApplicationManager.appPreferences = getPreferences(MODE_PRIVATE);
 			int backgroundColor = ApplicationManager.appPreferences.getInt(getResources().getString(R.string.backgroundColor), Color.WHITE);
