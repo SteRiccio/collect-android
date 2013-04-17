@@ -19,6 +19,8 @@
     <string name="log_file_extension">.txt</string>
     <string name="backup_folder">/mofc/backups</string>
     <string name="formDefinitionFile">/test.idm.xml</string>
+    <!--<string name="formDefinitionFile">/ghana.idm.collect.xml</string>-->
+    
     <string name="formDefinitionFileTest">/test.idm_petri.xml</string>
     
     <!-- PREFERENCES -->

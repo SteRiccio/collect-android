@@ -29,7 +29,9 @@
     <string name="noInternetTitle">No connection&#8230;</string>    
     <string name="noInternetMessage">There is no connection to Internet available. Make sure you are connected to network and then try to upload data again.</string>
     <string name="maxCountTitle">Too many&#8230;</string>
-    <string name="maxCountMessage">Number of instances of this element has reached maximum.</string>    
+    <string name="maxCountMessage">Number of instances of this element has reached maximum.</string>
+    <string name="uploadToServerSuccessfulTitle">Upload completed</string>
+    <string name="uploadToServerSuccessfulMessage">Uploading plots to server successfully finished.</string>       
     
     <!-- buttons -->
     <string name="footerSave">Save</string>
@@ -73,6 +75,7 @@
     <string name="saving">Saving&#8230;</string>
     <string name="loading">Loading&#8230;</string>   
     <string name="launchAppMessage">Launching application&#8230;</string>
+    <string name="uploadingDataToServerMessage">Uploading data to server&#8230;</string>
     
     <!-- lists -->
     <string name="clusterChoiceFailedBecauseNoDataSaved">No data saved in local database</string>

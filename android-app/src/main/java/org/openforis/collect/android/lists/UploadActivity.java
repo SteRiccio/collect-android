@@ -13,7 +13,9 @@ import org.openforis.collect.android.management.BaseListActivity;
 import org.openforis.collect.android.messages.AlertMessage;
 import org.openforis.collect.android.misc.RunnableHandler;
 import org.openforis.collect.android.misc.ServerInterface;
+import org.openforis.collect.android.screens.FormScreen;
 
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.graphics.Color;
@@ -51,6 +53,8 @@ public class UploadActivity extends BaseListActivity{
 	
 	private UploadActivity mainActivity = null;
 	
+	private ProgressDialog pd;
+	
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -69,17 +73,9 @@ public class UploadActivity extends BaseListActivity{
                 btn.setOnClickListener(new OnClickListener() {
     			    @Override
     			    public void onClick(View v) {
-    			    	SparseBooleanArray checkedItems = lv.getCheckedItemPositions();
-    			    	for (int i=0;i<lv.getChildCount();i++){
-    			    		if (checkedItems.get(i)){
-    			    			try {
-    			    				//postData(getStringFromFile(path+"/"+filesList[i]));
-    			    				(new SendData()).execute("parametrMOJ");
-    							} catch (Exception e) {
-    								e.printStackTrace();
-    							}
-    			    		}
-    			    	}			    	
+    			    	//SparseBooleanArray checkedItems = lv.getCheckedItemPositions();
+    			    	pd = ProgressDialog.show(UploadActivity.this, getResources().getString(R.string.workInProgress), getResources().getString(R.string.uploadingDataToServerMessage));
+    			    	(new SendData()).execute();
     			    }
     		    });
         	} else {
@@ -233,9 +229,19 @@ public class UploadActivity extends BaseListActivity{
         /**
          * Let's make the http request and return the result as a String.
          */
-        protected String doInBackground(Object... args) {
+        protected String doInBackground(Object... args) {        	
         	Log.e("iloscPARAMETROW","=="+args.length);
-        	Log.e("parametr","=="+args[0]);
+        	Log.e("iloscDZIECI","=="+lv.getChildCount());
+        	SparseBooleanArray checkedItems = lv.getCheckedItemPositions();
+	    	for (int i=0;i<lv.getChildCount();i++){
+	    		if (checkedItems.get(i)){
+	    			try {
+	    				Log.e("file",lv.getItemAtPosition(i).toString()+"=="+checkedItems.get(i));
+					} catch (Exception e) {
+						e.printStackTrace();
+					}
+	    		}
+	    	}
             return ServerInterface.sendDataFiles();
         }
      
@@ -269,6 +275,18 @@ public class UploadActivity extends BaseListActivity{
                 //ArrayAdapter<String> newAdapter = new ArrayAdapter<String>(mainActivity, R.layout.list, responseList);
                 //mainActivity.setListAdapter(newAdapter);
             }
+            pd.dismiss();
+			AlertMessage.createPositiveDialog(UploadActivity.this, true, null,
+					getResources().getString(R.string.uploadToServerSuccessfulTitle), 
+					getResources().getString(R.string.uploadToServerSuccessfulMessage),
+						getResources().getString(R.string.okay),
+			    		new DialogInterface.OnClickListener() {
+							@Override
+							public void onClick(DialogInterface dialog, int which) {
+								
+							}
+						},
+						null).show();
         }
      
     }

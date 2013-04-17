@@ -15,6 +15,16 @@
 			<artifactId>android</artifactId>
 			<version>2.2.1</version>
 			<scope>provided</scope>
+			<exclusions>
+				<exclusion>
+					<artifactId>commons-codec</artifactId>
+					<groupId>commons-codec</groupId>
+				</exclusion>
+				<exclusion>
+					<artifactId>commons-logging</artifactId>
+					<groupId>commons-logging</groupId>
+				</exclusion>
+			</exclusions>
 		</dependency>
 		<dependency>
 			<groupId>com.google.android</groupId>
@@ -25,8 +35,13 @@
 		<dependency>
 			<groupId>org.openforis.collect</groupId>
 			<artifactId>collect-core</artifactId>
-			<version>3.0-Alpha5-SNAPSHOT</version>
+			<!--<version>3.0-Alpha5-SNAPSHOT</version>-->
+			<version>3.0-CR1-SNAPSHOT</version>
 			<exclusions>
+				<exclusion>
+					<artifactId>jooq</artifactId>
+					<groupId>org.jooq</groupId>
+				</exclusion>
 				<!-- hangs Eclipse when launching Android application -->
 				<exclusion>
 					<artifactId>spring-tx</artifactId>
