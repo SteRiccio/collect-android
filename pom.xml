@@ -8,7 +8,7 @@
 	<modules>
 		<module>android-app</module>
 		<module>jaxb-android</module>
-		<module>jooq-android</module>
+		<!--<module>jooq-android</module>-->
 		<module>jpa-android</module>
 		<module>jxpath-android</module>
 		<module>spring-android</module>
