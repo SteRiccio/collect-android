@@ -13,7 +13,6 @@ import org.openforis.collect.android.management.BaseListActivity;
 import org.openforis.collect.android.messages.AlertMessage;
 import org.openforis.collect.android.misc.RunnableHandler;
 import org.openforis.collect.android.misc.ServerInterface;
-import org.openforis.collect.android.screens.FormScreen;
 
 import android.app.ProgressDialog;
 import android.content.Context;
@@ -51,9 +50,9 @@ public class UploadActivity extends BaseListActivity{
 	
 	private String path;
 	
-	private UploadActivity mainActivity = null;
-	
 	private ProgressDialog pd;
+	
+	private int filesCount;
 	
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -75,7 +74,21 @@ public class UploadActivity extends BaseListActivity{
     			    public void onClick(View v) {
     			    	//SparseBooleanArray checkedItems = lv.getCheckedItemPositions();
     			    	pd = ProgressDialog.show(UploadActivity.this, getResources().getString(R.string.workInProgress), getResources().getString(R.string.uploadingDataToServerMessage));
-    			    	(new SendData()).execute();
+    			    	
+    		        	SparseBooleanArray checkedItems = lv.getCheckedItemPositions();
+    			    	for (int i=0;i<lv.getChildCount();i++){
+    			    		if (checkedItems.get(i)){
+    			    			try {
+    			    				(new SendData()).execute(lv.getItemAtPosition(i).toString());
+    			    				filesCount++;
+    							} catch (Exception e) {
+    								e.printStackTrace();
+    							}
+    			    		}
+    			    	}
+    			    	if (filesCount==0){
+    			    		pd.dismiss();
+    			    	}
     			    }
     		    });
         	} else {
@@ -92,7 +105,7 @@ public class UploadActivity extends BaseListActivity{
 							null).show();
         	}
         	
-        	mainActivity = this;
+        	this.filesCount = 0;
         } catch (Exception e){
     		RunnableHandler.reportException(e,getResources().getString(R.string.app_name),TAG+":onCreate",
     				Environment.getExternalStorageDirectory().toString()
@@ -179,6 +192,11 @@ public class UploadActivity extends BaseListActivity{
         StringBuilder sb = new StringBuilder();
         String line = null;
         while ((line = reader.readLine()) != null) {
+        	if (line.contains("<value>")&&line.contains("</value>")){
+        		line = line.substring(line.indexOf("<value>")+7,line.indexOf("</value>"));
+        	} else if (line.contains("<code>")&&line.contains("<code>")){
+        		line = line.substring(line.indexOf("<code>")+6,line.indexOf("</code>"));        		
+        	}
         	sb.append(line).append("\n");
         }
         //Log.e("koniec","=="+sb.toString().substring(sb.length()-20,sb.length()-1));
@@ -200,82 +218,44 @@ public class UploadActivity extends BaseListActivity{
         return activeNetworkInfo != null && activeNetworkInfo.isConnected();
     }
     
-    /*protected String addParamsToUrl(String url){
-        if(!url.endsWith("?"))
-            url += "?";
-
-        List<NameValuePair> params = new LinkedList<NameValuePair>();
-
-        if (lat != 0.0 && lon != 0.0){
-            params.add(new BasicNameValuePair("lat", String.valueOf(lat)));
-            params.add(new BasicNameValuePair("lon", String.valueOf(lon)));
-        }
-
-        if (address != null && address.getPostalCode() != null)
-            params.add(new BasicNameValuePair("postalCode", address.getPostalCode()));
-        if (address != null && address.getCountryCode() != null)
-            params.add(new BasicNameValuePair("country",address.getCountryCode()));
-
-        params.add(new BasicNameValuePair("user", agent.uniqueId));
-
-        String paramString = URLEncodedUtils.format(params, "utf-8");
-
-        url += paramString;
-        return url;
-    }*/
-    
     private class SendData extends AsyncTask {
     	 
         /**
          * Let's make the http request and return the result as a String.
          */
-        protected String doInBackground(Object... args) {        	
-        	Log.e("iloscPARAMETROW","=="+args.length);
-        	Log.e("iloscDZIECI","=="+lv.getChildCount());
-        	SparseBooleanArray checkedItems = lv.getCheckedItemPositions();
-	    	for (int i=0;i<lv.getChildCount();i++){
-	    		if (checkedItems.get(i)){
-	    			try {
-	    				Log.e("file",lv.getItemAtPosition(i).toString()+"=="+checkedItems.get(i));
-					} catch (Exception e) {
-						e.printStackTrace();
-					}
-	    		}
-	    	}
-            return ServerInterface.sendDataFiles();
+        protected String doInBackground(Object... args) {
+            try {            
+				return ServerInterface.sendDataFiles(UploadActivity.getStringFromFile(Environment.getExternalStorageDirectory().toString()+String.valueOf(getResources().getString(R.string.exported_data_folder)+"/"+args[0])));
+			} catch (Exception e) {
+				e.printStackTrace();
+				return "";
+			}
         }
      
         /**
          * Parse the String result, and create a new array adapter for the list
          * view.
          */
-        protected void onPostExecute(/*void result*/Object objResult) {
+        protected void onPostExecute(Object objResult) {
         	Log.e("zakonczono","egzekucje"+objResult);
-            /*wywolujaceActivity.removeDialog(MainActivity.PLEASE_WAIT_DIALOG);
-            Toast.makeText(wywolujaceActivity, "Obliczono!", Toast.LENGTH_SHORT).show();*/
-            // check to make sure we're dealing with a string
+        	filesCount--;
+
             if(objResult != null && objResult instanceof String) {
                 String result = (String) objResult;
-                // this is used to hold the string array, after tokenizing
+
                 String[] responseList;
      
-                // we'll use a string tokenizer, with "," (comma) as the delimiter
                 StringTokenizer tk = new StringTokenizer(result, ",");
      
-                // now we know how long the string array is
                 responseList = new String[tk.countTokens()];
      
-                // let's build the string array
                 int i = 0;
                 while(tk.hasMoreTokens()) {
                     responseList[i++] = tk.nextToken();
                 }
-     
-                // now we'll supply the data structure needed by this ListActivity
-                //ArrayAdapter<String> newAdapter = new ArrayAdapter<String>(mainActivity, R.layout.list, responseList);
-                //mainActivity.setListAdapter(newAdapter);
             }
-            pd.dismiss();
+            if (filesCount==0)
+            	pd.dismiss();
 			AlertMessage.createPositiveDialog(UploadActivity.this, true, null,
 					getResources().getString(R.string.uploadToServerSuccessfulTitle), 
 					getResources().getString(R.string.uploadToServerSuccessfulMessage),

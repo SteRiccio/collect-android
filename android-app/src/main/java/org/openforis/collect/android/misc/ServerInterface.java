@@ -1,12 +1,7 @@
 package org.openforis.collect.android.misc;
 
-import java.io.DataInputStream;
-import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
-import java.net.URL;
-import java.net.URLConnection;
-import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -22,20 +17,15 @@ import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.protocol.HTTP;
 import org.apache.http.util.EntityUtils;
 
-import android.util.Log;
-
 public class ServerInterface {
 
-        public static final String SERVER_URL = "http://ar5.arbonaut.com/webforest/fao-mobile/save-received-data-file";//"http://www.hassanpur.com/AndroidListServer/server.php";
+        public static final String SERVER_URL = "http://ar5.arbonaut.com/webforest/fao-mobile/save-received-data-file";
 
-        public static String sendDataFiles() {
-                String data = "survey_id=" + URLEncoder.encode("666");
-                data += "&datafile_xml_string=" + URLEncoder.encode("qwertyuiop");
-                //return executeHttpRequest(data);
-                return postSyncXML(data);
+        public static String sendDataFiles(String xml) {
+                return postSyncXML(xml);
         }
 
-        private static String executeHttpRequest(String data) {
+        /*private static String executeHttpRequest(String data) {
         		Log.e("executeHttpRequest","=="+data);
                 String result = "";
                 try {
@@ -66,15 +56,18 @@ public class ServerInterface {
                 }
 
                 return result;
-        }
+        }*/
         
         private static String postSyncXML(String xml) {
             String url = "http://ar5.arbonaut.com/webforest/fao-mobile/save-received-data-file";
             HttpClient httpclient = new DefaultHttpClient();  
-/* String encode_url=URLEncoder.encode(url,"UTF-8");
-         String decode_url=URLDecoder.decode(encode_url,"UTF-8");*/
+            /* String encode_url=URLEncoder.encode(url,"UTF-8");
+         	String decode_url=URLDecoder.decode(encode_url,"UTF-8");*/
             List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>();
             nameValuePairs.add(new BasicNameValuePair("datafile_xml_string",xml));
+            nameValuePairs.add(new BasicNameValuePair("survey_id","99"));
+            nameValuePairs.add(new BasicNameValuePair("username","collect"));
+            nameValuePairs.add(new BasicNameValuePair("overwrite","true"));
 
             UrlEncodedFormEntity form;
             try {
@@ -87,16 +80,14 @@ public class ServerInterface {
                 HttpResponse response = (HttpResponse) httpclient .execute(httppost);
                 HttpEntity resEntity = response.getEntity();  
                 String resp = EntityUtils.toString(resEntity);
-                try
+                /*try
                 {
                     final String s = new String(resp.getBytes(), "UTF-8");
-                    Log.e("DECODED","=="+s);
                 }
                 catch (UnsupportedEncodingException e)
                 {
                     Log.e("utf8", "conversion", e);
-                }
-                Log.i("RESPONSE","postSyncXML srv response:"+resp);
+                }*/
                 return resp;
             } catch (UnsupportedEncodingException e) {
                 e.printStackTrace();
