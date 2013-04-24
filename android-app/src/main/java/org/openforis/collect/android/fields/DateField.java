@@ -151,7 +151,7 @@ public class DateField extends InputField {
 			} else {
 				dateAtr.setValue(new Date(Integer.valueOf(year),Integer.valueOf(month),Integer.valueOf(day)));
 			}
-			this.validateResult(node);
+			//this.validateResult(node);
 		} else {
 			if (month.equals("") && day.equals("") && year.equals("")){
 				EntityBuilder.addValue(this.findParentEntity(path), this.nodeDefinition.getName(), new Date(null,null,null), position);

@@ -70,7 +70,7 @@ public class TextField extends InputField {
 				    	}				    	
 			    	}
 		    	}else{
-		    		TextField.this.validateResults();
+		    		//TextField.this.validateResults();
 		    	}
 		    }
 	    });

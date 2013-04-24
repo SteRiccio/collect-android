@@ -44,8 +44,9 @@ public class CodeField extends InputField {
 			ArrayList<String> codes, ArrayList<String> options, 
 			String selectedItem) {
 		super(context, nodeDef);
-		this.searchable = true;
 
+		this.searchable = true;
+		
 		CodeField.form = (FormScreen)context;
 		
 		this.selectedForTheFirstTime = true;

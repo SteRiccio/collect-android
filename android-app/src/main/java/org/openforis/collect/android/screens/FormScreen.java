@@ -401,7 +401,12 @@ public class FormScreen extends BaseActivity implements OnClickListener {
 	    				List<CodeListItem> codeListItemsList = codeAttrDef.getList().getItems();
 	    				for (CodeListItem codeListItem : codeListItemsList){
 	    					codes.add(codeListItem.getCode());
-	    					options.add(codeListItem.getLabel(null));
+	    					if (codeListItem.getLabel(null)==null){
+	    						options.add(codeListItem.getLabel("en"));
+	    					} else {
+	    						options.add(codeListItem.getLabel(null));	    						
+	    					}
+	    					
 	    				}
 	    				
 	    				if (!nodeDef.isMultiple()){
@@ -1382,7 +1387,11 @@ public class FormScreen extends BaseActivity implements OnClickListener {
     				List<CodeListItem> codeListItemsList = codeAttrDef.getList().getItems();
     				for (CodeListItem codeListItem : codeListItemsList){
     					codes.add(codeListItem.getCode());
-    					options.add(codeListItem.getLabel(null));
+    					if (codeListItem.getLabel(null)==null){
+    						options.add(codeListItem.getLabel("en"));
+    					} else {
+    						options.add(codeListItem.getLabel(null));	    						
+    					}
     				}
     				
     				if (!nodeDef.isMultiple()){
@@ -2362,21 +2371,22 @@ public class FormScreen extends BaseActivity implements OnClickListener {
 		}
 		
 		NodeDefinition currentScreenNodeDef = ApplicationManager.getSurvey().getSchema().getDefinitionById(this.idmlId);
-		if (currentScreenNodeDef.getMaxCount()<=this.currInstanceNo){
-			this.currInstanceNo--;
-			AlertMessage.createPositiveDialog(FormScreen.this, true, null,
-					getResources().getString(R.string.maxCountTitle), 
-					getResources().getString(R.string.maxCountMessage),
-						getResources().getString(R.string.okay),
-			    		new DialogInterface.OnClickListener() {
-							@Override
-							public void onClick(DialogInterface dialog, int which) {
-								
-							}
-						},
-						null).show();
-			return;
-		}
+		if (currentScreenNodeDef.getMaxCount()!=null)
+			if (currentScreenNodeDef.getMaxCount()<=this.currInstanceNo){
+				this.currInstanceNo--;
+				AlertMessage.createPositiveDialog(FormScreen.this, true, null,
+						getResources().getString(R.string.maxCountTitle), 
+						getResources().getString(R.string.maxCountMessage),
+							getResources().getString(R.string.okay),
+				    		new DialogInterface.OnClickListener() {
+								@Override
+								public void onClick(DialogInterface dialog, int which) {
+									
+								}
+							},
+							null).show();
+				return;
+			}
 		
 		View firstView = this.ll.getChildAt(0);
 		if (firstView instanceof TextView){

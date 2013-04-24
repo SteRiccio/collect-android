@@ -82,7 +82,7 @@ public class CoordinateField extends InputField implements OnClickListener {
 			    	}
 
 		    	}else{
-		    		Log.i("COORDINATE FIELD info", "Coordinate Field lost focus. Start validate its value");		    		
+		    		/*Log.i("COORDINATE FIELD info", "Coordinate Field lost focus. Start validate its value");		    		
 		    		Node<? extends NodeDefinition> node = CoordinateField.this.findParentEntity(form.getFormScreenId()).get(CoordinateField.this.nodeDefinition.getName(), form.currInstanceNo);		    		
 		    		ValidationResults results = ValidationManager.validateField(node);
 		    		if(results.getErrors().size() > 0 || results.getFailed().size() > 0){
@@ -94,7 +94,7 @@ public class CoordinateField extends InputField implements OnClickListener {
 		    		}
 		    		Log.e("VALIDATION FOR COORDINATE FIELD", "Errors: " + results.getErrors().size() + " : " + results.getErrors().toString());
 		    		Log.d("VALIDATION FOR COORDINATE FIELD", "Warnings: "  + results.getWarnings().size() + " : " + results.getWarnings().toString());
-		    		Log.e("VALIDATION FOR COORDINATE FIELD", "Fails: "  + results.getFailed().size() + " : " +  results.getFailed().toString());    		
+		    		Log.e("VALIDATION FOR COORDINATE FIELD", "Fails: "  + results.getFailed().size() + " : " +  results.getFailed().toString());*/    		
 		    	}		    	
 			}
 		});
@@ -122,7 +122,7 @@ public class CoordinateField extends InputField implements OnClickListener {
 //			    		CoordinateField.this.setKeyboardType(null);
 			    	}
 		    	}else{
-		    		Log.i("COORDINATE FIELD info", "Coordinate Field lost focus. Start validate its value");		    		
+		    		/*Log.i("COORDINATE FIELD info", "Coordinate Field lost focus. Start validate its value");		    		
 		    		Node<? extends NodeDefinition> node = CoordinateField.this.findParentEntity(form.getFormScreenId()).get(CoordinateField.this.nodeDefinition.getName(), form.currInstanceNo);		    		
 		    		ValidationResults results = ValidationManager.validateField(node);
 		    		if(results.getErrors().size() > 0 || results.getFailed().size() > 0){
@@ -131,7 +131,7 @@ public class CoordinateField extends InputField implements OnClickListener {
 		    			txtLatitude.setBackgroundColor(Color.YELLOW);
 		    		}else{
 		    			txtLatitude.setBackgroundColor(Color.TRANSPARENT);
-		    		}   		
+		    		}   */		
 		    	}	
 		    	
 			}

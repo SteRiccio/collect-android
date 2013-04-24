@@ -2,20 +2,13 @@ package org.openforis.collect.android.management;
 
 import java.io.File;
 import java.io.FileInputStream;
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import liquibase.Liquibase;
-import liquibase.database.Database;
-import liquibase.database.DatabaseFactory;
-import liquibase.database.jvm.JdbcConnection;
-import liquibase.resource.FileSystemResourceAccessor;
-
 import org.openforis.collect.android.R;
+import org.openforis.collect.android.database.CollectDatabase;
+import org.openforis.collect.android.database.DatabaseWrapper;
 import org.openforis.collect.android.fields.UIElement;
 import org.openforis.collect.android.lists.RecordChoiceActivity;
 import org.openforis.collect.android.lists.RootEntityChoiceActivity;
@@ -128,20 +121,20 @@ public class ApplicationManager extends BaseActivity {
 			    folder.mkdirs();
 			    
 			    //creating database
-//			    new DatabaseWrapper(ApplicationManager.this);
-//			    CollectDatabase collectDB = new CollectDatabase(DatabaseWrapper.db);	
+			    /*new DatabaseWrapper(ApplicationManager.this);
+			    CollectDatabase collectDB = new CollectDatabase(DatabaseWrapper.db);	*/
 			    
 			    //instantiating managers
 			    ExpressionFactory expressionFactory = new ExpressionFactory();
 	        	Validator validator = new Validator();
-	        	//CollectSurveyContext collectSurveyContext = new CollectSurveyContext(expressionFactory, validator, null);
-	        	CollectSurveyContext collectSurveyContext = new CollectSurveyContext(expressionFactory, validator);
+	        	CollectSurveyContext collectSurveyContext = new CollectSurveyContext(expressionFactory, validator, null);
+	        	//CollectSurveyContext collectSurveyContext = new CollectSurveyContext(expressionFactory, validator);
 	        	
 	        	surveyManager = new SurveyManager();
 	        	surveyManager.setCollectSurveyContext(collectSurveyContext);
-	        	//surveyManager.setSurveyDao(new SurveyDao(collectSurveyContext));
-	        	SurveyDao surveyDao = new SurveyDao();
-	        	surveyDao.setSurveyContext(collectSurveyContext);
+	        	surveyManager.setSurveyDao(new SurveyDao(collectSurveyContext));
+	        	/*SurveyDao surveyDao = new SurveyDao();
+	        	surveyDao.setSurveyContext(collectSurveyContext);*/
 	        	surveyManager.setSurveyWorkDao(new SurveyWorkDao());
 	        	
 	        	userManager = new UserManager();
@@ -156,13 +149,15 @@ public class ApplicationManager extends BaseActivity {
 	            	FileInputStream fis = new FileInputStream(sdcardPath+getResources().getString(R.string.formDefinitionFile));        	
 	            	SurveyIdmlBinder binder = new SurveyIdmlBinder(collectSurveyContext);
 	        		binder.addApplicationOptionsBinder(new UIOptionsBinder());
-	        		survey = (CollectSurvey) binder.unmarshal(fis);	
+	        		survey = (CollectSurvey) binder.unmarshal(fis);
 	        		List<LanguageSpecificText> projectNamesList = survey.getProjectNames();
 	        		if (projectNamesList.size()>0){
 	        			survey.setName(projectNamesList.get(0).getText());
 	        		} else {
 	        			survey.setName("defaultSurveyName");
 	        		}
+	        		if (survey!=null)
+	        			Log.e("survey.name","=="+survey.getName());
 	        		if (surveyManager.get(survey.getName())==null){
 		        		surveyManager.importModel(survey);
 		        		Log.e("new survey added","==");
@@ -227,12 +222,16 @@ public class ApplicationManager extends BaseActivity {
         	liquibase.setChangeLog("classpath:org/openforis/collect/db/changelog/db.changelog-master.xml");
         	*/
         	
+        	//creating database
+		    new DatabaseWrapper(ApplicationManager.this);
+		    CollectDatabase collectDB = new CollectDatabase(DatabaseWrapper.db);
+        	
         	/*JdbcDaoSupport jdbcDao = new JdbcDaoSupport();
         	jdbcDao.getConnection();
             Connection c = jdbcDao.getConnection();
             Liquibase liquibase = null;
             try {
-                Database database = DatabaseFactory.getInstance().findCorrectDatabaseImplementation(new JdbcConnection(DriverManager.getConnection("jdbc:sqldroid:"+"/data/data/org.openforis.collect.android/databases/collect.db")) );
+                Database database = (Database) DatabaseWrapper.db;//DatabaseFactory.getInstance().findCorrectDatabaseImplementation(new JdbcConnection(DriverManager.getConnection("jdbc:sqldroid:"+"/data/data/org.openforis.collect.android/databases/collect.db")) );
                 liquibase = new Liquibase("classpath:org/openforis/collect/db/changelog/db.changelog-master.xml", new FileSystemResourceAccessor(), database);
                 liquibase.update(null);
             } finally {

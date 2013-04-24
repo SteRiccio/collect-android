@@ -84,7 +84,7 @@ public class NumberField extends InputField {
 				    	}
 			    	}
 		    	}else{
-		    		NumberField.this.validateResult();
+		    		//NumberField.this.validateResult();
 		    	}
 		    }
 	    });

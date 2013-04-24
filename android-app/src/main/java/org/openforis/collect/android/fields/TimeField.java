@@ -174,7 +174,7 @@ public class TimeField extends InputField implements TextWatcher {
 				timeAttr.setValue(new Time(Integer.valueOf(hour),Integer.valueOf(minute)));
 			}
 			//Validate results
-			this.validateResult(node);
+			//this.validateResult(node);
 		} else {
 			if (hour.equals("") && minute.equals("")){
 				EntityBuilder.addValue(this.findParentEntity(path), this.nodeDefinition.getName(), new Time(null,null), position);
