@@ -108,7 +108,6 @@ public class FormScreen extends BaseActivity implements OnClickListener {
     		//this.numberOfInstances = this.startingIntent.getIntExtra(getResources().getString(R.string.numberOfInstances),-1);
     		this.parentFormScreenId = this.startingIntent.getStringExtra(getResources().getString(R.string.parentFormScreenId));;
     		this.fieldsNo = this.startingIntent.getExtras().size()-5;
-    		
     		//this.parentEntitySingleAttribute = this.findParentEntity(this.getFormScreenId());
     		//this.parentEntityMultipleAttribute = this.findParentEntity(this.parentFormScreenId);
 
@@ -133,15 +132,15 @@ public class FormScreen extends BaseActivity implements OnClickListener {
 		super.onResume();
 		Log.i(getResources().getString(R.string.app_name),TAG+":onResume");
 		try{
-//			Log.e("onresume","this.getFormScreenId()=="+this.getFormScreenId());
-//			Log.e("onresume","this.parentFormScreenId=="+this.parentFormScreenId);
+			//Log.e("onresume","this.getFormScreenId()=="+this.getFormScreenId());
+			//Log.e("onresume","this.parentFormScreenId=="+this.parentFormScreenId);
     		this.parentEntitySingleAttribute = this.findParentEntity(this.getFormScreenId());
     		this.parentEntityMultipleAttribute = this.findParentEntity(this.parentFormScreenId);
-//    		if (parentEntitySingleAttribute!=null)
-//    			Log.e("onresume","parentEntitySingleAttribute=="+parentEntitySingleAttribute.getName()+"=="+parentEntitySingleAttribute.getIndex());
-//    		if (parentEntityMultipleAttribute!=null)
-//    			Log.e("onresume","parentEntityMultipleAttribute=="+parentEntityMultipleAttribute.getName()+"=="+parentEntityMultipleAttribute.getIndex());
-    		
+    		/*if (parentEntitySingleAttribute!=null)
+    			Log.e("onresume","parentEntitySingleAttribute=="+parentEntitySingleAttribute.getName()+"=="+parentEntitySingleAttribute.getIndex());
+    		if (parentEntityMultipleAttribute!=null)
+    			Log.e("onresume","parentEntityMultipleAttribute=="+parentEntityMultipleAttribute.getName()+"=="+parentEntityMultipleAttribute.getIndex());
+    		*/
 			String loadedValue = "";
 
     		ArrayList<String> tableColHeaders = new ArrayList<String>();
@@ -455,7 +454,7 @@ public class FormScreen extends BaseActivity implements OnClickListener {
 	        						this.longitude = "";
 	        					if (this.latitude==null)
 	        						this.latitude = "";
-	        					coordField.setValue(0, this.longitude, this.latitude, this.parentFormScreenId,false);
+	        					//coordField.setValue(0, this.longitude, this.latitude, this.parentFormScreenId, false);
 	    		    			this.currentCoordinateField = null;
 	    		    			this.longitude = null;
 	    		    			this.latitude = null;
