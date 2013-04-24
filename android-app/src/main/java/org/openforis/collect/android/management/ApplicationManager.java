@@ -156,15 +156,14 @@ public class ApplicationManager extends BaseActivity {
 	        		} else {
 	        			survey.setName("defaultSurveyName");
 	        		}
-	        		if (survey!=null)
-	        			Log.e("survey.name","=="+survey.getName());
 	        		if (surveyManager.get(survey.getName())==null){
 		        		surveyManager.importModel(survey);
 		        		Log.e("new survey added","==");
 	        		}
 	            	Log.e("parsingTIME","=="+(System.currentTimeMillis()-startTimeParsing));
 	        	}
-	        	schema = survey.getSchema();           
+	        	schema = survey.getSchema();
+	        	Log.e("surveyId","=="+survey.getId());
 	        	//ApplicationManager.fieldsDefList = new ArrayList<NodeDefinition>();        	
 	        	//List<EntityDefinition> rootEntitiesDefsList = schema.getRootEntityDefinitions();
 	        	//getAllFormFields(rootEntitiesDefsList);

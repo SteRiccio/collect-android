@@ -74,7 +74,7 @@ public class DateSetDialog extends FragmentActivity {
 			//String strDate = (String) DateFormat.format("yyyy"+getResources().getString(R.string.dateSeparator)+"MM"+getResources().getString(R.string.dateSeparator)+"dd", cal);
 //			String strDate = cal.get(Calendar.YEAR)+getResources().getString(R.string.dateSeparator)+(cal.get(Calendar.MONTH)+1)+getResources().getString(R.string.dateSeparator)+cal.get(Calendar.DAY_OF_MONTH);
 			//!!! BECAUSE IN FORM SCREEN FORMAT IS "mm-dd-yyy" 
-			String strDate = (cal.get(Calendar.YEAR)+1) + getResources().getString(R.string.dateSeparator) + cal.get(Calendar.MONTH) + getResources().getString(R.string.dateSeparator)+cal.get(Calendar.DAY_OF_MONTH);
+			String strDate = cal.get(Calendar.YEAR) + getResources().getString(R.string.dateSeparator) + (cal.get(Calendar.MONTH)+1) + getResources().getString(R.string.dateSeparator)+cal.get(Calendar.DAY_OF_MONTH);
 			//activity_edittext.txtBox.setText(strDate);
 			activity_edittext.setValue(0, strDate, this.pathToParentScreen, false);
 		    //Finish activity
