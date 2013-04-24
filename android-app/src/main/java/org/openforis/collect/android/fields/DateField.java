@@ -114,7 +114,7 @@ public class DateField extends InputField {
 	{
 		if (!isTextChanged)
 			this.txtBox.setText(value);
-		Log.e("setValue","=="+value);
+
 		String day = "";
 		String month = "";
 		String year = "";

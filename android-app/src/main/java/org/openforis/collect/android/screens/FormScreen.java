@@ -638,8 +638,6 @@ public class FormScreen extends BaseActivity implements OnClickListener {
 	        				final DateField dateField= new DateField(this, nodeDef);
 	        				dateField.setOnClickListener(this);
 	        				dateField.setId(nodeDef.getId());
-	        				Log.e("parentEntity2",this.parentEntitySingleAttribute.getName()+"=="+this.parentEntitySingleAttribute.getIndex());
-	    					Log.e("wczytanaDATA2","=="+loadedValue);
 	        				dateField.setValue(0, loadedValue, FormScreen.this.getFormScreenId(),false);
 	        				dateField.addTextChangedListener(new TextWatcher(){
 	        			        public void afterTextChanged(Editable s) {        			            
@@ -1662,8 +1660,6 @@ public class FormScreen extends BaseActivity implements OnClickListener {
         				final DateField dateField= new DateField(this, nodeDef);
         				dateField.setOnClickListener(this);
         				dateField.setId(nodeDef.getId());
-        				Log.e("parentEntity1",this.parentEntitySingleAttribute.getName()+"=="+this.parentEntitySingleAttribute.getIndex());
-    					Log.e("wczytanaDATA1","=="+loadedValue);
         				//dateField.setValue(this.currInstanceNo, loadedValue, this.parentFormScreenId,false);
         				dateField.addTextChangedListener(new TextWatcher(){
         			        public void afterTextChanged(Editable s) {        			            
@@ -1977,8 +1973,6 @@ public class FormScreen extends BaseActivity implements OnClickListener {
 						if (dateValue.getYear()!=null)
 							year = dateValue.getYear().toString();
 					}
-					Log.e("parentEntity",parentEntity.getName()+"=="+parentEntity.getIndex());
-					Log.e("wczytanaDATA","=="+year+"-"+month+"-"+day);
 					DateField dateField = (DateField) ApplicationManager.getUIElement(nodeDef.getId());
 					if (dateField!=null)
 						dateField.setValue(0, year+getResources().getString(R.string.dateSeparator)+month+getResources().getString(R.string.dateSeparator)+day, this.getFormScreenId(), false);
