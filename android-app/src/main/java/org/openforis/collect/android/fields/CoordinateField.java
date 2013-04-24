@@ -183,9 +183,8 @@ public class CoordinateField extends InputField implements OnClickListener {
 			this.txtLongitude.setText(lon);
 			this.txtLatitude.setText(lat);
 		}
-		Log.e("coordsSetValue",path+"=="+this.nodeDefinition.getName());
+
 		Node<? extends NodeDefinition> node = this.findParentEntity(path).get(this.nodeDefinition.getName(), position);
-		Log.e("coordsSetValue","node==Null"+(node==null));
 		if (node!=null){
 			CoordinateAttribute coordAtr = (CoordinateAttribute)node;
 			if ((lat.equals("")&&lon.equals(""))){
