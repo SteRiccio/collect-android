@@ -156,9 +156,9 @@ public class ApplicationManager extends BaseActivity {
 	        		} else {
 	        			survey.setName("defaultSurveyName");
 	        		}
-	        		if (surveyManager.get(survey.getName())==null){
+	        		survey = surveyManager.get(survey.getName());
+	        		if (survey==null){
 		        		surveyManager.importModel(survey);
-		        		Log.e("new survey added","==");
 	        		}
 	            	Log.e("parsingTIME","=="+(System.currentTimeMillis()-startTimeParsing));
 	        	}

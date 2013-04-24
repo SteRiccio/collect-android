@@ -195,7 +195,7 @@ public class CoordinateField extends InputField implements OnClickListener {
 				coordAtr.setValue(new Coordinate(null, Double.valueOf(lat), null));
 			} else {
 				coordAtr.setValue(new Coordinate(Double.valueOf(lon), Double.valueOf(lat), null));
-			}			
+			}
 		} else {
 			if ((lat.equals("")&&lon.equals(""))){
 				EntityBuilder.addValue(this.findParentEntity(path), this.nodeDefinition.getName(), new Coordinate(null, null, null), position);
