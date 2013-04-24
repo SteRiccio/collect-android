@@ -42,7 +42,7 @@ public class GpsActivity extends Activity {
 		else
 		{
 			ll = new MyLocationListener();
-			lm.requestLocationUpdates(LocationManager.GPS_PROVIDER, 900000, 1, ll);
+			lm.requestLocationUpdates(LocationManager.GPS_PROVIDER, 1000, 1, ll);
 			// Create a Runnable which is used to determine when the new GPS coords were received	
 			Runnable showWaitDialog = new Runnable() {
 
