@@ -25,12 +25,13 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Environment;
 import android.util.Log;
-import android.util.SparseBooleanArray;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.CheckBox;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 
@@ -66,13 +67,28 @@ public class UploadActivity extends BaseListActivity{
             	
             	this.lv = getListView();
             	
-            	path = Environment.getExternalStorageDirectory().toString()+getResources().getString(R.string.exported_data_folder);
+            	path = Environment.getExternalStorageDirectory().toString()+getResources().getString(R.string.exported_data_folder);            
             	
             	Button btn =(Button) findViewById(R.id.btnUpload);
                 btn.setOnClickListener(new OnClickListener() {
     			    @Override
     			    public void onClick(View v) {
-    			    	//SparseBooleanArray checkedItems = lv.getCheckedItemPositions();
+    			    	pd = ProgressDialog.show(UploadActivity.this, getResources().getString(R.string.workInProgress), getResources().getString(R.string.uploadingDataToServerMessage));
+    			    	CheckBox upload;
+    			    	CheckBox overwrite;
+    			    	for (int i=0;i<adapter.getCount();i++){
+    			    		LinearLayout ll = (LinearLayout)lv.getChildAt(i);
+    			    		upload = (CheckBox)ll.getChildAt(1);
+    			    		overwrite = (CheckBox)ll.getChildAt(2);
+    			    		if (upload.isChecked()){
+    			    			(new SendData()).execute(adapter.getItem(i).toString(),overwrite.isChecked());
+    		    				filesCount++;	
+    			    		}
+    			    	}
+    			    	if (filesCount==0){
+    			    		pd.dismiss();
+    			    	}
+    			    	/*
     			    	pd = ProgressDialog.show(UploadActivity.this, getResources().getString(R.string.workInProgress), getResources().getString(R.string.uploadingDataToServerMessage));
     			    	
     		        	SparseBooleanArray checkedItems = lv.getCheckedItemPositions();
@@ -88,7 +104,7 @@ public class UploadActivity extends BaseListActivity{
     			    	}
     			    	if (filesCount==0){
     			    		pd.dismiss();
-    			    	}
+    			    	}*/
     			    }
     		    });
         	} else {
@@ -134,8 +150,10 @@ public class UploadActivity extends BaseListActivity{
 	        this.selections[i] = false;
 		}
 		
-		int layout = (backgroundColor!=Color.WHITE)?R.layout.selectableitem_white:R.layout.selectableitem_black;
-		this.adapter = new ArrayAdapter<String>(this,layout,filesList);
+		//int layout = (backgroundColor!=Color.WHITE)?R.layout.selectableitem_white:R.layout.selectableitem_black;
+		int layout = (backgroundColor!=Color.WHITE)?R.layout.upload_list_item_white:R.layout.upload_list_item_black;
+		//this.adapter = new ArrayAdapter<String>(this,layout,filesList);
+		this.adapter = new ArrayAdapter<String>(this, layout, R.id.lblFileName, filesList);
 		this.setListAdapter(this.adapter);
     }
     
@@ -225,7 +243,7 @@ public class UploadActivity extends BaseListActivity{
          */
         protected String doInBackground(Object... args) {
             try {            
-				return ServerInterface.sendDataFiles(UploadActivity.getStringFromFile(Environment.getExternalStorageDirectory().toString()+String.valueOf(getResources().getString(R.string.exported_data_folder)+"/"+args[0])));
+				return ServerInterface.sendDataFiles(UploadActivity.getStringFromFile(Environment.getExternalStorageDirectory().toString()+String.valueOf(getResources().getString(R.string.exported_data_folder)+"/"+args[0])),(Boolean)args[1]);
 			} catch (Exception e) {
 				e.printStackTrace();
 				return "";
@@ -254,19 +272,20 @@ public class UploadActivity extends BaseListActivity{
                     responseList[i++] = tk.nextToken();
                 }
             }
-            if (filesCount==0)
+            if (filesCount==0){
             	pd.dismiss();
-			AlertMessage.createPositiveDialog(UploadActivity.this, true, null,
-					getResources().getString(R.string.uploadToServerSuccessfulTitle), 
-					getResources().getString(R.string.uploadToServerSuccessfulMessage),
-						getResources().getString(R.string.okay),
-			    		new DialogInterface.OnClickListener() {
-							@Override
-							public void onClick(DialogInterface dialog, int which) {
-								
-							}
-						},
-						null).show();
+    			AlertMessage.createPositiveDialog(UploadActivity.this, true, null,
+    					getResources().getString(R.string.uploadToServerSuccessfulTitle), 
+    					getResources().getString(R.string.uploadToServerSuccessfulMessage),
+    						getResources().getString(R.string.okay),
+    			    		new DialogInterface.OnClickListener() {
+    							@Override
+    							public void onClick(DialogInterface dialog, int which) {
+    								
+    							}
+    						},
+    						null).show();	
+            }            	
         }
      
     }

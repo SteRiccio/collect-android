@@ -21,8 +21,8 @@ public class ServerInterface {
 
         public static final String SERVER_URL = "http://ar5.arbonaut.com/webforest/fao-mobile/save-received-data-file";
 
-        public static String sendDataFiles(String xml) {
-                return postSyncXML(xml);
+        public static String sendDataFiles(String xml, boolean overwrite) {
+                return postSyncXML(xml, overwrite);
         }
 
         /*private static String executeHttpRequest(String data) {
@@ -58,7 +58,7 @@ public class ServerInterface {
                 return result;
         }*/
         
-        private static String postSyncXML(String xml) {
+        private static String postSyncXML(String xml, boolean overwrite) {
             String url = "http://ar5.arbonaut.com/webforest/fao-mobile/save-received-data-file";
             HttpClient httpclient = new DefaultHttpClient();  
             /* String encode_url=URLEncoder.encode(url,"UTF-8");
@@ -67,7 +67,7 @@ public class ServerInterface {
             nameValuePairs.add(new BasicNameValuePair("datafile_xml_string",xml));
             nameValuePairs.add(new BasicNameValuePair("survey_id","99"));
             nameValuePairs.add(new BasicNameValuePair("username","collect"));
-            nameValuePairs.add(new BasicNameValuePair("overwrite","true"));
+            nameValuePairs.add(new BasicNameValuePair("overwrite",String.valueOf(overwrite)));
 
             UrlEncodedFormEntity form;
             try {
