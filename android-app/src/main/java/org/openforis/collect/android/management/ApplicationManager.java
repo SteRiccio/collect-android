@@ -77,6 +77,8 @@ public class ApplicationManager extends BaseActivity {
 	
 	public static ProgressDialog pd;
 	
+	public static String selectedLanguage;
+	
 	private Thread creationThread = new Thread() {
 		@Override
 		public void run() {
@@ -146,7 +148,7 @@ public class ApplicationManager extends BaseActivity {
 	        	survey = surveyManager.get("Archenland NFI");//default survey
 	        	if (survey==null){
 	            	long startTimeParsing = System.currentTimeMillis();
-	            	FileInputStream fis = new FileInputStream(sdcardPath+getResources().getString(R.string.formDefinitionFile));        	
+	            	FileInputStream fis = new FileInputStream(sdcardPath+getResources().getString(R.string.formDefinitionFileTest));        	
 	            	SurveyIdmlBinder binder = new SurveyIdmlBinder(collectSurveyContext);
 	        		binder.addApplicationOptionsBinder(new UIOptionsBinder());
 	        		survey = (CollectSurvey) binder.unmarshal(fis);
@@ -267,7 +269,13 @@ public class ApplicationManager extends BaseActivity {
 	    	if(valueForNum == null)
 	    		editor.putBoolean(getResources().getString(R.string.showSoftKeyboardOnNumericField), false);
 	    	if(valueForText == null)
-	    		editor.putBoolean(getResources().getString(R.string.showSoftKeyboardOnTextField), false);	    	
+	    		editor.putBoolean(getResources().getString(R.string.showSoftKeyboardOnTextField), false);
+	    	
+	    	String language = ApplicationManager.appPreferences.getString(getResources().getString(R.string.selectedLanguage), getResources().getString(R.string.defaultLanguage));
+			editor = ApplicationManager.appPreferences.edit();
+			editor.putString(getResources().getString(R.string.selectedLanguage), language);
+			ApplicationManager.selectedLanguage = language;
+			
 	    	editor.commit();			
 	    		    
         	creationThread.start();
@@ -529,7 +537,7 @@ public class ApplicationManager extends BaseActivity {
 		//List<EntityDefinition> rootEntitiesDefsList = schema.getRootEntityDefinitions();		
 		Intent intent = new Intent(this,FormScreen.class);
 		EntityDefinition rootEntityDef = (EntityDefinition)ApplicationManager.getSurvey().getSchema().getDefinitionById(ApplicationManager.currRootEntityId);
-		intent.putExtra(getResources().getString(R.string.breadcrumb), ApplicationManager.getLabel(rootEntityDef, null));
+		intent.putExtra(getResources().getString(R.string.breadcrumb), ApplicationManager.getLabel(rootEntityDef/*, null*/));
 		intent.putExtra(getResources().getString(R.string.intentType), getResources().getInteger(R.integer.singleEntityIntent));
 		intent.putExtra(getResources().getString(R.string.parentFormScreenId), "");
 		intent.putExtra(getResources().getString(R.string.idmlId), ApplicationManager.currRootEntityId);
@@ -619,10 +627,18 @@ public class ApplicationManager extends BaseActivity {
 		return ApplicationManager.sessionId;
 	}
 	
-	public static String getLabel(NodeDefinition nodeDef, String language){
-		String label = nodeDef.getLabel(Type.INSTANCE, null);
-		if (label==null){
+	public static String getLabel(NodeDefinition nodeDef/*, String language*/){
+		Log.e("getLabel","=="+ApplicationManager.selectedLanguage);
+		String label = nodeDef.getLabel(Type.INSTANCE, ApplicationManager.selectedLanguage);
+		/*if (label==null){
 			label = nodeDef.getLabel(Type.INSTANCE, "en");
+		}*/
+		if (label==null){
+			if (nodeDef.getLabels().size()>0){
+				label = nodeDef.getLabels().get(0).getText();	
+			} else {
+				label = "";
+			}			
 		}
 		return label;
 	}

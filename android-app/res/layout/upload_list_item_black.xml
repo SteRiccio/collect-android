@@ -19,7 +19,7 @@
         android:id="@+id/chckUpload"
         android:layout_width="0px"
         android:layout_height="fill_parent" 
-    	android:gravity="center_vertical"
+        android:gravity="center_vertical" 
 	    android:paddingLeft="6dip"
 	    android:paddingRight="6dip"
 	    android:layout_weight="1" />

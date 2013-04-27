@@ -9,6 +9,7 @@
     <string name="lblLoadedDataFileName">Loaded data file:</string>
     <string name="lblGpsTimeout">GPS timeout:\u0020</string>
     <string name="txtGpsTimeout">set GPS timeout</string>
+    <string name="lblLanguage">Language:\u0020</string>
     
     <!-- dialogs -->
     <string name="exitAppTitle">Exiting&#8230;</string>    

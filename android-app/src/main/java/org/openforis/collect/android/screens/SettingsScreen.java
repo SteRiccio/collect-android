@@ -1,5 +1,7 @@
 package org.openforis.collect.android.screens;
 
+import java.util.List;
+
 import org.openforis.collect.android.R;
 import org.openforis.collect.android.management.ApplicationManager;
 import org.openforis.collect.android.misc.RunnableHandler;
@@ -15,8 +17,12 @@ import android.text.TextWatcher;
 import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemSelectedListener;
+import android.widget.ArrayAdapter;
 import android.widget.CheckBox;
 import android.widget.EditText;
+import android.widget.Spinner;
 import android.widget.TextView;
 
 public class SettingsScreen extends Activity{
@@ -31,6 +37,10 @@ public class SettingsScreen extends Activity{
 	
 	private TextView tvGpsMaxWaitingTime;
 	private EditText txtGpsMaxWaitingTime;
+	
+	private TextView tvLanguage;
+	private Spinner spinLanguage;
+	private ArrayAdapter<String> languageAdapter;
 	
 	public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);       
@@ -94,6 +104,31 @@ public class SettingsScreen extends Activity{
 		        public void beforeTextChanged(CharSequence s, int start, int count, int after){}
 		        public void onTextChanged(CharSequence s, int start, int before, int count){}
 		    });
+            
+            this.tvLanguage = (TextView)findViewById(R.id.lblLanguage);
+            this.spinLanguage = (Spinner) findViewById(R.id.languageSpinner);            
+            List<String> languageList = ApplicationManager.getSurvey().getLanguages();
+            this.languageAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item, languageList);
+        	this.languageAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        	this.spinLanguage.setAdapter(this.languageAdapter);
+        	this.spinLanguage.setOnItemSelectedListener(new OnItemSelectedListener() {
+			    @Override
+			    public void onItemSelected(AdapterView<?> parentView, View selectedItemView, int position, long id) {
+			    	SharedPreferences.Editor editor = ApplicationManager.appPreferences.edit();
+			    	String language = spinLanguage.getAdapter().getItem(position).toString();
+    				editor.putString(getResources().getString(R.string.selectedLanguage), language);
+    				editor.commit();
+    				ApplicationManager.selectedLanguage = language;
+			    }
+
+			    @Override
+			    public void onNothingSelected(AdapterView<?> parentView) {
+			    	
+			    }
+
+			});
+        	
+
         } catch (Exception e){
     		RunnableHandler.reportException(e,getResources().getString(R.string.app_name),TAG+":onCreate",
     				Environment.getExternalStorageDirectory().toString()
@@ -113,6 +148,14 @@ public class SettingsScreen extends Activity{
 		int backgroundColor = ApplicationManager.appPreferences.getInt(getResources().getString(R.string.backgroundColor), Color.WHITE);
 		this.chckWhiteBackground.setChecked((backgroundColor==Color.WHITE)?true:false);		
 		changeBackgroundColor(backgroundColor);
+		
+		String language = ApplicationManager.appPreferences.getString(getResources().getString(R.string.selectedLanguage), getResources().getString(R.string.defaultLanguage));
+		for (int i=0;i<this.languageAdapter.getCount();i++){
+			if (this.languageAdapter.getItem(i).equals(language)){
+				this.spinLanguage.setSelection(i);
+				break;
+			}
+		}
 	}
     
     private void changeBackgroundColor(int backgroundColor){
@@ -122,6 +165,7 @@ public class SettingsScreen extends Activity{
 		this.chckSoftKeyboardOnNumeric.setTextColor((backgroundColor!=Color.WHITE)?Color.WHITE:Color.BLACK);
 		this.chckWhiteBackground.setTextColor((backgroundColor!=Color.WHITE)?Color.WHITE:Color.BLACK);
 		this.tvGpsMaxWaitingTime.setTextColor((backgroundColor!=Color.WHITE)?Color.WHITE:Color.BLACK);
+		this.tvLanguage.setTextColor((backgroundColor!=Color.WHITE)?Color.WHITE:Color.BLACK);
 		//this.txtGpsMaxWaitingTime.setBackgroundColor((backgroundColor!=Color.WHITE)?Color.WHITE:Color.BLACK);
     }
 }

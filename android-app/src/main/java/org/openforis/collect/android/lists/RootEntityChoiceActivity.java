@@ -92,7 +92,7 @@ public class RootEntityChoiceActivity extends BaseListActivity{
 			if (label==null){
 				label = rootEntity.getLabel(Type.INSTANCE, "en").toString();
 			}*/
-			clusterList[i] = ApplicationManager.getLabel(rootEntity, null);
+			clusterList[i] = ApplicationManager.getLabel(rootEntity/*, null*/);
 		}
 		int layout = (backgroundColor!=Color.WHITE)?R.layout.localclusterrow_white:R.layout.localclusterrow_black;
         this.adapter = new ArrayAdapter<String>(this, layout, R.id.plotlabel, clusterList);
