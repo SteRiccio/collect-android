@@ -400,12 +400,12 @@ public class FormScreen extends BaseActivity implements OnClickListener {
 	    				List<CodeListItem> codeListItemsList = codeAttrDef.getList().getItems();
 	    				for (CodeListItem codeListItem : codeListItemsList){
 	    					codes.add(codeListItem.getCode());
-	    					if (codeListItem.getLabel(null)==null){
+	    					/*if (codeListItem.getLabel(null)==null){
 	    						options.add(codeListItem.getLabel("en"));
 	    					} else {
 	    						options.add(codeListItem.getLabel(null));	    						
-	    					}
-	    					
+	    					}	*/
+	    					options.add(CodeField.getLabelForCodeListItem(codeListItem));
 	    				}
 	    				
 	    				if (!nodeDef.isMultiple()){

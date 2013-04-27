@@ -53,7 +53,8 @@ public class RecordChoiceActivity extends BaseListActivity implements OnItemLong
         	this.activityLabel.setText(getResources().getString(R.string.clusterChoiceListLabel));
         	
         	this.getListView().setLongClickable(true);
-        	this.getListView().setOnItemLongClickListener(this);       	
+        	this.getListView().setOnItemLongClickListener(this); 
+        	Log.e("rootEntity",ApplicationManager.getSurvey().getSchema().getRootEntityDefinition(ApplicationManager.currRootEntityId).getName()+"=="+ApplicationManager.currRootEntityId);
         	/*ProgressDialog pd = ProgressDialog.show(ClusterChoiceActivity.this, getResources().getString(R.string.workInProgress), getResources().getString(R.string.loading), true, false);
     		pd.dismiss();*/
         } catch (Exception e){
@@ -181,6 +182,13 @@ public class RecordChoiceActivity extends BaseListActivity implements OnItemLong
 		CollectSurvey collectSurvey = (CollectSurvey)ApplicationManager.getSurvey();	        	
     	DataManager dataManager = new DataManager(collectSurvey,this.rootEntityDef.getName(),ApplicationManager.getLoggedInUser());
     	this.recordsList = dataManager.loadSummaries();
+    	if (this.recordsList.size()==0){
+    		Log.e("nothing in database","==");
+    		Intent resultHolder = new Intent();
+			resultHolder.putExtra(getResources().getString(R.string.recordId), -1);	
+			setResult(getResources().getInteger(R.integer.clusterChoiceSuccessful),resultHolder);
+			RecordChoiceActivity.this.finish();	
+    	}
 		String[] clusterList;
 		if (this.recordsList.size()==0){
 			clusterList = new String[1];

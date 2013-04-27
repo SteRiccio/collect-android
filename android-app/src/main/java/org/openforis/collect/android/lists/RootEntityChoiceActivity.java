@@ -38,6 +38,14 @@ public class RootEntityChoiceActivity extends BaseListActivity{
         Log.i(getResources().getString(R.string.app_name),TAG+":onCreate");
         setContentView(R.layout.clusterchoiceactivity);
         try{
+    		this.rootEntitiesList = ApplicationManager.getSurvey().getSchema().getRootEntityDefinitions();
+        	if (this.rootEntitiesList.size()==1){
+        		Intent resultHolder = new Intent();
+        		resultHolder.putExtra(getResources().getString(R.string.rootEntityId), this.rootEntitiesList.get(0).getId());
+        		setResult(getResources().getInteger(R.integer.rootEntityChoiceSuccessful),resultHolder);
+        		RootEntityChoiceActivity.this.finish();
+        	}
+        	
         	this.activityLabel = (TextView)findViewById(R.id.lblList);
         	this.activityLabel.setText(getResources().getString(R.string.rootEntityChoiceListLabel));
         	

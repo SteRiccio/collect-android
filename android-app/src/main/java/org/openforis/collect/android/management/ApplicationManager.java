@@ -158,14 +158,16 @@ public class ApplicationManager extends BaseActivity {
 	        		} else {
 	        			survey.setName("defaultSurveyName");
 	        		}
-	        		survey = surveyManager.get(survey.getName());
-	        		if (survey==null){
+	        		Log.e("surveyToLoad","name=="+survey.getName());
+	        		CollectSurvey loadedSurvey = surveyManager.get(survey.getName());
+	        		if (loadedSurvey==null){
 		        		surveyManager.importModel(survey);
+	        		} else {
+	        			survey = loadedSurvey;
 	        		}
 	            	Log.e("parsingTIME","=="+(System.currentTimeMillis()-startTimeParsing));
 	        	}
 	        	schema = survey.getSchema();
-	        	Log.e("surveyId","=="+survey.getId());
 	        	//ApplicationManager.fieldsDefList = new ArrayList<NodeDefinition>();        	
 	        	//List<EntityDefinition> rootEntitiesDefsList = schema.getRootEntityDefinitions();
 	        	//getAllFormFields(rootEntitiesDefsList);
@@ -420,7 +422,7 @@ public class ApplicationManager extends BaseActivity {
 	 	    	if (resultCode==getResources().getInteger(R.integer.clusterChoiceSuccessful)){//record was selected	 	    		
 	 	    		
 	 	    		int recordId = data.getIntExtra(getResources().getString(R.string.recordId), -1);
-	 	    		
+	 	    		Log.e("SELECTEDrecordID","=="+recordId);
 	 	    		if (recordId==-1){//new record
 	 	    			ApplicationManager.currentRecord = new CollectRecord(ApplicationManager.survey, ApplicationManager.survey.getVersions().get(this.survey.getVersions().size()-1).getName());//null;	 	    			
 	 					Entity rootEntity = ApplicationManager.currentRecord.createRootEntity(ApplicationManager.getSurvey().getSchema().getRootEntityDefinition(ApplicationManager.currRootEntityId).getName());
@@ -628,7 +630,7 @@ public class ApplicationManager extends BaseActivity {
 	}
 	
 	public static String getLabel(NodeDefinition nodeDef/*, String language*/){
-		Log.e("getLabel","=="+ApplicationManager.selectedLanguage);
+		//Log.e("getLabel","=="+ApplicationManager.selectedLanguage);
 		String label = nodeDef.getLabel(Type.INSTANCE, ApplicationManager.selectedLanguage);
 		/*if (label==null){
 			label = nodeDef.getLabel(Type.INSTANCE, "en");
