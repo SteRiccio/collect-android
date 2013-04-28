@@ -38,6 +38,7 @@ import org.openforis.idm.model.Entity;
 import org.openforis.idm.model.expression.ExpressionFactory;
 import org.springframework.jdbc.core.support.JdbcDaoSupport;
 
+import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -78,6 +79,11 @@ public class ApplicationManager extends BaseActivity {
 	public static ProgressDialog pd;
 	
 	public static String selectedLanguage;
+	
+	public static Activity mainActivity;
+	public static Activity rootEntitySelectionActivity;
+	public static Activity recordSelectionActivity;
+	public static Activity formScreenActivity;
 	
 	private Thread creationThread = new Thread() {
 		@Override
@@ -448,22 +454,63 @@ public class ApplicationManager extends BaseActivity {
 	 	    		ApplicationManager.this.finish();
 	 	    	}
 	 	    } else if (requestCode==getResources().getInteger(R.integer.startingFormScreen)){
-	 			AlertMessage.createPositiveNegativeDialog(ApplicationManager.this, false, getResources().getDrawable(R.drawable.warningsign),
-	 					getResources().getString(R.string.selectRecordTitle), getResources().getString(R.string.selectRecordMessage),
-	 					getResources().getString(R.string.yes), getResources().getString(R.string.no),
-	 		    		new DialogInterface.OnClickListener() {
-	 						@Override
-	 						public void onClick(DialogInterface dialog, int which) {
-	 							showRecordsListScreen(ApplicationManager.currRootEntityId);
-	 						}
-	 					},
-	 		    		new DialogInterface.OnClickListener() {
-	 						@Override
-	 						public void onClick(DialogInterface dialog, int which) {
-	 							showFormRootScreen();
-	 						}
-	 					},
-	 					null).show(); 	    	
+	 	    	CollectSurvey collectSurvey = (CollectSurvey)ApplicationManager.getSurvey();	        	
+		    	DataManager dataManager = new DataManager(collectSurvey,collectSurvey.getSchema().getRootEntityDefinition(ApplicationManager.currRootEntityId).getName(),ApplicationManager.getLoggedInUser());
+				if (dataManager.loadSummaries().size()==0){
+		        	if (ApplicationManager.getSurvey().getSchema().getRootEntityDefinitions().size()==1){
+		        		AlertMessage.createPositiveNegativeDialog(ApplicationManager.this, false, getResources().getDrawable(R.drawable.warningsign),
+			 					getResources().getString(R.string.exitAppTitle), getResources().getString(R.string.exitAppMessage),
+			 					getResources().getString(R.string.yes), getResources().getString(R.string.no),
+			 		    		new DialogInterface.OnClickListener() {
+			 						@Override
+			 						public void onClick(DialogInterface dialog, int which) {
+			 							ApplicationManager.this.finish();						
+			 						}
+			 					},
+			 		    		new DialogInterface.OnClickListener() {
+			 						@Override
+			 						public void onClick(DialogInterface dialog, int which) {
+			 							showFormRootScreen();
+			 						}
+			 					},
+			 					null).show();		        		
+		        	} else {
+		        		AlertMessage.createPositiveNegativeDialog(ApplicationManager.this, false, getResources().getDrawable(R.drawable.warningsign),
+			 					getResources().getString(R.string.selectRootEntityTitle), getResources().getString(R.string.selectRootEntityMessage),
+			 					getResources().getString(R.string.yes), getResources().getString(R.string.no),
+			 		    		new DialogInterface.OnClickListener() {
+			 						@Override
+			 						public void onClick(DialogInterface dialog, int which) {
+			 							showRootEntitiesListScreen();						
+			 						}
+			 					},
+			 		    		new DialogInterface.OnClickListener() {
+			 						@Override
+			 						public void onClick(DialogInterface dialog, int which) {
+			 							showFormRootScreen();
+			 						}
+			 					},
+			 					null).show();		        		
+		        	}
+				} else {
+					AlertMessage.createPositiveNegativeDialog(ApplicationManager.this, false, getResources().getDrawable(R.drawable.warningsign),
+		 					getResources().getString(R.string.selectRecordTitle), getResources().getString(R.string.selectRecordMessage),
+		 					getResources().getString(R.string.yes), getResources().getString(R.string.no),
+		 		    		new DialogInterface.OnClickListener() {
+		 						@Override
+		 						public void onClick(DialogInterface dialog, int which) {
+		 							showRecordsListScreen(ApplicationManager.currRootEntityId);						
+		 						}
+		 					},
+		 		    		new DialogInterface.OnClickListener() {
+		 						@Override
+		 						public void onClick(DialogInterface dialog, int which) {
+		 							showFormRootScreen();
+		 						}
+		 					},
+		 					null).show(); 
+						
+				}	 				    
 	 	    }
 	    } catch (Exception e){
     		RunnableHandler.reportException(e,getResources().getString(R.string.app_name),TAG+":onActivityResult",
@@ -517,6 +564,10 @@ public class ApplicationManager extends BaseActivity {
     
     private void initSession() {
     	ApplicationManager.sessionId = "1";//UUID.randomUUID().toString();
+    	ApplicationManager.mainActivity = this;
+    	ApplicationManager.rootEntitySelectionActivity = null;
+    	ApplicationManager.recordSelectionActivity = null;
+    	ApplicationManager.formScreenActivity = null;
 	}
     
 	private boolean userExists(User user){

@@ -66,6 +66,33 @@ public class BaseActivity extends Activity {
     { 
         switch (item.getItemId())
         {
+			case R.id.menu_exit:
+				AlertMessage.createPositiveNegativeDialog(BaseActivity.this, false, getResources().getDrawable(R.drawable.warningsign),
+	 					getResources().getString(R.string.exitAppTitle), getResources().getString(R.string.exitAppMessage),
+	 					getResources().getString(R.string.yes), getResources().getString(R.string.no),
+	 		    		new DialogInterface.OnClickListener() {
+	 						@Override
+	 						public void onClick(DialogInterface dialog, int which) {
+	 							if (ApplicationManager.rootEntitySelectionActivity!=null){
+	 								ApplicationManager.rootEntitySelectionActivity.finish();
+	 							}
+	 							if (ApplicationManager.recordSelectionActivity!=null){
+	 								ApplicationManager.recordSelectionActivity.finish();
+	 							}
+	 							if (ApplicationManager.formScreenActivity!=null){
+	 								ApplicationManager.formScreenActivity.finish();
+	 							}
+	 							ApplicationManager.mainActivity.finish();						
+	 						}
+	 					},
+	 		    		new DialogInterface.OnClickListener() {
+	 						@Override
+	 						public void onClick(DialogInterface dialog, int which) {
+	 							
+	 						}
+	 					},
+	 					null).show();
+			    return true;
 	        case R.id.menu_save:
 	        	CollectSurvey collectSurveySave = (CollectSurvey)ApplicationManager.getSurvey();	        	
 	        	DataManager dataManagerSave = new DataManager(collectSurveySave,collectSurveySave.getSchema().getRootEntityDefinitions().get(0).getName(),ApplicationManager.getLoggedInUser());

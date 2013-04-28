@@ -65,7 +65,31 @@ public class BaseListActivity extends ListActivity {
     public boolean onOptionsItemSelected(MenuItem item)
     { 
         switch (item.getItemId())
-        {       	
+        {      
+        	case R.id.menu_exit:
+				AlertMessage.createPositiveNegativeDialog(BaseListActivity.this, false, getResources().getDrawable(R.drawable.warningsign),
+	 					getResources().getString(R.string.exitAppTitle), getResources().getString(R.string.exitAppMessage),
+	 					getResources().getString(R.string.yes), getResources().getString(R.string.no),
+	 		    		new DialogInterface.OnClickListener() {
+	 						@Override
+	 						public void onClick(DialogInterface dialog, int which) {
+	 							if (ApplicationManager.rootEntitySelectionActivity!=null){
+	 								ApplicationManager.rootEntitySelectionActivity.finish();
+	 							}
+	 							if (ApplicationManager.recordSelectionActivity!=null){
+	 								ApplicationManager.recordSelectionActivity.finish();
+	 							}
+	 							ApplicationManager.mainActivity.finish();					
+	 						}
+	 					},
+	 		    		new DialogInterface.OnClickListener() {
+	 						@Override
+	 						public void onClick(DialogInterface dialog, int which) {
+	 							
+	 						}
+	 					},
+	 					null).show();
+			    return true;
 			case R.id.menu_upload:
 				startActivity(new Intent(BaseListActivity.this, UploadActivity.class));
 			    return true;

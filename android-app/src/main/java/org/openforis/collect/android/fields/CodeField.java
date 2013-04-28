@@ -45,6 +45,8 @@ public class CodeField extends InputField {
 	
 	private boolean searchable;
 	private boolean hierarchical;
+	private ArrayList<String> selectedCodesList;
+	private int currentHierarchyLevel;
 	
 	private static FormScreen form;
 	
@@ -60,9 +62,10 @@ public class CodeField extends InputField {
 		this.codeAttrDef = (CodeAttributeDefinition)this.nodeDefinition;
 		
 		this.searchable = true;
-		this.hierarchical = (this.codeAttrDef.getList().getHierarchy().size()>0);
+		this.hierarchical = false;//(this.codeAttrDef.getList().getHierarchy().size()>0);
 		this.aaList = new ArrayList<ArrayAdapter<String>>();
 		this.spinnerList = new ArrayList<Spinner>();
+		this.selectedCodesList = new ArrayList<String>();
 		
 		CodeField.form = (FormScreen)context;
 		
@@ -151,15 +154,18 @@ public class CodeField extends InputField {
 				int hierarchyLevelsNo = this.codeAttrDef.getList().getHierarchy().size();
 				Log.e("iloscPoziomow","=="+hierarchyLevelsNo);
 				for (int hierarchyLevel=0;hierarchyLevel<hierarchyLevelsNo;hierarchyLevel++){
-					Spinner currentSpinner = new Spinner(context);
-					currentSpinner.setPrompt(getLabelForCodeListLevel(this.codeAttrDef.getList().getHierarchy().get(hierarchyLevel)));
+					currentHierarchyLevel = hierarchyLevel;
+					this.selectedCodesList.add("");
+					
+					currentSpinner = new Spinner(context);
+					currentSpinner.setPrompt(this.codeAttrDef.getList().getHierarchy().get(hierarchyLevel).getName());
 					this.spinnerList.add(currentSpinner);
-
+					
 					ArrayList<String> currentOptions = new ArrayList<String>();
 					currentCodes = new ArrayList<String>();
 					currentOptions.add("");
 					currentCodes.add("");
-    				List<CodeListItem> codeListItemsList = codeAttrDef.getList().getItems();
+    				List<CodeListItem> codeListItemsList = codeAttrDef.getList().getItems(hierarchyLevel);
     				for (CodeListItem codeListItem : codeListItemsList){
     					currentCodes.add(codeListItem.getCode());
     					currentOptions.add(CodeField.getLabelForCodeListItem(codeListItem));
@@ -170,31 +176,59 @@ public class CodeField extends InputField {
 
 					currentSpinner.setAdapter(currentAA);					
 					currentSpinner.setLayoutParams(new LayoutParams(0,ViewGroup.LayoutParams.WRAP_CONTENT,(float) 3));
-					currentSpinner.setOnItemSelectedListener(new OnItemSelectedListener() {
-					    @Override
-					    public void onItemSelected(AdapterView<?> parentView, View selectedItemView, int position, long id) {
-					    	/*ArrayList<String> valueToAdd = new ArrayList<String>();
-					    	valueToAdd.add(CodeField.this.currentCodes.get((CodeField.this.currentSpinner.getSelectedItemPosition())));
-					    	//Log.e("onItemSelected",CodeField.form.getFormScreenId()+"=="+CodeField.this.currentInstanceNo+"("+CodeField.form.currInstanceNo+")");
-					    	if (CodeField.this.nodeDefinition.isMultiple()){
-					    		CodeField.this.setValue(CodeField.form.currInstanceNo, CodeField.this.currentCodes.get(CodeField.this.currentSpinner.getSelectedItemPosition()),CodeField.form.getFormScreenId(),true);	
-					    	} else {
-					    		CodeField.this.setValue(0, CodeField.this.currentCodes.get(CodeField.this.currentSpinner.getSelectedItemPosition()),CodeField.form.getFormScreenId(),true);
-					    	}			    	
-					    	
-					    	if (!CodeField.this.selectedForTheFirstTime){
-								
-					    	} else {
-					    		CodeField.this.selectedForTheFirstTime = false;
-					    	}*/
-					    }
+					if (hierarchyLevel<hierarchyLevelsNo-1){
+						currentSpinner.setOnItemSelectedListener(new OnItemSelectedListener() {
+						    @Override
+						    public void onItemSelected(AdapterView<?> parentView, View selectedItemView, int position, long id) {
+						    	if (CodeField.this.nodeDefinition.isMultiple()){
+						    		//CodeField.this.setValue(CodeField.form.currInstanceNo, CodeField.this.currentCodes.get(CodeField.this.currentSpinner.getSelectedItemPosition()),CodeField.form.getFormScreenId(),true);	
+						    	} else {
+						    		//CodeField.this.setValue(0, CodeField.this.currentCodes.get(CodeField.this.currentSpinner.getSelectedItemPosition()),CodeField.form.getFormScreenId(),true);
+						    		//CodeField.this.selectedCodesList.set(CodeField.this.currentHierarchyLevel, CodeField.this.currentCodes.get(position));
+						    	}
+						    	Log.e("setCode"+CodeField.this.currentHierarchyLevel,"=="+ CodeField.this.currentCodes.get(position));
+						    	CodeField.this.selectedCodesList.set(CodeField.this.currentHierarchyLevel, CodeField.this.currentCodes.get(position));
+						    	if (position!=0){
+						    		Log.e("DOPUSZCZANIE",selectedItemView.getParent().getClass()+"KOLEJNEJ LISTY"+position);
+						    		Spinner spinner = (Spinner)selectedItemView.getParent();
+						    		for (int i=0;i<CodeField.this.spinnerList.size();i++){
+						    			if (spinner.equals(CodeField.this.spinnerList.get(i))){
+						    				spinner = CodeField.this.spinnerList.get(i+1);
+						    				Log.e("spinnerNR","=="+(i+1));
+						    				break;
+						    			}
+						    		}
+						    		if (spinner!=null)
+						    			spinner.setEnabled(true);
+						    	}
+						    }
 
-					    @Override
-					    public void onNothingSelected(AdapterView<?> parentView) {
-					    	
-					    }
+						    @Override
+						    public void onNothingSelected(AdapterView<?> parentView) {
+						    	
+						    }
 
-					});
+						});
+					} else {
+						currentSpinner.setOnItemSelectedListener(new OnItemSelectedListener() {
+						    @Override
+						    public void onItemSelected(AdapterView<?> parentView, View selectedItemView, int position, long id) {
+						    	Log.e("setCodeLAST"+CodeField.this.currentHierarchyLevel,"=="+ CodeField.this.currentCodes.get(position));
+						    	CodeField.this.selectedCodesList.set(CodeField.this.currentHierarchyLevel, CodeField.this.currentCodes.get(position));
+						    	/*if (CodeField.this.nodeDefinition.isMultiple()){
+						    		CodeField.this.setValue(CodeField.form.currInstanceNo, CodeField.this.currentCodes.get(CodeField.this.currentSpinner.getSelectedItemPosition()),CodeField.form.getFormScreenId(),true);	
+						    	} else {
+						    		CodeField.this.setValue(0, CodeField.this.currentCodes.get(CodeField.this.currentSpinner.getSelectedItemPosition()),CodeField.form.getFormScreenId(),true);
+						    	}*/
+						    }
+
+						    @Override
+						    public void onNothingSelected(AdapterView<?> parentView) {
+						    	
+						    }
+
+						});
+					}					
 					
 					boolean isFound = false;
 					int position = 0;
@@ -211,7 +245,12 @@ public class CodeField extends InputField {
 					else
 						currentSpinner.setSelection(0);
 
-					this.addView(currentSpinner);
+					if (hierarchyLevel>0){
+						//currentSpinner.setClickable(false);
+						//currentSpinner.getSelectedView().setEnabled(false);
+						currentSpinner.setEnabled(false);
+					}
+					this.addView(currentSpinner);				
 				}
 			}				
 		}
@@ -277,18 +316,6 @@ public class CodeField extends InputField {
 		if (label==null){
 			if (codeListItem.getLabels().size()>0){
 				label = codeListItem.getLabels().get(0).getText();	
-			} else {
-				label = "";
-			}			
-		}
-		return label;
-	}
-	
-	private String getLabelForCodeListLevel(CodeListLevel codeListLevel){
-		String label = codeListLevel.getLabel(ApplicationManager.selectedLanguage);
-		if (label==null){
-			if (codeListLevel.getLabels().size()>0){
-				label = codeListLevel.getLabels().get(0).getText();	
 			} else {
 				label = "";
 			}			

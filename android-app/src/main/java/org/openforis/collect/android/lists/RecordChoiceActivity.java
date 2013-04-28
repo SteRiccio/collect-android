@@ -11,7 +11,6 @@ import org.openforis.collect.android.misc.RunnableHandler;
 import org.openforis.collect.model.CollectRecord;
 import org.openforis.collect.model.CollectSurvey;
 import org.openforis.idm.metamodel.EntityDefinition;
-import org.openforis.idm.metamodel.NodeLabel.Type;
 
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -49,6 +48,8 @@ public class RecordChoiceActivity extends BaseListActivity implements OnItemLong
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
         setContentView(R.layout.clusterchoiceactivity);
         try{
+        	ApplicationManager.recordSelectionActivity = this;
+        	
         	this.activityLabel = (TextView)findViewById(R.id.lblList);
         	this.activityLabel.setText(getResources().getString(R.string.clusterChoiceListLabel));
         	

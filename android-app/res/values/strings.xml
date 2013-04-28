@@ -14,6 +14,8 @@
     <!-- dialogs -->
     <string name="exitAppTitle">Exiting&#8230;</string>    
     <string name="exitAppMessage">Do you want to exit?</string>
+    <string name="selectRootEntityTitle">Back to root entity selection&#8230;</string>    
+    <string name="selectRootEntityMessage">Do you want to go to root entity selection screen?</string>
     <string name="selectRecordTitle">Back to record selection&#8230;</string>    
     <string name="selectRecordMessage">Do you want to go to record selection screen?</string>
     <string name="startGpsTitle">Starting GPS&#8230;</string>
@@ -57,6 +59,7 @@
     <string name="upload_to_server">Upload</string>
     <string name="settings">Settings</string>
     <string name="about">About</string>
+    <string name="exit">Exit</string>
     
     <string name="addNewRecord">Add new</string>
     

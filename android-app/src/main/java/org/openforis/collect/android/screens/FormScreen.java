@@ -100,6 +100,8 @@ public class FormScreen extends BaseActivity implements OnClickListener {
         try{
         	Log.i(getResources().getString(R.string.app_name),TAG+":onCreate");
     		
+        	ApplicationManager.formScreenActivity = this;
+        	
     		this.startingIntent = getIntent();
     		this.breadcrumb = this.startingIntent.getStringExtra(getResources().getString(R.string.breadcrumb));
     		this.intentType = this.startingIntent.getIntExtra(getResources().getString(R.string.intentType),-1);
