@@ -82,6 +82,9 @@ public class BaseActivity extends Activity {
 	 							if (ApplicationManager.formScreenActivity!=null){
 	 								ApplicationManager.formScreenActivity.finish();
 	 							}
+	 							if (ApplicationManager.formSelectionActivity!=null){
+	 								ApplicationManager.formSelectionActivity.finish();
+	 							}
 	 							ApplicationManager.mainActivity.finish();						
 	 						}
 	 					},

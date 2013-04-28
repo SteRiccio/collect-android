@@ -79,6 +79,9 @@ public class BaseListActivity extends ListActivity {
 	 							if (ApplicationManager.recordSelectionActivity!=null){
 	 								ApplicationManager.recordSelectionActivity.finish();
 	 							}
+	 							if (ApplicationManager.formSelectionActivity!=null){
+	 								ApplicationManager.formSelectionActivity.finish();
+	 							}
 	 							ApplicationManager.mainActivity.finish();					
 	 						}
 	 					},

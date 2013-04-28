@@ -14,6 +14,10 @@
     <!-- dialogs -->
     <string name="exitAppTitle">Exiting&#8230;</string>    
     <string name="exitAppMessage">Do you want to exit?</string>
+    <string name="selectFormDefinitionTitle">Back to form definition selection&#8230;</string> 
+    <string name="selectFormDefinitionMessage">Do you want to go to form definition selection screen?</string>
+    <string name="loadFormDefinitionTitle">Loading form definition&#8230;</string>
+    <string name="loadFormDefinitionMessage">Form definition from /sdcard/test.idm.xml could not be loaded. Make sure that the file exists and contains correct form definition.</string>
     <string name="selectRootEntityTitle">Back to root entity selection&#8230;</string>    
     <string name="selectRootEntityMessage">Do you want to go to root entity selection screen?</string>
     <string name="selectRecordTitle">Back to record selection&#8230;</string>    
@@ -62,6 +66,7 @@
     <string name="exit">Exit</string>
     
     <string name="addNewRecord">Add new</string>
+    <string name="addNewSurvey">Add new survey from file /sdcard/test.idm.xml</string>
     
     
     <!-- settings screen -->
@@ -85,6 +90,7 @@
     <string name="clusterChoiceFailedBecauseNoDataSaved">No data saved in local database</string>
     <string name="clusterChoiceListLabel">Available records</string>
     <string name="rootEntityChoiceListLabel">Select root entity</string>
+    <string name="formChoiceListLabel">Select form definition</string>
     <string name="dataToUpload">Select data to upload</string>
     
     <!-- others -->

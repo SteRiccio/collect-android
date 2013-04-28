@@ -131,7 +131,7 @@ public class RootEntityChoiceActivity extends BaseListActivity{
 	
 	@Override
 	public void onBackPressed() {
-		AlertMessage.createPositiveNegativeDialog(RootEntityChoiceActivity.this, false, getResources().getDrawable(R.drawable.warningsign),
+		/*AlertMessage.createPositiveNegativeDialog(RootEntityChoiceActivity.this, false, getResources().getDrawable(R.drawable.warningsign),
 				getResources().getString(R.string.exitAppTitle), getResources().getString(R.string.exitAppMessage),
 				getResources().getString(R.string.yes), getResources().getString(R.string.no),
 	    		new DialogInterface.OnClickListener() {
@@ -147,7 +147,9 @@ public class RootEntityChoiceActivity extends BaseListActivity{
 						
 					}
 				},
-				null).show();
+				null).show();*/
+		setResult(getResources().getInteger(R.integer.backButtonPressed), new Intent());
+		RootEntityChoiceActivity.this.finish();
 	}
 	
     private void changeBackgroundColor(int backgroundColor){

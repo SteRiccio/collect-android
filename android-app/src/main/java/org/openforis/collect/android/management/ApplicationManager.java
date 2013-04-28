@@ -10,6 +10,7 @@ import org.openforis.collect.android.R;
 import org.openforis.collect.android.database.CollectDatabase;
 import org.openforis.collect.android.database.DatabaseWrapper;
 import org.openforis.collect.android.fields.UIElement;
+import org.openforis.collect.android.lists.FormChoiceActivity;
 import org.openforis.collect.android.lists.RecordChoiceActivity;
 import org.openforis.collect.android.lists.RootEntityChoiceActivity;
 import org.openforis.collect.android.messages.AlertMessage;
@@ -30,7 +31,6 @@ import org.openforis.idm.metamodel.EntityDefinition;
 import org.openforis.idm.metamodel.LanguageSpecificText;
 import org.openforis.idm.metamodel.NodeDefinition;
 import org.openforis.idm.metamodel.NodeLabel.Type;
-import org.openforis.idm.metamodel.Schema;
 import org.openforis.idm.metamodel.Survey;
 import org.openforis.idm.metamodel.validation.Validator;
 import org.openforis.idm.metamodel.xml.SurveyIdmlBinder;
@@ -57,10 +57,10 @@ public class ApplicationManager extends BaseActivity {
 	private static String sessionId;
 
 	private static UserManager userManager;
-	private static SurveyManager surveyManager;
+	public static SurveyManager surveyManager;
 	
 	private static CollectSurvey survey;
-	private static Schema schema;
+	//private static Schema schema;
 	private static User loggedInUser;
 	
 	//public static List<NodeDefinition> fieldsDefList;
@@ -84,6 +84,7 @@ public class ApplicationManager extends BaseActivity {
 	public static Activity rootEntitySelectionActivity;
 	public static Activity recordSelectionActivity;
 	public static Activity formScreenActivity;
+	public static Activity formSelectionActivity;
 	
 	private Thread creationThread = new Thread() {
 		@Override
@@ -150,8 +151,7 @@ public class ApplicationManager extends BaseActivity {
 	        	userManager.setRecordDao(new RecordDao());
 	        	
 	        	//reading form definition if it is not available in database
-	        	//survey = surveyManager.getSurveyDao().load("Archenland NFI");
-	        	survey = surveyManager.get("Archenland NFI");//default survey
+	        	/*survey = surveyManager.get("Archenland NFI");//default survey
 	        	if (survey==null){
 	            	long startTimeParsing = System.currentTimeMillis();
 	            	FileInputStream fis = new FileInputStream(sdcardPath+getResources().getString(R.string.formDefinitionFileTest));        	
@@ -173,7 +173,7 @@ public class ApplicationManager extends BaseActivity {
 	        		}
 	            	Log.e("parsingTIME","=="+(System.currentTimeMillis()-startTimeParsing));
 	        	}
-	        	schema = survey.getSchema();
+	        	schema = survey.getSchema();*/
 	        	//ApplicationManager.fieldsDefList = new ArrayList<NodeDefinition>();        	
 	        	//List<EntityDefinition> rootEntitiesDefsList = schema.getRootEntityDefinitions();
 	        	//getAllFormFields(rootEntitiesDefsList);
@@ -198,7 +198,8 @@ public class ApplicationManager extends BaseActivity {
 	            
 	            ApplicationManager.pd.dismiss();
 	            
-	            showRootEntitiesListScreen();	           	            
+	            //showRootEntitiesListScreen();
+	            showFormsListScreen();
 			} catch (Exception e) {
 				RunnableHandler.reportException(e,getResources().getString(R.string.app_name),TAG+":run",
 	    				Environment.getExternalStorageDirectory().toString()
@@ -423,7 +424,7 @@ public class ApplicationManager extends BaseActivity {
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {    	
 	    super.onActivityResult(requestCode, resultCode, data);
 	    try{
-	    	//Log.e("request="+requestCode,"result="+resultCode);
+	    	Log.e("request="+requestCode,"result="+resultCode);
 	 	    if (requestCode==getResources().getInteger(R.integer.clusterSelection)){
 	 	    	if (resultCode==getResources().getInteger(R.integer.clusterChoiceSuccessful)){//record was selected	 	    		
 	 	    		
@@ -443,13 +444,80 @@ public class ApplicationManager extends BaseActivity {
 	 	    		}
 	 	    		showFormRootScreen();
 	 	    	} else if (resultCode==getResources().getInteger(R.integer.backButtonPressed)){
-	 	    		showRootEntitiesListScreen();
+	 	    		if (ApplicationManager.getSurvey().getSchema().getRootEntityDefinitions().size()==1){
+	 	    			showFormsListScreen();
+	 	    		} else {
+	 	    			showRootEntitiesListScreen();	
+	 	    		}	 	    	
 	 	    	}
 	 	    } else if (requestCode==getResources().getInteger(R.integer.rootEntitySelection)){
 	 	    	if (resultCode==getResources().getInteger(R.integer.rootEntityChoiceSuccessful)){//root entity was selected	    	
 	 	    		ApplicationManager.currRootEntityId = data.getIntExtra(getResources().getString(R.string.rootEntityId), -1);
-	 	    		ApplicationManager.dataManager = new DataManager(survey,schema.getRootEntityDefinition(ApplicationManager.currRootEntityId).getName(),ApplicationManager.getLoggedInUser());
+	 	    		ApplicationManager.dataManager = new DataManager(survey,survey.getSchema().getRootEntityDefinition(ApplicationManager.currRootEntityId).getName(),ApplicationManager.getLoggedInUser());
 	 	    		showRecordsListScreen(ApplicationManager.currRootEntityId);	
+	 	    	} else if (resultCode==getResources().getInteger(R.integer.backButtonPressed)){
+	 	    		showFormsListScreen();
+	 	    	}
+	 	    } else if (requestCode==getResources().getInteger(R.integer.formDefinitionSelection)){
+	 	    	if (resultCode==getResources().getInteger(R.integer.formDefinitionChoiceSuccessful)){//form was selected
+	 	    		int formId = data.getIntExtra(getResources().getString(R.string.formId), -1);
+	 	    		Log.e("SELECTEDformID","=="+formId);
+	 	    		if (formId==-1){//new form to be added from file
+	 	    			try{
+		 	    			long startTimeParsing = System.currentTimeMillis();
+		 	    			//opening database connection
+			 	           	JdbcDaoSupport jdbcDao = new JdbcDaoSupport();
+			 	           	jdbcDao.getConnection();
+			 	           	
+		 	    			String sdcardPath = Environment.getExternalStorageDirectory().toString();
+		 	    			ExpressionFactory expressionFactory = new ExpressionFactory();
+		 		        	Validator validator = new Validator();
+		 		        	CollectSurveyContext collectSurveyContext = new CollectSurveyContext(expressionFactory, validator, null);
+			            	FileInputStream fis = new FileInputStream(sdcardPath+getResources().getString(R.string.formDefinitionFile));        	
+			            	SurveyIdmlBinder binder = new SurveyIdmlBinder(collectSurveyContext);
+			        		binder.addApplicationOptionsBinder(new UIOptionsBinder());
+			        		survey = (CollectSurvey) binder.unmarshal(fis);
+			        		List<LanguageSpecificText> projectNamesList = survey.getProjectNames();
+			        		if (projectNamesList.size()>0){
+			        			survey.setName(projectNamesList.get(0).getText());
+			        		} else {
+			        			survey.setName("defaultSurveyName");
+			        		}
+			        		Log.e("surveyToLoad","name=="+survey.getName());
+			        		CollectSurvey loadedSurvey = surveyManager.get(survey.getName());
+			        		Log.e("loadedSurvey==null","=="+(loadedSurvey==null));
+			        		if (loadedSurvey==null){
+				        		surveyManager.importModel(survey);
+			        		} else {
+			        			survey = loadedSurvey;
+			        		}
+			        		Log.e("survey==null","=="+(survey==null));
+			        		Log.e("survey","=="+(survey.getName()));
+			            	Log.e("parsingTIME","=="+(System.currentTimeMillis()-startTimeParsing));
+	 	    			} catch (Exception e){
+	 	    				Log.e("parsingEXCEPTION","===");
+	 	    				e.printStackTrace();
+	 	    				survey = null;
+	 	    			}
+		            	if (survey!=null)
+		            		showRootEntitiesListScreen();
+		            	else {
+		            		AlertMessage.createPositiveDialog(ApplicationManager.this, false, getResources().getDrawable(R.drawable.warningsign),
+				 					getResources().getString(R.string.loadFormDefinitionTitle), getResources().getString(R.string.loadFormDefinitionMessage),
+				 					getResources().getString(R.string.okay),
+				 		    		new DialogInterface.OnClickListener() {
+				 						@Override
+				 						public void onClick(DialogInterface dialog, int which) {
+				 							//ApplicationManager.this.finish();
+				 							showFormsListScreen();
+				 						}
+				 					},
+				 					null).show();	
+		            	}
+	 	    		} else {
+	 	    			survey = surveyManager.getById(formId);
+	 	    			showRootEntitiesListScreen();
+	 	    		}	 	    		
 	 	    	} else if (resultCode==getResources().getInteger(R.integer.backButtonPressed)){
 	 	    		ApplicationManager.this.finish();
 	 	    	}
@@ -459,12 +527,13 @@ public class ApplicationManager extends BaseActivity {
 				if (dataManager.loadSummaries().size()==0){
 		        	if (ApplicationManager.getSurvey().getSchema().getRootEntityDefinitions().size()==1){
 		        		AlertMessage.createPositiveNegativeDialog(ApplicationManager.this, false, getResources().getDrawable(R.drawable.warningsign),
-			 					getResources().getString(R.string.exitAppTitle), getResources().getString(R.string.exitAppMessage),
+			 					getResources().getString(R.string.selectFormDefinitionTitle), getResources().getString(R.string.selectFormDefinitionMessage),
 			 					getResources().getString(R.string.yes), getResources().getString(R.string.no),
 			 		    		new DialogInterface.OnClickListener() {
 			 						@Override
 			 						public void onClick(DialogInterface dialog, int which) {
-			 							ApplicationManager.this.finish();						
+			 							//ApplicationManager.this.finish();
+			 							showFormsListScreen();
 			 						}
 			 					},
 			 		    		new DialogInterface.OnClickListener() {
@@ -568,6 +637,7 @@ public class ApplicationManager extends BaseActivity {
     	ApplicationManager.rootEntitySelectionActivity = null;
     	ApplicationManager.recordSelectionActivity = null;
     	ApplicationManager.formScreenActivity = null;
+    	ApplicationManager.formSelectionActivity = null;
 	}
     
 	private boolean userExists(User user){
@@ -622,51 +692,22 @@ public class ApplicationManager extends BaseActivity {
 		this.startActivityForResult(new Intent(this, RootEntityChoiceActivity.class),getResources().getInteger(R.integer.rootEntitySelection));
 	}
 	
+	public void showFormsListScreen(){		
+		this.startActivityForResult(new Intent(this, FormChoiceActivity.class),getResources().getInteger(R.integer.formDefinitionSelection));
+	}
+	
 	public static NodeDefinition getNodeDefinition(int nodeId){
-		return schema.getDefinitionById(nodeId);
+		//return schema.getDefinitionById(nodeId);
+		return survey.getSchema().getDefinitionById(nodeId);
 	}
 	
     public static Survey getSurvey(){
-    	return survey;
+    	return ApplicationManager.survey;
     }
     
-    /*private void getAllFormFields(List<EntityDefinition> rootEntitiesDefsList){
-    	for (int i=0;i<rootEntitiesDefsList.size();i++){
-    		fieldsDefList.add(rootEntitiesDefsList.get(i));
-    		getFields(rootEntitiesDefsList.get(i).getChildDefinitions());
-    	}    	
-    	ApplicationManager.fieldsDefList = this.sortById(ApplicationManager.fieldsDefList);
+    public static void setSurvey(CollectSurvey collectSurvey){
+    	ApplicationManager.survey = collectSurvey;
     }
-    
-    private void getFields(List<NodeDefinition> childrenList){
-    	for (int i=0;i<childrenList.size();i++){
-    		NodeDefinition field = childrenList.get(i);
-    		//Log.e("field","=="+field.getName());
-    		ApplicationManager.fieldsDefList.add(field);
-    		if (field.getClass().equals(EntityDefinition.class)){
-    			EntityDefinition entityDef = (EntityDefinition) field;
-    			getFields(entityDef.getChildDefinitions());
-    		}
-    	}
-    }*/
-    
-	/*private List<NodeDefinition> sortById(List<NodeDefinition> nodes){
-		NodeDefinition[] nodesArray = new NodeDefinition[nodes.size()];
-		nodes.toArray(nodesArray);
-		List<NodeDefinition> nodesList = new ArrayList<NodeDefinition>();
-		for (int i=0;i<nodesArray.length;i++){
-			nodesList.add(nodesArray[i]);
-		}
-		Collections.sort(nodesList, new NodeIdComparator());
-		return nodesList;
-	}
-	
-	public class NodeIdComparator implements Comparator<NodeDefinition> {
-		@Override
-		public int compare(NodeDefinition lhs, NodeDefinition rhs) {				
-			return Integer.valueOf(lhs.getId()).compareTo(rhs.getId());//lhs.getId().compareTo(rhs.getId());
-		}
-	}*/
 	
 	public static UIElement getUIElement(int elementId){
 		return ApplicationManager.uiElementsMap.get(elementId);

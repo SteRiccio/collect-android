@@ -9,7 +9,6 @@ import org.openforis.collect.android.messages.ToastMessage;
 import org.openforis.collect.android.screens.FormScreen;
 import org.openforis.idm.metamodel.CodeAttributeDefinition;
 import org.openforis.idm.metamodel.CodeListItem;
-import org.openforis.idm.metamodel.CodeListLevel;
 import org.openforis.idm.metamodel.NodeDefinition;
 import org.openforis.idm.model.Code;
 import org.openforis.idm.model.CodeAttribute;
@@ -50,7 +49,7 @@ public class CodeField extends InputField {
 	
 	private static FormScreen form;
 	
-	private boolean selectedForTheFirstTime;
+//	private boolean selectedForTheFirstTime;
 	
 	private CodeAttributeDefinition codeAttrDef;
 	
@@ -69,7 +68,7 @@ public class CodeField extends InputField {
 		
 		CodeField.form = (FormScreen)context;
 		
-		this.selectedForTheFirstTime = true;
+		//this.selectedForTheFirstTime = true;
 		
 		this.label.setLayoutParams(new LayoutParams(0, ViewGroup.LayoutParams.WRAP_CONTENT, (float) 1));
 		this.label.setOnLongClickListener(new OnLongClickListener() {
@@ -119,11 +118,11 @@ public class CodeField extends InputField {
 				    		CodeField.this.setValue(0, CodeField.this.codes.get(CodeField.this.spinner.getSelectedItemPosition()),CodeField.form.getFormScreenId(),true);
 				    	}			    	
 				    	
-				    	if (!CodeField.this.selectedForTheFirstTime){
+				    	/*if (!CodeField.this.selectedForTheFirstTime){
 							
 				    	} else {
 				    		CodeField.this.selectedForTheFirstTime = false;
-				    	}
+				    	}*/
 				    }
 
 				    @Override

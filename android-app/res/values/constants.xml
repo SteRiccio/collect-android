@@ -10,18 +10,18 @@
     <integer name="field_height">64</integer>
     
     <!-- FILE SYSTEM -->
-    <string name="application_folder">/mofc</string>
-    <string name="data_folder">/mofc/data</string>
-    <string name="exported_data_folder">/mofc/data/exported</string>
-    <string name="imported_data_folder">/mofc/data/imported</string>
-    <string name="logs_folder">/mofc/logs</string>
+    <string name="application_folder">/ofcm</string>
+    <string name="data_folder">/ofcm/data</string>
+    <string name="exported_data_folder">/ofcm/data/exported</string>
+    <string name="imported_data_folder">/ofcm/data/imported</string>
+    <string name="logs_folder">/ofcm/logs</string>
     <string name="logs_file_name">/log_</string>
     <string name="log_file_extension">.txt</string>
-    <string name="backup_folder">/mofc/backups</string>
+    <string name="backup_folder">/ofcm/backups</string>
     <string name="formDefinitionFile">/test.idm.xml</string>
     <!--<string name="formDefinitionFile">/test.idm_petri.xml</string>-->
     
-    <string name="formDefinitionFileTest">/test.idm_petri.xml</string>
+    <string name="formDefinitionFileTest">/test.idm.grdemo.new.xml</string>
     
     <!-- PREFERENCES -->
     <string name="sleepTime">sleepTime</string>
@@ -52,7 +52,9 @@
     <!-- REQUEST CODES FOR ACTIVITIES -->
     <integer name="clusterSelection">789</integer>
     <integer name="rootEntitySelection">111</integer>
+    <integer name="formDefinitionSelection">101</integer>
     <integer name="clusterChoiceSuccessful">123</integer>
+    <integer name="formDefinitionChoiceSuccessful">202</integer>
     <integer name="rootEntityChoiceSuccessful">222</integer>
     <integer name="clusterChoiceFailed">456</integer>
     <integer name="startingFormScreen">1000</integer>
@@ -65,6 +67,7 @@
     <!-- INTENT EXTRAS -->
     <string name="recordId">recordId</string>
     <string name="rootEntityId">rootEntityId</string>
+    <string name="formId">formId</string>
     <string name="entityId">entityId</string>
     <string name="attributeId">attributeId</string>
     <string name="breadcrumbSeparator">-></string>

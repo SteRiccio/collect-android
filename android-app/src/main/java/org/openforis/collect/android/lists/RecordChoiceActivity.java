@@ -157,7 +157,7 @@ public class RecordChoiceActivity extends BaseListActivity implements OnItemLong
 		if ((recordsList.size()!=0) && (position<recordsList.size())){
 			final int number = position;
 			AlertMessage.createPositiveNegativeDialog(RecordChoiceActivity.this, false, getResources().getDrawable(R.drawable.warningsign),
-					getResources().getString(R.string.exitAppTitle), getResources().getString(R.string.deleteRecord),
+					getResources().getString(R.string.deleteRecordTitle), getResources().getString(R.string.deleteRecord),
 					getResources().getString(R.string.yes), getResources().getString(R.string.no),
 		    		new DialogInterface.OnClickListener() {
 						@Override
