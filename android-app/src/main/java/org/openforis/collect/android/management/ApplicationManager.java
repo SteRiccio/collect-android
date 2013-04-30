@@ -229,8 +229,8 @@ public class ApplicationManager extends BaseActivity {
         	
         	DatabaseAwareSpringLiquibase liquibase = new DatabaseAwareSpringLiquibase();
         	liquibase.setDataSource(bdSource);
-        	liquibase.setChangeLog("classpath:org/openforis/collect/db/changelog/db.changelog-master.xml");
-        	*/
+        	liquibase.setChangeLog("classpath:org/openforis/collect/db/changelog/db.changelog-master.xml");*/
+        	
         	
         	//creating database
 		    new DatabaseWrapper(ApplicationManager.this);

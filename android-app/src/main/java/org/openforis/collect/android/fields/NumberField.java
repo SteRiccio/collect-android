@@ -67,8 +67,9 @@ public class NumberField extends InputField {
 		    	//Get current settings about software keyboard for text fields
 		    	if(hasFocus){
 			    	if(this.getClass().toString().contains("NumberField")){
-				    	Map<String, ?> settings = ApplicationManager.appPreferences.getAll();
-				    	Boolean valueForNum = (Boolean)settings.get(getResources().getString(R.string.showSoftKeyboardOnNumericField));
+				    	//Map<String, ?> settings = ApplicationManager.appPreferences.getAll();
+				    	//Boolean valueForNum = (Boolean)settings.get(getResources().getString(R.string.showSoftKeyboardOnNumericField));
+				    	boolean valueForNum = ApplicationManager.appPreferences.getBoolean(getResources().getString(R.string.showSoftKeyboardOnNumericField), false);
 				    	//Switch on or off Software keyboard depend of settings
 				    	if(valueForNum){
 				    		Log.i(getResources().getString(R.string.app_name), "Setting numeric field is: " + valueForNum);

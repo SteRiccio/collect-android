@@ -1,7 +1,5 @@
 package org.openforis.collect.android.fields;
 
-import java.util.Map;
-
 import org.openforis.collect.android.R;
 import org.openforis.collect.android.management.ApplicationManager;
 import org.openforis.collect.android.messages.ToastMessage;
@@ -44,8 +42,8 @@ public class MemoField extends InputField {
 	        public void onFocusChange(View v, boolean hasFocus) {
 	            if (hasFocus) {
 	            	
-			    	Map<String, ?> settings = ApplicationManager.appPreferences.getAll();
-			    	Boolean valueForText = (Boolean)settings.get(getResources().getString(R.string.showSoftKeyboardOnTextField));
+			    	//Map<String, ?> settings = ApplicationManager.appPreferences.getAll();
+			    	//Boolean valueForText = (Boolean)settings.get(getResources().getString(R.string.showSoftKeyboardOnTextField));
 	            	
 	            	//Create dialog for Memo
 	            	final EditText input = new EditText(MemoField.this.getContext());
@@ -67,6 +65,7 @@ public class MemoField extends InputField {
 	                    }
 	                }).show();
 	            	
+	            	boolean valueForText = ApplicationManager.appPreferences.getBoolean(getResources().getString(R.string.showSoftKeyboardOnTextField), false);
 			    	if(valueForText){
 			    		input.setKeyListener(new QwertyKeyListener(TextKeyListener.Capitalize.NONE, false));
 			    		dialog.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE);

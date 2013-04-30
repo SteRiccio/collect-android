@@ -28,6 +28,7 @@ import org.openforis.idm.model.Value;
 import android.content.Context;
 import android.graphics.Color;
 import android.text.Html;
+import android.util.Log;
 import android.view.ViewGroup;
 import android.widget.TableLayout;
 import android.widget.TableRow;
@@ -57,7 +58,7 @@ public class SummaryList extends UIElement {
 		this.tableLayout.setPadding(5, 10, 5, 10);
 		
 		this.entityDefinition = entityDef;
-		
+		//Log.e("entityDef",this.entityDefinition.getName()+"=="+this.instanceNo);
 		TextView titleView = new TextView(context);
 		if (this.entityDefinition.isMultiple())
 			titleView.setText(this.label.getText()+" "+(this.instanceNo+1));

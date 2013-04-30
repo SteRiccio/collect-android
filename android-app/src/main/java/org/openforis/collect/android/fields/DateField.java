@@ -1,6 +1,5 @@
 package org.openforis.collect.android.fields;
 
-import java.util.Map;
 import java.util.Random;
 
 import org.openforis.collect.android.R;
@@ -53,8 +52,9 @@ public class DateField extends InputField {
 		    	//Get current settings about software keyboard for text fields
 		    	if(hasFocus){
 			    	if(this.getClass().toString().contains("DateField")){
-				    	Map<String, ?> settings = ApplicationManager.appPreferences.getAll();
-				    	Boolean valueForNum = (Boolean)settings.get(getResources().getString(R.string.showSoftKeyboardOnNumericField));
+				    	//Map<String, ?> settings = ApplicationManager.appPreferences.getAll();
+				    	//Boolean valueForNum = (Boolean)settings.get(getResources().getString(R.string.showSoftKeyboardOnNumericField));
+			    		boolean valueForNum = ApplicationManager.appPreferences.getBoolean(getResources().getString(R.string.showSoftKeyboardOnNumericField), false);
 				    	//Switch on or off Software keyboard depend of settings
 				    	if(valueForNum){
 				    		DateField.this.makeReal();			    		

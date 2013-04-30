@@ -1,7 +1,5 @@
 package org.openforis.collect.android.fields;
 
-import java.util.Map;
-
 import org.openforis.collect.android.R;
 import org.openforis.collect.android.management.ApplicationManager;
 import org.openforis.collect.android.messages.ToastMessage;
@@ -51,8 +49,9 @@ public class RangeField extends InputField {
 		    	//Get current settings about software keyboard for text fields
 		    	if(hasFocus){
 			    	if(this.getClass().toString().contains("RangeField")){
-				    	Map<String, ?> settings = ApplicationManager.appPreferences.getAll();
-				    	Boolean valueForNum = (Boolean)settings.get(getResources().getString(R.string.showSoftKeyboardOnNumericField));
+				    	//Map<String, ?> settings = ApplicationManager.appPreferences.getAll();
+				    	//Boolean valueForNum = (Boolean)settings.get(getResources().getString(R.string.showSoftKeyboardOnNumericField));
+			    		boolean valueForNum = ApplicationManager.appPreferences.getBoolean(getResources().getString(R.string.showSoftKeyboardOnNumericField), false);
 				    	//Switch on or off Software keyboard depend of settings
 				    	if(valueForNum){
 				    		RangeField.this.makeReal();			    		

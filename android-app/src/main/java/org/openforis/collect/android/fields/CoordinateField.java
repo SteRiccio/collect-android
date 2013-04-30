@@ -70,8 +70,9 @@ public class CoordinateField extends InputField implements OnClickListener {
 			public void onFocusChange(View v, boolean hasFocus) {
 		    	//Get current settings about software keyboard for numeric fields
 		    	if(hasFocus){
-			    	Map<String, ?> settings = ApplicationManager.appPreferences.getAll();
-			    	Boolean valueForNum = (Boolean)settings.get(getResources().getString(R.string.showSoftKeyboardOnNumericField));
+			    	//Map<String, ?> settings = ApplicationManager.appPreferences.getAll();
+			    	//Boolean valueForNum = (Boolean)settings.get(getResources().getString(R.string.showSoftKeyboardOnNumericField));
+			    	boolean valueForNum = ApplicationManager.appPreferences.getBoolean(getResources().getString(R.string.showSoftKeyboardOnNumericField), false);
 			    	//Switch on or off Software keyboard depend of settings
 			    	if(valueForNum){	
 			    		txtLongitude.setKeyListener(new DigitsKeyListener(true,true));

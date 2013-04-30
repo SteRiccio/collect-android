@@ -295,14 +295,16 @@ public class CodeField extends InputField {
 			if (!isSelectionChanged)
 				this.txtBox.setText(code);
 		}
-
-		Node<? extends NodeDefinition> node = this.findParentEntity(path).get(this.nodeDefinition.getName(), position);
-		if (node!=null){
-			CodeAttribute codeAtr = (CodeAttribute)node;
-			codeAtr.setValue(new Code(code));
-		} else {
-			EntityBuilder.addValue(this.findParentEntity(path), this.nodeDefinition.getName(), new Code(code), position);	
-		}
+		
+		if (code!=null && code!="null"){
+			Node<? extends NodeDefinition> node = this.findParentEntity(path).get(this.nodeDefinition.getName(), position);
+			if (node!=null){
+				CodeAttribute codeAtr = (CodeAttribute)node;
+				codeAtr.setValue(new Code(code));
+			} else {
+				EntityBuilder.addValue(this.findParentEntity(path), this.nodeDefinition.getName(), new Code(code), position);	
+			}	
+		}		
 	}
 	
 	@Override
