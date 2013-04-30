@@ -2,6 +2,7 @@ package org.openforis.collect.android.management;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -83,7 +84,7 @@ public class ApplicationManager extends BaseActivity {
 	public static Activity mainActivity;
 	public static Activity rootEntitySelectionActivity;
 	public static Activity recordSelectionActivity;
-	public static Activity formScreenActivity;
+	public static List<Activity> formScreenActivityList;
 	public static Activity formSelectionActivity;
 	
 	private Thread creationThread = new Thread() {
@@ -636,7 +637,7 @@ public class ApplicationManager extends BaseActivity {
     	ApplicationManager.mainActivity = this;
     	ApplicationManager.rootEntitySelectionActivity = null;
     	ApplicationManager.recordSelectionActivity = null;
-    	ApplicationManager.formScreenActivity = null;
+    	ApplicationManager.formScreenActivityList = new ArrayList<Activity>();
     	ApplicationManager.formSelectionActivity = null;
 	}
     

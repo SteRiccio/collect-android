@@ -106,29 +106,23 @@ public class SettingsScreen extends Activity{
 		    });
             
             this.tvLanguage = (TextView)findViewById(R.id.lblLanguage);
-            this.spinLanguage = (Spinner) findViewById(R.id.languageSpinner);            
-            List<String> languageList = ApplicationManager.getSurvey().getLanguages();
-            this.languageAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item, languageList);
-        	this.languageAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        	this.spinLanguage.setAdapter(this.languageAdapter);
-        	this.spinLanguage.setOnItemSelectedListener(new OnItemSelectedListener() {
-			    @Override
-			    public void onItemSelected(AdapterView<?> parentView, View selectedItemView, int position, long id) {
-			    	SharedPreferences.Editor editor = ApplicationManager.appPreferences.edit();
-			    	String language = spinLanguage.getAdapter().getItem(position).toString();
-    				editor.putString(getResources().getString(R.string.selectedLanguage), language);
-    				editor.commit();
-    				ApplicationManager.selectedLanguage = language;
-			    }
+            this.spinLanguage = (Spinner) findViewById(R.id.languageSpinner);  
+         	this.spinLanguage.setOnItemSelectedListener(new OnItemSelectedListener() {
+ 			    @Override
+ 			    public void onItemSelected(AdapterView<?> parentView, View selectedItemView, int position, long id) {
+ 			    	SharedPreferences.Editor editor = ApplicationManager.appPreferences.edit();
+ 			    	String language = spinLanguage.getAdapter().getItem(position).toString();
+     				editor.putString(getResources().getString(R.string.selectedLanguage), language);
+     				editor.commit();
+     				ApplicationManager.selectedLanguage = language;
+ 			    }
 
-			    @Override
-			    public void onNothingSelected(AdapterView<?> parentView) {
-			    	
-			    }
+ 			    @Override
+ 			    public void onNothingSelected(AdapterView<?> parentView) {
+ 			    	
+ 			    }
 
-			});
-        	
-
+ 			});
         } catch (Exception e){
     		RunnableHandler.reportException(e,getResources().getString(R.string.app_name),TAG+":onCreate",
     				Environment.getExternalStorageDirectory().toString()
@@ -148,14 +142,23 @@ public class SettingsScreen extends Activity{
 		int backgroundColor = ApplicationManager.appPreferences.getInt(getResources().getString(R.string.backgroundColor), Color.WHITE);
 		this.chckWhiteBackground.setChecked((backgroundColor==Color.WHITE)?true:false);		
 		changeBackgroundColor(backgroundColor);
+		if (ApplicationManager.getSurvey()!=null){
+        	List<String> languageList = ApplicationManager.getSurvey().getLanguages();
+            this.languageAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item, languageList);
+         	this.languageAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+         	this.spinLanguage.setAdapter(this.languageAdapter);
+         	String language = ApplicationManager.appPreferences.getString(getResources().getString(R.string.selectedLanguage), getResources().getString(R.string.defaultLanguage));
+    		for (int i=0;i<this.languageAdapter.getCount();i++){
+    			if (this.languageAdapter.getItem(i).equals(language)){
+    				this.spinLanguage.setSelection(i);
+    				break;
+    			}
+    		}
+        } else {
+        	this.tvLanguage.setVisibility(View.GONE);
+        	this.spinLanguage.setVisibility(View.GONE);
+        }
 		
-		String language = ApplicationManager.appPreferences.getString(getResources().getString(R.string.selectedLanguage), getResources().getString(R.string.defaultLanguage));
-		for (int i=0;i<this.languageAdapter.getCount();i++){
-			if (this.languageAdapter.getItem(i).equals(language)){
-				this.spinLanguage.setSelection(i);
-				break;
-			}
-		}
 	}
     
     private void changeBackgroundColor(int backgroundColor){

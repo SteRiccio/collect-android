@@ -91,7 +91,9 @@
     <string name="clusterChoiceListLabel">Available records</string>
     <string name="rootEntityChoiceListLabel">Select root entity</string>
     <string name="formChoiceListLabel">Select form definition</string>
-    <string name="dataToUpload">Select data to upload</string>
+    <string name="dataToUpload">Select files to upload</string>
+    <string name="noDataToUpload">No XML files exist in the application folder: </string>
+    <string name="dataToUplaodColumnHeaders">Upload   Overwrite </string>
     
     <!-- others -->
     <string name="entityMarker">[]</string>

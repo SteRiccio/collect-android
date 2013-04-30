@@ -79,8 +79,10 @@ public class BaseActivity extends Activity {
 	 							if (ApplicationManager.recordSelectionActivity!=null){
 	 								ApplicationManager.recordSelectionActivity.finish();
 	 							}
-	 							if (ApplicationManager.formScreenActivity!=null){
-	 								ApplicationManager.formScreenActivity.finish();
+	 							if (ApplicationManager.formScreenActivityList!=null){
+	 								for (Activity formScreenActivity : ApplicationManager.formScreenActivityList){
+	 									formScreenActivity.finish();
+	 								}
 	 							}
 	 							if (ApplicationManager.formSelectionActivity!=null){
 	 								ApplicationManager.formSelectionActivity.finish();

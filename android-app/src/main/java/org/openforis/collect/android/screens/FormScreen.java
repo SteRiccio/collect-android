@@ -100,7 +100,7 @@ public class FormScreen extends BaseActivity implements OnClickListener {
         try{
         	Log.i(getResources().getString(R.string.app_name),TAG+":onCreate");
     		
-        	ApplicationManager.formScreenActivity = this;
+        	ApplicationManager.formScreenActivityList.add(this);
         	
     		this.startingIntent = getIntent();
     		this.breadcrumb = this.startingIntent.getStringExtra(getResources().getString(R.string.breadcrumb));
@@ -173,13 +173,7 @@ public class FormScreen extends BaseActivity implements OnClickListener {
     			if (nodeDef instanceof EntityDefinition){
     				if (ApplicationManager.currentRecord.getRootEntity().getId()!=nodeDef.getId()){
         				Node<?> foundNode = this.parentEntitySingleAttribute.get(nodeDef.getName(), this.currInstanceNo);
-        				if (foundNode!=null){
-        					Log.e("foundNode",foundNode.getName()+"==");
-        					Log.e("path",this.currInstanceNo+"=="+this.getFormScreenId());
-        				}
         				if (foundNode==null){
-        					Log.e("addingEntityRESUME",this.parentEntitySingleAttribute.getName()+"=="+ApplicationManager.getSurvey().getSchema().getDefinitionById(nodeDef.getId()).getName());
-        					Log.e("path",this.currInstanceNo+"=="+this.getFormScreenId());
         					EntityBuilder.addEntity(this.parentEntitySingleAttribute, ApplicationManager.getSurvey().getSchema().getDefinitionById(nodeDef.getId()).getName(), 0);
         				}
     				}
@@ -1142,8 +1136,6 @@ public class FormScreen extends BaseActivity implements OnClickListener {
 		if (parentEntity==null){
 			String path = this.getFormScreenId().substring(0,this.getFormScreenId().lastIndexOf(getResources().getString(R.string.valuesSeparator2)));
 			parentEntity = this.findParentEntity(path);
-			Log.e("addingEntity2",parentEntity.getName()+"=="+ApplicationManager.getSurvey().getSchema().getDefinitionById(this.idmlId).getName());
-			Log.e("path2",this.currInstanceNo+"=="+this.getFormScreenId());
 			EntityBuilder.addEntity(parentEntity, ApplicationManager.getSurvey().getSchema().getDefinitionById(this.idmlId).getName());
 			parentEntity = this.findParentEntity(this.getFormScreenId());
 		}
@@ -1164,11 +1156,8 @@ public class FormScreen extends BaseActivity implements OnClickListener {
 			NodeDefinition nodeDef = ApplicationManager.getNodeDefinition(this.startingIntent.getIntExtra(getResources().getString(R.string.attributeId)+i, -1));
 			if (nodeDef instanceof EntityDefinition){
 				if (ApplicationManager.currentRecord.getRootEntity().getId()!=nodeDef.getId()){
-					Log.e("przedAddingEntity3","=="+this.currInstanceNo);
     				Node<?> foundNode = this.parentEntitySingleAttribute.get(nodeDef.getName(), 0/*this.currInstanceNo*/);
     				if (foundNode==null){
-    					Log.e("addingEntity3",this.parentEntitySingleAttribute.getName()+"=="+ApplicationManager.getSurvey().getSchema().getDefinitionById(nodeDef.getId()).getName());
-    					Log.e("path3",this.currInstanceNo+"=="+this.getFormScreenId());
     					EntityBuilder.addEntity(this.parentEntitySingleAttribute, ApplicationManager.getSurvey().getSchema().getDefinitionById(nodeDef.getId()).getName()/*, this.currInstanceNo*/);
     				}
 				}

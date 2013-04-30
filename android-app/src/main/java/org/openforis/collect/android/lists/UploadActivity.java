@@ -40,6 +40,7 @@ public class UploadActivity extends BaseListActivity{
 	private static final String TAG = "UploadActivity";
 
 	private TextView activityLabel;
+	private TextView columnLabel;
 	
 	private ArrayAdapter<String> adapter;
 	
@@ -62,8 +63,11 @@ public class UploadActivity extends BaseListActivity{
         setContentView(R.layout.uploadactivity);
         try{
         	if (isNetworkAvailable()){
-        		this.activityLabel = (TextView)findViewById(R.id.lblList);
+        		this.activityLabel = (TextView)findViewById(R.id.lblList);        		
             	this.activityLabel.setText(getResources().getString(R.string.dataToUpload));
+            	
+            	this.columnLabel = (TextView)findViewById(R.id.lblHeaders);
+            	this.columnLabel.setText(getResources().getString(R.string.dataToUplaodColumnHeaders));
             	
             	this.lv = getListView();
             	
@@ -149,7 +153,9 @@ public class UploadActivity extends BaseListActivity{
 	        filesList[i] = inFile.getName();
 	        this.selections[i] = false;
 		}
-		
+		if (filesNo==0){
+			this.activityLabel.setText(getResources().getString(R.string.noDataToUpload)+" "+getResources().getString(R.string.exported_data_folder));
+		}
 		//int layout = (backgroundColor!=Color.WHITE)?R.layout.selectableitem_white:R.layout.selectableitem_black;
 		int layout = (backgroundColor!=Color.WHITE)?R.layout.upload_list_item_white:R.layout.upload_list_item_black;
 		//this.adapter = new ArrayAdapter<String>(this,layout,filesList);
@@ -157,11 +163,11 @@ public class UploadActivity extends BaseListActivity{
 		this.setListAdapter(this.adapter);
     }
     
-    @Override
+    /*@Override
 	protected void onListItemClick(ListView l, View v, int position, long id) {
 		super.onListItemClick(l, v, position, id);
 		Log.i(getResources().getString(R.string.app_name),TAG+":onListItemClick");
-	}
+	}*/
     
 	@Override
     public boolean onKeyDown(int keyCode, KeyEvent event)  {
@@ -181,6 +187,7 @@ public class UploadActivity extends BaseListActivity{
     private void changeBackgroundColor(int backgroundColor){
 		getWindow().setBackgroundDrawable(new ColorDrawable(backgroundColor));
 		this.activityLabel.setTextColor((backgroundColor!=Color.WHITE)?Color.WHITE:Color.BLACK);
+		this.columnLabel.setTextColor((backgroundColor!=Color.WHITE)?Color.WHITE:Color.BLACK);
     }
     
     /*public void postData(String sendData) {
@@ -217,7 +224,6 @@ public class UploadActivity extends BaseListActivity{
         	}
         	sb.append(line).append("\n");
         }
-        //Log.e("koniec","=="+sb.toString().substring(sb.length()-20,sb.length()-1));
         return sb.toString();
     }
 
@@ -255,7 +261,7 @@ public class UploadActivity extends BaseListActivity{
          * view.
          */
         protected void onPostExecute(Object objResult) {
-        	Log.e("zakonczono","egzekucje"+objResult);
+        	Log.e("onPostExecute","=="+objResult);
         	filesCount--;
 
             if(objResult != null && objResult instanceof String) {
