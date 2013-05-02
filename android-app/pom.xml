@@ -33,6 +33,18 @@
 			<scope>provided</scope>
 		</dependency>
 		<dependency>
+		    <groupId>org.sqldroid</groupId>
+		    <artifactId>sqld</artifactId>
+		    <version>1.0</version>
+		    <scope>system</scope>
+		    <systemPath>${project.basedir}/lib/sqldroid-android-1.0.jar</systemPath>
+		</dependency>
+		<dependency>
+			<groupId>com.google.android</groupId>
+			<artifactId>support-v4</artifactId>
+			<version>r7</version>
+		</dependency>
+		<dependency>
 			<groupId>org.openforis.collect</groupId>
 			<artifactId>collect-core</artifactId>
 			<!--<version>3.0-Alpha5-SNAPSHOT</version>-->
@@ -118,9 +130,9 @@
 			</exclusions>
 		</dependency>
 		<dependency>
-			<groupId>org.jooq</groupId>
+			<groupId>org.openforis.collect.android</groupId>
 			<artifactId>collect-android-jooq</artifactId>
-			<version>2.6.0-SNAPSHOT</version>
+			<version>3.0-SNAPSHOT</version>
 		</dependency>
 	    <dependency>
 			<groupId>org.sqldroid</groupId>
@@ -134,6 +146,13 @@
 			<artifactId>collect-android-spring</artifactId>
 			<version>1.0-SNAPSHOT</version>
 		</dependency>
+		<dependency>
+			<groupId>junit</groupId>
+			<artifactId>junit</artifactId>
+			<version>3.8.2</version>
+			<type>jar</type>
+			<scope>test</scope>
+	    </dependency>
 	</dependencies>
 	
 	<build>
@@ -167,4 +186,18 @@
 			</plugin>
 		</plugins> 
 	</build>
+	
+	<repositories>
+		<repository>
+			<id>openforis-releases-repository</id>
+			<name>Open Foris Repository</name>
+			<url>http://www.openforis.org/nexus/content/repositories/releases/</url>
+		</repository>
+		<repository>
+			<id>openforis-snapshots-repository</id>
+			<name>Open Foris Snapshots Repository</name>
+			<url>http://www.openforis.org/nexus/content/repositories/snapshots/</url>
+		</repository>
+	</repositories>
+	
 </project>

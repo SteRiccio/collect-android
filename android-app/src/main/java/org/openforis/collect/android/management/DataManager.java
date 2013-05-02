@@ -152,9 +152,9 @@ public class DataManager {
 			JdbcDaoSupport.close();
 		} catch (NullPointerException e){
 			e.printStackTrace();
-		} catch (RecordPersistenceException e) {
+		} /*catch (RecordPersistenceException e) {
 			e.printStackTrace();
-		}
+		}*/
 		Log.e("record"+recordId,"LOADED IN "+(System.currentTimeMillis()-startTime)/1000+"s");
 		return loadedRecord;
 	}
