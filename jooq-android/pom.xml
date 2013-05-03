@@ -91,12 +91,12 @@
         <dependency>
         	<groupId>org.openforis.collect.android</groupId>
         	<artifactId>collect-android-jpa</artifactId>
-        	<version>3.0-SNAPSHOT</version>
+        	<version>${project.version}</version>
         </dependency>
         <dependency>
         	<groupId>org.openforis.collect.android</groupId>
         	<artifactId>collect-android-jaxb</artifactId>
-        	<version>3.0-SNAPSHOT</version>
+        	<version>${project.version}</version>
         </dependency>
     </dependencies>
 </project>
