@@ -1,6 +1,7 @@
 package org.openforis.collect.android.management;
 
 import org.openforis.collect.android.R;
+import org.openforis.collect.android.lists.DownloadActivity;
 import org.openforis.collect.android.lists.UploadActivity;
 import org.openforis.collect.android.messages.AlertMessage;
 import org.openforis.collect.android.misc.RunnableHandler;
@@ -96,6 +97,9 @@ public class BaseListActivity extends ListActivity {
 			case R.id.menu_upload:
 				startActivity(new Intent(BaseListActivity.this, UploadActivity.class));
 			    return true;
+			case R.id.menu_download:
+				startActivity(new Intent(BaseListActivity.this, DownloadActivity.class));
+			    return true;        
 			case R.id.menu_settings:
 				startActivity(new Intent(BaseListActivity.this, SettingsScreen.class));
 			    return true;			    
@@ -106,13 +110,19 @@ public class BaseListActivity extends ListActivity {
 				} catch (NameNotFoundException e) {
 					versionName = "";
 				}
-				AlertMessage.createPositiveDialog(BaseListActivity.this, true, null,
-						getResources().getString(R.string.aboutTabTitle), 
-						getResources().getString(R.string.lblApplicationName)+getResources().getString(R.string.app_name)
+				String about = getResources().getString(R.string.lblApplicationName)+getResources().getString(R.string.app_name)
 						+"\n"
 						+getResources().getString(R.string.lblProgramVersionName)+versionName
-						+"\n"
-						+getResources().getString(R.string.lblFormVersionName)+ApplicationManager.getSurvey().getProjectName(null)+" "+ApplicationManager.getSurvey().getVersions().get(ApplicationManager.getSurvey().getVersions().size()-1).getName(),
+						+"\n";
+				if (ApplicationManager.getSurvey()!=null){
+					String formVersionName = ApplicationManager.getSurvey().getProjectName(null)+" "+ApplicationManager.getSurvey().getVersions().get(ApplicationManager.getSurvey().getVersions().size()-1).getName();
+					if (formVersionName!=null){
+						about+= getResources().getString(R.string.lblFormVersionName)+formVersionName;
+					}	
+				}				
+				AlertMessage.createPositiveDialog(BaseListActivity.this, true, null,
+						getResources().getString(R.string.aboutTabTitle), 
+						about,
 							getResources().getString(R.string.okay),
 				    		new DialogInterface.OnClickListener() {
 								@Override

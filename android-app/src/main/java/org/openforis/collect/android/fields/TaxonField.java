@@ -18,14 +18,19 @@ import android.content.Intent;
 import android.graphics.Color;
 import android.text.Editable;
 import android.text.InputType;
+import android.text.TextWatcher;
 import android.text.method.QwertyKeyListener;
 import android.text.method.TextKeyListener;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemSelectedListener;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
+import android.widget.Spinner;
 import android.widget.TextView;
 
 public class TaxonField extends InputField {
@@ -39,7 +44,11 @@ public class TaxonField extends InputField {
 	private EditText txtCodes; //Code
 	private EditText txtSciName; //Scientific name
 	private EditText txtVernacularName; //Vernacular names
-	private EditText txtVernacularLang; //List of vernacular languages
+	//private EditText txtVernacularLang; //List of vernacular languages
+	private ArrayAdapter<String> aa;
+	private Spinner spinner;
+	ArrayList<String> options;
+	ArrayList<String> codes;
 	private EditText txtLangVariant; //Language variant
 	
 	private Button btnSearchByCode;
@@ -48,6 +57,8 @@ public class TaxonField extends InputField {
 	
 	boolean searchable;
 	private static FormScreen form;
+	
+	private final String[] languageCodes = {"acm", "Mesopotamian Arabic", "afr", "Afrikaans", "ara", "Arabic", "arz", "Egyptian Arabic", "bel", "Belarusian", "ben", "Bengali", "bos", "Bosnian", "bre", "Breton", "bul", "Bulgarian", "cat", "Catalan", "ces", "Czech", "cha", "Chamorro", "cmn", "Mandarin Chinese", "dan", "Danish", "deu", "German", "ell", "Modern Greek (1453-)", "eng", "English", "epo", "Esperanto", "est", "Estonian", "eus", "Basque", "fao", "Faroese", "fin", "Finnish", "fra", "French", "fry", "Western Frisian", "gle", "Irish", "glg", "Galician", "heb", "Hebrew", "hin", "Hindi", "hrv", "Croatian", "hun", "Hungarian", "hye", "Armenian", "ina", "Interlingua (International Auxiliary Language Association)", "ind", "Indonesian", "isl", "Icelandic", "ita", "Italian", "jbo", "Lojban", "kat", "Georgian", "kaz", "Kazakh", "kor", "Korean", "lat", "Latin", "lit", "Lithuanian", "lvs", "Standard Latvian", "lzh", "Literary Chinese", "mal", "Malayalam", "mon", "Mongolian", "nan", "Min Nan Chinese", "nds", "Low German", "nld", "Dutch", "nob", "Norwegian Bokmål", "non", "Old Norse", "orv", "Old Russian", "oss", "Ossetian", "pes", "Iranian Persian", "pol", "Polish", "por", "Portuguese", "que", "Quechua", "roh", "Romansh", "ron", "Romanian", "rus", "Russian", "scn", "Sicilian", "slk", "Slovak", "slv", "Slovenian", "spa", "Spanish", "sqi", "Albanian", "srp", "Serbian", "swe", "Swedish", "swh", "Swahili (individual language)", "tat", "Tatar", "tgl", "Tagalog", "tha", "Thai", "tlh", "Klingon", "tur", "Turkish", "uig", "Uighur", "ukr", "Ukrainian", "urd", "Urdu", "uzb", "Uzbek", "vie", "Vietnamese", "vol", "Volapük", "wuu", "Wu Chinese", "yid", "Yiddish", "yue", "Yue Chinese", "zsm", "Standard Malay"};
 	
 	public TaxonField(Context context, NodeDefinition nodeDef, 
 			ArrayList<String> codes, ArrayList<String> options, 
@@ -91,6 +102,18 @@ public class TaxonField extends InputField {
 		    	}
 		    }
 	    });	
+		this.txtCodes.addTextChangedListener(new TextWatcher(){
+			public void afterTextChanged(Editable s) {}
+			public void beforeTextChanged(CharSequence s, int start,  int count, int after) {}				 
+			public void onTextChanged(CharSequence s, int start, int before, int count) {
+				TaxonField.this.setValue(0, s.toString(), 
+						TaxonField.this.txtSciName.getText().toString(), 
+						TaxonField.this.txtVernacularName.getText().toString(), 
+						TaxonField.this.languageCodes[getVernacularLanguageCodeIndex(TaxonField.this.spinner.getSelectedItemPosition())-1]/*TaxonField.this.txtVernacularLang.getText().toString()*/, 
+						TaxonField.this.txtLangVariant.getText().toString(),
+						TaxonField.form.getFormScreenId(),true);
+			}	
+		});
 		//Button "Search By Code"
 		this.btnSearchByCode = new Button(context);
 		this.btnSearchByCode.setText("Search");
@@ -105,7 +128,7 @@ public class TaxonField extends InputField {
 				tempValue.add(TaxonField.this.txtCodes.getText().toString());
 				tempValue.add(TaxonField.this.txtSciName.getText().toString());
 				tempValue.add(TaxonField.this.txtVernacularName.getText().toString());
-				tempValue.add(TaxonField.this.txtVernacularLang.getText().toString());
+				tempValue.add(TaxonField.this.languageCodes[getVernacularLanguageCodeIndex(TaxonField.this.spinner.getSelectedItemPosition())-1]/*TaxonField.this.txtVernacularLang.getText().toString()*/);
 				tempValue.add(TaxonField.this.txtLangVariant.getText().toString());
 				//Check the value is not empty  and Run SearchTaxon activity
 				//TODO: in future validator should check it
@@ -114,7 +137,8 @@ public class TaxonField extends InputField {
 				else
 					Log.i(getResources().getString(R.string.app_name), "Value of Code field is EMPTY!!!! ");
 			}
-		});		
+		});
+		this.btnSearchByCode.setVisibility(View.GONE);
 		
 		//Create layout and add input field "Code" into there
 		LinearLayout codeLL = new LinearLayout(context);		
@@ -158,7 +182,19 @@ public class TaxonField extends InputField {
 			    	}
 		    	}
 		    }
-	    });		
+	    });	
+		this.txtSciName.addTextChangedListener(new TextWatcher(){
+			public void afterTextChanged(Editable s) {}
+			public void beforeTextChanged(CharSequence s, int start,  int count, int after) {}				 
+			public void onTextChanged(CharSequence s, int start, int before, int count) {
+				TaxonField.this.setValue(0, TaxonField.this.txtCodes.getText().toString(), 
+						s.toString(), 
+						TaxonField.this.txtVernacularName.getText().toString(), 
+						TaxonField.this.languageCodes[getVernacularLanguageCodeIndex(TaxonField.this.spinner.getSelectedItemPosition())-1]/*TaxonField.this.txtVernacularLang.getText().toString()*/, 
+						TaxonField.this.txtLangVariant.getText().toString(),
+						TaxonField.form.getFormScreenId(),true);
+			}	
+		});
 		//Button "Search By Scientific names"
 		this.btnSearchBySciName = new Button(context);
 		this.btnSearchBySciName.setText("Search");
@@ -173,7 +209,7 @@ public class TaxonField extends InputField {
 				tempValue.add(TaxonField.this.txtCodes.getText().toString());
 				tempValue.add(TaxonField.this.txtSciName.getText().toString());
 				tempValue.add(TaxonField.this.txtVernacularName.getText().toString());
-				tempValue.add(TaxonField.this.txtVernacularLang.getText().toString());
+				tempValue.add(TaxonField.this.languageCodes[getVernacularLanguageCodeIndex(TaxonField.this.spinner.getSelectedItemPosition())-1]/*TaxonField.this.txtVernacularLang.getText().toString()*/);
 				tempValue.add(TaxonField.this.txtLangVariant.getText().toString());
 				//Check the value is not empty  and Run SearchTaxon activity
 				//TODO: in future validator should check it
@@ -182,7 +218,8 @@ public class TaxonField extends InputField {
 				else
 					Log.i(getResources().getString(R.string.app_name), "Value of SciName field is EMPTY!!!! ");
 			}
-		});		
+		});
+		this.btnSearchBySciName.setVisibility(View.GONE);
 		
 		//Create layout and add input field "Scientific name" into there
 		LinearLayout sciNameLL = new LinearLayout(context);		
@@ -228,6 +265,18 @@ public class TaxonField extends InputField {
 		    	}
 		    }
 	    });	
+		this.txtVernacularName.addTextChangedListener(new TextWatcher(){
+			public void afterTextChanged(Editable s) {}
+			public void beforeTextChanged(CharSequence s, int start,  int count, int after) {}				 
+			public void onTextChanged(CharSequence s, int start, int before, int count) {
+				TaxonField.this.setValue(0, TaxonField.this.txtCodes.getText().toString(), 
+						TaxonField.this.txtSciName.getText().toString(), 
+						s.toString(), 
+						TaxonField.this.languageCodes[getVernacularLanguageCodeIndex(TaxonField.this.spinner.getSelectedItemPosition())-1]/*TaxonField.this.txtVernacularLang.getText().toString()*/, 
+						TaxonField.this.txtLangVariant.getText().toString(),
+						TaxonField.form.getFormScreenId(),true);
+			}	
+		});
 		//Button "Search By Vernacular names"
 		this.btnSearchByVernName = new Button(context);
 		this.btnSearchByVernName.setText("Search");
@@ -242,7 +291,7 @@ public class TaxonField extends InputField {
 				tempValue.add(TaxonField.this.txtCodes.getText().toString());
 				tempValue.add(TaxonField.this.txtSciName.getText().toString());
 				tempValue.add(TaxonField.this.txtVernacularName.getText().toString());
-				tempValue.add(TaxonField.this.txtVernacularLang.getText().toString());
+				tempValue.add(TaxonField.this.languageCodes[getVernacularLanguageCodeIndex(TaxonField.this.spinner.getSelectedItemPosition())-1]/*TaxonField.this.txtVernacularLang.getText().toString()*/);
 				tempValue.add(TaxonField.this.txtLangVariant.getText().toString());
 				//Check the value is not empty  and Run SearchTaxon activity
 				//TODO: in future validator should check it
@@ -251,7 +300,8 @@ public class TaxonField extends InputField {
 				else
 					Log.i(getResources().getString(R.string.app_name), "Value of VernName field is EMPTY!!!! ");
 			}
-		});			
+		});
+		this.btnSearchByVernName.setVisibility(View.GONE);
 		//Create layout and add input field "Vernacular name" into there
 		LinearLayout vernNameLL = new LinearLayout(context);		
 		vernNameLL.setOrientation(HORIZONTAL);
@@ -266,11 +316,81 @@ public class TaxonField extends InputField {
 		this.venacLangLabel = new TextView(context);
 		this.venacLangLabel.setMaxLines(1);
 		this.venacLangLabel.setTextColor(Color.BLACK);
-		this.venacLangLabel.setText("Vernacular language");			
+		this.venacLangLabel.setText("Vernacular language");
+		
+		this.spinner = new Spinner(context);
+		this.spinner.setPrompt(nodeDef.getName());
+		
+		this.codes = new ArrayList<String>();
+		this.options = new ArrayList<String>();
+		for (int i=0;i<Math.floor(this.languageCodes.length/2);i++){
+			this.codes.add(this.languageCodes[2*i]);
+			this.options.add(this.languageCodes[2*i+1]);
+		}
+
+		this.aa = new ArrayAdapter<String>(context, android.R.layout.simple_spinner_item, this.options);
+		this.aa.setDropDownViewResource(R.layout.codelistitem);
+
+		this.spinner.setAdapter(aa);
+		this.spinner.setLayoutParams(new LayoutParams(0,ViewGroup.LayoutParams.WRAP_CONTENT,(float) 3));
+		this.spinner.setOnItemSelectedListener(new OnItemSelectedListener() {
+		    @Override
+		    public void onItemSelected(AdapterView<?> parentView, View selectedItemView, int position, long id) {
+		    	//ArrayList<String> valueToAdd = new ArrayList<String>();
+		    	//valueToAdd.add(TaxonField.this.codes.get((TaxonField.this.spinner.getSelectedItemPosition())));
+		    	//Log.e("onItemSelected",CodeField.form.getFormScreenId()+"=="+CodeField.this.currentInstanceNo+"("+CodeField.form.currInstanceNo+")");
+		    	if (TaxonField.this.nodeDefinition.isMultiple()){
+		    		TaxonField.this.setValue(TaxonField.form.currInstanceNo, 
+		    		TaxonField.this.txtCodes.getText().toString(), 
+		    		TaxonField.this.txtSciName.getText().toString(),
+					TaxonField.this.txtVernacularName.getText().toString(), 
+					TaxonField.this.languageCodes[getVernacularLanguageCodeIndex(position)-1]/*TaxonField.this.txtVernacularLang.getText().toString()*/, 
+					TaxonField.this.txtLangVariant.getText().toString(),
+					TaxonField.form.getFormScreenId(),true);
+		    	} else {
+		    		TaxonField.this.setValue(0, 
+				    		TaxonField.this.txtCodes.getText().toString(), 
+				    		TaxonField.this.txtSciName.getText().toString(),
+							TaxonField.this.txtVernacularName.getText().toString(), 
+							TaxonField.this.languageCodes[getVernacularLanguageCodeIndex(position)-1]/*TaxonField.this.txtVernacularLang.getText().toString()*/, 
+							TaxonField.this.txtLangVariant.getText().toString(),
+							TaxonField.form.getFormScreenId(),true);
+		    	}			    	
+		    	
+		    	/*if (!CodeField.this.selectedForTheFirstTime){
+					
+		    	} else {
+		    		CodeField.this.selectedForTheFirstTime = false;
+		    	}*/
+		    }
+
+		    @Override
+		    public void onNothingSelected(AdapterView<?> parentView) {
+		    	
+		    }
+
+		});
+		
+		boolean isFound = false;
+		int position = 0;
+		if (selectedItem!=null){
+			while (!isFound&&position<this.codes.size()){
+				if (this.codes.get(position).equals(selectedItem)){
+					isFound = true;
+				}
+				position++;
+			}	
+		}
+		if (isFound)
+			this.spinner.setSelection(position-1);
+		else
+			this.spinner.setSelection(0);
+
+		
 		//this.venacLangLabel.setLayoutParams(new LayoutParams(0, ViewGroup.LayoutParams.WRAP_CONTENT, (float) 2));
 		//Add text box for vernacular languages
-		this.txtVernacularLang = new EditText(context);
-		this.txtVernacularLang.setText(""/*initialText[3]*/);
+		/*this.txtVernacularLang = new EditText(context);
+		this.txtVernacularLang.setText("");
 		//this.txtVernacularLang.setLayoutParams(new LayoutParams(0, ViewGroup.LayoutParams.WRAP_CONTENT, (float) 1));
 		// When txtLangVariant gets focus
 		this.txtVernacularLang.setOnFocusChangeListener(new OnFocusChangeListener() {
@@ -291,14 +411,27 @@ public class TaxonField extends InputField {
 			    	}
 		    	}
 		    }
-	    });		
+	    });	
+		this.txtVernacularLang.addTextChangedListener(new TextWatcher(){
+			public void afterTextChanged(Editable s) {}
+			public void beforeTextChanged(CharSequence s, int start,  int count, int after) {}				 
+			public void onTextChanged(CharSequence s, int start, int before, int count) {
+				TaxonField.this.setValue(0, TaxonField.this.txtCodes.getText().toString(), 
+						TaxonField.this.txtSciName.getText().toString(), 
+						TaxonField.this.txtVernacularName.getText().toString(), 
+						TaxonField.this.txtVernacularLang.getText().toString(), 
+						TaxonField.this.txtLangVariant.getText().toString(),
+						TaxonField.form.getFormScreenId(),true);
+			}	
+		});*/
 		//Create layout and add input field "Vernacular language" into there
 //		LinearLayout vernLangLL = new LinearLayout(context);		
 //		vernLangLL.setOrientation(HORIZONTAL);
 //		vernLangLL.addView(this.venacLangLabel);
 //		vernLangLL.addView(this.txtVernacularLang);		
 		this.addView(this.venacLangLabel);
-		this.addView(this.txtVernacularLang);
+		this.addView(this.spinner);
+		//this.addView(this.txtVernacularLang);
 		
 		//Create input field "Language variant"
 		//Create label "Language variant"
@@ -333,7 +466,18 @@ public class TaxonField extends InputField {
 		    	}
 		    }
 	    });
-		
+		this.txtLangVariant.addTextChangedListener(new TextWatcher(){
+			public void afterTextChanged(Editable s) {}
+			public void beforeTextChanged(CharSequence s, int start,  int count, int after) {}				 
+			public void onTextChanged(CharSequence s, int start, int before, int count) {
+				TaxonField.this.setValue(0, TaxonField.this.txtCodes.getText().toString(), 
+						TaxonField.this.txtSciName.getText().toString(), 
+						TaxonField.this.txtVernacularName.getText().toString(), 
+						TaxonField.this.languageCodes[getVernacularLanguageCodeIndex(TaxonField.this.spinner.getSelectedItemPosition())-1]/*TaxonField.this.txtVernacularLang.getText().toString()*/, 
+						TaxonField.this.txtLangVariant.getText().toString(),
+						TaxonField.form.getFormScreenId(),true);
+			}	
+		});
 		//Create layout and add input field "Language variant" into there
 //		LinearLayout langVariantLL = new LinearLayout(context);
 //		langVariantLL.addView(this.langVariantLabel);
@@ -372,21 +516,32 @@ public class TaxonField extends InputField {
 	}
 	
 	public void setValue(int position, String code, String sciName, String vernName, String vernLang, String langVariant, String path, boolean isTextChanged){
-		//Set text to textboxes
 		if (!isTextChanged){
 			this.txtCodes.setText(code);
 			this.txtSciName.setText(sciName);
 			this.txtVernacularName.setText(vernName);
-			this.txtVernacularLang.setText(vernLang);
+			//this.txtVernacularLang.setText(vernLang);
 			this.txtLangVariant.setText(langVariant);
 		}
-		
+		//Log.e("TAXON",code+"=="+sciName);
+		//Log.e("TAXON"+langVariant,vernName+"=="+vernLang);
 		Node<? extends NodeDefinition> node = this.findParentEntity(path).get(this.nodeDefinition.getName(), position);
 		if (node!=null){
-			TaxonAttribute taxontAtr = (TaxonAttribute)node;
-			taxontAtr.setValue(new TaxonOccurrence(code, sciName, vernName, null, langVariant));
+			TaxonAttribute taxonAttr= (TaxonAttribute)node;
+			if (vernLang.equals("")){
+				vernLang = null;
+			}
+			taxonAttr.setValue(new TaxonOccurrence(code, sciName, vernName, vernLang, langVariant));
+			/*Log.e("reloaded",code+"code=="+taxonAttr.getValue().getCode());
+			//Log.e("reloaded",sciName+"sciName=="+taxonAttr.getValue().getScientificName());
+			Log.e("reloaded",vernName+"vernName=="+taxonAttr.getValue().getVernacularName());
+			//Log.e("reloaded",vernLang+"vernLang=="+taxonAttr.getValue().getLanguageCode());
+			//Log.e("reloaded",langVariant+"langVar=="+taxonAttr.getValue().getLanguageVariety());*/
 		} else {
-			EntityBuilder.addValue(this.findParentEntity(path), this.nodeDefinition.getName(), new TaxonOccurrence(code, sciName, vernName, null, langVariant), position);	
+			if (vernLang.equals("")){
+				vernLang = null;
+			}
+			EntityBuilder.addValue(this.findParentEntity(path), this.nodeDefinition.getName(), new TaxonOccurrence(code, sciName, vernName, vernLang, langVariant), position);	
 		}
 	}
 
@@ -409,8 +564,12 @@ public class TaxonField extends InputField {
 		this.langVariantLabel.setTextColor(color);
 	}
 	
-	@Override
+	/*@Override
 	public void afterTextChanged(Editable s) {
-		this.setValue(0, TaxonField.this.txtCodes.getText().toString(), TaxonField.this.txtSciName.getText().toString(), TaxonField.this.txtVernacularName.getText().toString(), TaxonField.this.txtVernacularLang.getText().toString(), TaxonField.this.txtLangVariant.getText().toString(), TaxonField.form.getFormScreenId(), true);
+		this.setValue(0, TaxonField.this.txtCodes.getText().toString(), TaxonField.this.txtSciName.getText().toString(), TaxonField.this.txtVernacularName.getText().toString(),TaxonField.this.languageCodes[getVernacularLanguageCodeIndex(TaxonField.this.spinner.getSelectedItemPosition())-1] TaxonField.this.txtVernacularLang.getText().toString(), TaxonField.this.txtLangVariant.getText().toString(), TaxonField.form.getFormScreenId(), true);
+	}*/
+	
+	public int getVernacularLanguageCodeIndex(int selectedItemPosition){
+		return 2*selectedItemPosition+1;		
 	}
 }

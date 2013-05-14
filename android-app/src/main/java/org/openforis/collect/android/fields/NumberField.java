@@ -69,10 +69,12 @@ public class NumberField extends InputField {
 			    	if(this.getClass().toString().contains("NumberField")){
 				    	//Map<String, ?> settings = ApplicationManager.appPreferences.getAll();
 				    	//Boolean valueForNum = (Boolean)settings.get(getResources().getString(R.string.showSoftKeyboardOnNumericField));
-				    	boolean valueForNum = ApplicationManager.appPreferences.getBoolean(getResources().getString(R.string.showSoftKeyboardOnNumericField), false);
+				    	boolean valueForNum = false;				   
+				    	if (ApplicationManager.appPreferences!=null){
+				    		valueForNum = ApplicationManager.appPreferences.getBoolean(getResources().getString(R.string.showSoftKeyboardOnNumericField), false);
+				    	}
 				    	//Switch on or off Software keyboard depend of settings
 				    	if(valueForNum){
-				    		Log.i(getResources().getString(R.string.app_name), "Setting numeric field is: " + valueForNum);
 				    		if (NumberField.this.type.toLowerCase().equals("integer")){
 				    			NumberField.this.makeInteger();
 				    		} else{
@@ -80,7 +82,6 @@ public class NumberField extends InputField {
 				    		}	    		
 				        }
 				    	else {
-				    		Log.i(getResources().getString(R.string.app_name), "Setting numeric field is: " + valueForNum);
 				    		NumberField.this.txtBox.setInputType(InputType.TYPE_NULL);
 				    	}
 			    	}
@@ -93,17 +94,36 @@ public class NumberField extends InputField {
 		//Check for every given character is it number or not
 		this.txtBox.addTextChangedListener(new TextWatcher(){
 		   
-			public void afterTextChanged(Editable s) {
-				if (s.length() > 0){
+			public void afterTextChanged(Editable s) {				
+				/*if (s.length() > 0){
 					if(!isNumeric(s.toString())){
 						String strReplace = s.subSequence(0, s.length()-1).toString();
+						int currPos = NumberField.this.txtBox.getSelectionStart();
+						Log.e("strReplace",strReplace+"=="+strReplace.length());
+						Log.e("NumberField.this.txtBox",NumberField.this.txtBox.getSelectionStart()+"=="+NumberField.this.txtBox.getSelectionEnd());
 						NumberField.this.txtBox.setText(strReplace);
 						NumberField.this.txtBox.setSelection(strReplace.length());
 					}
-				}
+				}*/
 			}
-			public void beforeTextChanged(CharSequence s, int start,  int count, int after) {}				 
-			public void onTextChanged(CharSequence s, int start, int before, int count) {}	
+			public void beforeTextChanged(CharSequence s, int start,  int count, int after) {
+
+			}				 
+			public void onTextChanged(CharSequence s, int start, int before, int count) {
+				if (s.length() > 0){
+					if(!isNumeric(s.toString())){
+						String strReplace = "";
+						if (before==0){//inputting characters
+							strReplace = s.toString().substring(0, start+count-1);
+							strReplace += s.toString().substring(start+count);
+						} else {//deleting characters
+							//do nothing - number with deleted digit is still a number
+						}
+						NumberField.this.txtBox.setText(strReplace);
+						NumberField.this.txtBox.setSelection(start);
+					}
+				}
+			}	
 			
 		});
 	}
@@ -143,14 +163,14 @@ public class NumberField extends InputField {
 						EntityBuilder.addValue(this.findParentEntity(path), this.nodeDefinition.getName(), Integer.valueOf(value), position);	
 					} else {
 						EntityBuilder.addValue(this.findParentEntity(path), this.nodeDefinition.getName(), Double.valueOf(value), position);
-					}	
+					}
 				}			
 			}
 			
 			if (!isTextChanged)
 				this.txtBox.setText(value);
 		} catch (Exception e){
-			Log.e("Number value got exception", e.getMessage());
+			Log.e("Number value got exception", "=="+e.getStackTrace());
 		}		
 	}
 	

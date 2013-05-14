@@ -78,6 +78,32 @@ public class DataManager {
 		return 0;
 	}
 	
+	public int saveRecord(CollectRecord recordToSave) {
+		try {
+			JdbcDaoSupport jdbcDao = new JdbcDaoSupport();
+			jdbcDao.getConnection();
+			//CollectRecord recordToSave = ApplicationManager.currentRecord;
+			Log.e("recordToSave==null","=="+(recordToSave==null));
+			if (recordToSave.getId()==null){
+				recordToSave.setCreatedBy(this.user);
+				recordToSave.setCreationDate(new Date());
+				recordToSave.setStep(Step.ENTRY);			
+			} else {
+				recordToSave.setModifiedDate(new Date());
+			}
+			DataManager.recordManager.save(recordToSave, ApplicationManager.getSessionId());
+		} catch (RecordUnlockedException e) {
+			Log.e("RecordUnlockedException","=="+e.getLocalizedMessage());
+		} catch (RecordPersistenceException e) {
+			Log.e("RecordPersistenceException",e.getMessage()+"=="+e.getLocalizedMessage());
+		} catch (NullPointerException e){
+			Log.e("NullPointerException","=="+e.getMessage());
+		} finally {
+
+		}
+		return 0;
+	}
+	
 	public int saveRecordToXml(CollectRecord recordToSave, String folderToSave) {
 		long startTime = System.currentTimeMillis();
 		try {
@@ -105,7 +131,7 @@ public class DataManager {
 	}
 	
 	public CollectRecord loadRecordFromXml(String filename) {
-		filename = Environment.getExternalStorageDirectory().toString()+"/mofc/data/exported/testowyRekord.xml";
+		filename = Environment.getExternalStorageDirectory().toString()+"/ofcm/data/imported/2_3_0_4_113_9_24_collect.xml";
 		long startTime = System.currentTimeMillis();
 		CollectRecord loadedRecord = null;
 		try {
@@ -113,13 +139,25 @@ public class DataManager {
 			loadedRecord = result.getRecord();
 			Log.e("isSuccess","=="+result.isSuccess());
 			Log.e("message","=="+result.getMessage());
-			Log.e("warningsNO","=="+result.getWarnings());
+			//Log.e("warningsNo","=="+result.getWarnings().size());
+			if (result.getFailures()!=null){
+				Log.e("failuresNo","=="+result.getFailures().size());
+				for (int i=0;i<result.getFailures().size();i++){
+					Log.e("failure"+i,"=="+result.getFailures().get(i).getMessage());
+					Log.e("failure"+i,"=="+result.getFailures().get(i).getPath());
+				}
+			} else {
+				Log.e("failures==null","==true");
+			}
 			Log.e("loadedResult"+(result==null),"LOADED FROM XML IN "+(System.currentTimeMillis()-startTime)/1000+"s");
+			Log.e("loadedRecord","=="+(loadedRecord==null));
+			this.saveRecord(loadedRecord);
+			Log.e("record","SAVED");
 		} catch (NullPointerException e){
 			e.printStackTrace();
 		} catch (DataUnmarshallerException e) {
 			e.printStackTrace();
-		}		
+		}			
 		return loadedRecord;
 	}
 	

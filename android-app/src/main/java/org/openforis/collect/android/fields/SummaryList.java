@@ -282,10 +282,18 @@ public class SummaryList extends UIElement {
 				Time timeValue = (Time)value;
 				String hour = "";
 				String minute = "";
-				if (timeValue.getHour()!=null)
+				if (timeValue.getHour()!=null){
 					hour = timeValue.getHour().toString();
-				if (timeValue.getMinute()!=null)
+					if (timeValue.getHour()<10){
+						hour = "0"+hour;
+					}	
+				}					
+				if (timeValue.getMinute()!=null){
 					minute = timeValue.getMinute().toString();
+					if (timeValue.getMinute()<10){
+						minute = "0"+minute;
+					}
+				}					
 				valueToReturn = hour+getResources().getString(R.string.timeSeparator)+minute;
 			} else if (value instanceof TaxonOccurrence){
 				TaxonOccurrence taxonValue = (TaxonOccurrence)value;

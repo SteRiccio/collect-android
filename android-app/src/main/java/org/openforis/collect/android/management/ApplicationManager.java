@@ -2,10 +2,19 @@ package org.openforis.collect.android.management;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import liquibase.Liquibase;
+import liquibase.database.Database;
+import liquibase.database.DatabaseFactory;
+import liquibase.database.jvm.JdbcConnection;
+import liquibase.resource.FileSystemResourceAccessor;
 
 import org.openforis.collect.android.R;
 import org.openforis.collect.android.database.CollectDatabase;
@@ -125,6 +134,8 @@ public class ApplicationManager extends BaseActivity {
 			    folder.mkdirs();
 				folder = new File(sdcardPath+getResources().getString(R.string.exported_data_folder));
 			    folder.mkdirs();
+			    folder = new File(sdcardPath+getResources().getString(R.string.imported_data_folder));
+			    folder.mkdirs();
 			    folder = new File(sdcardPath+getResources().getString(R.string.backup_folder));
 			    folder.mkdirs();
 			    folder = new File(sdcardPath+getResources().getString(R.string.logs_folder));
@@ -241,8 +252,8 @@ public class ApplicationManager extends BaseActivity {
         	jdbcDao.getConnection();
             Connection c = jdbcDao.getConnection();
             Liquibase liquibase = null;
-            try {
-                Database database = (Database) DatabaseWrapper.db;//DatabaseFactory.getInstance().findCorrectDatabaseImplementation(new JdbcConnection(DriverManager.getConnection("jdbc:sqldroid:"+"/data/data/org.openforis.collect.android/databases/collect.db")) );
+            try {            
+                Database database = DatabaseFactory.getInstance().findCorrectDatabaseImplementation(new JdbcConnection(DriverManager.getConnection("jdbc:sqldroid:"+"/data/data/org.openforis.collect.android/databases/collect.db")) );//(Database) DatabaseWrapper.db;
                 liquibase = new Liquibase("classpath:org/openforis/collect/db/changelog/db.changelog-master.xml", new FileSystemResourceAccessor(), database);
                 liquibase.update(null);
             } finally {
@@ -285,6 +296,10 @@ public class ApplicationManager extends BaseActivity {
 			editor = ApplicationManager.appPreferences.edit();
 			editor.putString(getResources().getString(R.string.selectedLanguage), language);
 			ApplicationManager.selectedLanguage = language;
+			
+			String formDefinitionPath = ApplicationManager.appPreferences.getString(getResources().getString(R.string.formDefinitionPath), getResources().getString(R.string.defaultFormDefinitionPath));
+			editor = ApplicationManager.appPreferences.edit();
+			editor.putString(getResources().getString(R.string.formDefinitionPath), formDefinitionPath);
 			
 	    	editor.commit();			
 	    		    
@@ -462,7 +477,6 @@ public class ApplicationManager extends BaseActivity {
 	 	    } else if (requestCode==getResources().getInteger(R.integer.formDefinitionSelection)){
 	 	    	if (resultCode==getResources().getInteger(R.integer.formDefinitionChoiceSuccessful)){//form was selected
 	 	    		int formId = data.getIntExtra(getResources().getString(R.string.formId), -1);
-	 	    		Log.e("SELECTEDformID","=="+formId);
 	 	    		if (formId==-1){//new form to be added from file
 	 	    			try{
 		 	    			long startTimeParsing = System.currentTimeMillis();

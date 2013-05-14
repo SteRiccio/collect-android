@@ -112,8 +112,12 @@ public class CoordinateField extends InputField implements OnClickListener {
 			public void onFocusChange(View v, boolean hasFocus) {					    	
 		    	//Get current settings about software keyboard for numeric fields
 		    	if(hasFocus){
-			    	Map<String, ?> settings = ApplicationManager.appPreferences.getAll();
-			    	Boolean valueForNum = (Boolean)settings.get(getResources().getString(R.string.showSoftKeyboardOnNumericField));
+			    	//Map<String, ?> settings = ApplicationManager.appPreferences.getAll();
+			    	//Boolean valueForNum = (Boolean)settings.get(getResources().getString(R.string.showSoftKeyboardOnNumericField));
+		    		boolean valueForNum = false;				   
+			    	if (ApplicationManager.appPreferences!=null){
+			    		valueForNum = ApplicationManager.appPreferences.getBoolean(getResources().getString(R.string.showSoftKeyboardOnNumericField), false);
+			    	}
 			    	//Switch on or off Software keyboard depend of settings
 			    	if(valueForNum){	
 			    		txtLatitude.setKeyListener(new DigitsKeyListener(true,true));
@@ -142,7 +146,7 @@ public class CoordinateField extends InputField implements OnClickListener {
 		this.txtLatitude.addTextChangedListener(new TextWatcher(){
 			public void afterTextChanged(Editable s) {}
 			public void beforeTextChanged(CharSequence s, int start,  int count, int after) {}				 
-			public void onTextChanged(CharSequence s, int start, int before, int count) {
+			/*public void onTextChanged(CharSequence s, int start, int before, int count) {
 				if (s.length() > 0){
 					if(!isNumeric(s.toString())){
 						Log.i("COORDINATE FIELD", "Value of Latitude: " + s + " is NOT numeric.");
@@ -153,12 +157,27 @@ public class CoordinateField extends InputField implements OnClickListener {
 						Log.i("COORDINATE FIELD", "Value of Latitude: " + s + " is numeric.");
 					}
 				}				
-			}	
+			}*/
+			public void onTextChanged(CharSequence s, int start, int before, int count) {
+				if (s.length() > 0){
+					if(!isNumeric(s.toString())){
+						String strReplace = "";
+						if (before==0){//inputting characters
+							strReplace = s.toString().substring(0, start+count-1);
+							strReplace += s.toString().substring(start+count);
+						} else {//deleting characters
+							//do nothing - number with deleted digit is still a number
+						}
+						CoordinateField.this.txtLatitude.setText(strReplace);
+						CoordinateField.this.txtLatitude.setSelection(start);
+					}
+				}
+			}
 		});
 		this.txtLongitude.addTextChangedListener(new TextWatcher(){
 			public void afterTextChanged(Editable s) {}
 			public void beforeTextChanged(CharSequence s, int start,  int count, int after) {}				 
-			public void onTextChanged(CharSequence s, int start, int before, int count) {
+			/*public void onTextChanged(CharSequence s, int start, int before, int count) {
 				if (s.length() > 0){
 					if(!isNumeric(s.toString())){
 						String strReplace = s.subSequence(0, s.length()-1).toString();
@@ -166,7 +185,22 @@ public class CoordinateField extends InputField implements OnClickListener {
 						CoordinateField.this.txtLongitude.setSelection(strReplace.length());
 					}
 				}	
-			}	
+			}*/
+			public void onTextChanged(CharSequence s, int start, int before, int count) {
+				if (s.length() > 0){
+					if(!isNumeric(s.toString())){
+						String strReplace = "";
+						if (before==0){//inputting characters
+							strReplace = s.toString().substring(0, start+count-1);
+							strReplace += s.toString().substring(start+count);
+						} else {//deleting characters
+							//do nothing - number with deleted digit is still a number
+						}
+						CoordinateField.this.txtLongitude.setText(strReplace);
+						CoordinateField.this.txtLongitude.setSelection(start);
+					}
+				}
+			}
 		});	
 
 		this.addView(this.txtLongitude);

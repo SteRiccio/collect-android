@@ -172,20 +172,28 @@ public class FormScreen extends BaseActivity implements OnClickListener {
     			NodeDefinition nodeDef = ApplicationManager.getNodeDefinition(this.startingIntent.getIntExtra(getResources().getString(R.string.attributeId)+i, -1));
     			if (nodeDef instanceof EntityDefinition){
     				if (ApplicationManager.currentRecord.getRootEntity().getId()!=nodeDef.getId()){
-        				Node<?> foundNode = this.parentEntitySingleAttribute.get(nodeDef.getName(), this.currInstanceNo);
+        				Node<?> foundNode = this.parentEntitySingleAttribute.get(nodeDef.getName(), 0/*this.currInstanceNo*/);
         				if (foundNode==null){
         					EntityBuilder.addEntity(this.parentEntitySingleAttribute, ApplicationManager.getSurvey().getSchema().getDefinitionById(nodeDef.getId()).getName(), 0);
         				}
     				}
     				
     				EntityDefinition entityDef = (EntityDefinition)nodeDef;
-    				for (int e=0;e<this.parentEntitySingleAttribute.getCount(entityDef.getName());e++){
+    				//if (entityDef.isMultiple()){
+    					for (int e=0;e<this.parentEntitySingleAttribute.getCount(entityDef.getName());e++){
+        					SummaryList summaryListView = new SummaryList(this, entityDef, calcNoOfCharsFitInOneLine(),
+            						this,e);
+            				summaryListView.setOnClickListener(this);
+            				summaryListView.setId(nodeDef.getId());
+            				this.ll.addView(summaryListView);	
+        				}	
+    				/*} else {
     					SummaryList summaryListView = new SummaryList(this, entityDef, calcNoOfCharsFitInOneLine(),
-        						this,e);
+        						this,0);
         				summaryListView.setOnClickListener(this);
         				summaryListView.setId(nodeDef.getId());
-        				this.ll.addView(summaryListView);	
-    				}			  				
+        				this.ll.addView(summaryListView);
+    				}*/
     			}else {					
 					if (nodeDef instanceof TextAttributeDefinition){
 	    				loadedValue = "";	    				
@@ -694,14 +702,28 @@ public class FormScreen extends BaseActivity implements OnClickListener {
 		    				if (foundNode!=null){
 		    					Time timeValue = (Time)this.parentEntitySingleAttribute.getValue(nodeDef.getName(), 0);
 		    					if (timeValue!=null){
+		    						String hour = "";
+		    						if (timeValue.getHour()!=null){
+		    							hour = timeValue.getHour().toString();
+		    							if (Integer.valueOf(hour)<10){
+		    								hour = "0"+hour;
+			    						}		
+		    						}
+		    						String minute = "";
+		    						if (timeValue.getMinute()!=null){
+		    							minute = timeValue.getMinute().toString();
+		    							if (Integer.valueOf(minute)<10){
+		    								minute = "0"+minute;
+			    						}		
+		    						}
 		    						if (timeValue.getHour()==null && timeValue.getMinute()==null){
 		    							loadedValue = "";
 		    						} else if (timeValue.getHour()==null){
-		    							loadedValue = getResources().getString(R.string.timeSeparator)+timeValue.getMinute();
+		    							loadedValue = getResources().getString(R.string.timeSeparator)+minute;
 		    						} else if (timeValue.getMinute()==null){
-		    							loadedValue = timeValue.getHour()+getResources().getString(R.string.timeSeparator);
+		    							loadedValue = hour+getResources().getString(R.string.timeSeparator);
 		    						} else {
-		    							loadedValue = timeValue.getHour()+getResources().getString(R.string.timeSeparator)+timeValue.getMinute();
+		    							loadedValue = hour+getResources().getString(R.string.timeSeparator)+minute;
 		    						}		    						
 		    					}	    				
 		    				}
@@ -709,6 +731,7 @@ public class FormScreen extends BaseActivity implements OnClickListener {
 	        				timeField.setOnClickListener(this);
 	        				timeField.setId(nodeDef.getId());
 	        				timeField.setValue(0, loadedValue, FormScreen.this.getFormScreenId(),false);
+	        				Log.e("timeFIELDloadedValue","=="+loadedValue);
 	        				timeField.addTextChangedListener(new TextWatcher(){
 	        			        public void afterTextChanged(Editable s) {
 	        			        	timeField.setValue(0, s.toString(), FormScreen.this.getFormScreenId(),true);
@@ -723,16 +746,30 @@ public class FormScreen extends BaseActivity implements OnClickListener {
 		    				if (foundNode!=null){
 		    					Time timeValue = (Time)this.parentEntityMultipleAttribute.getValue(nodeDef.getName(), this.currInstanceNo);
 		    					if (timeValue!=null){
+		    						String hour = "";
+		    						if (timeValue.getHour()!=null){
+		    							hour = timeValue.getHour().toString();
+		    							if (Integer.valueOf(hour)<10){
+		    								hour = "0"+hour;
+			    						}		
+		    						}
+		    						String minute = "";
+		    						if (timeValue.getMinute()!=null){
+		    							minute = timeValue.getMinute().toString();
+		    							if (Integer.valueOf(minute)<10){
+		    								minute = "0"+minute;
+			    						}		
+		    						}
 		    						if (timeValue.getHour()==null && timeValue.getMinute()==null){
 		    							loadedValue = "";
 		    						} else if (timeValue.getHour()==null){
-		    							loadedValue = getResources().getString(R.string.timeSeparator)+timeValue.getMinute();
+		    							loadedValue = getResources().getString(R.string.timeSeparator)+minute;
 		    						} else if (timeValue.getMinute()==null){
-		    							loadedValue = timeValue.getHour()+getResources().getString(R.string.timeSeparator);
+		    							loadedValue = hour+getResources().getString(R.string.timeSeparator);
 		    						} else {
-		    							loadedValue = timeValue.getHour()+getResources().getString(R.string.timeSeparator)+timeValue.getMinute();
+		    							loadedValue = hour+getResources().getString(R.string.timeSeparator)+minute;
 		    						}		    						
-		    					}	   				
+		    					}		   				
 		    				}
 	        				final TimeField timeField= new TimeField(this, nodeDef);
 	        				timeField.setOnClickListener(this);
@@ -780,6 +817,7 @@ public class FormScreen extends BaseActivity implements OnClickListener {
 	        				final TaxonField taxonField= new TaxonField(this, nodeDef, codes, options, null);
 	        				taxonField.setOnClickListener(this);
 	        				taxonField.setId(nodeDef.getId());
+	        				Log.e("setValue","FORMSCREEN");
 	        				taxonField.setValue(0, code, sciName, vernName, vernLang, langVariant, FormScreen.this.getFormScreenId(),false);
 	        				ApplicationManager.putUIElement(taxonField.getId(), taxonField);
 	        				this.ll.addView(taxonField);
@@ -798,6 +836,7 @@ public class FormScreen extends BaseActivity implements OnClickListener {
 		    				final TaxonField taxonField= new TaxonField(this, nodeDef, codes, options, null);
 		    				taxonField.setOnClickListener(this);
 		    				taxonField.setId(nodeDef.getId());
+		    				Log.e("setValue","FORMSCREEN");
 		    				taxonField.setValue(this.currInstanceNo, code, sciName, vernName, vernLang, langVariant, this.parentFormScreenId,false);
 	        				ApplicationManager.putUIElement(taxonField.getId(), taxonField);
 	        				this.ll.addView(taxonField);

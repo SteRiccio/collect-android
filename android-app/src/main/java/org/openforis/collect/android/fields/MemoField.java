@@ -64,17 +64,18 @@ public class MemoField extends InputField {
 	                        //do nothing.
 	                    }
 	                }).show();
+	            	input.setKeyListener(new QwertyKeyListener(TextKeyListener.Capitalize.NONE, false));
 	            	
-	            	boolean valueForText = ApplicationManager.appPreferences.getBoolean(getResources().getString(R.string.showSoftKeyboardOnTextField), false);
-			    	if(valueForText){
-			    		input.setKeyListener(new QwertyKeyListener(TextKeyListener.Capitalize.NONE, false));
-			    		dialog.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE);
-			        }
-			    	else {
-			    		input.setKeyListener(new QwertyKeyListener(TextKeyListener.Capitalize.NONE, false));
-			    		//input.setKeyListener(null);
-			    		dialog.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
-			    	}
+			    	boolean valueForText = false;				   
+			    	if (ApplicationManager.appPreferences!=null){
+			    		valueForText = ApplicationManager.appPreferences.getBoolean(getResources().getString(R.string.showSoftKeyboardOnTextField), false);
+			    		if(valueForText){
+				    		dialog.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_VISIBLE);
+				        }
+				    	else {
+				    		dialog.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
+				    	}
+			    	}			    	
 	            }
 	        }
 	    });

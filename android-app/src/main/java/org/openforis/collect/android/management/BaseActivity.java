@@ -1,6 +1,7 @@
 package org.openforis.collect.android.management;
 
 import org.openforis.collect.android.R;
+import org.openforis.collect.android.lists.DownloadActivity;
 import org.openforis.collect.android.lists.UploadActivity;
 import org.openforis.collect.android.messages.AlertMessage;
 import org.openforis.collect.android.misc.RunnableHandler;
@@ -111,6 +112,9 @@ public class BaseActivity extends Activity {
 			case R.id.menu_upload:
 				startActivity(new Intent(BaseActivity.this, UploadActivity.class));
 			    return true;
+			case R.id.menu_download:
+				startActivity(new Intent(BaseActivity.this, DownloadActivity.class));
+			    return true;    
 			case R.id.menu_settings:
 				startActivity(new Intent(BaseActivity.this,SettingsScreen.class));
 			    return true;	    

@@ -58,8 +58,11 @@ public class TextField extends InputField {
 		    	if(hasFocus){
 			    	if(this.getClass().toString().contains("TextField")){
 				    	//Map<String, ?> settings = ApplicationManager.appPreferences.getAll();
-				    	//Boolean valueForText = (Boolean)settings.get(getResources().getString(R.string.showSoftKeyboardOnTextField));
-				    	boolean valueForText = ApplicationManager.appPreferences.getBoolean(getResources().getString(R.string.showSoftKeyboardOnTextField), false);
+				    	//Boolean valueForText = (Boolean)settings.get(getResources().getString(R.string.showSoftKeyboardOnTextField));			    
+				    	boolean valueForText = false;				   
+				    	if (ApplicationManager.appPreferences!=null){
+				    		valueForText = ApplicationManager.appPreferences.getBoolean(getResources().getString(R.string.showSoftKeyboardOnTextField), false);
+				    	}
 				    	// Switch on or off Software keyboard depend of settings
 				    	if(valueForText){
 				    		TextField.this.setKeyboardType(new QwertyKeyListener(TextKeyListener.Capitalize.NONE, false));

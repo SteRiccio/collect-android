@@ -17,6 +17,8 @@ import org.openforis.idm.model.species.TaxonVernacularName;
 import org.openforis.idm.model.species.Taxonomy;
 import org.springframework.transaction.annotation.Transactional;
 
+import android.util.Log;
+
 public class TaxonManager {
 
 	private TaxonDao taxonDao;
@@ -61,6 +63,7 @@ public class TaxonManager {
 		Taxonomy taxonomy = taxonomyDao.load(this.getSurveyId(), taxonomyName);
 		List<Taxon> list = taxonDao.findByCode(taxonomy.getId(), searchString, maxResults);
 		List<TaxonOccurrence> result = new ArrayList<TaxonOccurrence>();
+		Log.e("findByCode","==");
 		for (Taxon taxon : list) {
 			TaxonOccurrence o = new TaxonOccurrence(taxon.getCode(), taxon.getScientificName());
 			result.add(o);
@@ -73,6 +76,7 @@ public class TaxonManager {
 		Taxonomy taxonomy = taxonomyDao.load(this.getSurveyId(), taxonomyName);
 		List<Taxon> list = taxonDao.findByScientificName(taxonomy.getId(), searchString, maxResults);
 		List<TaxonOccurrence> result = new ArrayList<TaxonOccurrence>();
+		Log.e("findBySCIName","==");
 		for (Taxon taxon : list) {
 			TaxonOccurrence o = new TaxonOccurrence(taxon.getCode(), taxon.getScientificName());
 			result.add(o);
@@ -90,6 +94,7 @@ public class TaxonManager {
 		for (TaxonVernacularName taxonVernacularName : list) {
 			Integer taxonId = taxonVernacularName.getTaxonSystemId();
 			Taxon taxon = taxonDao.loadById(taxonId);
+			Log.e("findByVernacularName","==");
 			TaxonOccurrence o = new TaxonOccurrence(taxon.getCode(), taxon.getScientificName(), taxonVernacularName.getVernacularName(), taxonVernacularName.getLanguageCode(),
 					taxonVernacularName.getLanguageVariety());
 			result.add(o);

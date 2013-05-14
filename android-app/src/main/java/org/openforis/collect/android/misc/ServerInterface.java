@@ -1,7 +1,11 @@
 package org.openforis.collect.android.misc;
 
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -11,11 +15,14 @@ import org.apache.http.NameValuePair;
 import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
+import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.protocol.HTTP;
 import org.apache.http.util.EntityUtils;
+
+import android.util.Log;
 
 public class ServerInterface {
 
@@ -25,6 +32,41 @@ public class ServerInterface {
                 return postSyncXML(xml, overwrite);
         }
 
+        public static List<String> getFilesList(){        	
+        	ArrayList<String> filesList = new ArrayList<String>();
+        	try {        
+        			HttpResponse response = null;
+        	        HttpClient client = new DefaultHttpClient();
+        	        HttpGet request = new HttpGet();
+        	        URI downloadFolder = new URI("http://ar5.arbonaut.com/awfdatademo/planned/");
+        	        //new URI("http://cs.uef.fi/paikka/karol/listfiles.php?request_type='get_files_list'")
+        	        request.setURI(downloadFolder);
+        	        response = client.execute(request);
+        	        BufferedReader r = new BufferedReader(new InputStreamReader(response.getEntity().getContent()));
+
+        	        StringBuilder total = new StringBuilder();
+
+        	        String line = null;
+
+        	       while ((line = r.readLine()) != null) {
+        	    	   total.append(line);
+        	    	   if (line.contains("<a href")&&!line.contains("Parent Directory</a></li>")){
+        	    		   line = line.substring(line.lastIndexOf("\"> ")+3,line.indexOf("</a></li>"));
+        	    		   filesList.add(line);
+        	    	   }
+        	    	   
+        	       }
+        	    } catch (URISyntaxException e) {
+        	        e.printStackTrace();
+        	    } catch (ClientProtocolException e) {
+        	        // TODO Auto-generated catch block
+        	        e.printStackTrace();
+        	    } catch (IOException e) {
+        	        // TODO Auto-generated catch block
+        	        e.printStackTrace();
+        	    }   
+        	    return filesList;        	        	
+        }
         /*private static String executeHttpRequest(String data) {
         		Log.e("executeHttpRequest","=="+data);
                 String result = "";

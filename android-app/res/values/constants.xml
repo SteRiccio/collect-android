@@ -19,7 +19,8 @@
     <string name="log_file_extension">.txt</string>
     <string name="backup_folder">/ofcm/backups</string>
     <string name="formDefinitionFile">/test.idm.xml</string>
-    <!--<string name="formDefinitionFile">/test.idm_petri.xml</string>-->
+    <!--<string name="formDefinitionFile">/pe2013infbiomse.xml</string>-->
+    <!--<string name="formDefinitionFile">/test.idmARCHENLAND.xml</string>-->
     
     <string name="formDefinitionFileTest">/test.idm.grdemo.new.xml</string>
     
@@ -34,6 +35,8 @@
     <integer name="gpsMinUpdateDistance">10</integer>
     <string name="selectedLanguage">selectedLanguage</string>
     <string name="defaultLanguage">en</string>
+    <string name="formDefinitionPath">formDefinitionPath</string>
+    <string name="defaultFormDefinitionPath">/test.idm.xml</string>
     
     <string name="left_swipe">left_swipe</string>
     <string name="right_swipe">right_swipe</string>
@@ -109,4 +112,9 @@
     
     <!-- SERVER -->
     <string name="serverAddress">ar5.arbonaut.com/webforest/fao-mobile/save-received-data-file</string>
+    
+    <!-- colors -->
+    <color name="greenStart">#00ff00</color>
+    <color name="greenMid">#00ff00</color>
+    <color name="greenEnd">#00ff00</color>
 </resources>

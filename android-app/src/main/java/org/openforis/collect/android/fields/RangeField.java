@@ -51,7 +51,10 @@ public class RangeField extends InputField {
 			    	if(this.getClass().toString().contains("RangeField")){
 				    	//Map<String, ?> settings = ApplicationManager.appPreferences.getAll();
 				    	//Boolean valueForNum = (Boolean)settings.get(getResources().getString(R.string.showSoftKeyboardOnNumericField));
-			    		boolean valueForNum = ApplicationManager.appPreferences.getBoolean(getResources().getString(R.string.showSoftKeyboardOnNumericField), false);
+			    		boolean valueForNum = false;				   
+				    	if (ApplicationManager.appPreferences!=null){
+				    		valueForNum = ApplicationManager.appPreferences.getBoolean(getResources().getString(R.string.showSoftKeyboardOnNumericField), false);
+				    	}
 				    	//Switch on or off Software keyboard depend of settings
 				    	if(valueForNum){
 				    		RangeField.this.makeReal();			    		
@@ -67,18 +70,35 @@ public class RangeField extends InputField {
 		//Check for every given character is it number or not
 		this.txtBox.addTextChangedListener(new TextWatcher(){
 			public void afterTextChanged(Editable s) {
-				if (s.length() > 0){
+				/*if (s.length() > 0){
 					char symbol = s.charAt(s.length()-1);
 					if (!validateCharacter(symbol)){
 						String strReplace = s.subSequence(0, s.length()-1).toString(); 
 						RangeField.this.txtBox.setText(strReplace);
 						RangeField.this.txtBox.setSelection(strReplace.length());
 					}	
-				}			
+				}*/			
 			}
 			public void beforeTextChanged(CharSequence s, int start,  int count, int after) {}				 
-			public void onTextChanged(CharSequence s, int start, int before, int count) {}	
-			
+			//public void onTextChanged(CharSequence s, int start, int before, int count) {}	
+			public void onTextChanged(CharSequence s, int start, int before, int count) {
+				if (s.length() > 0){
+					if (before==0){
+						char symbol = s.charAt(start);
+						if (!validateCharacter(symbol)){
+							String strReplace = "";
+							if (before==0){//inputting characters
+								strReplace = s.toString().substring(0, start+count-1);
+								strReplace += s.toString().substring(start+count);
+							} else {//deleting characters
+								//do nothing - number with deleted digit is still a number
+							}
+							RangeField.this.txtBox.setText(strReplace);
+							RangeField.this.txtBox.setSelection(start);
+						}	
+					}					
+				}
+			}
 		});		
 	}
 	

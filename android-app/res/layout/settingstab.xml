@@ -65,5 +65,23 @@
         android:layout_height="wrap_content"
         android:layout_toRightOf="@id/lblLanguage"
    		android:layout_below="@id/txtGpsTimeout" />
-              
+    
+    <TextView 
+   		android:id="@+id/lblFormDefinitionFile"
+   		android:layout_width="wrap_content"
+   		android:layout_height="wrap_content"
+   		android:layout_below="@id/lblLanguage"
+   		android:text="@string/lblFormDefinitionFile"
+   		 >
+   	</TextView>
+   	
+    <EditText 
+   		android:id="@+id/txtFormDefinitionFile"
+   		android:layout_width="fill_parent"
+   		android:layout_height="wrap_content"
+   		android:inputType="number"
+   		android:layout_toRightOf="@id/lblGpsTimeout"
+   		android:layout_below="@id/languageSpinner"
+   		 >
+   	</EditText>	
 </RelativeLayout>

@@ -42,6 +42,9 @@ public class SettingsScreen extends Activity{
 	private Spinner spinLanguage;
 	private ArrayAdapter<String> languageAdapter;
 	
+	private TextView tvFormDefinitionFilePath;
+	private EditText txtFormDefinitionFilePath;
+	
 	public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);       
         setContentView(R.layout.settingstab);
@@ -123,6 +126,24 @@ public class SettingsScreen extends Activity{
  			    }
 
  			});
+         	
+         	this.tvFormDefinitionFilePath = (TextView)findViewById(R.id.lblFormDefinitionFile);
+			this.txtFormDefinitionFilePath = (EditText)findViewById(R.id.txtFormDefinitionFile);
+			this.txtFormDefinitionFilePath.setText(ApplicationManager.appPreferences.getString(getResources().getString(R.string.formDefinitionPath),getResources().getString(R.string.defaultFormDefinitionPath)));
+            this.txtFormDefinitionFilePath.addTextChangedListener(new TextWatcher(){
+		        public void afterTextChanged(Editable s) {        			            
+					SharedPreferences.Editor editor = ApplicationManager.appPreferences.edit();
+					editor = ApplicationManager.appPreferences.edit();
+					try{
+						editor.putString(getResources().getString(R.string.formDefinitionPath), s.toString());
+					} catch (Exception e){
+	
+					}
+					editor.commit();
+		        }
+		        public void beforeTextChanged(CharSequence s, int start, int count, int after){}
+		        public void onTextChanged(CharSequence s, int start, int before, int count){}
+		    });
         } catch (Exception e){
     		RunnableHandler.reportException(e,getResources().getString(R.string.app_name),TAG+":onCreate",
     				Environment.getExternalStorageDirectory().toString()
@@ -169,6 +190,7 @@ public class SettingsScreen extends Activity{
 		this.chckWhiteBackground.setTextColor((backgroundColor!=Color.WHITE)?Color.WHITE:Color.BLACK);
 		this.tvGpsMaxWaitingTime.setTextColor((backgroundColor!=Color.WHITE)?Color.WHITE:Color.BLACK);
 		this.tvLanguage.setTextColor((backgroundColor!=Color.WHITE)?Color.WHITE:Color.BLACK);
+		this.tvFormDefinitionFilePath.setTextColor((backgroundColor!=Color.WHITE)?Color.WHITE:Color.BLACK);
 		//this.txtGpsMaxWaitingTime.setBackgroundColor((backgroundColor!=Color.WHITE)?Color.WHITE:Color.BLACK);
     }
 }

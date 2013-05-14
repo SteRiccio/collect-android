@@ -148,7 +148,21 @@ public class SummaryTable extends UIElement {
 				    this.values.add(newValue);
 				} else if (nodeDef instanceof TimeAttributeDefinition){
 					Time timeValue = (Time)parentEntity.getValue(nodeDef.getName(), i);
-					loadedValue = timeValue.getHour()+getResources().getString(R.string.timeSeparator)+timeValue.getMinute();
+					String hour = "";
+					String minute = "";
+					if (timeValue.getHour()!=null){
+						hour = timeValue.getHour().toString();
+						if (timeValue.getHour()<10){
+							hour = "0"+hour;
+						}
+					}
+					if (timeValue.getMinute()!=null){
+						minute = timeValue.getMinute().toString();
+						if (timeValue.getMinute()<10){
+							minute = "0"+minute;
+						}
+					}
+					loadedValue = hour+getResources().getString(R.string.timeSeparator)+minute;
 				    ArrayList<String> newValue = new ArrayList<String>();
 				    newValue.add(loadedValue);
 				    this.values.add(newValue);

@@ -254,18 +254,12 @@ public class CodeField extends InputField {
 			}				
 		}
 		
-		List<CodeListItem> codeListItemsList = codeAttrDef.getList().getItems();
+		/*List<CodeListItem> codeListItemsList = codeAttrDef.getList().getItems();
 		for (CodeListItem codeListItem : codeListItemsList){
 			codes.add(codeListItem.getCode());
 
-			options.add(getLabelForCodeListItem(codeListItem));
-			/*if (codeListItem.getLabel(null)==null){
-				options.add(codeListItem.getLabel("en"));
-			} else {
-				options.add(codeListItem.getLabel(null));	    						
-			}*/
-			
-		}
+			options.add(getLabelForCodeListItem(codeListItem));			
+		}*/
 	}
 	
 	public void setValue(int position, String code, String path, boolean isSelectionChanged)

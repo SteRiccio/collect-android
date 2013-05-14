@@ -5,15 +5,17 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.StringTokenizer;
 
 import org.openforis.collect.android.R;
 import org.openforis.collect.android.management.ApplicationManager;
-import org.openforis.collect.android.management.BaseListActivity;
 import org.openforis.collect.android.messages.AlertMessage;
 import org.openforis.collect.android.misc.RunnableHandler;
 import org.openforis.collect.android.misc.ServerInterface;
 
+import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -35,14 +37,14 @@ import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 
-public class UploadActivity extends BaseListActivity{
+public class UploadActivity extends Activity{
 	
 	private static final String TAG = "UploadActivity";
 
 	private TextView activityLabel;
 	private TextView columnLabel;
 	
-	private ArrayAdapter<String> adapter;
+	//private ArrayAdapter<String> adapter;
 	
 	private Boolean[] selections;
 	
@@ -55,6 +57,9 @@ public class UploadActivity extends BaseListActivity{
 	private ProgressDialog pd;
 	
 	private int filesCount;
+	
+	private List<DataFile> dataFilesList;
+	private FileListAdapter adapter;
 	
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -69,23 +74,26 @@ public class UploadActivity extends BaseListActivity{
             	this.columnLabel = (TextView)findViewById(R.id.lblHeaders);
             	this.columnLabel.setText(getResources().getString(R.string.dataToUplaodColumnHeaders));
             	
-            	this.lv = getListView();
+            	//this.lv = getListView();
+            	this.lv = (ListView)findViewById(R.id.file_list);
             	
             	path = Environment.getExternalStorageDirectory().toString()+getResources().getString(R.string.exported_data_folder);            
             	
             	Button btn =(Button) findViewById(R.id.btnUpload);
+            	btn.setText(getResources().getString(R.string.uploadToServerButton));
                 btn.setOnClickListener(new OnClickListener() {
     			    @Override
     			    public void onClick(View v) {
+    			    	//CheckBox upload;
+    			    	//CheckBox overwrite;
     			    	pd = ProgressDialog.show(UploadActivity.this, getResources().getString(R.string.workInProgress), getResources().getString(R.string.uploadingDataToServerMessage));
-    			    	CheckBox upload;
-    			    	CheckBox overwrite;
     			    	for (int i=0;i<adapter.getCount();i++){
-    			    		LinearLayout ll = (LinearLayout)lv.getChildAt(i);
-    			    		upload = (CheckBox)ll.getChildAt(1);
-    			    		overwrite = (CheckBox)ll.getChildAt(2);
-    			    		if (upload.isChecked()){
-    			    			(new SendData()).execute(adapter.getItem(i).toString(),overwrite.isChecked());
+    			    		//LinearLayout ll = (LinearLayout)lv.getChildAt(i);
+    			    		//upload = (CheckBox)ll.getChildAt(1);
+    			    		//overwrite = (CheckBox)ll.getChildAt(2);
+    			    		//if (upload.isChecked()){
+    			    		if (adapter.checkList.get(i)[0]){
+    			    			(new SendData()).execute(adapter.getItem(i).getName(),adapter.checkList.get(i)[1]);
     		    				filesCount++;	
     			    		}
     			    	}
@@ -143,7 +151,7 @@ public class UploadActivity extends BaseListActivity{
 		int backgroundColor = ApplicationManager.appPreferences.getInt(getResources().getString(R.string.backgroundColor), Color.WHITE);	
 		changeBackgroundColor(backgroundColor);
 		
-		File dataFilesFolder = new File(path);
+		/*File dataFilesFolder = new File(path);
 		File[] dataFiles = dataFilesFolder.listFiles();
 		int filesNo = dataFiles.length;
 		filesList = new String[filesNo];
@@ -155,12 +163,25 @@ public class UploadActivity extends BaseListActivity{
 		}
 		if (filesNo==0){
 			this.activityLabel.setText(getResources().getString(R.string.noDataToUpload)+" "+getResources().getString(R.string.exported_data_folder));
+		}*/
+		dataFilesList = new ArrayList<DataFile>();
+		File dataFilesFolder = new File(path);
+		File[] dataFiles = dataFilesFolder.listFiles();
+		int filesNo = dataFiles.length;
+		for (int i=0;i<filesNo;i++) {
+	        //filesList[i] = serverFiles.get(i);
+	        dataFilesList.add(new DataFile(dataFiles[i].getName(),"xml_icon"));
+		}
+		if (filesNo==0){
+			this.activityLabel.setText(getResources().getString(R.string.noDataToDownload));
 		}
 		//int layout = (backgroundColor!=Color.WHITE)?R.layout.selectableitem_white:R.layout.selectableitem_black;
 		int layout = (backgroundColor!=Color.WHITE)?R.layout.upload_list_item_white:R.layout.upload_list_item_black;
 		//this.adapter = new ArrayAdapter<String>(this,layout,filesList);
-		this.adapter = new ArrayAdapter<String>(this, layout, R.id.lblFileName, filesList);
-		this.setListAdapter(this.adapter);
+		/*this.adapter = new ArrayAdapter<String>(this, layout, R.id.lblFileName, filesList);
+		this.setListAdapter(this.adapter);*/
+		this.adapter = new FileListAdapter(this, layout, dataFilesList, "upload");
+		lv.setAdapter(this.adapter);
     }
     
     /*@Override
@@ -280,7 +301,7 @@ public class UploadActivity extends BaseListActivity{
             }
             if (filesCount==0){
             	pd.dismiss();
-    			AlertMessage.createPositiveDialog(UploadActivity.this, true, null,
+    			/*AlertMessage.createPositiveDialog(UploadActivity.this, true, null,
     					getResources().getString(R.string.uploadToServerSuccessfulTitle), 
     					getResources().getString(R.string.uploadToServerSuccessfulMessage),
     						getResources().getString(R.string.okay),
@@ -290,7 +311,7 @@ public class UploadActivity extends BaseListActivity{
     								
     							}
     						},
-    						null).show();	
+    						null).show();	*/
             }            	
         }
      

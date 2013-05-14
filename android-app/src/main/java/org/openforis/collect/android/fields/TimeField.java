@@ -20,6 +20,7 @@ import android.graphics.Color;
 import android.text.Editable;
 import android.text.InputType;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
@@ -159,7 +160,8 @@ public class TimeField extends InputField implements TextWatcher {
 			if (separatorIndex+1<value.length())
 				minute = value.substring(separatorIndex+1);
 		}
-
+		Log.e("TIMEsetValue","value=="+value);
+		Log.e("TIMEsetValue","hour=="+hour+"minute"+minute);
 		Node<? extends NodeDefinition> node = this.findParentEntity(path).get(this.nodeDefinition.getName(), position);
 		
 		if (node!=null){
@@ -188,8 +190,9 @@ public class TimeField extends InputField implements TextWatcher {
 		}
 	}
 	
-	@Override
+	/*@Override
 	public void afterTextChanged(Editable s) {
+		Log.e("afterTextChanged","time"+s.toString());
 		this.setValue(0, s.toString(), TimeField.this.form.getFormScreenId(),true);
-	}
+	}*/
 }
