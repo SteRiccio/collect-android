@@ -731,7 +731,6 @@ public class FormScreen extends BaseActivity implements OnClickListener {
 	        				timeField.setOnClickListener(this);
 	        				timeField.setId(nodeDef.getId());
 	        				timeField.setValue(0, loadedValue, FormScreen.this.getFormScreenId(),false);
-	        				Log.e("timeFIELDloadedValue","=="+loadedValue);
 	        				timeField.addTextChangedListener(new TextWatcher(){
 	        			        public void afterTextChanged(Editable s) {
 	        			        	timeField.setValue(0, s.toString(), FormScreen.this.getFormScreenId(),true);
