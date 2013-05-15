@@ -6,11 +6,6 @@
 	<artifactId>collect-android</artifactId>
 	<packaging>pom</packaging>
 	<modules>
-		<module>jaxb-android</module>
-		<module>jpa-android</module>
-		<module>jxpath-android</module>
-		<module>jooq-android</module>
-		<module>spring-android</module>
 		<module>android-app</module>
 	</modules>
 </project>

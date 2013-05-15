@@ -2,14 +2,24 @@ package org.openforis.collect.android.management;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.sql.Connection;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import liquibase.Liquibase;
+import liquibase.database.Database;
+import liquibase.database.core.AndroidSQLiteDatabase;
+import liquibase.database.jvm.JdbcConnection;
+import liquibase.logging.LogFactory;
+import liquibase.resource.ClassLoaderResourceAccessor;
+
 import org.openforis.collect.android.R;
-import org.openforis.collect.android.database.CollectDatabase;
 import org.openforis.collect.android.database.DatabaseWrapper;
+import org.openforis.collect.android.database.SQLDroidDataSource;
+import org.openforis.collect.android.database.liquibase.AndroidLiquibaseLogger;
 import org.openforis.collect.android.fields.UIElement;
 import org.openforis.collect.android.lists.FormChoiceActivity;
 import org.openforis.collect.android.lists.RecordChoiceActivity;
@@ -57,6 +67,7 @@ public class ApplicationManager extends BaseActivity {
 	
 	private static String sessionId;
 
+	private static SQLDroidDataSource dataSource;
 	private static UserManager userManager;
 	public static SurveyManager surveyManager;
 	
@@ -149,6 +160,7 @@ public class ApplicationManager extends BaseActivity {
 	        	surveyDao.setSurveyContext(collectSurveyContext);
 	        	surveyManager.setSurveyWorkDao(new SurveyWorkDao());
 	        	surveyManager.setSurveyDao(surveyDao);
+	        	surveyManager.init();
 	        	
 	        	userManager = new UserManager();
 	        	userManager.setUserDao(new UserDao());
@@ -237,10 +249,18 @@ public class ApplicationManager extends BaseActivity {
         	liquibase.setDataSource(bdSource);
         	liquibase.setChangeLog("classpath:org/openforis/collect/db/changelog/db.changelog-master.xml");*/
         	
-        	
         	//creating database
-		    new DatabaseWrapper(ApplicationManager.this);
-		    CollectDatabase collectDB = new CollectDatabase(DatabaseWrapper.db);
+        	dataSource = new SQLDroidDataSource();
+        	dataSource.setUrl(DatabaseWrapper.CONNECTION_URL);
+        	JdbcDaoSupport.init(dataSource);
+        	
+		    DatabaseWrapper.init(this);
+        	
+		    updateDBSchema();
+		    
+        	//creating database
+		   // new DatabaseWrapper(ApplicationManager.this);
+		    //CollectDatabase collectDB = new CollectDatabase(DatabaseWrapper.db);
         	
         	/*JdbcDaoSupport jdbcDao = new JdbcDaoSupport();
         	jdbcDao.getConnection();
@@ -410,6 +430,28 @@ public class ApplicationManager extends BaseActivity {
     				+getResources().getString(R.string.logs_file_name)
     				+System.currentTimeMillis()
     				+getResources().getString(R.string.log_file_extension));
+		}
+	}
+	
+	private void updateDBSchema() throws SQLException {
+		Connection c = new JdbcDaoSupport().getConnection();
+		try {
+			LogFactory.putLogger(new AndroidLiquibaseLogger());
+			Database database = new AndroidSQLiteDatabase();
+			database.setConnection(new JdbcConnection(c));
+			Liquibase liquibase = new Liquibase("org/openforis/collect/db/changelog/db.changelog-master.xml", 
+					new ClassLoaderResourceAccessor(), database);
+		    liquibase.update(null);
+		} catch(Exception e) {
+			Log.e("", e.getMessage(), e);
+			if (c != null) {
+                c.rollback();
+	        }
+			throw new RuntimeException(e);
+		} finally {
+			if (c != null) {
+				c.close();
+			}
 		}
 	}
 	

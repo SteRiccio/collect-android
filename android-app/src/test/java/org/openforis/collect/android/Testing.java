@@ -1,7 +1,5 @@
 package org.openforis.collect.android;
 
-import org.junit.After;
-import org.junit.Before;
 import org.openforis.collect.persistence.UserDao;
 
 import android.test.AndroidTestCase;
@@ -9,12 +7,12 @@ import android.util.Log;
 
 public class Testing extends AndroidTestCase{
 
-	@Before
+	@Override
 	public void setUp() throws Exception {
 		Log.e("setUp","=====");
 	}
 	
-	@After
+	@Override
 	public void tearDown() throws Exception {
 		Log.e("tearDown","===");
 	}

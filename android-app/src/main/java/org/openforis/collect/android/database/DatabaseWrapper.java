@@ -6,31 +6,22 @@ import android.database.sqlite.SQLiteException;
 import android.database.sqlite.SQLiteOpenHelper;
 
 
-public class DatabaseWrapper{
+public abstract class DatabaseWrapper{
 	
 	private static final String DATABASE_NAME = "collect.db";
 	private static final String DB_PATH = "/data/data/org.openforis.collect.android/databases/";
 	private static final int DATABASE_VERSION = 3;
+	public static final String CONNECTION_URL = "jdbc:sqldroid:"+DB_PATH+"collect.db";
 	///data/data/org.openforis.collect.android/databases/collect.db
 	private static OpenHelper openHelper;
-	
-	private Context context;
 	public static SQLiteDatabase db;
 	
-	public DatabaseWrapper(Context ctx){
-		try{
-			this.context = ctx;
-			
-	        openHelper = new OpenHelper(context);
-
-	       	DatabaseWrapper.db = openHelper.getWritableDatabase();
-		}
-		catch (IllegalStateException e){
-			
-		}
+	public static void init(Context ctx){
+        openHelper = new OpenHelper(ctx);
+       	DatabaseWrapper.db = openHelper.getWritableDatabase();
 	}
 	
-	public SQLiteDatabase openDataBase(){
+	public static SQLiteDatabase openDataBase(){
         String myPath = DB_PATH + DATABASE_NAME;
         try{
         	db = SQLiteDatabase.openDatabase(myPath, null, SQLiteDatabase.CREATE_IF_NECESSARY);
@@ -40,7 +31,7 @@ public class DatabaseWrapper{
         return db;
     }
 
-	public boolean checkDataBase(){		 
+	public static boolean checkDataBase(){		 
     	SQLiteDatabase checkDB = null; 
     	try{
     		String myPath = DB_PATH + DATABASE_NAME;
