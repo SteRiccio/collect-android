@@ -2,19 +2,10 @@ package org.openforis.collect.android.management;
 
 import java.io.File;
 import java.io.FileInputStream;
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
-import liquibase.Liquibase;
-import liquibase.database.Database;
-import liquibase.database.DatabaseFactory;
-import liquibase.database.jvm.JdbcConnection;
-import liquibase.resource.FileSystemResourceAccessor;
 
 import org.openforis.collect.android.R;
 import org.openforis.collect.android.database.CollectDatabase;
@@ -157,6 +148,7 @@ public class ApplicationManager extends BaseActivity {
 	        	SurveyDao surveyDao = new SurveyDao();
 	        	surveyDao.setSurveyContext(collectSurveyContext);
 	        	surveyManager.setSurveyWorkDao(new SurveyWorkDao());
+	        	surveyManager.setSurveyDao(surveyDao);
 	        	
 	        	userManager = new UserManager();
 	        	userManager.setUserDao(new UserDao());
@@ -488,7 +480,7 @@ public class ApplicationManager extends BaseActivity {
 		 	    			ExpressionFactory expressionFactory = new ExpressionFactory();
 		 		        	Validator validator = new Validator();
 		 		        	CollectSurveyContext collectSurveyContext = new CollectSurveyContext(expressionFactory, validator/*, null*/);
-			            	FileInputStream fis = new FileInputStream(sdcardPath+getResources().getString(R.string.formDefinitionFile));        	
+			            	FileInputStream fis = new FileInputStream(sdcardPath+getResources().getString(R.string.formDefinitionFile));     	
 			            	SurveyIdmlBinder binder = new SurveyIdmlBinder(collectSurveyContext);
 			        		binder.addApplicationOptionsBinder(new UIOptionsBinder());
 			        		survey = (CollectSurvey) binder.unmarshal(fis);

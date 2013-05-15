@@ -74,7 +74,8 @@ public class DownloadActivity extends Activity{
     int totalSize = 0;
     TextView cur_val;
 //    String dwnload_file_path = "http://cs.uef.fi/ecse/";
-    String dwnload_file_path = "http://ar5.arbonaut.com/awfdatademo/planned/";
+    //String dwnload_file_path = "http://ar5.arbonaut.com/awfdatademo/planned/";
+    String dwnload_file_path = "http://cs.uef.fi/paikka/karol/doktorat/";
 	
     @Override
     public void onCreate(Bundle savedInstanceState) {
