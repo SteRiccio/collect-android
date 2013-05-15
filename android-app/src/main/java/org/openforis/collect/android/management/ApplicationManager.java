@@ -202,6 +202,8 @@ public class ApplicationManager extends BaseActivity {
 	            
 	            ApplicationManager.pd.dismiss();
 	            
+
+	            
 	            //showRootEntitiesListScreen();
 	            showFormsListScreen();
 			} catch (Exception e) {
@@ -451,6 +453,10 @@ public class ApplicationManager extends BaseActivity {
 	    				rootEntity.setId(ApplicationManager.currRootEntityId);
 	 	    		}
 	 	    		showFormRootScreen();
+    	            DataManager dataManager = new DataManager((CollectSurvey) ApplicationManager.getSurvey(),ApplicationManager.getSurvey().getSchema().getRootEntityDefinition(ApplicationManager.currRootEntityId).getName(),ApplicationManager.getLoggedInUser());
+    	            String fileName = "2_3_0_4_113_9_24_collect.xml";
+    	            Log.e("fileNAMEtoLoad","=="+fileName);
+    	            dataManager.loadRecordFromXml(fileName);
 	 	    	} else if (resultCode==getResources().getInteger(R.integer.backButtonPressed)){
 	 	    		if (ApplicationManager.getSurvey().getSchema().getRootEntityDefinitions().size()==1){
 	 	    			showFormsListScreen();
@@ -506,8 +512,10 @@ public class ApplicationManager extends BaseActivity {
 	 	    				e.printStackTrace();
 	 	    				survey = null;
 	 	    			}
-		            	if (survey!=null)
-		            		showRootEntitiesListScreen();
+		            	if (survey!=null){
+		            		showRootEntitiesListScreen();		    	            
+		            	}
+		            		
 		            	else {
 		            		AlertMessage.createPositiveDialog(ApplicationManager.this, false, getResources().getDrawable(R.drawable.warningsign),
 				 					getResources().getString(R.string.loadFormDefinitionTitle), getResources().getString(R.string.loadFormDefinitionMessage),

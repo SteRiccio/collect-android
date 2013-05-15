@@ -131,7 +131,7 @@ public class DataManager {
 	}
 	
 	public CollectRecord loadRecordFromXml(String filename) {
-		filename = Environment.getExternalStorageDirectory().toString()+"/ofcm/data/imported/2_3_0_4_113_9_24_collect.xml";
+		filename = Environment.getExternalStorageDirectory().toString()+"/ofcm/data/imported/"+filename;
 		long startTime = System.currentTimeMillis();
 		CollectRecord loadedRecord = null;
 		try {
