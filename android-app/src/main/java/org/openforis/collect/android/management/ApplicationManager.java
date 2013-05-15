@@ -146,9 +146,10 @@ public class ApplicationManager extends BaseActivity {
 	        	surveyManager.setCollectSurveyContext(collectSurveyContext);
 	        	//surveyManager.setSurveyDao(new SurveyDao(collectSurveyContext));
 	        	SurveyDao surveyDao = new SurveyDao();
-	        	surveyDao.setSurveyContext(collectSurveyContext);
+	        	surveyDao.setSurveyContext(collectSurveyContext);	        	
 	        	surveyManager.setSurveyWorkDao(new SurveyWorkDao());
 	        	surveyManager.setSurveyDao(surveyDao);
+	        	//surveyManager.init();
 	        	
 	        	userManager = new UserManager();
 	        	userManager.setUserDao(new UserDao());
@@ -486,7 +487,10 @@ public class ApplicationManager extends BaseActivity {
 		 	    			ExpressionFactory expressionFactory = new ExpressionFactory();
 		 		        	Validator validator = new Validator();
 		 		        	CollectSurveyContext collectSurveyContext = new CollectSurveyContext(expressionFactory, validator/*, null*/);
-			            	FileInputStream fis = new FileInputStream(sdcardPath+getResources().getString(R.string.formDefinitionFile));     	
+		 		        	String selectedFormDefinitionFile = ApplicationManager.appPreferences.getString(getResources().getString(R.string.formDefinitionPath), getResources().getString(R.string.defaultFormDefinitionPath));
+		 		        	Log.e("loadingForm","=FROM=="+selectedFormDefinitionFile);
+			            	//FileInputStream fis = new FileInputStream(sdcardPath+getResources().getString(R.string.formDefinitionFile));     	
+		 		        	FileInputStream fis = new FileInputStream(sdcardPath+selectedFormDefinitionFile);
 			            	SurveyIdmlBinder binder = new SurveyIdmlBinder(collectSurveyContext);
 			        		binder.addApplicationOptionsBinder(new UIOptionsBinder());
 			        		survey = (CollectSurvey) binder.unmarshal(fis);

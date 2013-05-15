@@ -79,7 +79,6 @@
    		android:id="@+id/txtFormDefinitionFile"
    		android:layout_width="fill_parent"
    		android:layout_height="wrap_content"
-   		android:inputType="number"
    		android:layout_toRightOf="@id/lblGpsTimeout"
    		android:layout_below="@id/languageSpinner"
    		 >

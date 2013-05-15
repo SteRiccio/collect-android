@@ -56,7 +56,7 @@ public class FormChoiceActivity extends BaseListActivity {
 		Log.i(getResources().getString(R.string.app_name),TAG+":onResume");
 		int backgroundColor = ApplicationManager.appPreferences.getInt(getResources().getString(R.string.backgroundColor), Color.WHITE);	
 		changeBackgroundColor(backgroundColor);
-		
+		String selectedFormDefinitionFile = ApplicationManager.appPreferences.getString(getResources().getString(R.string.formDefinitionPath), getResources().getString(R.string.defaultFormDefinitionPath));
 		this.surveysList = ApplicationManager.surveyManager.getAll();
 		String[] formsList;
 		if (this.surveysList.size()==0){
@@ -69,10 +69,10 @@ public class FormChoiceActivity extends BaseListActivity {
 			formsList[i] = survey.getName();
 		}
 		if (this.surveysList.size()==0){			
-			formsList[0]=getResources().getString(R.string.addNewSurvey);
+			formsList[0]=getResources().getString(R.string.addNewSurvey)+selectedFormDefinitionFile;
 		} else {
 			formsList[surveysList.size()]="";
-			formsList[surveysList.size()+1]=getResources().getString(R.string.addNewSurvey);
+			formsList[surveysList.size()+1]=getResources().getString(R.string.addNewSurvey)+selectedFormDefinitionFile;
 		}
 		
 		int layout = (backgroundColor!=Color.WHITE)?R.layout.localclusterrow_white:R.layout.localclusterrow_black;
