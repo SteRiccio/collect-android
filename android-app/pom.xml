@@ -1,19 +1,25 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
-	<parent>	
+	<parent>
 		<groupId>org.openforis.collect.android</groupId>
 		<artifactId>collect-android</artifactId>
 		<version>3.0-SNAPSHOT</version>
 	</parent>
 	<artifactId>collect-android-app</artifactId>
 	<packaging>apk</packaging>
- 	
+
+	<properties>
+		<platform.version>2.3.3</platform.version>
+		<maven.compiler.source>1.6</maven.compiler.source>
+		<maven.compiler.target>1.6</maven.compiler.target>
+	</properties>
+
 	<dependencies>
 		<dependency>
 			<groupId>com.google.android</groupId>
 			<artifactId>android</artifactId>
-			<version>2.2.1</version>
+			<version>${platform.version}</version>
 			<scope>provided</scope>
 			<exclusions>
 				<exclusion>
@@ -29,15 +35,8 @@
 		<dependency>
 			<groupId>com.google.android</groupId>
 			<artifactId>android-test</artifactId>
-			<version>2.2.1</version>
+			<version>${platform.version}</version>
 			<scope>provided</scope>
-		</dependency>
-		<dependency>
-		    <groupId>org.sqldroid</groupId>
-		    <artifactId>sqld</artifactId>
-		    <version>1.0</version>
-		    <scope>system</scope>
-		    <systemPath>${project.basedir}/lib/sqldroid-android-1.0.jar</systemPath>
 		</dependency>
 		<dependency>
 			<groupId>com.google.android</groupId>
@@ -45,9 +44,16 @@
 			<version>r7</version>
 		</dependency>
 		<dependency>
+			<groupId>com.googlecode</groupId>
+			<artifactId>openbeans</artifactId>
+			<version>1.0</version>
+			<scope>system</scope>
+			<systemPath>${project.basedir}/lib/openbeans-1.0.jar</systemPath>
+		</dependency>
+		<dependency>
 			<groupId>org.openforis.collect</groupId>
 			<artifactId>collect-core</artifactId>
-			<!--<version>3.0-Alpha5-SNAPSHOT</version>-->
+			<!--<version>3.0-Alpha5-SNAPSHOT</version> -->
 			<version>3.0-CR1-SNAPSHOT</version>
 			<exclusions>
 				<exclusion>
@@ -60,26 +66,9 @@
 					<groupId>org.springframework</groupId>
 				</exclusion>
 				<!-- conflicts with repackaged jxpath -->
- 				<exclusion>
+				<exclusion>
 					<artifactId>commons-collections</artifactId>
 					<groupId>commons-collections</groupId>
-				</exclusion>
-				<!-- geotools shouldn't be part of collect-core -->
-				<exclusion>
-					<artifactId>gt-epsg-wkt</artifactId>
-					<groupId>org.geotools</groupId>
-				</exclusion>
-				<exclusion>
-					<artifactId>gt-metadata</artifactId>
-					<groupId>org.geotools</groupId>
-				</exclusion>
-				<exclusion>
-					<artifactId>gt-main</artifactId>
-					<groupId>org.geotools</groupId>
-				</exclusion>
-				<exclusion>
-					<artifactId>gt-referencing</artifactId>
-					<groupId>org.geotools</groupId>
 				</exclusion>
 				<!-- Android requires repackaged jxpath -->
 				<exclusion>
@@ -108,14 +97,18 @@
 					<artifactId>lucene-core</artifactId>
 					<groupId>org.apache.lucene</groupId>
 				</exclusion>
+				<exclusion>
+					<groupId>org.liquibase</groupId>
+					<artifactId>liquibase-core</artifactId>
+				</exclusion>
 			</exclusions>
 		</dependency>
 		<dependency>
-			<groupId>org.openforis.collect.android</groupId>
-			<artifactId>collect-android-jxpath</artifactId>
-			<version>${project.version}</version>
+			<groupId>org.openforis.android</groupId>
+			<artifactId>android-jxpath</artifactId>
+			<version>1.0-SNAPSHOT</version>
 			<exclusions>
-		 		<exclusion>
+				<exclusion>
 					<artifactId>commons-beanutils</artifactId>
 					<groupId>commons-beanutils</groupId>
 				</exclusion>
@@ -126,48 +119,56 @@
 				<exclusion>
 					<groupId>org.apache.tomcat</groupId>
 					<artifactId>servlet-api</artifactId>
-				</exclusion>		
+				</exclusion>
 			</exclusions>
 		</dependency>
 		<dependency>
-			<groupId>org.openforis.collect.android</groupId>
-			<artifactId>collect-android-jooq</artifactId>
-			<version>${project.version}</version>
-		</dependency>
-	    <dependency>
-			<groupId>org.sqldroid</groupId>
-			<artifactId>sqldroid-android</artifactId>
-			<version>1.0</version>
-			<scope>system</scope>
-			<systemPath>${basedir}/lib/sqldroid-android-1.0.jar</systemPath>
+			<groupId>org.openforis.android</groupId>
+			<artifactId>android-spring</artifactId>
+			<version>1.0-SNAPSHOT</version>
 		</dependency>
 		<dependency>
-			<groupId>org.openforis.collect.android</groupId>
-			<artifactId>collect-android-spring</artifactId>
-			<version>${project.version}</version>
+			<groupId>org.openforis.android</groupId>
+			<artifactId>android-jooq</artifactId>
+			<version>1.0-SNAPSHOT</version>
+		</dependency>
+		<dependency>
+			<groupId>org.openforis.android</groupId>
+			<artifactId>android-sqldroid</artifactId>
+			<version>1.0-SNAPSHOT</version>
+		</dependency>
+		<dependency>
+			<groupId>org.openforis.android</groupId>
+			<artifactId>android-liquibase-core</artifactId>
+			<version>2.0.6-SNAPSHOT</version>
+		</dependency>
+		<dependency>
+			<groupId>org.openforis.idm</groupId>
+			<artifactId>idm-test</artifactId>
+			<version>3.0-CR1-SNAPSHOT</version>
+			<scope>test</scope>
 		</dependency>
 		<dependency>
 			<groupId>junit</groupId>
 			<artifactId>junit</artifactId>
-			<version>4.0</version>
-			<!--<version>3.8.2</version>-->
+			<version>3.8.2</version>
 			<type>jar</type>
 			<scope>test</scope>
-	    </dependency>
+		</dependency>
 	</dependencies>
-	
+
 	<build>
 		<plugins>
 			<plugin>
 				<groupId>com.jayway.maven.plugins.android.generation2</groupId>
 				<artifactId>android-maven-plugin</artifactId>
-				<version>3.1.1</version>			
+				<version>3.1.1</version>
 				<configuration>
-				    <dex>
+					<dex>
 						<coreLibrary>true</coreLibrary>
 					</dex>
 					<sdk>
-						<platform>2.3.3</platform>
+						<platform>${platform.version}</platform>
 					</sdk>
 					<emulator>
 						<avd>a233</avd>
@@ -179,15 +180,15 @@
 			</plugin>
 			<plugin>
 				<artifactId>maven-compiler-plugin</artifactId>
-				<version>2.3.2</version>
+				<version>3.1</version>
 				<configuration>
-					<source>1.6</source>
-					<target>1.6</target>
+					<source>${maven.compiler.source}</source>
+					<target>${maven.compiler.target}</target>
 				</configuration>
 			</plugin>
-		</plugins> 
+		</plugins>
 	</build>
-	
+
 	<repositories>
 		<repository>
 			<id>openforis-releases-repository</id>
@@ -200,5 +201,5 @@
 			<url>http://www.openforis.org/nexus/content/repositories/snapshots/</url>
 		</repository>
 	</repositories>
-	
+
 </project>

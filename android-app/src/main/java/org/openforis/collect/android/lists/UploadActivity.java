@@ -238,11 +238,11 @@ public class UploadActivity extends Activity{
         StringBuilder sb = new StringBuilder();
         String line = null;
         while ((line = reader.readLine()) != null) {
-        	if (line.contains("<value>")&&line.contains("</value>")){
+        	/*if (line.contains("<value>")&&line.contains("</value>")){
         		line = line.substring(line.indexOf("<value>")+7,line.indexOf("</value>"));
         	} else if (line.contains("<code>")&&line.contains("<code>")){
         		line = line.substring(line.indexOf("<code>")+6,line.indexOf("</code>"));        		
-        	}
+        	}*/
         	sb.append(line).append("\n");
         }
         return sb.toString();

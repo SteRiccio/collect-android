@@ -2,14 +2,24 @@ package org.openforis.collect.android.management;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.sql.Connection;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import liquibase.Liquibase;
+import liquibase.database.Database;
+import liquibase.database.core.AndroidSQLiteDatabase;
+import liquibase.database.jvm.JdbcConnection;
+import liquibase.logging.LogFactory;
+import liquibase.resource.ClassLoaderResourceAccessor;
+
 import org.openforis.collect.android.R;
-import org.openforis.collect.android.database.CollectDatabase;
 import org.openforis.collect.android.database.DatabaseWrapper;
+import org.openforis.collect.android.database.SQLDroidDataSource;
+import org.openforis.collect.android.database.liquibase.AndroidLiquibaseLogger;
 import org.openforis.collect.android.fields.UIElement;
 import org.openforis.collect.android.lists.FormChoiceActivity;
 import org.openforis.collect.android.lists.RecordChoiceActivity;
@@ -57,6 +67,7 @@ public class ApplicationManager extends BaseActivity {
 	
 	private static String sessionId;
 
+	private static SQLDroidDataSource dataSource;
 	private static UserManager userManager;
 	public static SurveyManager surveyManager;
 	
@@ -95,6 +106,20 @@ public class ApplicationManager extends BaseActivity {
 				Log.i(getResources().getString(R.string.app_name),TAG+":run");
 	        	
 	            initSession();
+	            
+	            dataSource = new SQLDroidDataSource();
+	        	dataSource.setUrl(DatabaseWrapper.CONNECTION_URL);
+	        	JdbcDaoSupport.init(dataSource);
+	        	
+			    DatabaseWrapper.init(ApplicationManager.this);
+	        	
+			    updateDBSchema();
+			    //creating database
+			    //new DatabaseWrapper(ApplicationManager.this);
+			    //CollectDatabase collectDB = new CollectDatabase(DatabaseWrapper.db);
+	        	//opening database connection		    
+	        	JdbcDaoSupport jdbcDao = new JdbcDaoSupport();
+	        	jdbcDao.getConnection();
 	            
 	            ApplicationManager.currentRecord = null;
 	            ApplicationManager.currRootEntityId = -1;
@@ -149,7 +174,7 @@ public class ApplicationManager extends BaseActivity {
 	        	surveyDao.setSurveyContext(collectSurveyContext);	        	
 	        	surveyManager.setSurveyWorkDao(new SurveyWorkDao());
 	        	surveyManager.setSurveyDao(surveyDao);
-	        	//surveyManager.init();
+	        	surveyManager.init();
 	        	
 	        	userManager = new UserManager();
 	        	userManager.setUserDao(new UserDao());
@@ -238,35 +263,20 @@ public class ApplicationManager extends BaseActivity {
         	liquibase.setDataSource(bdSource);
         	liquibase.setChangeLog("classpath:org/openforis/collect/db/changelog/db.changelog-master.xml");*/
         	
-        	
         	//creating database
-		    new DatabaseWrapper(ApplicationManager.this);
-		    CollectDatabase collectDB = new CollectDatabase(DatabaseWrapper.db);
+        	/*dataSource = new SQLDroidDataSource();
+        	dataSource.setUrl(DatabaseWrapper.CONNECTION_URL);
+        	JdbcDaoSupport.init(dataSource);
         	
-        	/*JdbcDaoSupport jdbcDao = new JdbcDaoSupport();
-        	jdbcDao.getConnection();
-            Connection c = jdbcDao.getConnection();
-            Liquibase liquibase = null;
-            try {            
-                Database database = DatabaseFactory.getInstance().findCorrectDatabaseImplementation(new JdbcConnection(DriverManager.getConnection("jdbc:sqldroid:"+"/data/data/org.openforis.collect.android/databases/collect.db")) );//(Database) DatabaseWrapper.db;
-                liquibase = new Liquibase("classpath:org/openforis/collect/db/changelog/db.changelog-master.xml", new FileSystemResourceAccessor(), database);
-                liquibase.update(null);
-            } finally {
-                if (c != null) {
-                    try {
-                        c.rollback();
-                        c.close();
-                    } catch (SQLException e) {
-                        //nothing to do
-                    }
-                }
-            }*/
+		    DatabaseWrapper.init(this);
+        	
+		    updateDBSchema();
 		    //creating database
 		    //new DatabaseWrapper(ApplicationManager.this);
 		    //CollectDatabase collectDB = new CollectDatabase(DatabaseWrapper.db);
         	//opening database connection		    
         	JdbcDaoSupport jdbcDao = new JdbcDaoSupport();
-        	jdbcDao.getConnection();
+        	jdbcDao.getConnection();*/
         	
         	ApplicationManager.appPreferences = getPreferences(MODE_PRIVATE);
 			int backgroundColor = ApplicationManager.appPreferences.getInt(getResources().getString(R.string.backgroundColor), Color.WHITE);
@@ -414,6 +424,28 @@ public class ApplicationManager extends BaseActivity {
 		}
 	}
 	
+	private void updateDBSchema() throws SQLException {
+		Connection c = new JdbcDaoSupport().getConnection();
+		try {
+			LogFactory.putLogger(new AndroidLiquibaseLogger());
+			Database database = new AndroidSQLiteDatabase();
+			database.setConnection(new JdbcConnection(c));
+			Liquibase liquibase = new Liquibase("org/openforis/collect/db/changelog/db.changelog-master.xml", 
+					new ClassLoaderResourceAccessor(), database);
+		    liquibase.update(null);
+		} catch(Exception e) {
+			Log.e("==", e.getMessage(), e);
+			if (c != null) {
+                c.rollback();
+	        }
+			throw new RuntimeException(e);
+		} finally {
+			if (c != null) {
+				c.close();
+			}
+		}
+	}
+	
     @Override
 	public void onResume()
 	{
@@ -455,14 +487,14 @@ public class ApplicationManager extends BaseActivity {
 	 	    		}
 	 	    		showFormRootScreen();
     	            DataManager dataManager = new DataManager((CollectSurvey) ApplicationManager.getSurvey(),ApplicationManager.getSurvey().getSchema().getRootEntityDefinition(ApplicationManager.currRootEntityId).getName(),ApplicationManager.getLoggedInUser());
-    	            String fileName = "2_3_0_4_113_9_24_collect.xml";
-    	            Log.e("fileNAMEtoLoad","=="+fileName);
-    	            dataManager.loadRecordFromXml(fileName);
+
+    	            /*Log.e("fileNAMEtoLoad","==2_3_0_4_113_9_24_collect.xml");
+    	            dataManager.loadRecordFromXml("2_3_0_4_113_9_24_collect.xml");*/
 	 	    	} else if (resultCode==getResources().getInteger(R.integer.backButtonPressed)){
 	 	    		if (ApplicationManager.getSurvey().getSchema().getRootEntityDefinitions().size()==1){
 	 	    			showFormsListScreen();
 	 	    		} else {
-	 	    			showRootEntitiesListScreen();	
+	 	    			showRootEntitiesListScreen();
 	 	    		}	 	    	
 	 	    	}
 	 	    } else if (requestCode==getResources().getInteger(R.integer.rootEntitySelection)){

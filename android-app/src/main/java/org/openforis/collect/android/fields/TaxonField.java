@@ -128,12 +128,12 @@ public class TaxonField extends InputField {
 				//Get category and value
 				String strValue = TaxonField.this.txtCodes.getText().toString();				
 				//Add current value to FormScreen.currentFieldValue
-		    	ArrayList<String> tempValue = new ArrayList<String>();
+		    	/*ArrayList<String> tempValue = new ArrayList<String>();
 				tempValue.add(TaxonField.this.txtCodes.getText().toString());
 				tempValue.add(TaxonField.this.txtSciName.getText().toString());
 				tempValue.add(TaxonField.this.txtVernacularName.getText().toString());
-				tempValue.add(TaxonField.this.languageCodes[getVernacularLanguageCodeIndex(TaxonField.this.spinner.getSelectedItemPosition())-1]/*TaxonField.this.txtVernacularLang.getText().toString()*/);
-				tempValue.add(TaxonField.this.txtLangVariant.getText().toString());
+				tempValue.add(TaxonField.this.languageCodes[getVernacularLanguageCodeIndex(TaxonField.this.spinner.getSelectedItemPosition())-1]);
+				tempValue.add(TaxonField.this.txtLangVariant.getText().toString());*/
 				//Check the value is not empty  and Run SearchTaxon activity
 				//TODO: in future validator should check it
 				if (!strValue.isEmpty())
@@ -227,7 +227,7 @@ public class TaxonField extends InputField {
 					Log.i(getResources().getString(R.string.app_name), "Value of SciName field is EMPTY!!!! ");
 			}
 		});
-		this.btnSearchBySciName.setVisibility(View.GONE);
+		//this.btnSearchBySciName.setVisibility(View.GONE);
 		
 		//Create layout and add input field "Scientific name" into there
 		LinearLayout sciNameLL = new LinearLayout(context);		
