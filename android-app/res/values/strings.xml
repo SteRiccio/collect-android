@@ -26,7 +26,9 @@
     <string name="startGpsTitle">Starting GPS&#8230;</string>
     <string name="startGpsMessage">GPS on your device is disabled. Do you want to enable it in operating system Settings?</string>
     <string name="savingDataTitle">Saving&#8230;</string>    
-    <string name="savingDataMessage">Do you want to save data from form?</string>
+    <string name="savingDataQuestionMessage">Do you want to save data from form?</string>
+    <string name="savingDataSuccessMessage">Record successfully saved in database.</string>
+    <string name="savingDataFailureMessage">Record could not be saved in database.</string>
     <string name="savingToDatabase">Save</string>
     <string name="savingToFile">XML</string>
     <string name="openingPlotListTitle">Back to list&#8230;</string>    

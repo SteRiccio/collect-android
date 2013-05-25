@@ -73,14 +73,18 @@ public class TaxonManager {
 
 	@Transactional
 	public List<TaxonOccurrence> findByScientificName(String taxonomyName, String searchString, int maxResults) {
-		Taxonomy taxonomy = taxonomyDao.load(this.getSurveyId(), taxonomyName);
-		List<Taxon> list = taxonDao.findByScientificName(taxonomy.getId(), searchString, maxResults);
 		List<TaxonOccurrence> result = new ArrayList<TaxonOccurrence>();
-		Log.e("findBySCIName","==");
-		for (Taxon taxon : list) {
-			TaxonOccurrence o = new TaxonOccurrence(taxon.getCode(), taxon.getScientificName());
-			result.add(o);
+		
+		Taxonomy taxonomy = taxonomyDao.load(this.getSurveyId(), taxonomyName);		
+		if (taxonomy!=null){
+			List<Taxon> list = taxonDao.findByScientificName(taxonomy.getId(), searchString, maxResults);			
+			Log.e("findBySCIName","==");
+			for (Taxon taxon : list) {
+				TaxonOccurrence o = new TaxonOccurrence(taxon.getCode(), taxon.getScientificName());
+				result.add(o);
+			}			
 		}
+		
 		return result;
 	}
 	

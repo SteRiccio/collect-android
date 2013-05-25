@@ -227,7 +227,7 @@ public class TaxonField extends InputField {
 					Log.i(getResources().getString(R.string.app_name), "Value of SciName field is EMPTY!!!! ");
 			}
 		});
-		//this.btnSearchBySciName.setVisibility(View.GONE);
+		this.btnSearchBySciName.setVisibility(View.GONE);
 		
 		//Create layout and add input field "Scientific name" into there
 		LinearLayout sciNameLL = new LinearLayout(context);		

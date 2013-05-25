@@ -52,7 +52,8 @@ public class DataManager {
 		this.dataUnmarshaller = new DataUnmarshaller(dataHandler);
 	}
 	
-	public int saveRecord(Context ctx) {
+	public boolean saveRecord(Context ctx) {
+		boolean isSuccess = true;
 		try {
 			JdbcDaoSupport jdbcDao = new JdbcDaoSupport();
 			jdbcDao.getConnection();
@@ -67,22 +68,27 @@ public class DataManager {
 			}
 			DataManager.recordManager.save(recordToSave, ApplicationManager.getSessionId());
 		} catch (RecordUnlockedException e) {
-			Log.e("RecordUnlockedException","=="+e.getLocalizedMessage());
+			e.printStackTrace();
+			isSuccess = false;
 		} catch (RecordPersistenceException e) {
-			Log.e("RecordPersistenceException",e.getMessage()+"=="+e.getLocalizedMessage());
+			e.printStackTrace();
+			isSuccess = false;
 		} catch (NullPointerException e){
-			Log.e("NullPointerException","=="+e.getLocalizedMessage());
+			e.printStackTrace();
+			isSuccess = false;
+		} catch (Exception e){
+			e.printStackTrace();
+			isSuccess = false;
 		} finally {
-
+			
 		}
-		return 0;
+		return isSuccess;
 	}
 	
 	public int saveRecord(CollectRecord recordToSave) {
 		try {
 			JdbcDaoSupport jdbcDao = new JdbcDaoSupport();
 			jdbcDao.getConnection();
-			//CollectRecord recordToSave = ApplicationManager.currentRecord;
 			Log.e("recordToSave==null","=="+(recordToSave==null));
 			if (recordToSave.getId()==null){
 				recordToSave.setCreatedBy(this.user);
@@ -93,11 +99,11 @@ public class DataManager {
 			}
 			DataManager.recordManager.save(recordToSave, ApplicationManager.getSessionId());
 		} catch (RecordUnlockedException e) {
-			Log.e("RecordUnlockedException","=="+e.getLocalizedMessage());
+			e.printStackTrace();
 		} catch (RecordPersistenceException e) {
-			Log.e("RecordPersistenceException",e.getMessage()+"=="+e.getLocalizedMessage());
+			e.printStackTrace();
 		} catch (NullPointerException e){
-			Log.e("NullPointerException","=="+e.getMessage());
+			e.printStackTrace();
 		} finally {
 
 		}
@@ -173,9 +179,14 @@ public class DataManager {
 	}
 	
 	public List<CollectRecord> loadSummaries(){
+		Log.e("loading","SUMMARIES");
+		long startTime = System.currentTimeMillis();
 		JdbcDaoSupport jdbcDao = new JdbcDaoSupport();
 		jdbcDao.getConnection();
+		Log.e("jdbcDaoconnection","=="+((System.currentTimeMillis()-startTime)/1000));
+		startTime = System.currentTimeMillis();
 		List<CollectRecord> recordsList = DataManager.recordManager.loadSummaries(survey, rootEntity);		
+		Log.e("loadSummaries","=="+((System.currentTimeMillis()-startTime)/1000));
 		JdbcDaoSupport.close();
 		return recordsList;
 	}

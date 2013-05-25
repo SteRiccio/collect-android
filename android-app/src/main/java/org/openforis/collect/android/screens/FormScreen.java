@@ -464,7 +464,7 @@ public class FormScreen extends BaseActivity implements OnClickListener {
 	        						this.longitude = "";
 	        					if (this.latitude==null)
 	        						this.latitude = "";
-	        					//coordField.setValue(0, this.longitude, this.latitude, this.parentFormScreenId, false);
+	        					coordField.setValue(0, this.longitude, this.latitude, FormScreen.this.getFormScreenId(), false);
 	    		    			this.currentCoordinateField = null;
 	    		    			this.longitude = null;
 	    		    			this.latitude = null;
@@ -2604,7 +2604,9 @@ public class FormScreen extends BaseActivity implements OnClickListener {
 	 	    		this.photoPath = data.getStringExtra(getResources().getString(R.string.photoPath));
 	 	    	}
 	 	    } else if (requestCode==getResources().getInteger(R.integer.internalGpsStarted)){
+	 	    	Log.e("internalGPS","STARTED");
 	 	    	if (resultCode==getResources().getInteger(R.integer.internalGpsLocationReceived)){
+	 	    		Log.e("internalGPS","LOCATION RECEIVED");
 	 	    		this.latitude = data.getStringExtra(getResources().getString(R.string.latitude));
 	 	    		this.longitude = data.getStringExtra(getResources().getString(R.string.longitude));
 	 	    	}

@@ -58,6 +58,7 @@ public class GpsActivity extends Activity {
 						resultHolder.putExtra(getResources().getString(R.string.longitude), String.valueOf(loc.getLongitude()));
 						setResult(getResources().getInteger(R.integer.internalGpsLocationReceived),resultHolder);
 					}
+					Log.e("lat1=="+loc.getLatitude(),"location updated1"+loc.getLongitude());
 						
 					// After receiving first GPS coordinates dismiss the Progress Dialog
 					dialog.dismiss();

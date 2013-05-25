@@ -102,7 +102,32 @@ public class BaseActivity extends Activity {
 	        case R.id.menu_save:
 	        	CollectSurvey collectSurveySave = (CollectSurvey)ApplicationManager.getSurvey();	        	
 	        	DataManager dataManagerSave = new DataManager(collectSurveySave,collectSurveySave.getSchema().getRootEntityDefinitions().get(0).getName(),ApplicationManager.getLoggedInUser());
-	        	dataManagerSave.saveRecord(this);
+	        	boolean isSuccess = dataManagerSave.saveRecord(this);
+	        	if (isSuccess){
+	        		AlertMessage.createPositiveDialog(BaseActivity.this, true, null,
+							getResources().getString(R.string.savingDataTitle), 
+							getResources().getString(R.string.savingDataSuccessMessage),
+								getResources().getString(R.string.okay),
+					    		new DialogInterface.OnClickListener() {
+									@Override
+									public void onClick(DialogInterface dialog, int which) {
+										
+									}
+								},
+								null).show();
+	        	} else {
+	        		AlertMessage.createPositiveDialog(BaseActivity.this, true, null,
+							getResources().getString(R.string.savingDataTitle), 
+							getResources().getString(R.string.savingDataFailureMessage),
+								getResources().getString(R.string.okay),
+					    		new DialogInterface.OnClickListener() {
+									@Override
+									public void onClick(DialogInterface dialog, int which) {
+										
+									}
+								},
+								null).show();
+	        	}
 	        	return true;
 	        case R.id.menu_export:
 	        	CollectSurvey collectSurveyExport = (CollectSurvey)ApplicationManager.getSurvey();	        	
