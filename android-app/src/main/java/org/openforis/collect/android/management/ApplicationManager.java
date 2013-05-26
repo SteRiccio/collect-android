@@ -113,7 +113,7 @@ public class ApplicationManager extends BaseActivity {
 	        	
 			    DatabaseWrapper.init(ApplicationManager.this);
 	        	
-			    updateDBSchema();
+			    //updateDBSchema();
 			    //creating database
 			    //new DatabaseWrapper(ApplicationManager.this);
 			    //CollectDatabase collectDB = new CollectDatabase(DatabaseWrapper.db);
@@ -660,4 +660,6 @@ public class ApplicationManager extends BaseActivity {
 		}
 		return label;
 	}
+	
+	
 }

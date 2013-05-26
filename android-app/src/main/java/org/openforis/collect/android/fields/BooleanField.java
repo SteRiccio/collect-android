@@ -56,7 +56,6 @@ public class BooleanField extends Field {
 				ArrayList<String> value = new ArrayList<String>();
 				value.add(String.valueOf(chckBox1.isChecked()));
 				value.add(String.valueOf(!chckBox1.isChecked()));
-				//Log.e("onItemSelected1",BooleanField.form.getFormScreenId()+"=="+BooleanField.form.currInstanceNo+"("+BooleanField.this.currentInstanceNo+")");
 				if (BooleanField.this.nodeDefinition.isMultiple()){
 					BooleanField.this.setValue(BooleanField.form.currInstanceNo, !chckBox2.isChecked(), BooleanField.form.getFormScreenId(), true);	
 				} else {
@@ -79,7 +78,6 @@ public class BooleanField extends Field {
 					ArrayList<String> value = new ArrayList<String>();
 					value.add(String.valueOf(!chckBox2.isChecked()));
 					value.add(String.valueOf(chckBox2.isChecked()));
-					//Log.e("onItemSelected2",BooleanField.form.getFormScreenId()+"=="+BooleanField.form.currInstanceNo+"("+BooleanField.this.currentInstanceNo+")");
 					if (BooleanField.this.nodeDefinition.isMultiple()){
 						BooleanField.this.setValue(BooleanField.form.currInstanceNo, !chckBox2.isChecked(), BooleanField.form.getFormScreenId(), true);	
 					} else {
@@ -135,13 +133,11 @@ public class BooleanField extends Field {
 	
 		Node<? extends NodeDefinition> node = this.findParentEntity(path).get(this.nodeDefinition.getName(), position);
 		if (node!=null){
-			//Log.e("BOOLvalueSET",path+"=="+position);
 			BooleanAttribute boolAtr = (BooleanAttribute)node;
 			boolAtr.setValue(new BooleanValue(boolValue));
 			//Validate results 
 //			this.validateResults(node);
 		} else {
-			//Log.e("BOOLvalueADDED",path+"=="+position);
 			EntityBuilder.addValue(this.findParentEntity(path), this.nodeDefinition.getName(), boolValue, position);	
 		}
 	}

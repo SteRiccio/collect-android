@@ -6,6 +6,7 @@ import java.util.Map;
 
 import org.openforis.collect.android.R;
 import org.openforis.collect.android.fields.TaxonField;
+import org.openforis.collect.android.lists.DownloadActivity;
 import org.openforis.collect.android.management.ApplicationManager;
 import org.openforis.collect.android.management.TaxonManager;
 import org.openforis.collect.persistence.TaxonDao;
@@ -15,9 +16,12 @@ import org.openforis.idm.model.TaxonOccurrence;
 import org.springframework.jdbc.core.support.JdbcDaoSupport;
 
 import android.app.Activity;
+import android.app.ProgressDialog;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.text.InputType;
 import android.text.method.QwertyKeyListener;
 import android.text.method.TextKeyListener;
@@ -50,6 +54,8 @@ public class SearchTaxonActivity extends Activity {
 	private EditText txtSearch;
 	private Button btnSearch;
 		
+	private ProgressDialog pd;
+	
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 	    super.onCreate(savedInstanceState);
@@ -167,82 +173,111 @@ public class SearchTaxonActivity extends Activity {
     }	
     
     private void doSearch(String strSearch, int parentTaxonFieldId){
-    	//Open connection with database
-    	JdbcDaoSupport jdbcDao  = new JdbcDaoSupport();
-    	jdbcDao.getConnection();    	
-    	//Search results 
-    	List<TaxonOccurrence> lstTaxonOccurence = new ArrayList<TaxonOccurrence>();
-    	if(this.taxonManager != null){
-    		Log.i(getResources().getString(R.string.app_name), "Search by: " + this.criteria);
-    		this.populateResultList(lstTaxonOccurence, parentTaxonFieldId);	    		
-    		if(this.criteria.equalsIgnoreCase("Code")){
-				Log.i(getResources().getString(R.string.app_name), "Search by Code");
-				lstTaxonOccurence = this.taxonManager.findByCode(this.taxonomy, strSearch, 1000);
-				this.populateResultList(lstTaxonOccurence, parentTaxonFieldId);				
-			}
-			else if (this.criteria.equalsIgnoreCase("SciName")){
-				Log.i(getResources().getString(R.string.app_name), "Search by Scientific name");
-				lstTaxonOccurence = this.taxonManager.findByScientificName(this.taxonomy, strSearch, 1000);
-				this.populateResultList(lstTaxonOccurence, parentTaxonFieldId);			
-			}
-			else if (this.criteria.equalsIgnoreCase("VernacularName")){
-				Log.i(getResources().getString(R.string.app_name), "Search by VernacularName");
-				lstTaxonOccurence = this.taxonManager.findByVernacularName(this.taxonomy, strSearch, 1000);
-				this.populateResultList(lstTaxonOccurence, parentTaxonFieldId);			
-
-			}    		
-			else{
-				Log.i(getResources().getString(R.string.app_name), "Undefined criteria is: " + this.criteria);
-			}
-		}else{
-			Log.i(getResources().getString(R.string.app_name), "Species Manager is NULL!");
-		}   	
-	    	
-    	//Close connection
-    	JdbcDaoSupport.close();
+    	pd = ProgressDialog.show(SearchTaxonActivity.this, getResources().getString(R.string.workInProgress), getResources().getString(R.string.searchingForTaxon));
+    	SearchThread searchThread = new SearchThread(strSearch, parentTaxonFieldId);
+    	searchThread.start();
     }
     
-    private void populateResultList(List<TaxonOccurrence> lstTaxonOccurence, final int parentTaxonFieldId){
-    	Log.i("SearchTaxonActivity", "Size of result list is: " + lstTaxonOccurence.size());
-    	String[] arrResults = new String[lstTaxonOccurence.size()];
-    	int idx = 0;
-		for (TaxonOccurrence taxonOcc : lstTaxonOccurence) {
-			arrResults[idx] = taxonOcc.getCode() + " ;\n" + taxonOcc.getScientificName() + " ;\n" 
-				+ taxonOcc.getVernacularName() + " ;\n" + taxonOcc.getLanguageCode() + " ;\n" 
-				+ taxonOcc.getLanguageVariety()+ " ;\n";
-			arrResults[idx] = arrResults[idx].replaceAll("null", "");
-			idx++;
-		}   
-		this.lstResult.setChoiceMode(ListView.CHOICE_MODE_SINGLE);
-		this.lstResult.setCacheColorHint(Color.TRANSPARENT);
-		this.lstResult.requestFocus(0);
-		//Create and set adapter for result list
-		int layout = (backgroundColor!=Color.WHITE)?R.layout.localclusterrow_white:R.layout.localclusterrow_black;	
-        ArrayAdapter<String> adapter = new ArrayAdapter<String>(this.getApplicationContext(), layout, R.id.plotlabel, arrResults);
-		this.lstResult.setAdapter(adapter);
-		this.lblSearch.setText("Search results: ");
-		changeBackgroundColor(this.backgroundColor);
-    	//Set item click listener 
-    	this.lstResult.setOnItemClickListener(new OnItemClickListener(){
-			@Override
-			public void onItemClick(AdapterView<?> adapterView, View view, int position, long id) {
-				// Back to previous screen and pass chosen results there
-				String strItem = lstResult.getAdapter().getItem(position).toString();
-				String[] arrItemValues = strItem.replaceAll(";\n", " ;").split(";");
-				for(int i=0; i<arrItemValues.length;i++){
-					Log.i(getResources().getString(R.string.app_name), "i = " + i + "; Value is: " + arrItemValues[i]);
-				}
-				// Set textboxes in TaxonField by given values
-				TaxonField parentTaxonField = (TaxonField)ApplicationManager.getUIElement(parentTaxonFieldId);
-				if(parentTaxonField != null){
-					parentTaxonField.setValue(0, arrItemValues[0], arrItemValues[1], arrItemValues[2], arrItemValues[4], arrItemValues[3], SearchTaxonActivity.this.path,false);
-				}
-				else{
-					Log.i(getResources().getString(R.string.app_name), "Parent taxon field is: NULL");
-				} 
-			    // Finish activity
-			    finish();				
-			}
-    	});
+   
+    
+    private class SearchThread extends Thread {
+
+    	private List<TaxonOccurrence> lstTaxonOccurence;
+    	private String strSearch;
+    	private int parentTaxonFieldId;
+    	
+        public SearchThread(String strSearch, int parentTaxonFieldId) {
+            this.strSearch = strSearch;
+            this.parentTaxonFieldId = parentTaxonFieldId;
+        }
+
+        @Override
+        public void run() {         
+        	//Open connection with database
+        	JdbcDaoSupport jdbcDao  = new JdbcDaoSupport();
+        	jdbcDao.getConnection();    	
+        	//Search results 
+        	this.lstTaxonOccurence = new ArrayList<TaxonOccurrence>();
+        	if(SearchTaxonActivity.this.taxonManager != null){
+        		Log.i(getResources().getString(R.string.app_name), "Search by: " + SearchTaxonActivity.this.criteria);
+        		    		
+        		if(SearchTaxonActivity.this.criteria.equalsIgnoreCase("Code")){
+    				Log.i(getResources().getString(R.string.app_name), "Search by Code");
+    				lstTaxonOccurence = SearchTaxonActivity.this.taxonManager.findByCode(SearchTaxonActivity.this.taxonomy, strSearch, 1000);			
+    			}
+    			else if (SearchTaxonActivity.this.criteria.equalsIgnoreCase("SciName")){
+    				Log.i(getResources().getString(R.string.app_name), "Search by Scientific name");
+    				lstTaxonOccurence = SearchTaxonActivity.this.taxonManager.findByScientificName(SearchTaxonActivity.this.taxonomy, strSearch, 1000);		
+    			}
+    			else if (SearchTaxonActivity.this.criteria.equalsIgnoreCase("VernacularName")){
+    				Log.i(getResources().getString(R.string.app_name), "Search by VernacularName");
+    				lstTaxonOccurence = SearchTaxonActivity.this.taxonManager.findByVernacularName(SearchTaxonActivity.this.taxonomy, strSearch, 1000);
+    					
+
+    			}    		
+    			else{
+    				Log.i(getResources().getString(R.string.app_name), "Undefined criteria is: " + SearchTaxonActivity.this.criteria);
+    			}
+    		}else{
+    			Log.i(getResources().getString(R.string.app_name), "Species Manager is NULL!");
+    		}   	
+    	    	
+        	//Close connection
+        	JdbcDaoSupport.close();
+            handler.sendEmptyMessage(0);
+        }
+
+        private Handler handler = new Handler() {
+
+            @Override
+            public void handleMessage(Message msg) {
+                populateResultList(lstTaxonOccurence, parentTaxonFieldId);
+                pd.dismiss();
+            }
+        };
+        
+        private void populateResultList(List<TaxonOccurrence> lstTaxonOccurence, final int parentTaxonFieldId){
+        	Log.i("SearchTaxonActivity", "Size of result list is: " + lstTaxonOccurence.size());
+        	String[] arrResults = new String[lstTaxonOccurence.size()];
+        	int idx = 0;
+    		for (TaxonOccurrence taxonOcc : lstTaxonOccurence) {
+    			arrResults[idx] = taxonOcc.getCode() + "\n" + taxonOcc.getScientificName() + " ;\n" 
+    				+ taxonOcc.getVernacularName()/* + " ;\n" + taxonOcc.getLanguageCode() + " ;\n" 
+    				+ taxonOcc.getLanguageVariety()+ " ;\n"*/;
+    			arrResults[idx] = arrResults[idx].replaceAll("null", "");
+    			idx++;
+    		}   
+    		SearchTaxonActivity.this.lstResult.setChoiceMode(ListView.CHOICE_MODE_SINGLE);
+    		SearchTaxonActivity.this.lstResult.setCacheColorHint(Color.TRANSPARENT);
+    		SearchTaxonActivity.this.lstResult.requestFocus(0);
+    		//Create and set adapter for result list
+    		int layout = (backgroundColor!=Color.WHITE)?R.layout.localclusterrow_white:R.layout.localclusterrow_black;	
+            ArrayAdapter<String> adapter = new ArrayAdapter<String>(SearchTaxonActivity.this.getApplicationContext(), layout, R.id.plotlabel, arrResults);
+            SearchTaxonActivity.this.lstResult.setAdapter(adapter);
+            SearchTaxonActivity.this.lblSearch.setText("Search results: ");
+    		changeBackgroundColor(SearchTaxonActivity.this.backgroundColor);
+        	//Set item click listener 
+    		SearchTaxonActivity.this.lstResult.setOnItemClickListener(new OnItemClickListener(){
+    			@Override
+    			public void onItemClick(AdapterView<?> adapterView, View view, int position, long id) {
+    				// Back to previous screen and pass chosen results there
+    				String strItem = lstResult.getAdapter().getItem(position).toString();
+    				String[] arrItemValues = strItem.replaceAll(";\n", " ;").split(";");
+    				for(int i=0; i<arrItemValues.length;i++){
+    					Log.i(getResources().getString(R.string.app_name), "i = " + i + "; Value is: " + arrItemValues[i]);
+    				}
+    				// Set textboxes in TaxonField by given values
+    				TaxonField parentTaxonField = (TaxonField)ApplicationManager.getUIElement(parentTaxonFieldId);
+    				if(parentTaxonField != null){
+    					parentTaxonField.setValue(0, arrItemValues[0], arrItemValues[1], arrItemValues[2], arrItemValues[4], arrItemValues[3], SearchTaxonActivity.this.path,false);
+    				}
+    				else{
+    					Log.i(getResources().getString(R.string.app_name), "Parent taxon field is: NULL");
+    				}
+    			    // Finish activity
+    			    finish();				
+    			}
+        	});
+        }
     }
 }

@@ -142,7 +142,7 @@ public class TaxonField extends InputField {
 					Log.i(getResources().getString(R.string.app_name), "Value of Code field is EMPTY!!!! ");
 			}
 		});
-		this.btnSearchByCode.setVisibility(View.GONE);
+		//this.btnSearchByCode.setVisibility(View.GONE);
 		
 		//Create layout and add input field "Code" into there
 		LinearLayout codeLL = new LinearLayout(context);		
@@ -227,7 +227,7 @@ public class TaxonField extends InputField {
 					Log.i(getResources().getString(R.string.app_name), "Value of SciName field is EMPTY!!!! ");
 			}
 		});
-		this.btnSearchBySciName.setVisibility(View.GONE);
+		//this.btnSearchBySciName.setVisibility(View.GONE);
 		
 		//Create layout and add input field "Scientific name" into there
 		LinearLayout sciNameLL = new LinearLayout(context);		
@@ -313,7 +313,7 @@ public class TaxonField extends InputField {
 					Log.i(getResources().getString(R.string.app_name), "Value of VernName field is EMPTY!!!! ");
 			}
 		});
-		this.btnSearchByVernName.setVisibility(View.GONE);
+		//this.btnSearchByVernName.setVisibility(View.GONE);
 		//Create layout and add input field "Vernacular name" into there
 		LinearLayout vernNameLL = new LinearLayout(context);		
 		vernNameLL.setOrientation(HORIZONTAL);

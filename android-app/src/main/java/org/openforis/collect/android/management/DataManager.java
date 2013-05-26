@@ -204,7 +204,7 @@ public class DataManager {
 		} /*catch (RecordPersistenceException e) {
 			e.printStackTrace();
 		}*/
-		Log.e("record"+recordId,"LOADED IN "+(System.currentTimeMillis()-startTime)/1000+"s");
+		Log.e("record"+recordId,"LOADED IN "+(System.currentTimeMillis()-startTime)+"ms");
 		return loadedRecord;
 	}
 }

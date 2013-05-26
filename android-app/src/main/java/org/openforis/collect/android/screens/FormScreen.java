@@ -429,7 +429,6 @@ public class FormScreen extends BaseActivity implements OnClickListener {
 	        				CodeField codeField = new CodeField(this, nodeDef, codes, options, null);
 	        				codeField.setOnClickListener(this);
 	        				codeField.setId(nodeDef.getId());
-	        				//Log.e("onResume",FormScreen.this.getFormScreenId()+"=="+0);
 	        				codeField.setValue(0, loadedValue, FormScreen.this.getFormScreenId(),false);
 	        				ApplicationManager.putUIElement(codeField.getId(), codeField);
 	        				this.ll.addView(codeField);
@@ -444,7 +443,6 @@ public class FormScreen extends BaseActivity implements OnClickListener {
 	        				CodeField codeField = new CodeField(this, nodeDef, codes, options, null);
 	        				codeField.setOnClickListener(this);
 	        				codeField.setId(nodeDef.getId());
-	        				//Log.e("onResume",this.parentFormScreenId+"=="+this.currInstanceNo);
 	        				codeField.setValue(this.currInstanceNo, loadedValue, this.parentFormScreenId,false);
 	        				ApplicationManager.putUIElement(codeField.getId(), codeField);
 	        				this.ll.addView(codeField);
@@ -1371,6 +1369,7 @@ public class FormScreen extends BaseActivity implements OnClickListener {
     			} else if (nodeDef instanceof BooleanAttributeDefinition){
     				loadedValue = "";
     				if (!nodeDef.isMultiple()){
+    					
     					Node<?> foundNode = this.parentEntitySingleAttribute.get(nodeDef.getName(), 0);
 	    				if (foundNode!=null){
 	    					BooleanValue boolValue = (BooleanValue)this.parentEntitySingleAttribute.getValue(nodeDef.getName(), 0);
@@ -1379,7 +1378,15 @@ public class FormScreen extends BaseActivity implements OnClickListener {
         							loadedValue = boolValue.getValue().toString();
         					}
 	    				}
-        				BooleanField boolField = new BooleanField(this, nodeDef, false, false, getResources().getString(R.string.yes), getResources().getString(R.string.no));
+	    				
+        				BooleanField boolField = null;// new BooleanField(this, nodeDef, false, false, getResources().getString(R.string.yes), getResources().getString(R.string.no));
+        				if (loadedValue.equals("")){
+        					boolField = new BooleanField(this, nodeDef, false, false, getResources().getString(R.string.yes), getResources().getString(R.string.no));
+        				} else if (loadedValue.equals("false")) {
+    						boolField = new BooleanField(this, nodeDef, false, true, getResources().getString(R.string.yes), getResources().getString(R.string.no));
+    					} else {
+    						boolField = new BooleanField(this, nodeDef, true, false, getResources().getString(R.string.yes), getResources().getString(R.string.no));
+    					}
         				boolField.setOnClickListener(this);
         				boolField.setId(nodeDef.getId());
         				if (loadedValue.equals("")){
@@ -1398,7 +1405,15 @@ public class FormScreen extends BaseActivity implements OnClickListener {
         							loadedValue = boolValue.getValue().toString();
         					}
 	    				}
-    					BooleanField boolField = new BooleanField(this, nodeDef, false, false, getResources().getString(R.string.yes), getResources().getString(R.string.no));
+    					//BooleanField boolField = new BooleanField(this, nodeDef, false, false, getResources().getString(R.string.yes), getResources().getString(R.string.no));
+    					BooleanField boolField = null;// new BooleanField(this, nodeDef, false, false, getResources().getString(R.string.yes), getResources().getString(R.string.no));
+        				if (loadedValue.equals("")){
+        					boolField = new BooleanField(this, nodeDef, false, false, getResources().getString(R.string.yes), getResources().getString(R.string.no));
+        				} else if (loadedValue.equals("false")) {
+    						boolField = new BooleanField(this, nodeDef, false, true, getResources().getString(R.string.yes), getResources().getString(R.string.no));
+    					} else {
+    						boolField = new BooleanField(this, nodeDef, true, false, getResources().getString(R.string.yes), getResources().getString(R.string.no));
+    					}
     					boolField.setOnClickListener(this);
     					boolField.setId(nodeDef.getId());
     					if (loadedValue.equals("")){
@@ -1439,10 +1454,9 @@ public class FormScreen extends BaseActivity implements OnClickListener {
         						loadedValue = codeValue.getCode();
         					}
 	    				}
-        				CodeField codeField = new CodeField(this, nodeDef, codes, options, null);
+        				CodeField codeField = new CodeField(this, nodeDef, codes, options, loadedValue);
         				codeField.setOnClickListener(this);
         				codeField.setId(nodeDef.getId());
-        				//Log.e("onResume",FormScreen.this.getFormScreenId()+"=="+0);
         				//codeField.setValue(0, loadedValue, FormScreen.this.getFormScreenId(),false);
         				ApplicationManager.putUIElement(codeField.getId(), codeField);
         				this.ll.addView(codeField);
@@ -1454,7 +1468,7 @@ public class FormScreen extends BaseActivity implements OnClickListener {
         						loadedValue = codeValue.getCode();
         					}
 	    				}
-        				CodeField codeField = new CodeField(this, nodeDef, codes, options, null);
+        				CodeField codeField = new CodeField(this, nodeDef, codes, options, loadedValue);
         				codeField.setOnClickListener(this);
         				codeField.setId(nodeDef.getId());
         				//Log.e("onResume",this.parentFormScreenId+"=="+this.currInstanceNo);
@@ -1932,12 +1946,13 @@ public class FormScreen extends BaseActivity implements OnClickListener {
 						numberField.setValue(0, loadedValue, this.getFormScreenId(), false);
 				}  else if (nodeDef instanceof BooleanAttributeDefinition){
 					loadedValue = "";
-					BooleanValue boolValue = (BooleanValue)parentEntity.getValue(nodeDef.getName(), this.currInstanceNo);
+					BooleanValue boolValue = (BooleanValue)parentEntity.getValue(nodeDef.getName(), 0);
 					if (boolValue!=null)
 						if (boolValue.getValue()!=null)
 							loadedValue = boolValue.getValue().toString();
 					BooleanField boolField = (BooleanField) ApplicationManager.getUIElement(nodeDef.getId());
 					if (boolField!=null){
+						
 						if (loadedValue.equals("")){
 							boolField.setValue(0, null, this.getFormScreenId(), false);
 						} else {

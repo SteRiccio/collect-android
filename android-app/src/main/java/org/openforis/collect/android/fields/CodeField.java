@@ -1,7 +1,6 @@
 package org.openforis.collect.android.fields;
 
 import java.util.ArrayList;
-import java.util.List;
 
 import org.openforis.collect.android.R;
 import org.openforis.collect.android.management.ApplicationManager;
@@ -17,7 +16,6 @@ import org.openforis.idm.model.Node;
 
 import android.content.Context;
 import android.text.Editable;
-import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
@@ -26,6 +24,8 @@ import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.Toast;
+//import android.util.Log;
+//import android.util.Log;
 
 
 public class CodeField extends InputField {
@@ -34,24 +34,26 @@ public class CodeField extends InputField {
 	private Spinner spinner;
 	
 	
-	private List<ArrayAdapter<String>> aaList;
+	/*private List<ArrayAdapter<String>> aaList;
 	private List<Spinner> spinnerList;
-	private Spinner currentSpinner;
+	private Spinner currentSpinner;*/
 
 	ArrayList<String> options;
 	ArrayList<String> codes;
-	private ArrayList<String> currentCodes;
+	//private ArrayList<String> currentCodes;
 	
 	private boolean searchable;
 	private boolean hierarchical;
-	private ArrayList<String> selectedCodesList;
-	private int currentHierarchyLevel;
+	/*private ArrayList<String> selectedCodesList;
+	private int currentHierarchyLevel;*/
 	
 	private static FormScreen form;
 	
 //	private boolean selectedForTheFirstTime;
 	
 	private CodeAttributeDefinition codeAttrDef;
+	
+	private ArrayList<Integer> childrenIds;
 	
 	public CodeField(Context context, NodeDefinition nodeDef, 
 			ArrayList<String> codes, ArrayList<String> options, 
@@ -60,11 +62,13 @@ public class CodeField extends InputField {
 
 		this.codeAttrDef = (CodeAttributeDefinition)this.nodeDefinition;
 		
+		this.childrenIds = new ArrayList<Integer>();
+		
 		this.searchable = true;
-		this.hierarchical = false;//(this.codeAttrDef.getList().getHierarchy().size()>0);
-		this.aaList = new ArrayList<ArrayAdapter<String>>();
+		this.hierarchical = (this.codeAttrDef.getList().getHierarchy().size()>0);
+		/*this.aaList = new ArrayList<ArrayAdapter<String>>();
 		this.spinnerList = new ArrayList<Spinner>();
-		this.selectedCodesList = new ArrayList<String>();
+		this.selectedCodesList = new ArrayList<String>();*/
 		
 		CodeField.form = (FormScreen)context;
 		
@@ -96,7 +100,7 @@ public class CodeField extends InputField {
 		} else {
 			if (!this.hierarchical){
 				this.spinner = new Spinner(context);
-				this.spinner.setPrompt(nodeDef.getName());
+				this.spinner.setPrompt(this.label.getText());
 				
 				this.codes = codes;
 				this.options = options;
@@ -109,20 +113,12 @@ public class CodeField extends InputField {
 				this.spinner.setOnItemSelectedListener(new OnItemSelectedListener() {
 				    @Override
 				    public void onItemSelected(AdapterView<?> parentView, View selectedItemView, int position, long id) {
-				    	ArrayList<String> valueToAdd = new ArrayList<String>();
-				    	valueToAdd.add(CodeField.this.codes.get((CodeField.this.spinner.getSelectedItemPosition())));
-				    	//Log.e("onItemSelected",CodeField.form.getFormScreenId()+"=="+CodeField.this.currentInstanceNo+"("+CodeField.form.currInstanceNo+")");
+				    	
 				    	if (CodeField.this.nodeDefinition.isMultiple()){
 				    		CodeField.this.setValue(CodeField.form.currInstanceNo, CodeField.this.codes.get(CodeField.this.spinner.getSelectedItemPosition()),CodeField.form.getFormScreenId(),true);	
 				    	} else {
 				    		CodeField.this.setValue(0, CodeField.this.codes.get(CodeField.this.spinner.getSelectedItemPosition()),CodeField.form.getFormScreenId(),true);
-				    	}			    	
-				    	
-				    	/*if (!CodeField.this.selectedForTheFirstTime){
-							
-				    	} else {
-				    		CodeField.this.selectedForTheFirstTime = false;
-				    	}*/
+				    	}
 				    }
 
 				    @Override
@@ -149,108 +145,178 @@ public class CodeField extends InputField {
 
 				this.addView(this.spinner);
 			} else {
-				Log.e("isHierarchical","==");
-				int hierarchyLevelsNo = this.codeAttrDef.getList().getHierarchy().size();
-				Log.e("iloscPoziomow","=="+hierarchyLevelsNo);
-				for (int hierarchyLevel=0;hierarchyLevel<hierarchyLevelsNo;hierarchyLevel++){
-					currentHierarchyLevel = hierarchyLevel;
-					this.selectedCodesList.add("");
+				if (this.codeAttrDef.getParentCodeAttributeDefinition()!=null){
+					this.spinner = new Spinner(context);
+					this.spinner.setPrompt(this.label.getText());
 					
-					currentSpinner = new Spinner(context);
-					currentSpinner.setPrompt(this.codeAttrDef.getList().getHierarchy().get(hierarchyLevel).getName());
-					this.spinnerList.add(currentSpinner);
+					//this.codes = codes;
+					//this.options = options;
+					this.codes = new ArrayList<String>();
+					this.codes.add("");
+					this.options = new ArrayList<String>();
+					this.options.add("");
 					
-					ArrayList<String> currentOptions = new ArrayList<String>();
-					currentCodes = new ArrayList<String>();
-					currentOptions.add("");
-					currentCodes.add("");
-    				List<CodeListItem> codeListItemsList = codeAttrDef.getList().getItems(hierarchyLevel);
-    				for (CodeListItem codeListItem : codeListItemsList){
-    					currentCodes.add(codeListItem.getCode());
-    					currentOptions.add(CodeField.getLabelForCodeListItem(codeListItem));
-    				}
-					ArrayAdapter<String> currentAA = new ArrayAdapter<String>(context, android.R.layout.simple_spinner_item, currentOptions);
-					currentAA.setDropDownViewResource(R.layout.codelistitem);
-					this.aaList.add(currentAA);
+					CodeField parentCodeField = (CodeField)ApplicationManager.getUIElement(this.codeAttrDef.getParentCodeAttributeDefinition().getId());
+					if (parentCodeField!=null){
+						int selectedPositionInParent = parentCodeField.spinner.getSelectedItemPosition();
+						if (selectedPositionInParent>0){
+							selectedPositionInParent--;
+							for (int i=0;i<this.codeAttrDef.getList().getItems(this.codeAttrDef.getCodeListLevel()-1).get(selectedPositionInParent).getChildItems().size();i++){
+								this.codes.add(this.codeAttrDef.getList().getItems(this.codeAttrDef.getCodeListLevel()-1).get(selectedPositionInParent).getChildItems().get(i).getCode().toString());
+								this.options.add(this.codeAttrDef.getList().getItems(this.codeAttrDef.getCodeListLevel()-1).get(selectedPositionInParent).getChildItems().get(i).getLabels().get(0).getText());
+							}
+						}							
+					}
+					
+					parentCodeField.addChildId(this.codeAttrDef.getId());
+					
+					this.aa = new ArrayAdapter<String>(context, android.R.layout.simple_spinner_item, this.options);
+					this.aa.setDropDownViewResource(R.layout.codelistitem);
 
-					currentSpinner.setAdapter(currentAA);					
-					currentSpinner.setLayoutParams(new LayoutParams(0,ViewGroup.LayoutParams.WRAP_CONTENT,(float) 3));
-					if (hierarchyLevel<hierarchyLevelsNo-1){
-						currentSpinner.setOnItemSelectedListener(new OnItemSelectedListener() {
-						    @Override
-						    public void onItemSelected(AdapterView<?> parentView, View selectedItemView, int position, long id) {
-						    	if (CodeField.this.nodeDefinition.isMultiple()){
-						    		//CodeField.this.setValue(CodeField.form.currInstanceNo, CodeField.this.currentCodes.get(CodeField.this.currentSpinner.getSelectedItemPosition()),CodeField.form.getFormScreenId(),true);	
-						    	} else {
-						    		//CodeField.this.setValue(0, CodeField.this.currentCodes.get(CodeField.this.currentSpinner.getSelectedItemPosition()),CodeField.form.getFormScreenId(),true);
-						    		//CodeField.this.selectedCodesList.set(CodeField.this.currentHierarchyLevel, CodeField.this.currentCodes.get(position));
-						    	}
-						    	Log.e("setCode"+CodeField.this.currentHierarchyLevel,"=="+ CodeField.this.currentCodes.get(position));
-						    	CodeField.this.selectedCodesList.set(CodeField.this.currentHierarchyLevel, CodeField.this.currentCodes.get(position));
-						    	if (position!=0){
-						    		Log.e("DOPUSZCZANIE",selectedItemView.getParent().getClass()+"KOLEJNEJ LISTY"+position);
-						    		Spinner spinner = (Spinner)selectedItemView.getParent();
-						    		for (int i=0;i<CodeField.this.spinnerList.size();i++){
-						    			if (spinner.equals(CodeField.this.spinnerList.get(i))){
-						    				spinner = CodeField.this.spinnerList.get(i+1);
-						    				Log.e("spinnerNR","=="+(i+1));
-						    				break;
-						    			}
-						    		}
-						    		if (spinner!=null)
-						    			spinner.setEnabled(true);
-						    	}
-						    }
+					this.spinner.setAdapter(aa);
+					this.spinner.setLayoutParams(new LayoutParams(0,ViewGroup.LayoutParams.WRAP_CONTENT,(float) 3));
+					this.spinner.setOnItemSelectedListener(new OnItemSelectedListener() {
+					    @Override
+					    public void onItemSelected(AdapterView<?> parentView, View selectedItemView, int position, long id) {
+					    	if (CodeField.this.nodeDefinition.isMultiple()){
+					    		CodeField.this.setValue(CodeField.form.currInstanceNo, CodeField.this.codes.get(CodeField.this.spinner.getSelectedItemPosition()),CodeField.form.getFormScreenId(),true);	
+					    	} else {
+					    		CodeField.this.setValue(0, CodeField.this.codes.get(CodeField.this.spinner.getSelectedItemPosition()),CodeField.form.getFormScreenId(),true);
+					    	}
+					    }
 
-						    @Override
-						    public void onNothingSelected(AdapterView<?> parentView) {
-						    	
-						    }
+					    @Override
+					    public void onNothingSelected(AdapterView<?> parentView) {
+					    	
+					    }
 
-						});
-					} else {
-						currentSpinner.setOnItemSelectedListener(new OnItemSelectedListener() {
-						    @Override
-						    public void onItemSelected(AdapterView<?> parentView, View selectedItemView, int position, long id) {
-						    	Log.e("setCodeLAST"+CodeField.this.currentHierarchyLevel,"=="+ CodeField.this.currentCodes.get(position));
-						    	CodeField.this.selectedCodesList.set(CodeField.this.currentHierarchyLevel, CodeField.this.currentCodes.get(position));
-						    	/*if (CodeField.this.nodeDefinition.isMultiple()){
-						    		CodeField.this.setValue(CodeField.form.currInstanceNo, CodeField.this.currentCodes.get(CodeField.this.currentSpinner.getSelectedItemPosition()),CodeField.form.getFormScreenId(),true);	
-						    	} else {
-						    		CodeField.this.setValue(0, CodeField.this.currentCodes.get(CodeField.this.currentSpinner.getSelectedItemPosition()),CodeField.form.getFormScreenId(),true);
-						    	}*/
-						    }
-
-						    @Override
-						    public void onNothingSelected(AdapterView<?> parentView) {
-						    	
-						    }
-
-						});
-					}					
+					});
 					
 					boolean isFound = false;
 					int position = 0;
 					if (selectedItem!=null){
-						while (!isFound&&position<currentCodes.size()){
-							if (currentCodes.get(position).equals(selectedItem)){
+						while (!isFound&&position<this.codes.size()){
+							if (this.codes.get(position).equals(selectedItem)){
 								isFound = true;
 							}
 							position++;
 						}	
 					}
-					if (isFound)
-						currentSpinner.setSelection(position-1);
-					else
-						currentSpinner.setSelection(0);
-
-					if (hierarchyLevel>0){
-						//currentSpinner.setClickable(false);
-						//currentSpinner.getSelectedView().setEnabled(false);
-						currentSpinner.setEnabled(false);
+					if (isFound){
+						this.spinner.setSelection(position-1);
+					}						
+					else{
+						this.spinner.setSelection(0);						
 					}
-					this.addView(currentSpinner);				
+
+					if (this.aa.getCount()==1){
+						this.spinner.setEnabled(false);
+					} else {
+						this.spinner.setEnabled(true);
+					}
+					this.addView(this.spinner);
+				}			
+				else {
+					this.spinner = new Spinner(context);
+					this.spinner.setPrompt(this.label.getText());
+					
+					this.codes = codes;
+					this.options = options;
+
+					this.aa = new ArrayAdapter<String>(context, android.R.layout.simple_spinner_item, this.options);
+					this.aa.setDropDownViewResource(R.layout.codelistitem);
+
+					this.spinner.setAdapter(aa);
+					this.spinner.setLayoutParams(new LayoutParams(0,ViewGroup.LayoutParams.WRAP_CONTENT,(float) 3));
+					this.spinner.setOnItemSelectedListener(new OnItemSelectedListener() {
+					    @Override
+					    public void onItemSelected(AdapterView<?> parentView, View selectedItemView, int position, long id) {
+					    	if (CodeField.this.nodeDefinition.isMultiple()){
+					    		CodeField.this.setValue(CodeField.form.currInstanceNo, CodeField.this.codes.get(CodeField.this.spinner.getSelectedItemPosition()),CodeField.form.getFormScreenId(),true);	
+					    	} else {
+					    		CodeField.this.setValue(0, CodeField.this.codes.get(CodeField.this.spinner.getSelectedItemPosition()),CodeField.form.getFormScreenId(),true);
+					    	}
+					    	if (!CodeField.this.childrenIds.isEmpty()){
+					    		for (int i=0;i<CodeField.this.childrenIds.size();i++){
+					    			CodeField currentChild = (CodeField)ApplicationManager.getUIElement(CodeField.this.childrenIds.get(i));
+					    			currentChild.codes = new ArrayList<String>();
+					    			currentChild.codes.add("");
+					    			currentChild.options = new ArrayList<String>();
+					    			currentChild.options.add("");
+					    			
+									currentChild.aa.clear();
+					    			currentChild.aa.add("");
+					    			
+					    			int selectedPositionInParent = spinner.getSelectedItemPosition();
+									if (selectedPositionInParent>0){
+										selectedPositionInParent--;
+
+										for (int j=0;j<CodeField.this.codeAttrDef.getList().getItems(CodeField.this.codeAttrDef.getCodeListLevel()-1).get(selectedPositionInParent).getChildItems().size();j++){									
+											currentChild.codes.add(CodeField.this.codeAttrDef.getList().getItems(CodeField.this.codeAttrDef.getCodeListLevel()-1).get(selectedPositionInParent).getChildItems().get(j).getCode().toString());
+											currentChild.options.add(CodeField.this.codeAttrDef.getList().getItems(CodeField.this.codeAttrDef.getCodeListLevel()-1).get(selectedPositionInParent).getChildItems().get(j).getLabels().get(0).getText());
+											currentChild.aa.add(CodeField.this.codeAttrDef.getList().getItems(CodeField.this.codeAttrDef.getCodeListLevel()-1).get(selectedPositionInParent).getChildItems().get(j).getLabels().get(0).getText());
+										}
+									}
+									if (currentChild.aa.getCount()==1){
+						    			currentChild.spinner.setEnabled(false);
+									} else {
+										currentChild.spinner.setEnabled(true);
+									}									
+					    		}
+					    		
+					    	}
+					    }
+
+					    @Override
+					    public void onNothingSelected(AdapterView<?> parentView) {
+					    	
+					    }
+
+					});
+					
+					boolean isFound = false;
+					int position = 0;
+					if (selectedItem!=null){
+						while (!isFound&&position<this.codes.size()){
+							if (this.codes.get(position).equals(selectedItem)){
+								isFound = true;
+							}
+							position++;
+						}	
+					}
+					if (isFound){
+						this.spinner.setSelection(position-1);
+					}
+					else{
+						this.spinner.setSelection(0);
+					}
+
+
+
+					
+					this.addView(this.spinner);
 				}
+				//int hierarchyLevelsNo = this.codeAttrDef.getList().getHierarchy().size();
+				//Log.e("iloscPoziomow","=="+hierarchyLevelsNo);
+				/*for (int hierarchyLevel=0;hierarchyLevel<hierarchyLevelsNo;hierarchyLevel++){
+					Log.e("poziom"+hierarchyLevel,"=="+this.codeAttrDef.getList().getHierarchy().get(hierarchyLevel).getName());					
+				}*/
+				/*if (this.codeAttrDef.getParentCodeAttributeDefinition()!=null){
+					Log.e("parentCODEnode","=="+this.codeAttrDef.getParentCodeAttributeDefinition().getName());
+				}			
+				else {
+					Log.e("parentCODEnode","==ROOT");
+				}
+				Log.e("codeListLevel","=="+this.codeAttrDef.getCodeListLevel());
+				Log.e("codeListLevelIndex","=="+this.codeAttrDef.getListLevelIndex());
+				Log.e("codeListHierarchyName","=="+this.codeAttrDef.getList().getHierarchy().get(1).getName());
+				for (int i=0;i<this.codeAttrDef.getList().getItems(this.codeAttrDef.getCodeListLevel()).size();i++){
+					Log.e("element"+i,"=="+this.codeAttrDef.getList().getItems(this.codeAttrDef.getCodeListLevel()).get(i).getLabels().get(0).getText());					
+				}
+				if (this.codeAttrDef.getCodeListLevel()>0)
+					for (int i=0;i<this.codeAttrDef.getList().getItems(this.codeAttrDef.getCodeListLevel()-1).get(0).getChildItems().size();i++){
+						Log.e("element"+i,"=="+this.codeAttrDef.getList().getItems(this.codeAttrDef.getCodeListLevel()-1).get(0).getChildItems().get(i).getLabels().get(0).getText());					
+					}*/
 			}				
 		}
 		
@@ -265,7 +331,7 @@ public class CodeField extends InputField {
 	public void setValue(int position, String code, String path, boolean isSelectionChanged)
 	{
 		if (!this.codeAttrDef.isAllowUnlisted()){
-			if (!this.hierarchical){
+			//if (!this.hierarchical){
 				boolean isFound = false;
 				int counter = 0;
 				while (!isFound&&counter<this.codes.size()){
@@ -282,9 +348,9 @@ public class CodeField extends InputField {
 					if (!isSelectionChanged)
 						this.spinner.setSelection(0);
 				}	
-			} else {//setting value of hierarchical list
+			/*} else {//setting value of hierarchical list
 				
-			}
+			}*/
 		} else {
 			if (!isSelectionChanged)
 				this.txtBox.setText(code);
@@ -316,5 +382,9 @@ public class CodeField extends InputField {
 			}			
 		}
 		return label;
+	}
+	
+	private void addChildId(int childCodeListId){
+		this.childrenIds.add(childCodeListId);
 	}
 }
