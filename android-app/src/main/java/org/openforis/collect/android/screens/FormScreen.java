@@ -811,10 +811,9 @@ public class FormScreen extends BaseActivity implements OnClickListener {
 		    	    				langVariant = taxonValue.getLanguageVariety();
 		    					}	    				
 		    				}
-	        				final TaxonField taxonField= new TaxonField(this, nodeDef, codes, options, null);
+	        				final TaxonField taxonField= new TaxonField(this, nodeDef, codes, options, vernLang);
 	        				taxonField.setOnClickListener(this);
 	        				taxonField.setId(nodeDef.getId());
-	        				Log.e("setValue","FORMSCREEN");
 	        				taxonField.setValue(0, code, sciName, vernName, vernLang, langVariant, FormScreen.this.getFormScreenId(),false);
 	        				ApplicationManager.putUIElement(taxonField.getId(), taxonField);
 	        				this.ll.addView(taxonField);
@@ -830,10 +829,9 @@ public class FormScreen extends BaseActivity implements OnClickListener {
 		    	    				langVariant = taxonValue.getLanguageVariety();	    						
 		    					}	   				
 		    				}
-		    				final TaxonField taxonField= new TaxonField(this, nodeDef, codes, options, null);
+		    				final TaxonField taxonField= new TaxonField(this, nodeDef, codes, options, vernLang);
 		    				taxonField.setOnClickListener(this);
 		    				taxonField.setId(nodeDef.getId());
-		    				Log.e("setValue","FORMSCREEN");
 		    				taxonField.setValue(this.currInstanceNo, code, sciName, vernName, vernLang, langVariant, this.parentFormScreenId,false);
 	        				ApplicationManager.putUIElement(taxonField.getId(), taxonField);
 	        				this.ll.addView(taxonField);
@@ -1812,7 +1810,7 @@ public class FormScreen extends BaseActivity implements OnClickListener {
 	    	    				langVariant = taxonValue.getLanguageVariety();
 	    					}	    				
 	    				}
-        				final TaxonField taxonField= new TaxonField(this, nodeDef, codes, options, null);
+        				final TaxonField taxonField= new TaxonField(this, nodeDef, codes, options, vernLang);
         				taxonField.setOnClickListener(this);
         				taxonField.setId(nodeDef.getId());
         				//taxonField.setValue(0, code, sciName, vernName, vernLang, langVariant, FormScreen.this.getFormScreenId(),false);
@@ -1830,7 +1828,7 @@ public class FormScreen extends BaseActivity implements OnClickListener {
 	    	    				langVariant = taxonValue.getLanguageVariety();	    						
 	    					}	   				
 	    				}
-	    				final TaxonField taxonField= new TaxonField(this, nodeDef, codes, options, null);
+	    				final TaxonField taxonField= new TaxonField(this, nodeDef, codes, options, vernLang);
 	    				taxonField.setOnClickListener(this);
 	    				taxonField.setId(nodeDef.getId());
 	    				//taxonField.setValue(this.currInstanceNo, code, sciName, vernName, vernLang, langVariant, this.parentFormScreenId,false);

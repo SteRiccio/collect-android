@@ -1,7 +1,6 @@
 package org.openforis.collect.android.fields;
 
 import java.util.ArrayList;
-import java.util.Map;
 
 import org.openforis.collect.android.R;
 import org.openforis.collect.android.management.ApplicationManager;
@@ -110,6 +109,11 @@ public class TaxonField extends InputField {
 			public void afterTextChanged(Editable s) {}
 			public void beforeTextChanged(CharSequence s, int start,  int count, int after) {}				 
 			public void onTextChanged(CharSequence s, int start, int before, int count) {
+				if (s.length()>0){
+					TaxonField.this.btnSearchByCode.setEnabled(true);
+				} else {
+					TaxonField.this.btnSearchByCode.setEnabled(false);
+				}
 				TaxonField.this.setValue(0, s.toString(), 
 						TaxonField.this.txtSciName.getText().toString(), 
 						TaxonField.this.txtVernacularName.getText().toString(), 
@@ -126,14 +130,7 @@ public class TaxonField extends InputField {
 			@Override
 			public void onClick(View arg0) {
 				//Get category and value
-				String strValue = TaxonField.this.txtCodes.getText().toString();				
-				//Add current value to FormScreen.currentFieldValue
-		    	/*ArrayList<String> tempValue = new ArrayList<String>();
-				tempValue.add(TaxonField.this.txtCodes.getText().toString());
-				tempValue.add(TaxonField.this.txtSciName.getText().toString());
-				tempValue.add(TaxonField.this.txtVernacularName.getText().toString());
-				tempValue.add(TaxonField.this.languageCodes[getVernacularLanguageCodeIndex(TaxonField.this.spinner.getSelectedItemPosition())-1]);
-				tempValue.add(TaxonField.this.txtLangVariant.getText().toString());*/
+				String strValue = TaxonField.this.txtCodes.getText().toString();
 				//Check the value is not empty  and Run SearchTaxon activity
 				//TODO: in future validator should check it
 				if (!strValue.isEmpty())
@@ -142,6 +139,7 @@ public class TaxonField extends InputField {
 					Log.i(getResources().getString(R.string.app_name), "Value of Code field is EMPTY!!!! ");
 			}
 		});
+		this.btnSearchByCode.setEnabled(false);
 		//this.btnSearchByCode.setVisibility(View.GONE);
 		
 		//Create layout and add input field "Code" into there
@@ -195,6 +193,11 @@ public class TaxonField extends InputField {
 			public void afterTextChanged(Editable s) {}
 			public void beforeTextChanged(CharSequence s, int start,  int count, int after) {}				 
 			public void onTextChanged(CharSequence s, int start, int before, int count) {
+				if (s.length()>0){
+					TaxonField.this.btnSearchBySciName.setEnabled(true);
+				} else {
+					TaxonField.this.btnSearchBySciName.setEnabled(false);
+				}
 				TaxonField.this.setValue(0, TaxonField.this.txtCodes.getText().toString(), 
 						s.toString(), 
 						TaxonField.this.txtVernacularName.getText().toString(), 
@@ -227,6 +230,7 @@ public class TaxonField extends InputField {
 					Log.i(getResources().getString(R.string.app_name), "Value of SciName field is EMPTY!!!! ");
 			}
 		});
+		this.btnSearchBySciName.setEnabled(false);
 		//this.btnSearchBySciName.setVisibility(View.GONE);
 		
 		//Create layout and add input field "Scientific name" into there
@@ -281,6 +285,11 @@ public class TaxonField extends InputField {
 			public void afterTextChanged(Editable s) {}
 			public void beforeTextChanged(CharSequence s, int start,  int count, int after) {}				 
 			public void onTextChanged(CharSequence s, int start, int before, int count) {
+				if (s.length()>0){
+					TaxonField.this.btnSearchByVernName.setEnabled(true);
+				} else {
+					TaxonField.this.btnSearchByVernName.setEnabled(false);
+				}
 				TaxonField.this.setValue(0, TaxonField.this.txtCodes.getText().toString(), 
 						TaxonField.this.txtSciName.getText().toString(), 
 						s.toString(), 
@@ -297,14 +306,7 @@ public class TaxonField extends InputField {
 			@Override
 			public void onClick(View arg0) {
 				//Get category and value
-				String strValue = TaxonField.this.txtVernacularName.getText().toString();				
-				//Add current value to FormScreen.currentFieldValue
-		    	ArrayList<String> tempValue = new ArrayList<String>();
-				tempValue.add(TaxonField.this.txtCodes.getText().toString());
-				tempValue.add(TaxonField.this.txtSciName.getText().toString());
-				tempValue.add(TaxonField.this.txtVernacularName.getText().toString());
-				tempValue.add(TaxonField.this.languageCodes[getVernacularLanguageCodeIndex(TaxonField.this.spinner.getSelectedItemPosition())-1]/*TaxonField.this.txtVernacularLang.getText().toString()*/);
-				tempValue.add(TaxonField.this.txtLangVariant.getText().toString());
+				String strValue = TaxonField.this.txtVernacularName.getText().toString();
 				//Check the value is not empty  and Run SearchTaxon activity
 				//TODO: in future validator should check it
 				if (!strValue.isEmpty())
@@ -313,6 +315,7 @@ public class TaxonField extends InputField {
 					Log.i(getResources().getString(R.string.app_name), "Value of VernName field is EMPTY!!!! ");
 			}
 		});
+		this.btnSearchByVernName.setEnabled(false);
 		//this.btnSearchByVernName.setVisibility(View.GONE);
 		//Create layout and add input field "Vernacular name" into there
 		LinearLayout vernNameLL = new LinearLayout(context);		
@@ -348,9 +351,6 @@ public class TaxonField extends InputField {
 		this.spinner.setOnItemSelectedListener(new OnItemSelectedListener() {
 		    @Override
 		    public void onItemSelected(AdapterView<?> parentView, View selectedItemView, int position, long id) {
-		    	//ArrayList<String> valueToAdd = new ArrayList<String>();
-		    	//valueToAdd.add(TaxonField.this.codes.get((TaxonField.this.spinner.getSelectedItemPosition())));
-		    	//Log.e("onItemSelected",CodeField.form.getFormScreenId()+"=="+CodeField.this.currentInstanceNo+"("+CodeField.form.currInstanceNo+")");
 		    	if (TaxonField.this.nodeDefinition.isMultiple()){
 		    		TaxonField.this.setValue(TaxonField.form.currInstanceNo, 
 		    		TaxonField.this.txtCodes.getText().toString(), 
@@ -539,8 +539,6 @@ public class TaxonField extends InputField {
 			//this.txtVernacularLang.setText(vernLang);
 			this.txtLangVariant.setText(langVariant);
 		}
-		//Log.e("TAXON",code+"=="+sciName);
-		//Log.e("TAXON"+langVariant,vernName+"=="+vernLang);
 		Node<? extends NodeDefinition> node = this.findParentEntity(path).get(this.nodeDefinition.getName(), position);
 		if (node!=null){
 			TaxonAttribute taxonAttr= (TaxonAttribute)node;
@@ -548,11 +546,6 @@ public class TaxonField extends InputField {
 				vernLang = null;
 			}
 			taxonAttr.setValue(new TaxonOccurrence(code, sciName, vernName, vernLang, langVariant));
-			/*Log.e("reloaded",code+"code=="+taxonAttr.getValue().getCode());
-			//Log.e("reloaded",sciName+"sciName=="+taxonAttr.getValue().getScientificName());
-			Log.e("reloaded",vernName+"vernName=="+taxonAttr.getValue().getVernacularName());
-			//Log.e("reloaded",vernLang+"vernLang=="+taxonAttr.getValue().getLanguageCode());
-			//Log.e("reloaded",langVariant+"langVar=="+taxonAttr.getValue().getLanguageVariety());*/
 		} else {
 			if (vernLang.equals("")){
 				vernLang = null;
