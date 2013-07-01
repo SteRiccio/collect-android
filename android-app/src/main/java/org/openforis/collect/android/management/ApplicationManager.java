@@ -1,25 +1,13 @@
 package org.openforis.collect.android.management;
 
 import java.io.File;
-import java.io.FileInputStream;
-import java.sql.Connection;
-import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import liquibase.Liquibase;
-import liquibase.database.Database;
-import liquibase.database.core.AndroidSQLiteDatabase;
-import liquibase.database.jvm.JdbcConnection;
-import liquibase.logging.LogFactory;
-import liquibase.resource.ClassLoaderResourceAccessor;
-
 import org.openforis.collect.android.R;
 import org.openforis.collect.android.database.DatabaseWrapper;
-import org.openforis.collect.android.database.SQLDroidDataSource;
-import org.openforis.collect.android.database.liquibase.AndroidLiquibaseLogger;
 import org.openforis.collect.android.fields.UIElement;
 import org.openforis.collect.android.lists.FormChoiceActivity;
 import org.openforis.collect.android.lists.RecordChoiceActivity;
@@ -27,26 +15,17 @@ import org.openforis.collect.android.lists.RootEntityChoiceActivity;
 import org.openforis.collect.android.messages.AlertMessage;
 import org.openforis.collect.android.misc.RunnableHandler;
 import org.openforis.collect.android.screens.FormScreen;
+import org.openforis.collect.android.service.ServiceFactory;
 import org.openforis.collect.manager.SurveyManager;
-import org.openforis.collect.manager.UserManager;
 import org.openforis.collect.model.CollectRecord;
 import org.openforis.collect.model.CollectSurvey;
-import org.openforis.collect.model.CollectSurveyContext;
 import org.openforis.collect.model.User;
-import org.openforis.collect.persistence.RecordDao;
-import org.openforis.collect.persistence.SurveyDao;
-import org.openforis.collect.persistence.SurveyWorkDao;
-import org.openforis.collect.persistence.UserDao;
-import org.openforis.collect.persistence.xml.UIOptionsBinder;
 import org.openforis.idm.metamodel.EntityDefinition;
 import org.openforis.idm.metamodel.LanguageSpecificText;
 import org.openforis.idm.metamodel.NodeDefinition;
 import org.openforis.idm.metamodel.NodeLabel.Type;
 import org.openforis.idm.metamodel.Survey;
-import org.openforis.idm.metamodel.validation.Validator;
-import org.openforis.idm.metamodel.xml.SurveyIdmlBinder;
 import org.openforis.idm.model.Entity;
-import org.openforis.idm.model.expression.ExpressionFactory;
 import org.springframework.jdbc.core.support.JdbcDaoSupport;
 
 import android.app.Activity;
@@ -67,10 +46,6 @@ public class ApplicationManager extends BaseActivity {
 	
 	private static String sessionId;
 
-	private static SQLDroidDataSource dataSource;
-	private static UserManager userManager;
-	public static SurveyManager surveyManager;
-	
 	private static CollectSurvey survey;
 	//private static Schema schema;
 	private static User loggedInUser;
@@ -107,13 +82,10 @@ public class ApplicationManager extends BaseActivity {
 	        	
 	            initSession();
 	            
-	            dataSource = new SQLDroidDataSource();
-	        	dataSource.setUrl(DatabaseWrapper.CONNECTION_URL);
-	        	JdbcDaoSupport.init(dataSource);
-	        	
 			    DatabaseWrapper.init(ApplicationManager.this);
 	        	
-			    //updateDBSchema();
+			    ServiceFactory.init();
+			    
 			    //creating database
 			    //new DatabaseWrapper(ApplicationManager.this);
 			    //CollectDatabase collectDB = new CollectDatabase(DatabaseWrapper.db);
@@ -161,25 +133,6 @@ public class ApplicationManager extends BaseActivity {
 			    /*new DatabaseWrapper(ApplicationManager.this);
 			    CollectDatabase collectDB = new CollectDatabase(DatabaseWrapper.db);	*/
 			    
-			    //instantiating managers
-			    ExpressionFactory expressionFactory = new ExpressionFactory();
-	        	Validator validator = new Validator();
-	        	CollectSurveyContext collectSurveyContext = new CollectSurveyContext(expressionFactory, validator/*, null*/);
-	        	//CollectSurveyContext collectSurveyContext = new CollectSurveyContext(expressionFactory, validator);
-	        	
-	        	surveyManager = new SurveyManager();
-	        	surveyManager.setCollectSurveyContext(collectSurveyContext);
-	        	//surveyManager.setSurveyDao(new SurveyDao(collectSurveyContext));
-	        	SurveyDao surveyDao = new SurveyDao();
-	        	surveyDao.setSurveyContext(collectSurveyContext);	        	
-	        	surveyManager.setSurveyWorkDao(new SurveyWorkDao());
-	        	surveyManager.setSurveyDao(surveyDao);
-	        	surveyManager.init();
-	        	
-	        	userManager = new UserManager();
-	        	userManager.setUserDao(new UserDao());
-	        	userManager.setRecordDao(new RecordDao());
-	        	
 	        	//reading form definition if it is not available in database
 	        	/*survey = surveyManager.get("Archenland NFI");//default survey
 	        	if (survey==null){
@@ -218,7 +171,7 @@ public class ApplicationManager extends BaseActivity {
 	        	defaultUser.setId(getResources().getInteger(R.integer.defaulUsertId));
 	        	defaultUser.addRole(getResources().getString(R.string.defaultUserRole));
 	        	if (!userExists(defaultUser)){
-	        		userManager.insert(defaultUser);
+	        		ServiceFactory.getUserManager().insert(defaultUser);
 	        	}
 	        	ApplicationManager.loggedInUser = defaultUser;
 	        	
@@ -298,28 +251,6 @@ public class ApplicationManager extends BaseActivity {
 		}
 	}
 	
-	private void updateDBSchema() throws SQLException {
-		Connection c = new JdbcDaoSupport().getConnection();
-		try {
-			LogFactory.putLogger(new AndroidLiquibaseLogger());
-			Database database = new AndroidSQLiteDatabase();
-			database.setConnection(new JdbcConnection(c));
-			Liquibase liquibase = new Liquibase("org/openforis/collect/db/changelog/db.changelog-master.xml", 
-					new ClassLoaderResourceAccessor(), database);
-		    liquibase.update(null);
-		} catch(Exception e) {
-			Log.e("==", e.getMessage(), e);
-			if (c != null) {
-                c.rollback();
-	        }
-			throw new RuntimeException(e);
-		} finally {
-			if (c != null) {
-//				c.close();
-			}
-		}
-	}
-	
     @Override
 	public void onResume()
 	{
@@ -348,7 +279,8 @@ public class ApplicationManager extends BaseActivity {
 	 	    		int recordId = data.getIntExtra(getResources().getString(R.string.recordId), -1);
 	 	    		Log.e("SELECTEDrecordID","=="+recordId);
 	 	    		if (recordId==-1){//new record
-	 	    			ApplicationManager.currentRecord = new CollectRecord(ApplicationManager.survey, ApplicationManager.survey.getVersions().get(this.survey.getVersions().size()-1).getName());//null;	 	    			
+	 	    			String versionName = survey.getVersions().isEmpty() ? null: survey.getVersions().get(survey.getVersions().size()-1).getName();
+						ApplicationManager.currentRecord = new CollectRecord(ApplicationManager.survey, versionName);//null;	 	    			
 	 					Entity rootEntity = ApplicationManager.currentRecord.createRootEntity(ApplicationManager.getSurvey().getSchema().getRootEntityDefinition(ApplicationManager.currRootEntityId).getName());
 	 					rootEntity.setId(ApplicationManager.currRootEntityId);
 	 	    		} else {//record from database
@@ -390,16 +322,13 @@ public class ApplicationManager extends BaseActivity {
 			 	           	jdbcDao.getConnection();
 			 	           	
 		 	    			String sdcardPath = Environment.getExternalStorageDirectory().toString();
-		 	    			ExpressionFactory expressionFactory = new ExpressionFactory();
-		 		        	Validator validator = new Validator();
-		 		        	CollectSurveyContext collectSurveyContext = new CollectSurveyContext(expressionFactory, validator/*, null*/);
 		 		        	String selectedFormDefinitionFile = ApplicationManager.appPreferences.getString(getResources().getString(R.string.formDefinitionPath), getResources().getString(R.string.defaultFormDefinitionPath));
 		 		        	Log.e("loadingForm","=FROM=="+selectedFormDefinitionFile);
-			            	//FileInputStream fis = new FileInputStream(sdcardPath+getResources().getString(R.string.formDefinitionFile));     	
-		 		        	FileInputStream fis = new FileInputStream(sdcardPath+selectedFormDefinitionFile);
-			            	SurveyIdmlBinder binder = new SurveyIdmlBinder(collectSurveyContext);
-			        		binder.addApplicationOptionsBinder(new UIOptionsBinder());
-			        		survey = (CollectSurvey) binder.unmarshal(fis);
+			            	//FileInputStream fis = new FileInputStream(sdcardPath+getResources().getString(R.string.formDefinitionFile));  	
+		 		        	//FileInputStream fis = new FileInputStream(sdcardPath+selectedFormDefinitionFile);
+		 		        	SurveyManager surveyManager = ServiceFactory.getSurveyManager();
+		 		        	File idmlFile = new File(sdcardPath, selectedFormDefinitionFile);
+			        		survey = surveyManager.unmarshalSurvey(idmlFile, false, false);
 			        		List<LanguageSpecificText> projectNamesList = survey.getProjectNames();
 			        		if (projectNamesList.size()>0){
 			        			survey.setName(projectNamesList.get(0).getText());
@@ -410,7 +339,7 @@ public class ApplicationManager extends BaseActivity {
 			        		CollectSurvey loadedSurvey = surveyManager.get(survey.getName());
 			        		Log.e("loadedSurvey==null","=="+(loadedSurvey==null));
 			        		if (loadedSurvey==null){
-				        		surveyManager.importModel(survey);
+								survey = surveyManager.importModel(idmlFile, survey.getName(), false);
 			        		} else {
 			        			survey = loadedSurvey;
 			        		}
@@ -439,7 +368,7 @@ public class ApplicationManager extends BaseActivity {
 				 					null).show();	
 		            	}
 	 	    		} else {
-	 	    			survey = surveyManager.getById(formId);
+	 	    			survey = ServiceFactory.getSurveyManager().getById(formId);
 	 	    			showRootEntitiesListScreen();
 	 	    		}	 	    		
 	 	    	} else if (resultCode==getResources().getInteger(R.integer.backButtonPressed)){
@@ -565,7 +494,7 @@ public class ApplicationManager extends BaseActivity {
 	}
     
 	private boolean userExists(User user){
-		List<User> usersList = userManager.loadAll();
+		List<User> usersList = ServiceFactory.getUserManager().loadAll();
 		boolean userExists = false;
 		for (int i=0;i<usersList.size();i++){
 			if (usersList.get(i).equals(user)){

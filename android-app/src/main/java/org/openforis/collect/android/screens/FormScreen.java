@@ -24,6 +24,8 @@ import org.openforis.collect.android.management.BaseActivity;
 import org.openforis.collect.android.messages.AlertMessage;
 import org.openforis.collect.android.misc.GpsActivity;
 import org.openforis.collect.android.misc.RunnableHandler;
+import org.openforis.collect.android.service.ServiceFactory;
+import org.openforis.collect.manager.CodeListManager;
 import org.openforis.idm.metamodel.BooleanAttributeDefinition;
 import org.openforis.idm.metamodel.CodeAttributeDefinition;
 import org.openforis.idm.metamodel.CodeListItem;
@@ -407,7 +409,8 @@ public class FormScreen extends BaseActivity implements OnClickListener {
 	    				ArrayList<String> codes = new ArrayList<String>();
 	    				options.add("");
 	    				codes.add("null");
-	    				List<CodeListItem> codeListItemsList = codeAttrDef.getList().getItems();
+	    				CodeListManager codeListManager = ServiceFactory.getCodeListManager();
+						List<CodeListItem> codeListItemsList = codeListManager.loadRootItems(codeAttrDef.getList());;
 	    				for (CodeListItem codeListItem : codeListItemsList){
 	    					codes.add(codeListItem.getCode());
 	    					/*if (codeListItem.getLabel(null)==null){
@@ -1434,7 +1437,8 @@ public class FormScreen extends BaseActivity implements OnClickListener {
     				ArrayList<String> codes = new ArrayList<String>();
     				options.add("");
     				codes.add("null");
-    				List<CodeListItem> codeListItemsList = codeAttrDef.getList().getItems();
+    				CodeListManager codeListManager = ServiceFactory.getCodeListManager();
+					List<CodeListItem> codeListItemsList = codeListManager.loadRootItems(codeAttrDef.getList());;
     				for (CodeListItem codeListItem : codeListItemsList){
     					codes.add(codeListItem.getCode());
     					if (codeListItem.getLabel(null)==null){

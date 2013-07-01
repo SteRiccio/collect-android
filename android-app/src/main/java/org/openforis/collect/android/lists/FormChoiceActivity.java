@@ -7,6 +7,7 @@ import org.openforis.collect.android.management.ApplicationManager;
 import org.openforis.collect.android.management.BaseListActivity;
 import org.openforis.collect.android.messages.AlertMessage;
 import org.openforis.collect.android.misc.RunnableHandler;
+import org.openforis.collect.android.service.ServiceFactory;
 import org.openforis.collect.model.CollectSurvey;
 
 import android.content.DialogInterface;
@@ -57,7 +58,7 @@ public class FormChoiceActivity extends BaseListActivity {
 		int backgroundColor = ApplicationManager.appPreferences.getInt(getResources().getString(R.string.backgroundColor), Color.WHITE);	
 		changeBackgroundColor(backgroundColor);
 		String selectedFormDefinitionFile = ApplicationManager.appPreferences.getString(getResources().getString(R.string.formDefinitionPath), getResources().getString(R.string.defaultFormDefinitionPath));
-		this.surveysList = ApplicationManager.surveyManager.getAll();
+		this.surveysList = ServiceFactory.getSurveyManager().getAll();
 		String[] formsList;
 		if (this.surveysList.size()==0){
 			formsList = new String[1];

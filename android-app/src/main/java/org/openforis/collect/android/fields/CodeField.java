@@ -1,12 +1,16 @@
 package org.openforis.collect.android.fields;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import org.openforis.collect.android.R;
 import org.openforis.collect.android.management.ApplicationManager;
 import org.openforis.collect.android.messages.ToastMessage;
 import org.openforis.collect.android.screens.FormScreen;
+import org.openforis.collect.android.service.ServiceFactory;
+import org.openforis.collect.manager.CodeListManager;
 import org.openforis.idm.metamodel.CodeAttributeDefinition;
+import org.openforis.idm.metamodel.CodeList;
 import org.openforis.idm.metamodel.CodeListItem;
 import org.openforis.idm.metamodel.NodeDefinition;
 import org.openforis.idm.model.Code;
@@ -161,9 +165,14 @@ public class CodeField extends InputField {
 						int selectedPositionInParent = parentCodeField.spinner.getSelectedItemPosition();
 						if (selectedPositionInParent>0){
 							selectedPositionInParent--;
-							for (int i=0;i<this.codeAttrDef.getList().getItems(this.codeAttrDef.getCodeListLevel()-1).get(selectedPositionInParent).getChildItems().size();i++){
-								this.codes.add(this.codeAttrDef.getList().getItems(this.codeAttrDef.getCodeListLevel()-1).get(selectedPositionInParent).getChildItems().get(i).getCode().toString());
-								this.options.add(this.codeAttrDef.getList().getItems(this.codeAttrDef.getCodeListLevel()-1).get(selectedPositionInParent).getChildItems().get(i).getLabels().get(0).getText());
+							CodeListManager codeListManager = ServiceFactory.getCodeListManager();
+							List<CodeListItem> parentItems = codeListManager.loadItems(this.codeAttrDef.getList(), this.codeAttrDef.getListLevelIndex() + 1);
+							CodeListItem parentItem = parentItems.get(selectedPositionInParent);
+							List<CodeListItem> childItems = codeListManager.loadChildItems(parentItem);
+							for (int i=0;i<childItems.size();i++){
+								CodeListItem item = childItems.get(i);
+								this.codes.add(item.getCode());
+								this.options.add(item.getLabels().get(0).getText());
 							}
 						}							
 					}
@@ -250,11 +259,16 @@ public class CodeField extends InputField {
 					    			int selectedPositionInParent = spinner.getSelectedItemPosition();
 									if (selectedPositionInParent>0){
 										selectedPositionInParent--;
-
-										for (int j=0;j<CodeField.this.codeAttrDef.getList().getItems(CodeField.this.codeAttrDef.getCodeListLevel()-1).get(selectedPositionInParent).getChildItems().size();j++){									
-											currentChild.codes.add(CodeField.this.codeAttrDef.getList().getItems(CodeField.this.codeAttrDef.getCodeListLevel()-1).get(selectedPositionInParent).getChildItems().get(j).getCode().toString());
-											currentChild.options.add(CodeField.this.codeAttrDef.getList().getItems(CodeField.this.codeAttrDef.getCodeListLevel()-1).get(selectedPositionInParent).getChildItems().get(j).getLabels().get(0).getText());
-											currentChild.aa.add(CodeField.this.codeAttrDef.getList().getItems(CodeField.this.codeAttrDef.getCodeListLevel()-1).get(selectedPositionInParent).getChildItems().get(j).getLabels().get(0).getText());
+										CodeListManager codeListManager = ServiceFactory.getCodeListManager();
+										CodeList list = CodeField.this.codeAttrDef.getList();
+										List<CodeListItem> parentItems = codeListManager.loadItems(list, CodeField.this.codeAttrDef.getListLevelIndex() + 1);
+										CodeListItem parentItem = parentItems.get(selectedPositionInParent);
+										List<CodeListItem> childItems = codeListManager.loadChildItems(parentItem);
+										for (int j=0;j<childItems.size();j++){									
+											CodeListItem item = childItems.get(j);
+											currentChild.codes.add(item.getCode().toString());
+											currentChild.options.add(item.getLabels().get(0).getText());
+											currentChild.aa.add(item.getLabels().get(0).getText());
 										}
 									}
 									if (currentChild.aa.getCount()==1){
