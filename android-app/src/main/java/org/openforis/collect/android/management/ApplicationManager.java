@@ -7,7 +7,8 @@ import java.util.List;
 import java.util.Map;
 
 import org.openforis.collect.android.R;
-import org.openforis.collect.android.database.DatabaseWrapper;
+import org.openforis.collect.android.config.Configuration;
+import org.openforis.collect.android.database.DatabaseHelper;
 import org.openforis.collect.android.fields.UIElement;
 import org.openforis.collect.android.lists.FormChoiceActivity;
 import org.openforis.collect.android.lists.RecordChoiceActivity;
@@ -26,7 +27,6 @@ import org.openforis.idm.metamodel.NodeDefinition;
 import org.openforis.idm.metamodel.NodeLabel.Type;
 import org.openforis.idm.metamodel.Survey;
 import org.openforis.idm.model.Entity;
-import org.springframework.jdbc.core.support.JdbcDaoSupport;
 
 import android.app.Activity;
 import android.app.ProgressDialog;
@@ -82,17 +82,12 @@ public class ApplicationManager extends BaseActivity {
 	        	
 	            initSession();
 	            
-			    DatabaseWrapper.init(ApplicationManager.this);
-	        	
-			    ServiceFactory.init();
-			    
-			    //creating database
-			    //new DatabaseWrapper(ApplicationManager.this);
-			    //CollectDatabase collectDB = new CollectDatabase(DatabaseWrapper.db);
-	        	//opening database connection		    
-	        	JdbcDaoSupport jdbcDao = new JdbcDaoSupport();
-	        	jdbcDao.getConnection();
+	            Configuration config = Configuration.getDefault(ApplicationManager.this);
 	            
+			    //DatabaseWrapper.init(ApplicationManager.this, config);
+	        	
+			    ServiceFactory.init(config);
+			    
 	            ApplicationManager.currentRecord = null;
 	            ApplicationManager.currRootEntityId = -1;
 	            ApplicationManager.selectedView = null;
@@ -177,8 +172,6 @@ public class ApplicationManager extends BaseActivity {
 	        	
 	        	ApplicationManager.dataManager = null;
 	    		
-	            JdbcDaoSupport.close();
-	            
 	            ApplicationManager.pd.dismiss();
 	            
 	            //showRootEntitiesListScreen();
@@ -192,6 +185,7 @@ public class ApplicationManager extends BaseActivity {
 	    				+getResources().getString(R.string.log_file_extension));
 			} 	 finally {
 				//finish();
+	            DatabaseHelper.closeConnection();
 			}
 		}
 	};
@@ -318,8 +312,8 @@ public class ApplicationManager extends BaseActivity {
 	 	    			try{
 		 	    			long startTimeParsing = System.currentTimeMillis();
 		 	    			//opening database connection
-			 	           	JdbcDaoSupport jdbcDao = new JdbcDaoSupport();
-			 	           	jdbcDao.getConnection();
+//			 	           	JdbcDaoSupport jdbcDao = new JdbcDaoSupport();
+//			 	           	jdbcDao.getConnection();
 			 	           	
 		 	    			String sdcardPath = Environment.getExternalStorageDirectory().toString();
 		 		        	String selectedFormDefinitionFile = ApplicationManager.appPreferences.getString(getResources().getString(R.string.formDefinitionPath), getResources().getString(R.string.defaultFormDefinitionPath));

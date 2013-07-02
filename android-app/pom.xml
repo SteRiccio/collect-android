@@ -10,7 +10,8 @@
 	<packaging>apk</packaging>
 
 	<properties>
-		<platform.version>2.3.3</platform.version>
+		<android.platform.version>2.3.3</android.platform.version>
+		<android.api.level>10</android.api.level>
 		<maven.compiler.source>1.6</maven.compiler.source>
 		<maven.compiler.target>1.6</maven.compiler.target>
 	</properties>
@@ -19,7 +20,7 @@
 		<dependency>
 			<groupId>com.google.android</groupId>
 			<artifactId>android</artifactId>
-			<version>${platform.version}</version>
+			<version>${android.platform.version}</version>
 			<scope>provided</scope>
 			<exclusions>
 				<exclusion>
@@ -35,7 +36,7 @@
 		<dependency>
 			<groupId>com.google.android</groupId>
 			<artifactId>android-test</artifactId>
-			<version>${platform.version}</version>
+			<version>${android.platform.version}</version>
 			<scope>provided</scope>
 		</dependency>
 		<dependency>
@@ -125,7 +126,7 @@
 		<dependency>
 			<groupId>org.openforis.android</groupId>
 			<artifactId>android-spring</artifactId>
-			<version>1.0-SNAPSHOT</version>
+			<version>1.0-20130702.095856-9</version>
 		</dependency>
 		<dependency>
 			<groupId>org.openforis.android</groupId>
@@ -162,13 +163,13 @@
 			<plugin>
 				<groupId>com.jayway.maven.plugins.android.generation2</groupId>
 				<artifactId>android-maven-plugin</artifactId>
-				<version>3.1.1</version>
+				<version>3.6.0</version>
 				<configuration>
 					<dex>
 						<coreLibrary>true</coreLibrary>
 					</dex>
 					<sdk>
-						<platform>${platform.version}</platform>
+						<platform>${android.api.level}</platform>
 					</sdk>
 					<emulator>
 						<avd>a233</avd>
@@ -187,16 +188,50 @@
 				</configuration>
 			</plugin>
 		</plugins>
+<!-- 		<pluginManagement> -->
+<!-- 			<plugins> -->
+<!-- 				<plugin> -->
+<!-- 					<groupId>org.eclipse.m2e</groupId> -->
+<!-- 					<artifactId>lifecycle-mapping</artifactId> -->
+<!-- 					<version>1.0.0</version> -->
+<!-- 					<configuration> -->
+<!-- 						<lifecycleMappingMetadata> -->
+<!-- 							<pluginExecutions> -->
+<!-- 								<pluginExecution> -->
+<!-- 									<pluginExecutionFilter> -->
+<!-- 										<groupId>com.jayway.maven.plugins.android.generation2</groupId> -->
+<!-- 										<artifactId>android-maven-plugin</artifactId> -->
+<!-- 										<versionRange>[3.6.0,)</versionRange> -->
+<!-- 										<goals> -->
+<!-- 											<goal>generate-sources</goal> -->
+<!-- 											<goal>proguard</goal> -->
+<!-- 											<goal>emma</goal> -->
+<!-- 											<goal>dex</goal> -->
+<!-- 											<goal>apk</goal> -->
+<!-- 											<goal>internal-pre-integration-test</goal> -->
+<!-- 											<goal>internal-integration-test</goal> -->
+<!-- 										</goals> -->
+<!-- 									</pluginExecutionFilter> -->
+<!-- 									<action> -->
+<!-- 										<execute /> -->
+<!-- 									</action> -->
+<!-- 								</pluginExecution> -->
+<!-- 							</pluginExecutions> -->
+<!-- 						</lifecycleMappingMetadata> -->
+<!-- 					</configuration> -->
+<!-- 				</plugin> -->
+<!-- 			</plugins> -->
+<!-- 		</pluginManagement> -->
 	</build>
 
 	<repositories>
 		<repository>
-			<id>openforis-releases-repository</id>
+			<id>openforis-releases</id>
 			<name>Open Foris Repository</name>
 			<url>http://www.openforis.org/nexus/content/repositories/releases/</url>
 		</repository>
 		<repository>
-			<id>openforis-snapshots-repository</id>
+			<id>openforis-snapshots</id>
 			<name>Open Foris Snapshots Repository</name>
 			<url>http://www.openforis.org/nexus/content/repositories/snapshots/</url>
 		</repository>

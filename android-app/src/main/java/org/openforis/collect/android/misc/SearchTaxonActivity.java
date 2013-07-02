@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.openforis.collect.android.R;
+import org.openforis.collect.android.database.DatabaseHelper;
 import org.openforis.collect.android.fields.TaxonField;
 import org.openforis.collect.android.lists.DownloadActivity;
 import org.openforis.collect.android.management.ApplicationManager;
@@ -194,8 +195,8 @@ public class SearchTaxonActivity extends Activity {
         @Override
         public void run() {         
         	//Open connection with database
-        	JdbcDaoSupport jdbcDao  = new JdbcDaoSupport();
-        	jdbcDao.getConnection();    	
+//        	JdbcDaoSupport jdbcDao  = new JdbcDaoSupport();
+//        	jdbcDao.getConnection();    	
         	//Search results 
         	this.lstTaxonOccurence = new ArrayList<TaxonOccurrence>();
         	if(SearchTaxonActivity.this.taxonManager != null){
@@ -223,7 +224,8 @@ public class SearchTaxonActivity extends Activity {
     		}   	
     	    	
         	//Close connection
-        	JdbcDaoSupport.close();
+//        	JdbcDaoSupport.close();
+        	DatabaseHelper.closeConnection();
             handler.sendEmptyMessage(0);
         }
 

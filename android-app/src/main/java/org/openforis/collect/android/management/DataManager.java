@@ -6,12 +6,12 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 
-import org.openforis.collect.manager.RecordManager;
+import org.openforis.collect.android.database.DatabaseHelper;
+import org.openforis.collect.android.service.ServiceFactory;
 import org.openforis.collect.model.CollectRecord;
 import org.openforis.collect.model.CollectRecord.Step;
 import org.openforis.collect.model.CollectSurvey;
 import org.openforis.collect.model.User;
-import org.openforis.collect.persistence.RecordDao;
 import org.openforis.collect.persistence.RecordPersistenceException;
 import org.openforis.collect.persistence.RecordUnlockedException;
 import org.openforis.collect.persistence.xml.DataHandler;
@@ -19,7 +19,6 @@ import org.openforis.collect.persistence.xml.DataMarshaller;
 import org.openforis.collect.persistence.xml.DataUnmarshaller;
 import org.openforis.collect.persistence.xml.DataUnmarshaller.ParseRecordResult;
 import org.openforis.collect.persistence.xml.DataUnmarshallerException;
-import org.springframework.jdbc.core.support.JdbcDaoSupport;
 import org.xmlpull.v1.XmlPullParserException;
 
 import android.content.Context;
@@ -28,7 +27,6 @@ import android.util.Log;
 
 public class DataManager {
 
-	private static RecordManager recordManager = null;
 	private CollectSurvey survey;
 	private String rootEntity;
 	private User user;
@@ -37,10 +35,6 @@ public class DataManager {
 	private DataUnmarshaller dataUnmarshaller;
 	
 	public DataManager(CollectSurvey survey, String rootEntity, User loggedInUser){
-		if (DataManager.recordManager==null){
-			DataManager.recordManager = new RecordManager(false);
-			DataManager.recordManager.setRecordDao(new RecordDao());
-		}				
 		this.survey = survey;
 		this.rootEntity = rootEntity;
 		this.user = loggedInUser;
@@ -55,8 +49,8 @@ public class DataManager {
 	public boolean saveRecord(Context ctx) {
 		boolean isSuccess = true;
 		try {
-			JdbcDaoSupport jdbcDao = new JdbcDaoSupport();
-			jdbcDao.getConnection();
+//			JdbcDaoSupport jdbcDao = new JdbcDaoSupport();
+//			jdbcDao.getConnection();
 			CollectRecord recordToSave = ApplicationManager.currentRecord;
 			
 			if (recordToSave.getId()==null){
@@ -66,7 +60,7 @@ public class DataManager {
 			} else {
 				recordToSave.setModifiedDate(new Date());
 			}
-			DataManager.recordManager.save(recordToSave, ApplicationManager.getSessionId());
+			ServiceFactory.getRecordManager().save(recordToSave, ApplicationManager.getSessionId());
 		} catch (RecordUnlockedException e) {
 			e.printStackTrace();
 			isSuccess = false;
@@ -87,8 +81,8 @@ public class DataManager {
 	
 	public int saveRecord(CollectRecord recordToSave) {
 		try {
-			JdbcDaoSupport jdbcDao = new JdbcDaoSupport();
-			jdbcDao.getConnection();
+//			JdbcDaoSupport jdbcDao = new JdbcDaoSupport();
+//			jdbcDao.getConnection();
 			Log.e("recordToSave==null","=="+(recordToSave==null));
 			if (recordToSave.getId()==null){
 				recordToSave.setCreatedBy(this.user);
@@ -97,7 +91,7 @@ public class DataManager {
 			} else {
 				recordToSave.setModifiedDate(new Date());
 			}
-			DataManager.recordManager.save(recordToSave, ApplicationManager.getSessionId());
+			ServiceFactory.getRecordManager().save(recordToSave, ApplicationManager.getSessionId());
 		} catch (RecordUnlockedException e) {
 			e.printStackTrace();
 		} catch (RecordPersistenceException e) {
@@ -169,25 +163,29 @@ public class DataManager {
 	
 	public void deleteRecord(int position){
 		try {
-			JdbcDaoSupport jdbcDao = new JdbcDaoSupport();
-			jdbcDao.getConnection();
-			List<CollectRecord> recordsList = DataManager.recordManager.loadSummaries(survey, rootEntity);
-			DataManager.recordManager.delete(recordsList.get(position).getId());			
+//			JdbcDaoSupport jdbcDao = new JdbcDaoSupport();
+//			jdbcDao.getConnection();
+			List<CollectRecord> recordsList = ServiceFactory.getRecordManager().loadSummaries(survey, rootEntity);
+			ServiceFactory.getRecordManager().delete(recordsList.get(position).getId());			
 		} catch (RecordPersistenceException e) {
 			e.printStackTrace();
+		} finally {
+			DatabaseHelper.closeConnection();
 		}
+		
 	}
 	
 	public List<CollectRecord> loadSummaries(){
 		Log.e("loading","SUMMARIES");
 		long startTime = System.currentTimeMillis();
-		JdbcDaoSupport jdbcDao = new JdbcDaoSupport();
-		jdbcDao.getConnection();
+		//JdbcDaoSupport jdbcDao = new JdbcDaoSupport();
+		//jdbcDao.getConnection();
 		Log.e("jdbcDaoconnection","=="+((System.currentTimeMillis()-startTime)/1000));
 		startTime = System.currentTimeMillis();
-		List<CollectRecord> recordsList = DataManager.recordManager.loadSummaries(survey, rootEntity);		
+		List<CollectRecord> recordsList = ServiceFactory.getRecordManager().loadSummaries(survey, rootEntity);		
 		Log.e("loadSummaries","=="+((System.currentTimeMillis()-startTime)/1000));
-		JdbcDaoSupport.close();
+		//JdbcDaoSupport.close();
+		DatabaseHelper.closeConnection();
 		return recordsList;
 	}
 	
@@ -195,10 +193,11 @@ public class DataManager {
 		long startTime = System.currentTimeMillis();
 		CollectRecord loadedRecord = null;
 		try {
-			JdbcDaoSupport jdbcDao = new JdbcDaoSupport();
-			jdbcDao.getConnection();
-			loadedRecord = DataManager.recordManager.load(survey, recordId, Step.ENTRY.getStepNumber());
-			JdbcDaoSupport.close();
+//			JdbcDaoSupport jdbcDao = new JdbcDaoSupport();
+//			jdbcDao.getConnection();
+			loadedRecord = ServiceFactory.getRecordManager().load(survey, recordId, Step.ENTRY);
+//			JdbcDaoSupport.close();
+			DatabaseHelper.closeConnection();
 		} catch (NullPointerException e){
 			e.printStackTrace();
 		} /*catch (RecordPersistenceException e) {

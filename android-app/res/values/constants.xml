@@ -24,6 +24,11 @@
     
     <string name="formDefinitionFileTest">/test.idm.grdemo.new.xml</string>
     
+    <!-- DATABASE -->
+    <string name="db_name">collect.db</string>
+    <string name="db_path">/data/data/org.openforis.collect.android/databases/</string>
+    <integer name="db_version">3</integer>
+    
     <!-- PREFERENCES -->
     <string name="sleepTime">sleepTime</string>
     <string name="showSoftKeyboardOnTextField">showSoftKeyboardOnText</string>

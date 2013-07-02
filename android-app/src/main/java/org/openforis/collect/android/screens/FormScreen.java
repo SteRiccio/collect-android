@@ -28,6 +28,7 @@ import org.openforis.collect.android.service.ServiceFactory;
 import org.openforis.collect.manager.CodeListManager;
 import org.openforis.idm.metamodel.BooleanAttributeDefinition;
 import org.openforis.idm.metamodel.CodeAttributeDefinition;
+import org.openforis.idm.metamodel.CodeList;
 import org.openforis.idm.metamodel.CodeListItem;
 import org.openforis.idm.metamodel.CoordinateAttributeDefinition;
 import org.openforis.idm.metamodel.DateAttributeDefinition;
@@ -410,17 +411,19 @@ public class FormScreen extends BaseActivity implements OnClickListener {
 	    				options.add("");
 	    				codes.add("null");
 	    				CodeListManager codeListManager = ServiceFactory.getCodeListManager();
-						List<CodeListItem> codeListItemsList = codeListManager.loadRootItems(codeAttrDef.getList());;
-	    				for (CodeListItem codeListItem : codeListItemsList){
-	    					codes.add(codeListItem.getCode());
-	    					/*if (codeListItem.getLabel(null)==null){
+						CodeList list = codeAttrDef.getList();
+						if ( ! list.isExternal() ) {
+							List<CodeListItem> codeListItemsList = codeListManager.loadRootItems(list);
+							for (CodeListItem codeListItem : codeListItemsList){
+								codes.add(codeListItem.getCode());
+								/*if (codeListItem.getLabel(null)==null){
 	    						options.add(codeListItem.getLabel("en"));
 	    					} else {
 	    						options.add(codeListItem.getLabel(null));	    						
 	    					}	*/
-	    					options.add(CodeField.getLabelForCodeListItem(codeListItem));
-	    				}
-	    				
+								options.add(CodeField.getLabelForCodeListItem(codeListItem));
+							}
+						}
 	    				if (!nodeDef.isMultiple()){
 	    					Node<?> foundNode = this.parentEntitySingleAttribute.get(nodeDef.getName(), 0);
 		    				if (foundNode!=null){
@@ -1438,16 +1441,18 @@ public class FormScreen extends BaseActivity implements OnClickListener {
     				options.add("");
     				codes.add("null");
     				CodeListManager codeListManager = ServiceFactory.getCodeListManager();
-					List<CodeListItem> codeListItemsList = codeListManager.loadRootItems(codeAttrDef.getList());;
-    				for (CodeListItem codeListItem : codeListItemsList){
-    					codes.add(codeListItem.getCode());
-    					if (codeListItem.getLabel(null)==null){
-    						options.add(codeListItem.getLabel("en"));
-    					} else {
-    						options.add(codeListItem.getLabel(null));	    						
-    					}
-    				}
-    				
+					CodeList list = codeAttrDef.getList();
+					if ( ! list.isExternal() ) {
+						List<CodeListItem> codeListItemsList = codeListManager.loadRootItems(list);
+	    				for (CodeListItem codeListItem : codeListItemsList){
+	    					codes.add(codeListItem.getCode());
+	    					if (codeListItem.getLabel(null)==null){
+	    						options.add(codeListItem.getLabel("en"));
+	    					} else {
+	    						options.add(codeListItem.getLabel(null));	    						
+	    					}
+	    				}
+					}
     				if (!nodeDef.isMultiple()){
     					Node<?> foundNode = this.parentEntitySingleAttribute.get(nodeDef.getName(), 0);
 	    				if (foundNode!=null){
