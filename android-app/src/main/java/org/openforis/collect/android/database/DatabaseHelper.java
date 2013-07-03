@@ -43,12 +43,12 @@ public abstract class DatabaseHelper {
 				} catch (SQLException e1) {}
 	        }
 			throw new RuntimeException(e);
-		} finally {
-			if (c != null) {
-				try {
-					c.close();
-				} catch (SQLException e) {}
-			}
+//		} finally {
+//			if (c != null) {
+//				try {
+//					c.close();
+//				} catch (SQLException e) {}
+//			}
 		}
 	}
 	
