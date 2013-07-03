@@ -10,9 +10,13 @@ import liquibase.database.jvm.JdbcConnection;
 import liquibase.logging.LogFactory;
 import liquibase.resource.ClassLoaderResourceAccessor;
 
+import org.openforis.collect.android.config.Configuration;
 import org.openforis.collect.android.database.liquibase.AndroidLiquibaseLogger;
 import org.openforis.collect.android.service.ServiceFactory;
 
+import android.content.Context;
+import android.database.sqlite.SQLiteDatabase;
+import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
 
 /**
@@ -25,6 +29,14 @@ public abstract class DatabaseHelper {
 	
 	private static final String LIQUIBASE_CHANGELOG = "org/openforis/collect/db/changelog/db.changelog-master.xml";
 	
+	public static void init(Context ctx, Configuration config){
+        OpenHelper openHelper = new OpenHelper(ctx, config);
+       	SQLiteDatabase db = openHelper.getWritableDatabase();
+       	if ( db == null ) {
+       		throw new RuntimeException("Null db");
+       	}
+	}
+
 	public static void updateDBSchema() {
 		Connection c = null;
 		try {
@@ -58,6 +70,23 @@ public abstract class DatabaseHelper {
 			Connection c = dataSource.getConnection();
 			c.close();
 		} catch(Exception e) {}
+	}
+	
+
+	private static class OpenHelper extends SQLiteOpenHelper {
+		OpenHelper(Context context, Configuration config) {
+			super(context, config.getDbName(), null, config.getDbVersion());
+		}
+
+		@Override
+		public void onCreate(SQLiteDatabase db) {
+
+		}
+
+		@Override
+		public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
+
+		}
 	}
 
 }

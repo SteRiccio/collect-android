@@ -84,7 +84,7 @@ public class ApplicationManager extends BaseActivity {
 	            
 	            Configuration config = Configuration.getDefault(ApplicationManager.this);
 	            
-			    //DatabaseWrapper.init(ApplicationManager.this, config);
+	            DatabaseHelper.init(ApplicationManager.this, config);
 	        	
 			    ServiceFactory.init(config);
 			    
