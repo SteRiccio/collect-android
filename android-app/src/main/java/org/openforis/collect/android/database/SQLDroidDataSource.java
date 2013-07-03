@@ -35,7 +35,7 @@ public class SQLDroidDataSource implements DataSource {
 				connection = DriverManager.getConnection(getUrl());				
 			}
 		} catch (Exception e) {
-			connection = null;
+			throw new RuntimeException(e);
 		} 
 		return connection;
 	}
