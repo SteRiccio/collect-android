@@ -26,6 +26,7 @@ import org.openforis.collect.android.misc.GpsActivity;
 import org.openforis.collect.android.misc.RunnableHandler;
 import org.openforis.collect.android.service.ServiceFactory;
 import org.openforis.collect.manager.CodeListManager;
+import org.openforis.collect.model.NodeChangeSet;
 import org.openforis.idm.metamodel.BooleanAttributeDefinition;
 import org.openforis.idm.metamodel.CodeAttributeDefinition;
 import org.openforis.idm.metamodel.CodeList;
