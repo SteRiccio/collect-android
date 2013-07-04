@@ -22,14 +22,12 @@ import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.protocol.HTTP;
 import org.apache.http.util.EntityUtils;
 
-import android.util.Log;
-
 public class ServerInterface {
 
         public static final String SERVER_URL = "http://ar5.arbonaut.com/webforest/fao-mobile/save-received-data-file";
 
-        public static String sendDataFiles(String xml, boolean overwrite) {
-                return postSyncXML(xml, overwrite);
+        public static String sendDataFiles(String xml, String survey_id, String username, boolean overwrite) {
+            return postSyncXML(xml, survey_id, username, overwrite);
         }
 
         public static List<String> getFilesList(){        	
@@ -101,15 +99,17 @@ public class ServerInterface {
                 return result;
         }*/
         
-        private static String postSyncXML(String xml, boolean overwrite) {
+        private static String postSyncXML(String xml, String survey_id, String username, boolean overwrite) {
             String url = "http://ar5.arbonaut.com/webforest/fao-mobile/save-received-data-file";
             HttpClient httpclient = new DefaultHttpClient();  
             /* String encode_url=URLEncoder.encode(url,"UTF-8");
          	String decode_url=URLDecoder.decode(encode_url,"UTF-8");*/
             List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>();
             nameValuePairs.add(new BasicNameValuePair("datafile_xml_string",xml));
-            nameValuePairs.add(new BasicNameValuePair("survey_id","99"));
-            nameValuePairs.add(new BasicNameValuePair("username","collect"));
+            ///nameValuePairs.add(new BasicNameValuePair("survey_id","99"));
+            nameValuePairs.add(new BasicNameValuePair("survey_id", survey_id));
+            //nameValuePairs.add(new BasicNameValuePair("username","collect"));
+            nameValuePairs.add(new BasicNameValuePair("username",username));
             nameValuePairs.add(new BasicNameValuePair("overwrite",String.valueOf(overwrite)));
 
             UrlEncodedFormEntity form;

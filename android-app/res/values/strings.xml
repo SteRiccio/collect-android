@@ -11,6 +11,8 @@
     <string name="txtGpsTimeout">set GPS timeout</string>
     <string name="lblLanguage">Language:\u0020</string>
     <string name="lblFormDefinitionFile">Path to form\r\ndefinition\r\nfile on sdcard:\u0020</string>
+    <string name="lblUsername">Username:\u0020</string>
+    <string name="lblSurveyId">Project ID:\u0020</string>
     
     <!-- dialogs -->
     <string name="exitAppTitle">Exiting&#8230;</string>    

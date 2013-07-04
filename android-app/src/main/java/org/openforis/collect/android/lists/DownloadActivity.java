@@ -85,11 +85,13 @@ public class DownloadActivity extends Activity{
             StrictMode.setThreadPolicy(policy);
         }
         try{
+        	this.activityLabel = (TextView)findViewById(R.id.lblList); 
+        	this.columnLabel = (TextView)findViewById(R.id.lblHeaders);
         	if (isNetworkAvailable()){
-        		this.activityLabel = (TextView)findViewById(R.id.lblList);        		
+        		      		
             	this.activityLabel.setText(getResources().getString(R.string.dataToDownload));
             	
-            	this.columnLabel = (TextView)findViewById(R.id.lblHeaders);
+            	
             	this.columnLabel.setText(getResources().getString(R.string.dataToDownlaodColumnHeaders));
             	
             	this.lv = (ListView)findViewById(R.id.file_list);
@@ -329,7 +331,9 @@ public class DownloadActivity extends Activity{
          */
         protected String doInBackground(Object... args) {
             try {            
-				return ServerInterface.sendDataFiles(DownloadActivity.getStringFromFile(Environment.getExternalStorageDirectory().toString()+String.valueOf(getResources().getString(R.string.exported_data_folder)+"/"+args[0])),(Boolean)args[1]);
+            	String survey_id = ApplicationManager.appPreferences.getString(getResources().getString(R.string.surveyId), "99");
+            	String username = ApplicationManager.appPreferences.getString(getResources().getString(R.string.username), "collect");
+				return ServerInterface.sendDataFiles(DownloadActivity.getStringFromFile(Environment.getExternalStorageDirectory().toString()+String.valueOf(getResources().getString(R.string.exported_data_folder)+"/"+args[0])), survey_id, username,(Boolean)args[1]);
 			} catch (Exception e) {
 				e.printStackTrace();
 				return "";

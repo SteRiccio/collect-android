@@ -1,10 +1,20 @@
 package org.openforis.collect.android.management;
 
 import java.io.File;
+
+
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+
+
+
+
+
+
 
 import org.openforis.collect.android.R;
 import org.openforis.collect.android.config.Configuration;
@@ -20,17 +30,27 @@ import org.openforis.collect.android.misc.RunnableHandler;
 import org.openforis.collect.android.screens.FormScreen;
 import org.openforis.collect.android.service.ServiceFactory;
 import org.openforis.collect.manager.SurveyManager;
+
 import org.openforis.collect.model.CollectRecord;
 import org.openforis.collect.model.CollectSurvey;
 import org.openforis.collect.model.NodeChange;
 import org.openforis.collect.model.NodeChangeSet;
 import org.openforis.collect.model.User;
+
+
+
+
+
 import org.openforis.idm.metamodel.EntityDefinition;
 import org.openforis.idm.metamodel.LanguageSpecificText;
 import org.openforis.idm.metamodel.NodeDefinition;
 import org.openforis.idm.metamodel.NodeLabel.Type;
 import org.openforis.idm.metamodel.Survey;
+
+
 import org.openforis.idm.model.Entity;
+
+
 
 import android.app.Activity;
 import android.app.ProgressDialog;
@@ -49,6 +69,10 @@ public class ApplicationManager extends BaseActivity {
 	private static final String TAG = "ApplicationManager";
 	
 	private static String sessionId;
+
+
+
+
 
 	private static CollectSurvey survey;
 	//private static Schema schema;
@@ -86,10 +110,22 @@ public class ApplicationManager extends BaseActivity {
 	        	
 	            initSession();
 	            
+
+
+
+
 	            Configuration config = Configuration.getDefault(ApplicationManager.this);
 	            
 	            DatabaseHelper.init(ApplicationManager.this, config);
 	        	
+
+
+
+
+
+
+
+
 			    ServiceFactory.init(config);
 			    
 	            ApplicationManager.currentRecord = null;
@@ -132,6 +168,25 @@ public class ApplicationManager extends BaseActivity {
 			    /*new DatabaseWrapper(ApplicationManager.this);
 			    CollectDatabase collectDB = new CollectDatabase(DatabaseWrapper.db);	*/
 			    
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 	        	//reading form definition if it is not available in database
 	        	/*survey = surveyManager.get("Archenland NFI");//default survey
 	        	if (survey==null){
@@ -176,6 +231,8 @@ public class ApplicationManager extends BaseActivity {
 	        	
 	        	ApplicationManager.dataManager = null;
 	    		
+
+
 	            ApplicationManager.pd.dismiss();
 	            
 	            //showRootEntitiesListScreen();
@@ -202,6 +259,7 @@ public class ApplicationManager extends BaseActivity {
         	setContentView(R.layout.welcomescreen);        	
         	
         	ApplicationManager.appPreferences = getPreferences(MODE_PRIVATE);
+
 			int backgroundColor = ApplicationManager.appPreferences.getInt(getResources().getString(R.string.backgroundColor), Color.WHITE);
 			SharedPreferences.Editor editor = ApplicationManager.appPreferences.edit();
 			editor.putInt(getResources().getString(R.string.backgroundColor), backgroundColor);
@@ -227,6 +285,16 @@ public class ApplicationManager extends BaseActivity {
 			editor = ApplicationManager.appPreferences.edit();
 			editor.putString(getResources().getString(R.string.formDefinitionPath), formDefinitionPath);
 			
+			String survey_id = ApplicationManager.appPreferences.getString(getResources().getString(R.string.surveyId), getResources().getString(R.string.defaultSurveyId));
+			editor.putString(getResources().getString(R.string.surveyId), survey_id);
+			
+			String username = ApplicationManager.appPreferences.getString(getResources().getString(R.string.username), getResources().getString(R.string.defaultUsername));
+			editor.putString(getResources().getString(R.string.username), username);
+
+
+
+
+
 	    	editor.commit();
 	    		    
         	creationThread.start();
@@ -249,6 +317,29 @@ public class ApplicationManager extends BaseActivity {
 		}
 	}
 	
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
     @Override
 	public void onResume()
 	{
@@ -320,10 +411,16 @@ public class ApplicationManager extends BaseActivity {
 //			 	           	jdbcDao.getConnection();
 			 	           	
 		 	    			String sdcardPath = Environment.getExternalStorageDirectory().toString();
+
+
+
 		 		        	String selectedFormDefinitionFile = ApplicationManager.appPreferences.getString(getResources().getString(R.string.formDefinitionPath), getResources().getString(R.string.defaultFormDefinitionPath));
 		 		        	Log.e("loadingForm","=FROM=="+selectedFormDefinitionFile);
 			            	//FileInputStream fis = new FileInputStream(sdcardPath+getResources().getString(R.string.formDefinitionFile));  	
 		 		        	//FileInputStream fis = new FileInputStream(sdcardPath+selectedFormDefinitionFile);
+
+
+
 		 		        	SurveyManager surveyManager = ServiceFactory.getSurveyManager();
 		 		        	File idmlFile = new File(sdcardPath, selectedFormDefinitionFile);
 			        		survey = surveyManager.unmarshalSurvey(idmlFile, false, false);
@@ -588,6 +685,7 @@ public class ApplicationManager extends BaseActivity {
 		return label;
 	}
 	
+
     public static void updateUIElementsWithValidationResults(NodeChangeSet nodeChangeSet){
     	List<NodeChange<?>> nodeChangesList = nodeChangeSet.getChanges();
     	Log.e("Size of NodeChangeSet","=="+nodeChangeSet.size());

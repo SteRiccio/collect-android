@@ -45,6 +45,12 @@ public class SettingsScreen extends Activity{
 	private TextView tvFormDefinitionFilePath;
 	private EditText txtFormDefinitionFilePath;
 	
+	private TextView tvUsername;
+	private EditText txtUsername;
+	
+	private TextView tvSurveyId;
+	private EditText txtSurveyId;
+	
 	public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);       
         setContentView(R.layout.settingstab);
@@ -144,6 +150,42 @@ public class SettingsScreen extends Activity{
 		        public void beforeTextChanged(CharSequence s, int start, int count, int after){}
 		        public void onTextChanged(CharSequence s, int start, int before, int count){}
 		    });
+            
+         	this.tvUsername = (TextView)findViewById(R.id.lblUsername);
+			this.txtUsername = (EditText)findViewById(R.id.txtUsername);
+			this.txtUsername.setText(ApplicationManager.appPreferences.getString(getResources().getString(R.string.username),getResources().getString(R.string.defaultUsername)));
+            this.txtUsername.addTextChangedListener(new TextWatcher(){
+		        public void afterTextChanged(Editable s) {        			            
+					SharedPreferences.Editor editor = ApplicationManager.appPreferences.edit();
+					editor = ApplicationManager.appPreferences.edit();
+					try{
+						editor.putString(getResources().getString(R.string.username), s.toString());
+					} catch (Exception e){
+	
+					}
+					editor.commit();
+		        }
+		        public void beforeTextChanged(CharSequence s, int start, int count, int after){}
+		        public void onTextChanged(CharSequence s, int start, int before, int count){}
+		    });
+            
+         	this.tvSurveyId = (TextView)findViewById(R.id.lblSurveyId);
+			this.txtSurveyId = (EditText)findViewById(R.id.txtSurveyId);
+			this.txtSurveyId.setText(ApplicationManager.appPreferences.getString(getResources().getString(R.string.surveyId),getResources().getString(R.string.defaultSurveyId)));
+            this.txtSurveyId.addTextChangedListener(new TextWatcher(){
+		        public void afterTextChanged(Editable s) {            
+					SharedPreferences.Editor editor = ApplicationManager.appPreferences.edit();
+					editor = ApplicationManager.appPreferences.edit();
+					try{
+						editor.putString(getResources().getString(R.string.surveyId), s.toString());
+					} catch (Exception e){
+	
+					}
+					editor.commit();
+		        }
+		        public void beforeTextChanged(CharSequence s, int start, int count, int after){}
+		        public void onTextChanged(CharSequence s, int start, int before, int count){}
+		    });
         } catch (Exception e){
     		RunnableHandler.reportException(e,getResources().getString(R.string.app_name),TAG+":onCreate",
     				Environment.getExternalStorageDirectory().toString()
@@ -191,6 +233,8 @@ public class SettingsScreen extends Activity{
 		this.tvGpsMaxWaitingTime.setTextColor((backgroundColor!=Color.WHITE)?Color.WHITE:Color.BLACK);
 		this.tvLanguage.setTextColor((backgroundColor!=Color.WHITE)?Color.WHITE:Color.BLACK);
 		this.tvFormDefinitionFilePath.setTextColor((backgroundColor!=Color.WHITE)?Color.WHITE:Color.BLACK);
+		this.tvUsername.setTextColor((backgroundColor!=Color.WHITE)?Color.WHITE:Color.BLACK);
+		this.tvSurveyId.setTextColor((backgroundColor!=Color.WHITE)?Color.WHITE:Color.BLACK);
 		//this.txtGpsMaxWaitingTime.setBackgroundColor((backgroundColor!=Color.WHITE)?Color.WHITE:Color.BLACK);
     }
 }

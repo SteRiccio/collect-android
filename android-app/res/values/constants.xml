@@ -27,7 +27,7 @@
     <!-- DATABASE -->
     <string name="db_name">collect.db</string>
     <string name="db_path">/data/data/org.openforis.collect.android/databases/</string>
-    <integer name="db_version">3</integer>
+    <integer name="db_version">3</integer>    
     
     <!-- PREFERENCES -->
     <string name="sleepTime">sleepTime</string>
@@ -42,6 +42,9 @@
     <string name="defaultLanguage">en</string>
     <string name="formDefinitionPath">formDefinitionPath</string>
     <string name="defaultFormDefinitionPath">/test.idm.xml</string>
+    <string name="surveyId">surveyId</string>
+    <string name="defaultSurveyId">99</string>
+    <string name="username">username</string>
     
     <string name="left_swipe">left_swipe</string>
     <string name="right_swipe">right_swipe</string>
@@ -53,7 +56,7 @@
     
     <!-- DEFAULT USER -->
     <string name="defaultUsername">collect</string>
-    <string name="defaultUserPassword">collect</string>
+    <string name="defaultUserPassword">0788a6922bd5f9f130e7ed8980193bab</string>
     <integer name ="defaulUsertId">99999</integer>
     <string name="defaultUserRole">ROLE_ADMIN</string>
     
