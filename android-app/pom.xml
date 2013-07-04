@@ -55,7 +55,7 @@
 			<groupId>org.openforis.collect</groupId>
 			<artifactId>collect-core</artifactId>
 			<!--<version>3.0-Alpha5-SNAPSHOT</version> -->
-			<version>3.0-CR1-20130702.150141-38</version>
+			<version>3.0-CR1-SNAPSHOT</version>
 			<exclusions>
 				<exclusion>
 					<artifactId>jooq</artifactId>
@@ -126,7 +126,7 @@
 		<dependency>
 			<groupId>org.openforis.android</groupId>
 			<artifactId>android-spring</artifactId>
-			<version>1.0-20130702.095856-9</version>
+			<version>1.0-SNAPSHOT</version>
 		</dependency>
 		<dependency>
 			<groupId>org.openforis.android</groupId>
@@ -142,6 +142,11 @@
 			<groupId>org.openforis.android</groupId>
 			<artifactId>android-liquibase-core</artifactId>
 			<version>2.0.6-SNAPSHOT</version>
+		</dependency>
+		<dependency>
+			<groupId>org.slf4j</groupId>
+			<artifactId>slf4j-android</artifactId>
+			<version>1.6.1-RC1</version>
 		</dependency>
 		<dependency>
 			<groupId>org.openforis.idm</groupId>
@@ -188,40 +193,6 @@
 				</configuration>
 			</plugin>
 		</plugins>
-<!-- 		<pluginManagement> -->
-<!-- 			<plugins> -->
-<!-- 				<plugin> -->
-<!-- 					<groupId>org.eclipse.m2e</groupId> -->
-<!-- 					<artifactId>lifecycle-mapping</artifactId> -->
-<!-- 					<version>1.0.0</version> -->
-<!-- 					<configuration> -->
-<!-- 						<lifecycleMappingMetadata> -->
-<!-- 							<pluginExecutions> -->
-<!-- 								<pluginExecution> -->
-<!-- 									<pluginExecutionFilter> -->
-<!-- 										<groupId>com.jayway.maven.plugins.android.generation2</groupId> -->
-<!-- 										<artifactId>android-maven-plugin</artifactId> -->
-<!-- 										<versionRange>[3.6.0,)</versionRange> -->
-<!-- 										<goals> -->
-<!-- 											<goal>generate-sources</goal> -->
-<!-- 											<goal>proguard</goal> -->
-<!-- 											<goal>emma</goal> -->
-<!-- 											<goal>dex</goal> -->
-<!-- 											<goal>apk</goal> -->
-<!-- 											<goal>internal-pre-integration-test</goal> -->
-<!-- 											<goal>internal-integration-test</goal> -->
-<!-- 										</goals> -->
-<!-- 									</pluginExecutionFilter> -->
-<!-- 									<action> -->
-<!-- 										<execute /> -->
-<!-- 									</action> -->
-<!-- 								</pluginExecution> -->
-<!-- 							</pluginExecutions> -->
-<!-- 						</lifecycleMappingMetadata> -->
-<!-- 					</configuration> -->
-<!-- 				</plugin> -->
-<!-- 			</plugins> -->
-<!-- 		</pluginManagement> -->
 	</build>
 
 	<repositories>
