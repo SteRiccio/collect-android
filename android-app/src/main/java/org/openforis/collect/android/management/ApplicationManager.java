@@ -9,6 +9,8 @@ import java.util.Map;
 import org.openforis.collect.android.R;
 import org.openforis.collect.android.config.Configuration;
 import org.openforis.collect.android.database.DatabaseHelper;
+import org.openforis.collect.android.fields.SummaryList;
+import org.openforis.collect.android.fields.SummaryTable;
 import org.openforis.collect.android.fields.UIElement;
 import org.openforis.collect.android.lists.FormChoiceActivity;
 import org.openforis.collect.android.lists.RecordChoiceActivity;
@@ -20,6 +22,8 @@ import org.openforis.collect.android.service.ServiceFactory;
 import org.openforis.collect.manager.SurveyManager;
 import org.openforis.collect.model.CollectRecord;
 import org.openforis.collect.model.CollectSurvey;
+import org.openforis.collect.model.NodeChange;
+import org.openforis.collect.model.NodeChangeSet;
 import org.openforis.collect.model.User;
 import org.openforis.idm.metamodel.EntityDefinition;
 import org.openforis.idm.metamodel.LanguageSpecificText;
@@ -584,5 +588,27 @@ public class ApplicationManager extends BaseActivity {
 		return label;
 	}
 	
-	
+    public static void updateUIElementsWithValidationResults(NodeChangeSet nodeChangeSet){
+    	List<NodeChange<?>> nodeChangesList = nodeChangeSet.getChanges();
+    	Log.e("ilosc zmianSET","=="+nodeChangeSet.size());
+    	Log.e("ilosc zmianLIST","=="+nodeChangesList.size());
+    	for (NodeChange<?> nodeChange : nodeChangesList){
+    		Log.e("UI ID","=="+nodeChange.getNode().getId());
+    		Log.e("nodeChange.getNode()!=null","=="+(nodeChange.getNode()!=null));
+    		Log.e("nodeChange.getNode().getId()!=null","=="+(nodeChange.getNode().getId()!=null));    		
+    		if (nodeChange.getNode().getId()!=null){
+    			Log.e("ApplicationManager.getUIElement(nodeChange.getNode().getId())!=null","=="+(ApplicationManager.getUIElement(nodeChange.getNode().getId())!=null));
+    			UIElement uiEl = ApplicationManager.getUIElement(nodeChange.getNode().getId());
+        		if (uiEl instanceof SummaryList){
+        			
+        		} else if (uiEl instanceof SummaryTable){
+        			
+        		} else {//single field
+        			Log.e("single field","to change");
+        			if (uiEl!=null)
+        				uiEl.setBackgroundColor(Color.RED);
+        		}	
+    		}    		
+    	}
+    }
 }

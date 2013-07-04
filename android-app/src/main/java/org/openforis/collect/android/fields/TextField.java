@@ -4,9 +4,11 @@ import org.openforis.collect.android.R;
 import org.openforis.collect.android.management.ApplicationManager;
 import org.openforis.collect.android.management.ValidationManager;
 import org.openforis.collect.android.messages.ToastMessage;
+import org.openforis.collect.android.service.ServiceFactory;
+import org.openforis.collect.model.NodeChangeSet;
 import org.openforis.idm.metamodel.NodeDefinition;
 import org.openforis.idm.metamodel.validation.ValidationResults;
-import org.openforis.idm.model.EntityBuilder;
+import org.openforis.idm.model.Entity;
 import org.openforis.idm.model.Node;
 import org.openforis.idm.model.TextAttribute;
 import org.openforis.idm.model.TextValue;
@@ -78,8 +80,7 @@ public class TextField extends InputField {
 	    });
 	}
 	
-	private void validateResults(){
-		
+	private void validateResults(){		
 		Log.i("TextField info", "Start to validate TextField's value");
 		Node<? extends NodeDefinition> node = TextField.this.findParentEntity(form.getFormScreenId()).get(TextField.this.nodeDefinition.getName(), form.currInstanceNo);
 		ValidationResults results = ValidationManager.validateField(node);
@@ -97,12 +98,21 @@ public class TextField extends InputField {
 		if (!isTextChanged)
 			this.txtBox.setText(value);
 		
-		Node<? extends NodeDefinition> node = this.findParentEntity(path).get(this.nodeDefinition.getName(), position);
+		/*Node<? extends NodeDefinition> node = this.findParentEntity(path).get(this.nodeDefinition.getName(), position);
 		if (node!=null){
 			TextAttribute textAtr = (TextAttribute)node;
 			textAtr.setValue(new TextValue(value));
 		} else {
 			EntityBuilder.addValue(this.findParentEntity(path), this.nodeDefinition.getName(), value, position);	
+		}*/		
+		Entity parentEntity = this.findParentEntity(path);
+		Node<? extends NodeDefinition> node = this.findParentEntity(path).get(this.nodeDefinition.getName(), position);
+		NodeChangeSet nodeChangeSet = null;
+		if (node!=null){
+			nodeChangeSet = ServiceFactory.getRecordManager().updateAttribute((TextAttribute)node, new TextValue(value));
+		} else {
+			nodeChangeSet = ServiceFactory.getRecordManager().addAttribute(parentEntity, this.nodeDefinition.getName(), new TextValue(value), null, null);
 		}
+		ApplicationManager.updateUIElementsWithValidationResults(nodeChangeSet);
 	}
 }
