@@ -590,24 +590,31 @@ public class ApplicationManager extends BaseActivity {
 	
     public static void updateUIElementsWithValidationResults(NodeChangeSet nodeChangeSet){
     	List<NodeChange<?>> nodeChangesList = nodeChangeSet.getChanges();
-    	Log.e("ilosc zmianSET","=="+nodeChangeSet.size());
-    	Log.e("ilosc zmianLIST","=="+nodeChangesList.size());
+    	Log.e("Size of NodeChangeSet","=="+nodeChangeSet.size());
+    	Log.e("Size of NodeChangeList","=="+nodeChangesList.size());
     	for (NodeChange<?> nodeChange : nodeChangesList){
-    		Log.e("UI ID","=="+nodeChange.getNode().getId());
-    		Log.e("nodeChange.getNode()!=null","=="+(nodeChange.getNode()!=null));
-    		Log.e("nodeChange.getNode().getId()!=null","=="+(nodeChange.getNode().getId()!=null));    		
-    		if (nodeChange.getNode().getId()!=null){
-    			Log.e("ApplicationManager.getUIElement(nodeChange.getNode().getId())!=null","=="+(ApplicationManager.getUIElement(nodeChange.getNode().getId())!=null));
-    			UIElement uiEl = ApplicationManager.getUIElement(nodeChange.getNode().getId());
-        		if (uiEl instanceof SummaryList){
-        			
-        		} else if (uiEl instanceof SummaryTable){
-        			
-        		} else {//single field
-        			Log.e("single field","to change");
-        			if (uiEl!=null)
-        				uiEl.setBackgroundColor(Color.RED);
-        		}	
+    		Log.e("Does nodeChange.getNode() Not Null?","=="+(nodeChange.getNode()!=null));
+    		Log.e("Does nodeChange.getNode().getInternalId() Not Null","=="+(nodeChange.getNode().getInternalId()!=null));    		
+    		if (nodeChange.getNode().getInternalId() !=null){
+    			Log.e("Node ID","=="+nodeChange.getNode().getInternalId());
+//    			Log.e("ApplicationManager.getUIElement(nodeChange.getNode().getInternalId())!=null","=="+(ApplicationManager.getUIElement(nodeChange.getNode().getId())!=null));
+//    			UIElement uiEl = ApplicationManager.getUIElement(nodeChange.getNode().getInternalId());
+    			UIElement uiEl = ApplicationManager.getUIElement(nodeChange.getNode().getDefinition().getId());
+    			if (uiEl != null){
+    				Log.e("UI element is: ", uiEl.nodeDefinition.getName() + " with ID: " + uiEl.nodeDefinition.getId());
+    			}
+    			else{
+    				Log.e("ERROR!","ApplicationManager cannot find node with id: "+nodeChange.getNode().getInternalId());
+    			}
+//        		if (uiEl instanceof SummaryList){
+//        			
+//        		} else if (uiEl instanceof SummaryTable){
+//        			
+//        		} else {//single field
+//        			Log.e("single field","to change");
+//        			if (uiEl!=null)
+//        				uiEl.setBackgroundColor(Color.RED);
+//        		}	
     		}    		
     	}
     }
