@@ -10,11 +10,11 @@ import org.openforis.collect.android.screens.FormScreen;
 import org.openforis.collect.android.service.ServiceFactory;
 import org.openforis.collect.manager.CodeListManager;
 import org.openforis.idm.metamodel.CodeAttributeDefinition;
-import org.openforis.idm.metamodel.CodeList;
 import org.openforis.idm.metamodel.CodeListItem;
 import org.openforis.idm.metamodel.NodeDefinition;
 import org.openforis.idm.model.Code;
 import org.openforis.idm.model.CodeAttribute;
+import org.openforis.idm.model.Entity;
 import org.openforis.idm.model.EntityBuilder;
 import org.openforis.idm.model.Node;
 
@@ -59,11 +59,15 @@ public class CodeField extends InputField {
 	
 	private ArrayList<Integer> childrenIds;
 	
+	private Entity parentEntity;
+	
 	public CodeField(Context context, NodeDefinition nodeDef, 
 			ArrayList<String> codes, ArrayList<String> options, 
-			String selectedItem) {
+			String selectedItem, String path) {
 		super(context, nodeDef);
 
+		this.parentEntity = this.findParentEntity(path);
+		
 		this.codeAttrDef = (CodeAttributeDefinition)this.nodeDefinition;
 		
 		this.childrenIds = new ArrayList<Integer>();
@@ -166,7 +170,8 @@ public class CodeField extends InputField {
 						if (selectedPositionInParent>0){
 							selectedPositionInParent--;
 							CodeListManager codeListManager = ServiceFactory.getCodeListManager();
-							List<CodeListItem> parentItems = codeListManager.loadItems(this.codeAttrDef.getList(), this.codeAttrDef.getListLevelIndex() + 1);
+							//List<CodeListItem> parentItems = codeListManager.loadValidItems(this.parentEntity, this.codeAttrDef);
+							List<CodeListItem> parentItems = codeListManager.loadValidItems(this.parentEntity, this.codeAttrDef);
 							CodeListItem parentItem = parentItems.get(selectedPositionInParent);
 							List<CodeListItem> childItems = codeListManager.loadChildItems(parentItem);
 							for (int i=0;i<childItems.size();i++){
@@ -174,6 +179,14 @@ public class CodeField extends InputField {
 								this.codes.add(item.getCode());
 								this.options.add(item.getLabels().get(0).getText());
 							}
+							/*List<CodeListItem> parentItems = codeListManager.loadItems(this.codeAttrDef.getList(), this.codeAttrDef.getListLevelIndex() + 1);
+							CodeListItem parentItem = parentItems.get(selectedPositionInParent);
+							List<CodeListItem> childItems = codeListManager.loadChildItems(parentItem);
+							for (int i=0;i<childItems.size();i++){
+								CodeListItem item = childItems.get(i);
+								this.codes.add(item.getCode());
+								this.options.add(item.getLabels().get(0).getText());
+							}*/
 						}							
 					}
 					
@@ -211,6 +224,7 @@ public class CodeField extends InputField {
 							position++;
 						}	
 					}
+					
 					if (isFound){
 						this.spinner.setSelection(position-1);
 					}						
@@ -260,6 +274,16 @@ public class CodeField extends InputField {
 									if (selectedPositionInParent>0){
 										selectedPositionInParent--;
 										CodeListManager codeListManager = ServiceFactory.getCodeListManager();
+										List<CodeListItem> parentItems = codeListManager.loadValidItems(currentChild.parentEntity, currentChild.codeAttrDef.getParentCodeAttributeDefinition());
+										CodeListItem parentItem = parentItems.get(selectedPositionInParent);
+										List<CodeListItem> childItems = codeListManager.loadChildItems(parentItem);
+										for (int j=0;j<childItems.size();j++){
+											CodeListItem item = childItems.get(j);
+											currentChild.codes.add(item.getCode().toString());
+											currentChild.options.add(item.getLabels().get(0).getText());
+											currentChild.aa.add(item.getLabels().get(0).getText());
+										}
+										/*CodeListManager codeListManager = ServiceFactory.getCodeListManager();
 										CodeList list = CodeField.this.codeAttrDef.getList();
 										List<CodeListItem> parentItems = codeListManager.loadItems(list, CodeField.this.codeAttrDef.getListLevelIndex() + 1);
 										CodeListItem parentItem = parentItems.get(selectedPositionInParent);
@@ -269,15 +293,14 @@ public class CodeField extends InputField {
 											currentChild.codes.add(item.getCode().toString());
 											currentChild.options.add(item.getLabels().get(0).getText());
 											currentChild.aa.add(item.getLabels().get(0).getText());
-										}
+										}*/
 									}
 									if (currentChild.aa.getCount()==1){
 						    			currentChild.spinner.setEnabled(false);
 									} else {
 										currentChild.spinner.setEnabled(true);
 									}									
-					    		}
-					    		
+					    		}					    		
 					    	}
 					    }
 
@@ -304,10 +327,6 @@ public class CodeField extends InputField {
 					else{
 						this.spinner.setSelection(0);
 					}
-
-
-
-					
 					this.addView(this.spinner);
 				}
 				//int hierarchyLevelsNo = this.codeAttrDef.getList().getHierarchy().size();

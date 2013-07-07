@@ -695,7 +695,6 @@ public class ApplicationManager extends BaseActivity {
     		Log.e("Does nodeChange.getNode().getInternalId() Not Null","=="+(nodeChange.getNode().getInternalId()!=null));    		
     		if (nodeChange.getNode().getInternalId() !=null){
     			Log.e("Node ID","=="+nodeChange.getNode().getInternalId());
-//    			Log.e("ApplicationManager.getUIElement(nodeChange.getNode().getInternalId())!=null","=="+(ApplicationManager.getUIElement(nodeChange.getNode().getId())!=null));
 //    			UIElement uiEl = ApplicationManager.getUIElement(nodeChange.getNode().getInternalId());
     			UIElement uiEl = ApplicationManager.getUIElement(nodeChange.getNode().getDefinition().getId());
     			if (uiEl != null){
