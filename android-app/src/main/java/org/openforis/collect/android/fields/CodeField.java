@@ -28,32 +28,20 @@ import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.Toast;
-//import android.util.Log;
-//import android.util.Log;
 
 
 public class CodeField extends InputField {
 	
 	private ArrayAdapter<String> aa;
 	private Spinner spinner;
-	
-	
-	/*private List<ArrayAdapter<String>> aaList;
-	private List<Spinner> spinnerList;
-	private Spinner currentSpinner;*/
 
 	ArrayList<String> options;
 	ArrayList<String> codes;
-	//private ArrayList<String> currentCodes;
 	
 	private boolean searchable;
 	private boolean hierarchical;
-	/*private ArrayList<String> selectedCodesList;
-	private int currentHierarchyLevel;*/
 	
 	private static FormScreen form;
-	
-//	private boolean selectedForTheFirstTime;
 	
 	private CodeAttributeDefinition codeAttrDef;
 	
@@ -74,13 +62,8 @@ public class CodeField extends InputField {
 		
 		this.searchable = true;
 		this.hierarchical = (this.codeAttrDef.getList().getHierarchy().size()>0);
-		/*this.aaList = new ArrayList<ArrayAdapter<String>>();
-		this.spinnerList = new ArrayList<Spinner>();
-		this.selectedCodesList = new ArrayList<String>();*/
 		
 		CodeField.form = (FormScreen)context;
-		
-		//this.selectedForTheFirstTime = true;
 		
 		this.label.setLayoutParams(new LayoutParams(0, ViewGroup.LayoutParams.WRAP_CONTENT, (float) 1));
 		this.label.setOnLongClickListener(new OnLongClickListener() {
@@ -103,7 +86,6 @@ public class CodeField extends InputField {
 			this.txtBox = new EditText(context);
 			this.txtBox.setLayoutParams(new LayoutParams(0,ViewGroup.LayoutParams.WRAP_CONTENT,(float) 3));
 			this.txtBox.addTextChangedListener(this);
-			//this.txtBox.setFilters(new InputFilter[]{new InputFilter.AllCaps()});
 			this.addView(this.txtBox);
 		} else {
 			if (!this.hierarchical){
@@ -157,8 +139,6 @@ public class CodeField extends InputField {
 					this.spinner = new Spinner(context);
 					this.spinner.setPrompt(this.label.getText());
 					
-					//this.codes = codes;
-					//this.options = options;
 					this.codes = new ArrayList<String>();
 					this.codes.add("");
 					this.options = new ArrayList<String>();
@@ -364,26 +344,22 @@ public class CodeField extends InputField {
 	public void setValue(int position, String code, String path, boolean isSelectionChanged)
 	{
 		if (!this.codeAttrDef.isAllowUnlisted()){
-			//if (!this.hierarchical){
-				boolean isFound = false;
-				int counter = 0;
-				while (!isFound&&counter<this.codes.size()){
-					if (this.codes.get(counter).equals(code)){
-						isFound = true;
-					}
-					counter++;
+			boolean isFound = false;
+			int counter = 0;
+			while (!isFound&&counter<this.codes.size()){
+				if (this.codes.get(counter).equals(code)){
+					isFound = true;
 				}
-				if (isFound){
-					if (!isSelectionChanged)
-						this.spinner.setSelection(counter-1);
-				}
-				else{
-					if (!isSelectionChanged)
-						this.spinner.setSelection(0);
-				}	
-			/*} else {//setting value of hierarchical list
-				
-			}*/
+				counter++;
+			}
+			if (isFound){
+				if (!isSelectionChanged)
+					this.spinner.setSelection(counter-1);
+			}
+			else{
+				if (!isSelectionChanged)
+					this.spinner.setSelection(0);
+			}
 		} else {
 			if (!isSelectionChanged)
 				this.txtBox.setText(code);
