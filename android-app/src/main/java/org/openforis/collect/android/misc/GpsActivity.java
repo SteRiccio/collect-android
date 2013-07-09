@@ -128,7 +128,6 @@ public class GpsActivity extends Activity {
 	        				while ((loc == null) && (SystemClock.currentThreadTimeMillis()<waitingTime)) {
 	        					// Wait for first GPS coords change (do nothing until loc != null)
 	        				}
-	        				Log.e("lat=="+loc.getLatitude(),"location updates"+loc.getLongitude());
 	        				// After receiving first GPS coordinates dismiss the Progress Dialog
 	        				dialog.dismiss();
 	        				stopListeningGpsUpdates();

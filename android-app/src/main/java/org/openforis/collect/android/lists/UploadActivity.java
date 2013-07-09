@@ -30,10 +30,7 @@ import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
-import android.widget.CheckBox;
-import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 
@@ -67,11 +64,13 @@ public class UploadActivity extends Activity{
         Log.i(getResources().getString(R.string.app_name),TAG+":onCreate");
         setContentView(R.layout.uploadactivity);
         try{
+        	this.activityLabel = (TextView)findViewById(R.id.lblList);  
+        	this.columnLabel = (TextView)findViewById(R.id.lblHeaders);
         	if (isNetworkAvailable()){
-        		this.activityLabel = (TextView)findViewById(R.id.lblList);        		
+        		//this.activityLabel = (TextView)findViewById(R.id.lblList);        		
             	this.activityLabel.setText(getResources().getString(R.string.dataToUpload));
             	
-            	this.columnLabel = (TextView)findViewById(R.id.lblHeaders);
+            	//this.columnLabel = (TextView)findViewById(R.id.lblHeaders);
             	this.columnLabel.setText(getResources().getString(R.string.dataToUplaodColumnHeaders));
             	
             	//this.lv = getListView();
@@ -119,7 +118,7 @@ public class UploadActivity extends Activity{
     			    	}*/
     			    }
     		    });
-        	} else {
+        	} else {        		
         		AlertMessage.createPositiveDialog(UploadActivity.this, true, null,
 						getResources().getString(R.string.noInternetTitle), 
 						getResources().getString(R.string.noInternetMessage),
@@ -270,7 +269,9 @@ public class UploadActivity extends Activity{
          */
         protected String doInBackground(Object... args) {
             try {            
-				return ServerInterface.sendDataFiles(UploadActivity.getStringFromFile(Environment.getExternalStorageDirectory().toString()+String.valueOf(getResources().getString(R.string.exported_data_folder)+"/"+args[0])),(Boolean)args[1]);
+            	String survey_id = ApplicationManager.appPreferences.getString(getResources().getString(R.string.surveyId), "99");
+            	String username = ApplicationManager.appPreferences.getString(getResources().getString(R.string.username), "collect");
+				return ServerInterface.sendDataFiles(UploadActivity.getStringFromFile(Environment.getExternalStorageDirectory().toString()+String.valueOf(getResources().getString(R.string.exported_data_folder)+"/"+args[0])), survey_id, username, (Boolean)args[1]);
 			} catch (Exception e) {
 				e.printStackTrace();
 				return "";

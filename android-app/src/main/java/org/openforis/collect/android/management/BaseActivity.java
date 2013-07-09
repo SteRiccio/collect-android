@@ -44,7 +44,14 @@ public class BaseActivity extends Activity {
 	{
 		super.onResume();
 		Log.i(getResources().getString(R.string.app_name),TAG+":onResume");
-		this.backgroundColor = ApplicationManager.appPreferences.getInt(getResources().getString(R.string.backgroundColor), Color.WHITE);
+		try{
+			this.backgroundColor = ApplicationManager.appPreferences.getInt(getResources().getString(R.string.backgroundColor), Color.WHITE);	
+		}		
+		catch (Exception e){
+			e.printStackTrace();
+		}
+		Log.e("CMA-114","ApplicationManager.appPreferences==null"+(ApplicationManager.appPreferences==null));
+		Log.e("CMA-114","getResources().getString(R.string.backgroundColor)==null"+(getResources().getString(R.string.backgroundColor)==null));
 		Thread thread = new Thread(new RunnableHandler(0, Environment.getExternalStorageDirectory().toString()
 				+getResources().getString(R.string.logs_folder)
 				+getResources().getString(R.string.logs_file_name)

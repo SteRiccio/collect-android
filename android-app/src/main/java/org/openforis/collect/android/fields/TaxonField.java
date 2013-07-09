@@ -555,7 +555,7 @@ public class TaxonField extends InputField {
 	}
 
 	private void startSearchScreen(String strContent, String strCriteria){
-		int taxonId = TaxonField.this.elemId;
+		int taxonId = TaxonField.this.elemDefId;
 		Intent searchTaxonIntent = new Intent(TaxonField.this.getContext(), SearchTaxonActivity.class);
 		searchTaxonIntent.putExtra("content", strContent);
 		searchTaxonIntent.putExtra("criteria", strCriteria);

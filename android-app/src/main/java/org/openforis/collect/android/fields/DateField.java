@@ -67,7 +67,7 @@ public class DateField extends InputField {
 				    	final Random myRandom = new Random();
 				    	DateField.this.txtBox.setId(myRandom.nextInt());
 				    	//Show Date picker
-				    	showDatePickerDialog(DateField.this.elemId);
+				    	showDatePickerDialog(DateField.this.elemDefId);
 			    	}
 		    	}
 		    }

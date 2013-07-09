@@ -36,6 +36,9 @@
    		android:layout_height="wrap_content"
    		android:layout_below="@id/chckWhiteBackground"
    		android:text="@string/lblGpsTimeout"
+   		android:layout_alignBottom="@+id/txtGpsTimeout"
+        android:layout_alignTop="@id/txtGpsTimeout"
+        android:gravity="center_vertical" 
    		 >
    	</TextView>
    	
@@ -56,6 +59,9 @@
    		android:layout_below="@id/txtGpsTimeout"
    		android:layout_toLeftOf="@id/txtGpsTimeout"
    		android:text="@string/lblLanguage"
+   		android:layout_alignBottom="@+id/languageSpinner"
+        android:layout_alignTop="@id/languageSpinner"
+        android:gravity="center_vertical"   		
    		 >
    	</TextView>
    	
@@ -66,12 +72,15 @@
         android:layout_toRightOf="@id/lblLanguage"
    		android:layout_below="@id/txtGpsTimeout" />
     
-    <TextView 
+    <TextView
    		android:id="@+id/lblFormDefinitionFile"
    		android:layout_width="wrap_content"
    		android:layout_height="wrap_content"
-   		android:layout_below="@id/lblLanguage"
+   		android:layout_below="@id/languageSpinner"
    		android:text="@string/lblFormDefinitionFile"
+   		android:layout_alignBottom="@+id/txtFormDefinitionFile"
+        android:layout_alignTop="@id/txtFormDefinitionFile"
+        android:gravity="center_vertical"
    		 >
    	</TextView>
    	
@@ -82,5 +91,48 @@
    		android:layout_toRightOf="@id/lblGpsTimeout"
    		android:layout_below="@id/languageSpinner"
    		 >
+   	</EditText>
+   	
+    <TextView 
+   		android:id="@+id/lblUsername"
+   		android:layout_width="wrap_content"
+   		android:layout_height="wrap_content"
+   		android:layout_below="@id/txtFormDefinitionFile"
+   		android:text="@string/lblUsername"
+   		android:layout_alignBottom="@+id/txtUsername"
+        android:layout_alignTop="@id/txtUsername"
+        android:gravity="center_vertical"
+   		 >
+   	</TextView>
+   	
+    <EditText 
+   		android:id="@+id/txtUsername"
+   		android:layout_width="fill_parent"
+   		android:layout_height="wrap_content"
+   		android:layout_toRightOf="@id/lblUsername"
+   		android:layout_below="@id/txtFormDefinitionFile"
+   		 >
    	</EditText>	
+   	
+    <TextView 
+   		android:id="@+id/lblSurveyId"
+   		android:layout_width="wrap_content"
+   		android:layout_height="wrap_content"
+   		android:layout_below="@id/txtUsername"
+   		android:text="@string/lblSurveyId" 
+   		android:layout_alignBottom="@+id/txtSurveyId"
+        android:layout_alignTop="@id/txtSurveyId"
+        android:gravity="center_vertical"
+   		 >
+   	</TextView>
+   	
+    <EditText 
+   		android:id="@+id/txtSurveyId"
+   		android:layout_width="fill_parent"
+   		android:layout_height="wrap_content"
+   		android:layout_toRightOf="@id/lblSurveyId"
+   		android:layout_below="@id/txtUsername"
+   		 >
+   	</EditText>
+   	
 </RelativeLayout>

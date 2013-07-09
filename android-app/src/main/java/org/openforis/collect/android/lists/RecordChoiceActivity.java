@@ -184,7 +184,6 @@ public class RecordChoiceActivity extends BaseListActivity implements OnItemLong
     	DataManager dataManager = new DataManager(collectSurvey,this.rootEntityDef.getName(),ApplicationManager.getLoggedInUser());
     	this.recordsList = dataManager.loadSummaries();
     	if (this.recordsList.size()==0){
-    		Log.e("nothing in database","==");
     		Intent resultHolder = new Intent();
 			resultHolder.putExtra(getResources().getString(R.string.recordId), -1);	
 			setResult(getResources().getInteger(R.integer.clusterChoiceSuccessful),resultHolder);

@@ -433,7 +433,7 @@ public class FormScreen extends BaseActivity implements OnClickListener {
 	        						loadedValue = codeValue.getCode();
 	        					}
 		    				}
-	        				CodeField codeField = new CodeField(this, nodeDef, codes, options, null);
+	        				CodeField codeField = new CodeField(this, nodeDef, codes, options, null, FormScreen.this.getFormScreenId());
 	        				codeField.setOnClickListener(this);
 	        				codeField.setId(nodeDef.getId());
 	        				codeField.setValue(0, loadedValue, FormScreen.this.getFormScreenId(),false);
@@ -447,7 +447,7 @@ public class FormScreen extends BaseActivity implements OnClickListener {
 	        						loadedValue = codeValue.getCode();
 	        					}
 		    				}
-	        				CodeField codeField = new CodeField(this, nodeDef, codes, options, null);
+	        				CodeField codeField = new CodeField(this, nodeDef, codes, options, null, this.parentFormScreenId);
 	        				codeField.setOnClickListener(this);
 	        				codeField.setId(nodeDef.getId());
 	        				codeField.setValue(this.currInstanceNo, loadedValue, this.parentFormScreenId,false);
@@ -959,7 +959,6 @@ public class FormScreen extends BaseActivity implements OnClickListener {
 
 	@Override
 	public void onClick(View arg0) {
-		//Log.e("clickedVIEW",arg0.getClass()+"=="+arg0.getId());
 		if (arg0 instanceof Button){
 			Button btn = (Button)arg0;
 			if (btn.getId()==getResources().getInteger(R.integer.leftButtonMultipleAttribute)){
@@ -1462,7 +1461,7 @@ public class FormScreen extends BaseActivity implements OnClickListener {
         						loadedValue = codeValue.getCode();
         					}
 	    				}
-        				CodeField codeField = new CodeField(this, nodeDef, codes, options, loadedValue);
+        				CodeField codeField = new CodeField(this, nodeDef, codes, options, loadedValue,FormScreen.this.getFormScreenId());
         				codeField.setOnClickListener(this);
         				codeField.setId(nodeDef.getId());
         				//codeField.setValue(0, loadedValue, FormScreen.this.getFormScreenId(),false);
@@ -1476,7 +1475,7 @@ public class FormScreen extends BaseActivity implements OnClickListener {
         						loadedValue = codeValue.getCode();
         					}
 	    				}
-        				CodeField codeField = new CodeField(this, nodeDef, codes, options, loadedValue);
+        				CodeField codeField = new CodeField(this, nodeDef, codes, options, loadedValue,this.parentFormScreenId);
         				codeField.setOnClickListener(this);
         				codeField.setId(nodeDef.getId());
         				//Log.e("onResume",this.parentFormScreenId+"=="+this.currInstanceNo);

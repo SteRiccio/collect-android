@@ -71,7 +71,7 @@ public class TimeField extends InputField implements TextWatcher {
 				    	final Random myRandom = new Random();
 				    	TimeField.this.txtBox.setId(myRandom.nextInt());
 				    	//Show Time picker
-				    	showTimePickerDialog(TimeField.this.elemId);				    	
+				    	showTimePickerDialog(TimeField.this.elemDefId);				    	
 			    	}
 		    	}
 		    }
