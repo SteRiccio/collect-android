@@ -30,11 +30,16 @@ public abstract class DatabaseHelper {
 	private static final String LIQUIBASE_CHANGELOG = "org/openforis/collect/db/changelog/db.changelog-master.xml";
 	
 	public static void init(Context ctx, Configuration config){
-        OpenHelper openHelper = new OpenHelper(ctx, config);
+        createDatabase(ctx, config);
+	}
+
+	private static void createDatabase(Context ctx, Configuration config) {
+		OpenHelper openHelper = new OpenHelper(ctx, config);
        	SQLiteDatabase db = openHelper.getWritableDatabase();
        	if ( db == null ) {
        		throw new RuntimeException("Null db");
        	}
+       	db.close();
 	}
 
 	public static void updateDBSchema() {
@@ -55,7 +60,7 @@ public abstract class DatabaseHelper {
 				} catch (SQLException e1) {}
 	        }
 			throw new RuntimeException(e);
-//		} finally {
+		} finally {
 //			if (c != null) {
 //				try {
 //					c.close();
@@ -67,8 +72,10 @@ public abstract class DatabaseHelper {
 	public static void closeConnection() {
 		SQLDroidDataSource dataSource = ServiceFactory.getDataSource();
 		try {
-			Connection c = dataSource.getConnection();
-			c.close();
+			Connection c = dataSource.getConnection(false);
+			if ( c != null && ! c.isClosed() ) {
+				c.close();
+			}
 		} catch(Exception e) {}
 	}
 	

@@ -187,7 +187,7 @@ public class ApplicationManager extends BaseActivity {
 	    				+getResources().getString(R.string.logs_file_name)
 	    				+System.currentTimeMillis()
 	    				+getResources().getString(R.string.log_file_extension));
-			} 	 finally {
+			} finally {
 				//finish();
 	            DatabaseHelper.closeConnection();
 			}

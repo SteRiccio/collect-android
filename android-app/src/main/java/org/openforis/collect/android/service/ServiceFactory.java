@@ -34,41 +34,45 @@ public class ServiceFactory {
 	}
 	
 	public static void init(Configuration config, boolean updateDBSchema) {
-		dataSource = new SQLDroidDataSource();
-    	dataSource.setUrl(config.getDbConnectionUrl());
-    	if ( updateDBSchema ) {
-    		DatabaseHelper.updateDBSchema();
-    	}
-    	codeListManager = new CodeListManager();
-    	CodeListItemDao codeListItemDao = new CodeListItemDao();
-    	codeListItemDao.setDataSource(dataSource);
-		codeListManager.setCodeListItemDao(codeListItemDao);
-		
-	    ExpressionFactory expressionFactory = new ExpressionFactory();
-    	Validator validator = new Validator();
-    	CollectSurveyContext collectSurveyContext = new CollectSurveyContext(expressionFactory, validator);
-    	
-    	surveyManager = new SurveyManager();
-    	surveyManager.setCollectSurveyContext(collectSurveyContext);
-    	SurveyDao surveyDao = new SurveyDao();
-    	surveyDao.setSurveyContext(collectSurveyContext);
-    	surveyDao.setDataSource(dataSource);
-    	surveyManager.setSurveyWorkDao(new SurveyWorkDao());
-    	surveyManager.setSurveyDao(surveyDao);
-    	surveyManager.setCodeListManager(codeListManager);
-    	
-    	recordManager = new RecordManager();
-    	RecordDao recordDao = new RecordDao();
-    	recordDao.setDataSource(dataSource);
-    	recordManager.setRecordDao(recordDao);
-    	
-		userManager = new UserManager();
-    	UserDao userDao = new UserDao();
-    	userDao.setDataSource(dataSource);
-		userManager.setUserDao(userDao);
-		userManager.setRecordDao(recordDao);
-
-		surveyManager.init();
+		try {
+			dataSource = new SQLDroidDataSource();
+	    	dataSource.setUrl(config.getDbConnectionUrl());
+	    	if ( updateDBSchema ) {
+	    		DatabaseHelper.updateDBSchema();
+	    	}
+	    	codeListManager = new CodeListManager();
+	    	CodeListItemDao codeListItemDao = new CodeListItemDao();
+	    	codeListItemDao.setDataSource(dataSource);
+			codeListManager.setCodeListItemDao(codeListItemDao);
+			
+		    ExpressionFactory expressionFactory = new ExpressionFactory();
+	    	Validator validator = new Validator();
+	    	CollectSurveyContext collectSurveyContext = new CollectSurveyContext(expressionFactory, validator);
+	    	
+	    	surveyManager = new SurveyManager();
+	    	surveyManager.setCollectSurveyContext(collectSurveyContext);
+	    	SurveyDao surveyDao = new SurveyDao();
+	    	surveyDao.setSurveyContext(collectSurveyContext);
+	    	surveyDao.setDataSource(dataSource);
+	    	surveyManager.setSurveyWorkDao(new SurveyWorkDao());
+	    	surveyManager.setSurveyDao(surveyDao);
+	    	surveyManager.setCodeListManager(codeListManager);
+	    	
+	    	recordManager = new RecordManager();
+	    	RecordDao recordDao = new RecordDao();
+	    	recordDao.setDataSource(dataSource);
+	    	recordManager.setRecordDao(recordDao);
+	    	
+			userManager = new UserManager();
+	    	UserDao userDao = new UserDao();
+	    	userDao.setDataSource(dataSource);
+			userManager.setUserDao(userDao);
+			userManager.setRecordDao(recordDao);
+	
+			surveyManager.init();
+		} finally {
+			DatabaseHelper.closeConnection();
+		}
 	}
 	
 	public static SQLDroidDataSource getDataSource() {

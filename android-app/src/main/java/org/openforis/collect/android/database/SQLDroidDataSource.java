@@ -22,14 +22,23 @@ public class SQLDroidDataSource implements DataSource {
 
 	@Override
 	public Connection getConnection() throws SQLException {
-		return getConnection(null, null);
+		return getConnection(true);
 	}
 
+	public Connection getConnection(boolean createIfClosed) throws SQLException {
+		return getConnection(null, null, createIfClosed);
+	}
+	
 	@Override
 	public Connection getConnection(String username, String password)
 			throws SQLException {
+		return getConnection(username, password, true);
+	}
+	
+	public Connection getConnection(String username, String password, boolean createIfClosed)
+			throws SQLException {
 		try {
-			if ( connection == null || connection.isClosed() ) {
+			if ( connection == null || (connection.isClosed() && createIfClosed) ) {
 				//register driver
 				Class.forName(SQLDROID_DRIVER).newInstance();
 				connection = DriverManager.getConnection(getUrl());				
