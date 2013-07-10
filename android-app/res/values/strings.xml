@@ -67,8 +67,9 @@
     
     <!-- menu -->
     <string name="open">Back to list</string>
-    <string name="save">Save in database</string>
-    <string name="export_to_xml">Save in XML</string>
+    <string name="save">Save</string>
+    <string name="export_to_xml">Export to XML</string>
+    <string name="export_all_to_zip">Export all</string>
     <string name="download_from_server">Download XML</string>
     <string name="upload_to_server">Upload XML</string>
     <string name="settings">Settings</string>

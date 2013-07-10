@@ -7,6 +7,9 @@
     <item android:id="@+id/menu_export"
           android:title="@string/export_to_xml" />
     
+    <item android:id="@+id/menu_export_all"
+          android:title="@string/export_all_to_zip" />
+    
     <item android:id="@+id/menu_download"
     	  android:title="@string/download_from_server" />    
     

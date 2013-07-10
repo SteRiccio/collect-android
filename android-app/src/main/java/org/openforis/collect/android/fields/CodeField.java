@@ -87,7 +87,7 @@ public class CodeField extends InputField {
 			this.txtBox.setLayoutParams(new LayoutParams(0,ViewGroup.LayoutParams.WRAP_CONTENT,(float) 3));
 			this.txtBox.addTextChangedListener(this);
 			this.addView(this.txtBox);
-		} else {
+		} else {//dropdown menu
 			if (!this.hierarchical){
 				this.spinner = new Spinner(context);
 				this.spinner.setPrompt(this.label.getText());
@@ -117,24 +117,7 @@ public class CodeField extends InputField {
 				    }
 
 				});
-				
-				boolean isFound = false;
-				int position = 0;
-				if (selectedItem!=null){
-					while (!isFound&&position<this.codes.size()){
-						if (this.codes.get(position).equals(selectedItem)){
-							isFound = true;
-						}
-						position++;
-					}	
-				}
-				if (isFound)
-					this.spinner.setSelection(position-1);
-				else
-					this.spinner.setSelection(0);
-
-				this.addView(this.spinner);
-			} else {
+			} else {//hierarchical list
 				if (this.codeAttrDef.getParentCodeAttributeDefinition()!=null){
 					this.spinner = new Spinner(context);
 					this.spinner.setPrompt(this.label.getText());
@@ -150,7 +133,6 @@ public class CodeField extends InputField {
 						if (selectedPositionInParent>0){
 							selectedPositionInParent--;
 							CodeListManager codeListManager = ServiceFactory.getCodeListManager();
-							//List<CodeListItem> parentItems = codeListManager.loadValidItems(this.parentEntity, this.codeAttrDef);
 							List<CodeListItem> parentItems = codeListManager.loadValidItems(this.parentEntity, this.codeAttrDef);
 							CodeListItem parentItem = parentItems.get(selectedPositionInParent);
 							List<CodeListItem> childItems = codeListManager.loadChildItems(parentItem);
@@ -193,31 +175,12 @@ public class CodeField extends InputField {
 					    }
 
 					});
-					
-					boolean isFound = false;
-					int position = 0;
-					if (selectedItem!=null){
-						while (!isFound&&position<this.codes.size()){
-							if (this.codes.get(position).equals(selectedItem)){
-								isFound = true;
-							}
-							position++;
-						}	
-					}
-					
-					if (isFound){
-						this.spinner.setSelection(position-1);
-					}						
-					else{
-						this.spinner.setSelection(0);						
-					}
 
 					if (this.aa.getCount()==1){
 						this.spinner.setEnabled(false);
 					} else {
 						this.spinner.setEnabled(true);
 					}
-					this.addView(this.spinner);
 				}			
 				else {
 					this.spinner = new Spinner(context);
@@ -289,56 +252,12 @@ public class CodeField extends InputField {
 					    	
 					    }
 
-					});
-					
-					boolean isFound = false;
-					int position = 0;
-					if (selectedItem!=null){
-						while (!isFound&&position<this.codes.size()){
-							if (this.codes.get(position).equals(selectedItem)){
-								isFound = true;
-							}
-							position++;
-						}	
-					}
-					if (isFound){
-						this.spinner.setSelection(position-1);
-					}
-					else{
-						this.spinner.setSelection(0);
-					}
-					this.addView(this.spinner);
+					});					
 				}
-				//int hierarchyLevelsNo = this.codeAttrDef.getList().getHierarchy().size();
-				//Log.e("iloscPoziomow","=="+hierarchyLevelsNo);
-				/*for (int hierarchyLevel=0;hierarchyLevel<hierarchyLevelsNo;hierarchyLevel++){
-					Log.e("poziom"+hierarchyLevel,"=="+this.codeAttrDef.getList().getHierarchy().get(hierarchyLevel).getName());					
-				}*/
-				/*if (this.codeAttrDef.getParentCodeAttributeDefinition()!=null){
-					Log.e("parentCODEnode","=="+this.codeAttrDef.getParentCodeAttributeDefinition().getName());
-				}			
-				else {
-					Log.e("parentCODEnode","==ROOT");
-				}
-				Log.e("codeListLevel","=="+this.codeAttrDef.getCodeListLevel());
-				Log.e("codeListLevelIndex","=="+this.codeAttrDef.getListLevelIndex());
-				Log.e("codeListHierarchyName","=="+this.codeAttrDef.getList().getHierarchy().get(1).getName());
-				for (int i=0;i<this.codeAttrDef.getList().getItems(this.codeAttrDef.getCodeListLevel()).size();i++){
-					Log.e("element"+i,"=="+this.codeAttrDef.getList().getItems(this.codeAttrDef.getCodeListLevel()).get(i).getLabels().get(0).getText());					
-				}
-				if (this.codeAttrDef.getCodeListLevel()>0)
-					for (int i=0;i<this.codeAttrDef.getList().getItems(this.codeAttrDef.getCodeListLevel()-1).get(0).getChildItems().size();i++){
-						Log.e("element"+i,"=="+this.codeAttrDef.getList().getItems(this.codeAttrDef.getCodeListLevel()-1).get(0).getChildItems().get(i).getLabels().get(0).getText());					
-					}*/
-			}				
-		}
-		
-		/*List<CodeListItem> codeListItemsList = codeAttrDef.getList().getItems();
-		for (CodeListItem codeListItem : codeListItemsList){
-			codes.add(codeListItem.getCode());
-
-			options.add(getLabelForCodeListItem(codeListItem));			
-		}*/
+			}//end of hierarchical list
+			setSpinnerSelection(selectedItem);
+			this.addView(this.spinner);
+		}//end of dropdown menu
 	}
 	
 	public void setValue(int position, String code, String path, boolean isSelectionChanged)
@@ -395,5 +314,22 @@ public class CodeField extends InputField {
 	
 	private void addChildId(int childCodeListId){
 		this.childrenIds.add(childCodeListId);
+	}
+	
+	private void setSpinnerSelection(String selectedItem){
+		boolean isFound = false;
+		int position = 0;
+		if (selectedItem!=null){
+			while (!isFound&&position<this.codes.size()){
+				if (this.codes.get(position).equals(selectedItem)){
+					isFound = true;
+				}
+				position++;
+			}	
+		}
+		if (isFound)
+			this.spinner.setSelection(position-1);
+		else
+			this.spinner.setSelection(0);
 	}
 }

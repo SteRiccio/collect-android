@@ -1,5 +1,6 @@
 package org.openforis.collect.android.management;
 
+import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.Date;
@@ -8,6 +9,9 @@ import java.util.List;
 
 import org.openforis.collect.android.database.DatabaseHelper;
 import org.openforis.collect.android.service.ServiceFactory;
+import org.openforis.collect.manager.RecordManager;
+import org.openforis.collect.manager.SurveyManager;
+import org.openforis.collect.manager.dataexport.BackupProcess;
 import org.openforis.collect.model.CollectRecord;
 import org.openforis.collect.model.CollectRecord.Step;
 import org.openforis.collect.model.CollectSurvey;
@@ -19,11 +23,9 @@ import org.openforis.collect.persistence.xml.DataMarshaller;
 import org.openforis.collect.persistence.xml.DataUnmarshaller;
 import org.openforis.collect.persistence.xml.DataUnmarshaller.ParseRecordResult;
 import org.openforis.collect.persistence.xml.DataUnmarshallerException;
-import org.sqldroid.SQLiteDatabase;
 import org.xmlpull.v1.XmlPullParserException;
 
 import android.content.Context;
-import android.database.Cursor;
 import android.os.Environment;
 import android.util.Log;
 
@@ -106,6 +108,19 @@ public class DataManager {
 		return 0;
 	}
 	
+	public void saveAllRecordsToFile(String folderToSave){
+		Log.e("saveAllRecordsToFile","=");
+		try{
+			BackupProcess backup = new BackupProcess(ServiceFactory.getSurveyManager(), ServiceFactory.getRecordManager(), 
+					this.dataMarshaller, new File(folderToSave),
+					this.survey, this.survey.getSchema().getDefinitionById(ApplicationManager.currRootEntityId).getName(), new int[]{1,2,3});
+			backup.init();
+			backup.call();
+		} catch (Exception e){
+			e.printStackTrace();
+		}
+	}
+	
 	public int saveRecordToXml(CollectRecord recordToSave, String folderToSave) {
 		long startTime = System.currentTimeMillis();
 		try {
@@ -182,36 +197,11 @@ public class DataManager {
 		long startTime = System.currentTimeMillis();
 		//JdbcDaoSupport jdbcDao = new JdbcDaoSupport();
 		//jdbcDao.getConnection();
-		Log.e("jdbcDaoconnection","=="+((System.currentTimeMillis()-startTime)));
-		startTime = System.currentTimeMillis();
-		List<CollectRecord> recordsList = ServiceFactory.getRecordManager().loadSummaries(survey, rootEntity);		
+		//android.os.Debug.startMethodTracing("slad");
+		List<CollectRecord> recordsList = ServiceFactory.getRecordManager().loadSummaries(survey, rootEntity);
+		//android.os.Debug.stopMethodTracing();
 		Log.e("loadSummaries","=="+((System.currentTimeMillis()-startTime)));
 		//JdbcDaoSupport.close();
-		DatabaseHelper.closeConnection();
-		startTime = System.currentTimeMillis();
-		String selectQuery = "select ofc_record.date_created, ofc_record.created_by_id, ofc_record.date_modified, ofc_record.errors, ofc_record.id, ofc_record.missing, ofc_record.model_version, ofc_record.modified_by_id, ofc_record.root_entity_definition_id, ofc_record.skipped, ofc_record.state, ofc_record.step, ofc_record.survey_id, ofc_record.warnings, ofc_record.key1, ofc_record.key2, ofc_record.key3, ofc_record.count1, ofc_record.count2, ofc_record.count3, ofc_record.count4, ofc_record.count5 from ofc_record where (ofc_record.survey_id = 1 and ofc_record.root_entity_definition_id = 3) order by ofc_record.id asc limit 2147483647 offset 0";	
-		try{
-			SQLiteDatabase db = new SQLiteDatabase("/data/data/org.openforis.collect.android/databases/collect.db",10000,10,1);
-			
-		    Cursor cursor = db.rawQuery(selectQuery, null);	
-		    Log.e("NATIVEselectQUERY","=="+((System.currentTimeMillis()-startTime)));
-		    int counter = 0;
-		    if (cursor.moveToFirst()) {
-		        do {
-		        	Log.e("record"+counter,"=="+cursor.getString(0));
-		        	Log.e("record"+counter,"=="+cursor.getString(1));
-		        	Log.e("record"+counter,"=="+cursor.getString(2));
-		        	Log.e("record"+counter,"=="+cursor.getString(3));
-		        	Log.e("record"+counter,"=="+cursor.getString(4));
-		            counter++;
-		        } while (cursor.moveToNext());
-		    }
-		}catch (Exception e){
-			e.printStackTrace();
-		}
-		
-		
-		
 		return recordsList;
 	}
 	
