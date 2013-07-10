@@ -1,5 +1,7 @@
 package org.openforis.collect.android.service;
 
+import java.util.List;
+
 import org.openforis.collect.android.config.Configuration;
 import org.openforis.collect.android.database.DatabaseHelper;
 import org.openforis.collect.android.database.SQLDroidDataSource;
@@ -13,7 +15,13 @@ import org.openforis.collect.persistence.RecordDao;
 import org.openforis.collect.persistence.SurveyDao;
 import org.openforis.collect.persistence.SurveyWorkDao;
 import org.openforis.collect.persistence.UserDao;
+import org.openforis.collect.service.CollectCodeListService;
+import org.openforis.idm.metamodel.CodeList;
+import org.openforis.idm.metamodel.CodeListItem;
+import org.openforis.idm.metamodel.CodeListService;
+import org.openforis.idm.metamodel.ModelVersion;
 import org.openforis.idm.metamodel.validation.Validator;
+import org.openforis.idm.model.CodeAttribute;
 import org.openforis.idm.model.expression.ExpressionFactory;
 
 /**
@@ -44,10 +52,13 @@ public class ServiceFactory {
 	    	CodeListItemDao codeListItemDao = new CodeListItemDao();
 	    	codeListItemDao.setDataSource(dataSource);
 			codeListManager.setCodeListItemDao(codeListItemDao);
+			CollectCodeListService codeListService = new CollectCodeListService();
+			codeListService.setCodeListManager(codeListManager);
 			
 		    ExpressionFactory expressionFactory = new ExpressionFactory();
 	    	Validator validator = new Validator();
 	    	CollectSurveyContext collectSurveyContext = new CollectSurveyContext(expressionFactory, validator);
+			collectSurveyContext.setCodeListService(codeListService);
 	    	
 	    	surveyManager = new SurveyManager();
 	    	surveyManager.setCollectSurveyContext(collectSurveyContext);

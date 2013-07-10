@@ -26,6 +26,7 @@
     
     <!-- DATABASE -->
     <string name="db_name">collect.db</string>
+    <!-- db_path is DEPRECATED, use Context.getFilesDir()... instead -->
     <string name="db_path">/data/data/org.openforis.collect.android/databases/</string>
     <integer name="db_version">3</integer>    
     
