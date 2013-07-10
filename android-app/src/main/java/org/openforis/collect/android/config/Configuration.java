@@ -1,5 +1,7 @@
 package org.openforis.collect.android.config;
 
+import java.io.File;
+
 import org.openforis.collect.android.R;
 
 import android.content.Context;
@@ -12,8 +14,11 @@ import android.content.res.Resources;
  */
 public class Configuration {
 
+	private static final String DATABASES_FOLDER_NAME = "databases";
+	private static final String FILES_FOLDER_NAME = "files";
+	
 	private String dbName;
-	private String dbPath;
+	private String dbRootPath;
 	private int dbVersion;
 	private String dbConnectionUrl;
 	
@@ -21,18 +26,25 @@ public class Configuration {
 		Configuration conf = new Configuration();
 		Resources res = ctx.getResources();
 		conf.dbName = res.getString(R.string.db_name);
-		conf.dbPath = res.getString(R.string.db_path);
+		conf.dbRootPath = getDatabasesFolderPath(ctx);
 		conf.dbVersion = res.getInteger(R.integer.db_version);
-		conf.dbConnectionUrl = "jdbc:sqldroid:" + conf.dbPath + conf.dbName;
+		conf.dbConnectionUrl = "jdbc:sqldroid:" + conf.dbRootPath + File.separator + conf.dbName;
 		return conf;
 	}
+
+	private static String getDatabasesFolderPath(Context ctx) {
+		String filesDir = ctx.getFilesDir().getAbsolutePath();
+		String rootPath = filesDir.substring(0, filesDir.length() - FILES_FOLDER_NAME.length());
+		String path = rootPath + DATABASES_FOLDER_NAME;
+		return path;
+	}
 	
-	public String getDbPath() {
-		return dbPath;
+	public String getDbRootPath() {
+		return dbRootPath;
 	}
 
-	public void setDbPath(String dbPath) {
-		this.dbPath = dbPath;
+	public void setDbRootPath(String dbRootPath) {
+		this.dbRootPath = dbRootPath;
 	}
 
 	public String getDbName() {
