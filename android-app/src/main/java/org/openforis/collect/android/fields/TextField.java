@@ -73,25 +73,11 @@ public class TextField extends InputField {
 				    		txtBox.setInputType(InputType.TYPE_NULL);
 				    	}				    	
 			    	}
-		    	}else{
-		    		//TextField.this.validateResults();
 		    	}
 		    }
 	    });
 	}
 	
-	private void validateResults(){		
-		Log.i("TextField info", "Start to validate TextField's value");
-		Node<? extends NodeDefinition> node = TextField.this.findParentEntity(form.getFormScreenId()).get(TextField.this.nodeDefinition.getName(), form.currInstanceNo);
-		ValidationResults results = ValidationManager.validateField(node);
-		if(results.getErrors().size() > 0 || results.getFailed().size() > 0){
-			TextField.this.txtBox.setBackgroundColor(Color.RED);
-		}else if (results.getWarnings().size() > 0){
-			TextField.this.txtBox.setBackgroundColor(Color.YELLOW);
-		}else{
-			TextField.this.txtBox.setBackgroundColor(Color.TRANSPARENT);
-		}   				
-	}
 	
 	public void setValue(Integer position, String value, String path, boolean isTextChanged)
 	{
@@ -111,11 +97,11 @@ public class TextField extends InputField {
 		if (node!=null){
 			Log.e("Text field with Id: ",node.getDefinition().getId() + " is updating. Node name is: " + node.getName() + " Node ID is: " + node.getInternalId());
 			nodeChangeSet = ServiceFactory.getRecordManager().updateAttribute((TextAttribute)node, new TextValue(value));
-			ApplicationManager.updateUIElementsWithValidationResults(nodeChangeSet);
+//			ApplicationManager.updateUIElementsWithValidationResults(nodeChangeSet);
 		} else {
 			Log.e("Text field","is adding attribute. Node is NULL ");
 			nodeChangeSet = ServiceFactory.getRecordManager().addAttribute(parentEntity, this.nodeDefinition.getName(), new TextValue(value), null, null);
 		}
-//		ApplicationManager.updateUIElementsWithValidationResults(nodeChangeSet);
+		ApplicationManager.updateUIElementsWithValidationResults(nodeChangeSet);
 	}
 }
