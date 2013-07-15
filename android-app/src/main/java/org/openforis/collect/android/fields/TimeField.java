@@ -7,8 +7,13 @@ import org.openforis.collect.android.dialogs.TimeSetDialog;
 import org.openforis.collect.android.management.ApplicationManager;
 import org.openforis.collect.android.management.ValidationManager;
 import org.openforis.collect.android.messages.ToastMessage;
+import org.openforis.collect.android.service.ServiceFactory;
+import org.openforis.collect.model.NodeChangeSet;
 import org.openforis.idm.metamodel.NodeDefinition;
 import org.openforis.idm.metamodel.validation.ValidationResults;
+import org.openforis.idm.model.Date;
+import org.openforis.idm.model.DateAttribute;
+import org.openforis.idm.model.Entity;
 import org.openforis.idm.model.EntityBuilder;
 import org.openforis.idm.model.Node;
 import org.openforis.idm.model.Time;
@@ -78,7 +83,7 @@ public class TimeField extends InputField implements TextWatcher {
 	    });
 	}
 	
-	private void validateResult(Node<? extends NodeDefinition> node){
+/*	private void validateResult(Node<? extends NodeDefinition> node){
 		ValidationResults results = ValidationManager.validateField(node);
 		if(results.getErrors().size() > 0 || results.getFailed().size() > 0){
 			TimeField.this.txtBox.setBackgroundColor(Color.RED);
@@ -88,7 +93,7 @@ public class TimeField extends InputField implements TextWatcher {
 			TimeField.this.txtBox.setBackgroundColor(Color.TRANSPARENT);
 		}			    				
 	}
-	
+*/	
 	private void showTimePickerDialog(int id) {  	
 //		Log.i(getResources().getString(R.string.app_name), "Id from date field was: " + id);
 		Intent timePickerIntent = new Intent(TimeField.this.getContext(), TimeSetDialog.class);
@@ -163,31 +168,41 @@ public class TimeField extends InputField implements TextWatcher {
 		Log.e("TIMEsetValue","value=="+value);
 		Log.e("TIMEsetValue","hour=="+hour+"minute"+minute);
 		Node<? extends NodeDefinition> node = this.findParentEntity(path).get(this.nodeDefinition.getName(), position);
-		
+		NodeChangeSet nodeChangeSet = null;
+		Entity parentEntity = this.findParentEntity(path);		
 		if (node!=null){
-			TimeAttribute timeAttr = (TimeAttribute)node;
+//			TimeAttribute timeAttr = (TimeAttribute)node;
+			Log.e("Time field with Id: ",node.getDefinition().getId() + " is updating. Node name is: " + node.getName() + " Node ID is: " + node.getInternalId());
 			if (hour.equals("") && minute.equals("")){
-				timeAttr.setValue(new Time(null,null));
+//				timeAttr.setValue(new Time(null,null));
+				nodeChangeSet = ServiceFactory.getRecordManager().updateAttribute((TimeAttribute)node, new Time(null,null));
 			} else if (hour.equals("")){
-				timeAttr.setValue(new Time(null,Integer.valueOf(minute)));
+//				timeAttr.setValue(new Time(null,Integer.valueOf(minute)));
+				nodeChangeSet = ServiceFactory.getRecordManager().updateAttribute((TimeAttribute)node, new Time(null,Integer.valueOf(minute)));
 			} else if (minute.equals("")){
-				timeAttr.setValue(new Time(Integer.valueOf(hour),null));
+//				timeAttr.setValue(new Time(Integer.valueOf(hour),null));
+				nodeChangeSet = ServiceFactory.getRecordManager().updateAttribute((TimeAttribute)node, new Time(Integer.valueOf(hour),null));
 			} else {
-				timeAttr.setValue(new Time(Integer.valueOf(hour),Integer.valueOf(minute)));
+//				timeAttr.setValue(new Time(Integer.valueOf(hour),Integer.valueOf(minute)));
+				nodeChangeSet = ServiceFactory.getRecordManager().updateAttribute((TimeAttribute)node, new Time(Integer.valueOf(hour),Integer.valueOf(minute)));
 			}
-			//Validate results
-			//this.validateResult(node);
 		} else {
+			Log.e("Time field","is adding attribute.");
 			if (hour.equals("") && minute.equals("")){
-				EntityBuilder.addValue(this.findParentEntity(path), this.nodeDefinition.getName(), new Time(null,null), position);
+//				EntityBuilder.addValue(this.findParentEntity(path), this.nodeDefinition.getName(), new Time(null,null), position);
+				nodeChangeSet = ServiceFactory.getRecordManager().addAttribute(parentEntity, this.nodeDefinition.getName(), new Time(null,null), null, null);
 			} else if (hour.equals("")){
-				EntityBuilder.addValue(this.findParentEntity(path), this.nodeDefinition.getName(), new Time(null,Integer.valueOf(minute)), position);
+//				EntityBuilder.addValue(this.findParentEntity(path), this.nodeDefinition.getName(), new Time(null,Integer.valueOf(minute)), position);
+				nodeChangeSet = ServiceFactory.getRecordManager().addAttribute(parentEntity, this.nodeDefinition.getName(), new Time(null,Integer.valueOf(minute)), null, null);
 			} else if (minute.equals("")){
-				EntityBuilder.addValue(this.findParentEntity(path), this.nodeDefinition.getName(), new Time(Integer.valueOf(hour),null), position);
+//				EntityBuilder.addValue(this.findParentEntity(path), this.nodeDefinition.getName(), new Time(Integer.valueOf(hour),null), position);
+				nodeChangeSet = ServiceFactory.getRecordManager().addAttribute(parentEntity, this.nodeDefinition.getName(), new Time(Integer.valueOf(hour),null), null, null);
 			} else {
-				EntityBuilder.addValue(this.findParentEntity(path), this.nodeDefinition.getName(), new Time(Integer.valueOf(hour),Integer.valueOf(minute)), position);
+//				EntityBuilder.addValue(this.findParentEntity(path), this.nodeDefinition.getName(), new Time(Integer.valueOf(hour),Integer.valueOf(minute)), position);
+				nodeChangeSet = ServiceFactory.getRecordManager().addAttribute(parentEntity, this.nodeDefinition.getName(), new Time(Integer.valueOf(hour),Integer.valueOf(minute)), null, null);
 			}			
 		}
+		ApplicationManager.updateUIElementsWithValidationResults(nodeChangeSet);
 	}
 	
 	/*@Override

@@ -7,10 +7,15 @@ import org.openforis.collect.android.dialogs.DateSetDialog;
 import org.openforis.collect.android.management.ApplicationManager;
 import org.openforis.collect.android.management.ValidationManager;
 import org.openforis.collect.android.messages.ToastMessage;
+import org.openforis.collect.android.service.ServiceFactory;
+import org.openforis.collect.model.NodeChangeSet;
 import org.openforis.idm.metamodel.NodeDefinition;
 import org.openforis.idm.metamodel.validation.ValidationResults;
+import org.openforis.idm.model.Coordinate;
+import org.openforis.idm.model.CoordinateAttribute;
 import org.openforis.idm.model.Date;
 import org.openforis.idm.model.DateAttribute;
+import org.openforis.idm.model.Entity;
 import org.openforis.idm.model.EntityBuilder;
 import org.openforis.idm.model.Node;
 
@@ -19,6 +24,7 @@ import android.content.Intent;
 import android.graphics.Color;
 import android.text.Editable;
 import android.text.InputType;
+import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
@@ -73,7 +79,7 @@ public class DateField extends InputField {
 		    }
 	    });
 	}
-
+/*
 	private void validateResult(Node<? extends NodeDefinition> node){
 		ValidationResults results = ValidationManager.validateField(node);
 		if(results.getErrors().size() > 0 || results.getFailed().size() > 0){
@@ -83,23 +89,24 @@ public class DateField extends InputField {
 		}else{
 			DateField.this.txtBox.setBackgroundColor(Color.TRANSPARENT);
 		}
-		/*Log.i("DateField info", "Start to validate DateField's value");		    		
-//		Log.i("VALIDATION FOR DATE FIELD", "Record of attribute is: " + attribute.getRecord());
-		//Validate value into field and change color if it's not valid
-		Validator validator = new Validator();
-		ValidationResults results = validator.validate(attribute); 
-		if(results.getErrors().size() > 0 || results.getFailed().size() > 0){
-			DateField.this.txtBox.setBackgroundColor(Color.RED);
-		}else if (results.getWarnings().size() > 0){
-			DateField.this.txtBox.setBackgroundColor(Color.YELLOW);
-		}else{
-			DateField.this.txtBox.setBackgroundColor(Color.TRANSPARENT);
-		}
-		Log.e("VALIDATION FOR DATE FIELD", "Errors: " + results.getErrors().size() + " : " + results.getErrors().toString());
-		Log.d("VALIDATION FOR DATE FIELD", "Warnings: "  + results.getWarnings().size() + " : " + results.getWarnings().toString());
-		Log.e("VALIDATION FOR DATE FIELD", "Fails: "  + results.getFailed().size() + " : " +  results.getFailed().toString());	    		
-		*/
+//		Log.i("DateField info", "Start to validate DateField's value");		    		
+////		Log.i("VALIDATION FOR DATE FIELD", "Record of attribute is: " + attribute.getRecord());
+//		//Validate value into field and change color if it's not valid
+//		Validator validator = new Validator();
+//		ValidationResults results = validator.validate(attribute); 
+//		if(results.getErrors().size() > 0 || results.getFailed().size() > 0){
+//			DateField.this.txtBox.setBackgroundColor(Color.RED);
+//		}else if (results.getWarnings().size() > 0){
+//			DateField.this.txtBox.setBackgroundColor(Color.YELLOW);
+//		}else{
+//			DateField.this.txtBox.setBackgroundColor(Color.TRANSPARENT);
+//		}
+//		Log.e("VALIDATION FOR DATE FIELD", "Errors: " + results.getErrors().size() + " : " + results.getErrors().toString());
+//		Log.d("VALIDATION FOR DATE FIELD", "Warnings: "  + results.getWarnings().size() + " : " + results.getWarnings().toString());
+//		Log.e("VALIDATION FOR DATE FIELD", "Fails: "  + results.getFailed().size() + " : " +  results.getFailed().toString());	    		
+
 	}
+	*/
 	
 	private void showDatePickerDialog(int id) {
 		Intent datePickerIntent = new Intent(DateField.this.getContext(), DateSetDialog.class);
@@ -131,45 +138,66 @@ public class DateField extends InputField {
 		}
 
 		Node<? extends NodeDefinition> node = this.findParentEntity(path).get(this.nodeDefinition.getName(), position);
+		NodeChangeSet nodeChangeSet = null;
+		Entity parentEntity = this.findParentEntity(path);
 		if (node!=null){
-			DateAttribute dateAtr = (DateAttribute)node;
+//			DateAttribute dateAtr = (DateAttribute)node;
+			Log.e("Date field with Id: ",node.getDefinition().getId() + " is updating. Node name is: " + node.getName() + " Node ID is: " + node.getInternalId());
 			if (month.equals("") && day.equals("") && year.equals("")){
-				dateAtr.setValue(new Date(null,null,null));
+//				dateAtr.setValue(new Date(null,null,null));
+				nodeChangeSet = ServiceFactory.getRecordManager().updateAttribute((DateAttribute)node, new Date(null,null,null));
 			} else if (month.equals("") && day.equals("")){
-				dateAtr.setValue(new Date(Integer.valueOf(year),null,null));		    							
+//				dateAtr.setValue(new Date(Integer.valueOf(year),null,null));	
+				nodeChangeSet = ServiceFactory.getRecordManager().updateAttribute((DateAttribute)node, new Date(Integer.valueOf(year),null,null));
 			} else if (month.equals("") && year.equals("")){
-				dateAtr.setValue(new Date(null,null,Integer.valueOf(day)));	
+//				dateAtr.setValue(new Date(null,null,Integer.valueOf(day)));	
+				nodeChangeSet = ServiceFactory.getRecordManager().updateAttribute((DateAttribute)node, new Date(null,null,Integer.valueOf(day)));
 			} else if (day.equals("") && year.equals("")){
-				dateAtr.setValue(new Date(null,Integer.valueOf(month),null));	
+//				dateAtr.setValue(new Date(null,Integer.valueOf(month),null));
+				nodeChangeSet = ServiceFactory.getRecordManager().updateAttribute((DateAttribute)node, new Date(null,Integer.valueOf(month),null));
 			} else if (month.equals("")){
-				dateAtr.setValue(new Date(Integer.valueOf(year),null,Integer.valueOf(day)));			    							
+//				dateAtr.setValue(new Date(Integer.valueOf(year),null,Integer.valueOf(day)));
+				nodeChangeSet = ServiceFactory.getRecordManager().updateAttribute((DateAttribute)node, new Date(Integer.valueOf(year),null,Integer.valueOf(day)));
 			} else if (day.equals("")){
-				dateAtr.setValue(new Date(Integer.valueOf(year),Integer.valueOf(month),null));	
+//				dateAtr.setValue(new Date(Integer.valueOf(year),Integer.valueOf(month),null));	
+				nodeChangeSet = ServiceFactory.getRecordManager().updateAttribute((DateAttribute)node, new Date(Integer.valueOf(year),Integer.valueOf(month),null));
 			} else if (year.equals("")){
-				dateAtr.setValue(new Date(null,Integer.valueOf(month),Integer.valueOf(day)));	
+//				dateAtr.setValue(new Date(null,Integer.valueOf(month),Integer.valueOf(day)));	
+				nodeChangeSet = ServiceFactory.getRecordManager().updateAttribute((DateAttribute)node, new Date(null,Integer.valueOf(month),Integer.valueOf(day)));
 			} else {
-				dateAtr.setValue(new Date(Integer.valueOf(year),Integer.valueOf(month),Integer.valueOf(day)));
+//				dateAtr.setValue(new Date(Integer.valueOf(year),Integer.valueOf(month),Integer.valueOf(day)));
+				nodeChangeSet = ServiceFactory.getRecordManager().updateAttribute((DateAttribute)node, new Date(Integer.valueOf(year),Integer.valueOf(month),Integer.valueOf(day)));
 			}
 			//this.validateResult(node);
 		} else {
+			Log.e("Date field","is adding attribute.");
 			if (month.equals("") && day.equals("") && year.equals("")){
-				EntityBuilder.addValue(this.findParentEntity(path), this.nodeDefinition.getName(), new Date(null,null,null), position);
+//				EntityBuilder.addValue(this.findParentEntity(path), this.nodeDefinition.getName(), new Date(null,null,null), position);
+				nodeChangeSet = ServiceFactory.getRecordManager().addAttribute(parentEntity, this.nodeDefinition.getName(), new Date(null,null,null), null, null);
 			} else if (month.equals("") && day.equals("")){
-				EntityBuilder.addValue(this.findParentEntity(path), this.nodeDefinition.getName(), new Date(Integer.valueOf(year),null,null), position);		    							
+//				EntityBuilder.addValue(this.findParentEntity(path), this.nodeDefinition.getName(), new Date(Integer.valueOf(year),null,null), position);
+				nodeChangeSet = ServiceFactory.getRecordManager().addAttribute(parentEntity, this.nodeDefinition.getName(), new Date(Integer.valueOf(year),null,null), null, null);
 			} else if (month.equals("") && year.equals("")){
-				EntityBuilder.addValue(this.findParentEntity(path), this.nodeDefinition.getName(), new Date(null,null,Integer.valueOf(day)), position);	
+//				EntityBuilder.addValue(this.findParentEntity(path), this.nodeDefinition.getName(), new Date(null,null,Integer.valueOf(day)), position);	
+				nodeChangeSet = ServiceFactory.getRecordManager().addAttribute(parentEntity, this.nodeDefinition.getName(), new Date(null,null,Integer.valueOf(day)), null, null);
 			} else if (day.equals("") && year.equals("")){
-				EntityBuilder.addValue(this.findParentEntity(path), this.nodeDefinition.getName(), new Date(null,Integer.valueOf(month),null), position);	
+//				EntityBuilder.addValue(this.findParentEntity(path), this.nodeDefinition.getName(), new Date(null,Integer.valueOf(month),null), position);	
+				nodeChangeSet = ServiceFactory.getRecordManager().addAttribute(parentEntity, this.nodeDefinition.getName(), new Date(null,Integer.valueOf(month),null), null, null);
 			} else if (month.equals("")){
-				EntityBuilder.addValue(this.findParentEntity(path), this.nodeDefinition.getName(), new Date(Integer.valueOf(year),null,Integer.valueOf(day)), position);			    							
+//				EntityBuilder.addValue(this.findParentEntity(path), this.nodeDefinition.getName(), new Date(Integer.valueOf(year),null,Integer.valueOf(day)), position);	
+				nodeChangeSet = ServiceFactory.getRecordManager().addAttribute(parentEntity, this.nodeDefinition.getName(), new Date(Integer.valueOf(year),null,Integer.valueOf(day)), null, null);
 			} else if (day.equals("")){
-				EntityBuilder.addValue(this.findParentEntity(path), this.nodeDefinition.getName(), new Date(Integer.valueOf(year),Integer.valueOf(month),null), position);	
+//				EntityBuilder.addValue(this.findParentEntity(path), this.nodeDefinition.getName(), new Date(Integer.valueOf(year),Integer.valueOf(month),null), position);	
+				nodeChangeSet = ServiceFactory.getRecordManager().addAttribute(parentEntity, this.nodeDefinition.getName(), new Date(Integer.valueOf(year),Integer.valueOf(month),null), null, null);
 			} else if (year.equals("")){
-				EntityBuilder.addValue(this.findParentEntity(path), this.nodeDefinition.getName(), new Date(null,Integer.valueOf(month),Integer.valueOf(day)), position);
+//				EntityBuilder.addValue(this.findParentEntity(path), this.nodeDefinition.getName(), new Date(null,Integer.valueOf(month),Integer.valueOf(day)), position);
+				nodeChangeSet = ServiceFactory.getRecordManager().addAttribute(parentEntity, this.nodeDefinition.getName(), new Date(null,Integer.valueOf(month),Integer.valueOf(day)), null, null);
 			} else {
-				EntityBuilder.addValue(this.findParentEntity(path), this.nodeDefinition.getName(), new Date(Integer.valueOf(year),Integer.valueOf(month),Integer.valueOf(day)), position);
+//				EntityBuilder.addValue(this.findParentEntity(path), this.nodeDefinition.getName(), new Date(Integer.valueOf(year),Integer.valueOf(month),Integer.valueOf(day)), position);
+				nodeChangeSet = ServiceFactory.getRecordManager().addAttribute(parentEntity, this.nodeDefinition.getName(), new Date(Integer.valueOf(year),Integer.valueOf(month),Integer.valueOf(day)), null, null);
 			}	
 		}
+		ApplicationManager.updateUIElementsWithValidationResults(nodeChangeSet);
 	}
 	
 	@Override

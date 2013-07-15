@@ -6,6 +6,8 @@ import org.openforis.collect.android.R;
 import org.openforis.collect.android.management.ApplicationManager;
 import org.openforis.collect.android.management.ValidationManager;
 import org.openforis.collect.android.messages.ToastMessage;
+import org.openforis.collect.android.service.ServiceFactory;
+import org.openforis.collect.model.NodeChangeSet;
 import org.openforis.idm.metamodel.NodeDefinition;
 import org.openforis.idm.metamodel.NumberAttributeDefinition;
 import org.openforis.idm.metamodel.validation.ValidationResults;
@@ -16,6 +18,8 @@ import org.openforis.idm.model.IntegerValue;
 import org.openforis.idm.model.Node;
 import org.openforis.idm.model.RealAttribute;
 import org.openforis.idm.model.RealValue;
+import org.openforis.idm.model.TextAttribute;
+import org.openforis.idm.model.TextValue;
 
 import android.content.Context;
 import android.graphics.Color;
@@ -92,23 +96,11 @@ public class NumberField extends InputField {
 	    });
 		
 		//Check for every given character is it number or not
+		//and remove all non-digit characters
 		this.txtBox.addTextChangedListener(new TextWatcher(){
 		   
-			public void afterTextChanged(Editable s) {				
-				/*if (s.length() > 0){
-					if(!isNumeric(s.toString())){
-						String strReplace = s.subSequence(0, s.length()-1).toString();
-						int currPos = NumberField.this.txtBox.getSelectionStart();
-						Log.e("strReplace",strReplace+"=="+strReplace.length());
-						Log.e("NumberField.this.txtBox",NumberField.this.txtBox.getSelectionStart()+"=="+NumberField.this.txtBox.getSelectionEnd());
-						NumberField.this.txtBox.setText(strReplace);
-						NumberField.this.txtBox.setSelection(strReplace.length());
-					}
-				}*/
-			}
-			public void beforeTextChanged(CharSequence s, int start,  int count, int after) {
-
-			}				 
+			public void afterTextChanged(Editable s) {}
+			public void beforeTextChanged(CharSequence s, int start,  int count, int after) {}				 
 			public void onTextChanged(CharSequence s, int start, int before, int count) {
 				if (s.length() > 0){
 					if(!isNumeric(s.toString())){
@@ -124,10 +116,9 @@ public class NumberField extends InputField {
 					}
 				}
 			}	
-			
 		});
 	}
-	
+/*	
 	private void validateResult(){
 		String value = NumberField.this.txtBox.getText().toString();
 		if ((value!=null) && (!value.equals("")) && (!value.equals("null"))){
@@ -142,35 +133,48 @@ public class NumberField extends InputField {
 			}
 		}
 	}
-	
+*/	
 	public void setValue(int position, String value, String path, boolean isTextChanged)
 	{		
 		try{
+			if (!isTextChanged)
+				this.txtBox.setText(value);
+			//Validate and add/update attribute
 			Node<? extends NodeDefinition> node = this.findParentEntity(path).get(this.nodeDefinition.getName(), position);
+			NodeChangeSet nodeChangeSet = null;
+			Entity parentEntity = this.findParentEntity(path);
 			if (node!=null){
 				if ((value!=null) && (!value.equals("")) && (!value.equals("null"))){
 					if (((NumberAttributeDefinition) this.nodeDefinition).isInteger()){
-						IntegerAttribute intAttr = (IntegerAttribute)node;
-						intAttr.setValue(new IntegerValue(Integer.valueOf(value), null));
+//						IntegerAttribute intAttr = (IntegerAttribute)node;
+//						intAttr.setValue(new IntegerValue(Integer.valueOf(value), null));
+						Log.e("Number(int) field with Id: ",node.getDefinition().getId() + " is updating. Node name is: " + node.getName() + " Node ID is: " + node.getInternalId());
+						nodeChangeSet = ServiceFactory.getRecordManager().updateAttribute((IntegerAttribute)node, new IntegerValue(Integer.valueOf(value), null));					
 					} else {
-						RealAttribute intAttr = (RealAttribute)node;
-						intAttr.setValue(new RealValue(Double.valueOf(value), null));
+//						RealAttribute intAttr = (RealAttribute)node;
+//						intAttr.setValue(new RealValue(Double.valueOf(value), null));
+						Log.e("Number(real) field with Id: ",node.getDefinition().getId() + " is updating. Node name is: " + node.getName() + " Node ID is: " + node.getInternalId());
+						nodeChangeSet = ServiceFactory.getRecordManager().updateAttribute((RealAttribute)node, new RealValue(Double.valueOf(value), null));						
 					}
 				}
 			} else {
 				if ((value!=null) && (!value.equals("")) && (!value.equals("null"))){
 					if (((NumberAttributeDefinition) this.nodeDefinition).isInteger()){
-						EntityBuilder.addValue(this.findParentEntity(path), this.nodeDefinition.getName(), Integer.valueOf(value), position);	
+//						EntityBuilder.addValue(this.findParentEntity(path), this.nodeDefinition.getName(), Integer.valueOf(value), position);	
+						Log.e("Number(int) field","is adding attribute.");
+						nodeChangeSet = ServiceFactory.getRecordManager().addAttribute(parentEntity, this.nodeDefinition.getName(), new IntegerValue(Integer.valueOf(value), null), null, null);			
 					} else {
-						EntityBuilder.addValue(this.findParentEntity(path), this.nodeDefinition.getName(), Double.valueOf(value), position);
+//						EntityBuilder.addValue(this.findParentEntity(path), this.nodeDefinition.getName(), Double.valueOf(value), position);
+						Log.e("Number(real) field","is adding attribute.");
+						nodeChangeSet = ServiceFactory.getRecordManager().addAttribute(parentEntity, this.nodeDefinition.getName(), new RealValue(Double.valueOf(value), null), null, null);
 					}
 				}			
 			}
-			
-			if (!isTextChanged)
-				this.txtBox.setText(value);
+			ApplicationManager.updateUIElementsWithValidationResults(nodeChangeSet);
+
 		} catch (Exception e){
-			Log.e("Number value got exception", "=="+e.getStackTrace());
+			Log.e("Number value got exception", "Value is: " + value 
+					+ " Exception is:" + e.getMessage() + " : " + e.getStackTrace());	
 		}		
 	}
 	
@@ -201,5 +205,5 @@ public class NumberField extends InputField {
 			result = false;
 		}	
 		return result;
-	}
+	} 
 }
