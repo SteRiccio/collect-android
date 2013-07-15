@@ -2,22 +2,22 @@ package org.openforis.collect.android.fields;
 
 
 import java.util.Map;
-
 import org.openforis.collect.android.R;
 import org.openforis.collect.android.management.ApplicationManager;
-import org.openforis.collect.android.management.ValidationManager;
 import org.openforis.collect.android.messages.ToastMessage;
 import org.openforis.collect.android.screens.FormScreen;
+import org.openforis.collect.android.service.ServiceFactory;
+import org.openforis.collect.model.NodeChangeSet;
 import org.openforis.idm.metamodel.NodeDefinition;
-import org.openforis.idm.metamodel.validation.ValidationResults;
-import org.openforis.idm.metamodel.validation.Validator;
 import org.openforis.idm.model.Coordinate;
 import org.openforis.idm.model.CoordinateAttribute;
+import org.openforis.idm.model.Entity;
 import org.openforis.idm.model.EntityBuilder;
+import org.openforis.idm.model.IntegerAttribute;
+import org.openforis.idm.model.IntegerValue;
 import org.openforis.idm.model.Node;
 
 import android.content.Context;
-import android.graphics.Color;
 import android.text.Editable;
 import android.text.InputType;
 import android.text.TextWatcher;
@@ -81,22 +81,7 @@ public class CoordinateField extends InputField implements OnClickListener {
 			    		txtLongitude.setInputType(InputType.TYPE_NULL);
 //			    		CoordinateField.this.setKeyboardType(null);
 			    	}
-
-		    	}else{
-		    		/*Log.i("COORDINATE FIELD info", "Coordinate Field lost focus. Start validate its value");		    		
-		    		Node<? extends NodeDefinition> node = CoordinateField.this.findParentEntity(form.getFormScreenId()).get(CoordinateField.this.nodeDefinition.getName(), form.currInstanceNo);		    		
-		    		ValidationResults results = ValidationManager.validateField(node);
-		    		if(results.getErrors().size() > 0 || results.getFailed().size() > 0){
-		    			txtLongitude.setBackgroundColor(Color.RED);
-		    		}else if (results.getWarnings().size() > 0){
-		    			txtLongitude.setBackgroundColor(Color.YELLOW);
-		    		}else{
-		    			txtLongitude.setBackgroundColor(Color.TRANSPARENT);
-		    		}
-		    		Log.e("VALIDATION FOR COORDINATE FIELD", "Errors: " + results.getErrors().size() + " : " + results.getErrors().toString());
-		    		Log.d("VALIDATION FOR COORDINATE FIELD", "Warnings: "  + results.getWarnings().size() + " : " + results.getWarnings().toString());
-		    		Log.e("VALIDATION FOR COORDINATE FIELD", "Fails: "  + results.getFailed().size() + " : " +  results.getFailed().toString());*/    		
-		    	}		    	
+		    	}	    	
 			}
 		});
 
@@ -126,19 +111,7 @@ public class CoordinateField extends InputField implements OnClickListener {
 			    		txtLatitude.setInputType(InputType.TYPE_NULL);
 //			    		CoordinateField.this.setKeyboardType(null);
 			    	}
-		    	}else{
-		    		/*Log.i("COORDINATE FIELD info", "Coordinate Field lost focus. Start validate its value");		    		
-		    		Node<? extends NodeDefinition> node = CoordinateField.this.findParentEntity(form.getFormScreenId()).get(CoordinateField.this.nodeDefinition.getName(), form.currInstanceNo);		    		
-		    		ValidationResults results = ValidationManager.validateField(node);
-		    		if(results.getErrors().size() > 0 || results.getFailed().size() > 0){
-		    			txtLatitude.setBackgroundColor(Color.RED);
-		    		}else if (results.getWarnings().size() > 0){
-		    			txtLatitude.setBackgroundColor(Color.YELLOW);
-		    		}else{
-		    			txtLatitude.setBackgroundColor(Color.TRANSPARENT);
-		    		}   */		
-		    	}	
-		    	
+		    	}		    	
 			}
 		});
 		
@@ -146,18 +119,6 @@ public class CoordinateField extends InputField implements OnClickListener {
 		this.txtLatitude.addTextChangedListener(new TextWatcher(){
 			public void afterTextChanged(Editable s) {}
 			public void beforeTextChanged(CharSequence s, int start,  int count, int after) {}				 
-			/*public void onTextChanged(CharSequence s, int start, int before, int count) {
-				if (s.length() > 0){
-					if(!isNumeric(s.toString())){
-						Log.i("COORDINATE FIELD", "Value of Latitude: " + s + " is NOT numeric.");
-						String strReplace = s.subSequence(0, s.length()-1).toString();
-						CoordinateField.this.txtLatitude.setText(strReplace);
-						CoordinateField.this.txtLatitude.setSelection(strReplace.length());
-					}else{
-						Log.i("COORDINATE FIELD", "Value of Latitude: " + s + " is numeric.");
-					}
-				}				
-			}*/
 			public void onTextChanged(CharSequence s, int start, int before, int count) {
 				if (s.length() > 0){
 					if(!isNumeric(s.toString())){
@@ -177,15 +138,6 @@ public class CoordinateField extends InputField implements OnClickListener {
 		this.txtLongitude.addTextChangedListener(new TextWatcher(){
 			public void afterTextChanged(Editable s) {}
 			public void beforeTextChanged(CharSequence s, int start,  int count, int after) {}				 
-			/*public void onTextChanged(CharSequence s, int start, int before, int count) {
-				if (s.length() > 0){
-					if(!isNumeric(s.toString())){
-						String strReplace = s.subSequence(0, s.length()-1).toString();
-						CoordinateField.this.txtLongitude.setText(strReplace);
-						CoordinateField.this.txtLongitude.setSelection(strReplace.length());
-					}
-				}	
-			}*/
 			public void onTextChanged(CharSequence s, int start, int before, int count) {
 				if (s.length() > 0){
 					if(!isNumeric(s.toString())){
@@ -220,29 +172,41 @@ public class CoordinateField extends InputField implements OnClickListener {
 		}
 
 		Node<? extends NodeDefinition> node = this.findParentEntity(path).get(this.nodeDefinition.getName(), position);
+		NodeChangeSet nodeChangeSet = null;
+		Entity parentEntity = this.findParentEntity(path);
 		if (node!=null){
-			CoordinateAttribute coordAtr = (CoordinateAttribute)node;
+//			CoordinateAttribute coordAtr = (CoordinateAttribute)node;
+			Log.e("Coordinate field with Id: ",node.getDefinition().getId() + " is updating. Node name is: " + node.getName() + " Node ID is: " + node.getInternalId());
 			if ((lat.equals("")&&lon.equals(""))){
-				coordAtr.setValue(new Coordinate(null, null, null));	
+//				coordAtr.setValue(new Coordinate(null, null, null));	
+				nodeChangeSet = ServiceFactory.getRecordManager().updateAttribute((CoordinateAttribute)node, new Coordinate(null, null, null));
 			} else if (lat.equals("")){
-				coordAtr.setValue(new Coordinate(Double.valueOf(lon), null, null));
+//				coordAtr.setValue(new Coordinate(Double.valueOf(lon), null, null));
+				nodeChangeSet = ServiceFactory.getRecordManager().updateAttribute((CoordinateAttribute)node, new Coordinate(Double.valueOf(lon), null, null));
 			} else if (lon.equals("")){
-				coordAtr.setValue(new Coordinate(null, Double.valueOf(lat), null));
+//				coordAtr.setValue(new Coordinate(null, Double.valueOf(lat), null));
+				nodeChangeSet = ServiceFactory.getRecordManager().updateAttribute((CoordinateAttribute)node, new Coordinate(null,  Double.valueOf(lat), null));
 			} else {
-				coordAtr.setValue(new Coordinate(Double.valueOf(lon), Double.valueOf(lat), null));
+//				coordAtr.setValue(new Coordinate(Double.valueOf(lon), Double.valueOf(lat), null));
+				nodeChangeSet = ServiceFactory.getRecordManager().updateAttribute((CoordinateAttribute)node, new Coordinate(Double.valueOf(lon),  Double.valueOf(lat), null));
 			}
 		} else {
+			Log.e("Coordinate field","is adding attribute.");
 			if ((lat.equals("")&&lon.equals(""))){
-				EntityBuilder.addValue(this.findParentEntity(path), this.nodeDefinition.getName(), new Coordinate(null, null, null), position);
+//				EntityBuilder.addValue(this.findParentEntity(path), this.nodeDefinition.getName(), new Coordinate(null, null, null), position);
+				nodeChangeSet = ServiceFactory.getRecordManager().addAttribute(parentEntity, this.nodeDefinition.getName(), new Coordinate(null, null, null), null, null);
 			} else if (lat.equals("")){
-				EntityBuilder.addValue(this.findParentEntity(path), this.nodeDefinition.getName(), new Coordinate(Double.valueOf(lon), null, null), position);
+//				EntityBuilder.addValue(this.findParentEntity(path), this.nodeDefinition.getName(), new Coordinate(Double.valueOf(lon), null, null), position);
+				nodeChangeSet = ServiceFactory.getRecordManager().addAttribute(parentEntity, this.nodeDefinition.getName(), new Coordinate(Double.valueOf(lon), null, null), null, null);
 			} else if (lon.equals("")){
-				EntityBuilder.addValue(this.findParentEntity(path), this.nodeDefinition.getName(), new Coordinate(null, Double.valueOf(lat), null), position);
+//				EntityBuilder.addValue(this.findParentEntity(path), this.nodeDefinition.getName(), new Coordinate(null, Double.valueOf(lat), null), position);
+				nodeChangeSet = ServiceFactory.getRecordManager().addAttribute(parentEntity, this.nodeDefinition.getName(), new Coordinate(null, Double.valueOf(lat), null), null, null);
 			} else {
-				EntityBuilder.addValue(this.findParentEntity(path), this.nodeDefinition.getName(), new Coordinate(Double.valueOf(lon), Double.valueOf(lat), null), position);
-			}
-				
+//				EntityBuilder.addValue(this.findParentEntity(path), this.nodeDefinition.getName(), new Coordinate(Double.valueOf(lon), Double.valueOf(lat), null), position);
+				nodeChangeSet = ServiceFactory.getRecordManager().addAttribute(parentEntity, this.nodeDefinition.getName(), new Coordinate(Double.valueOf(lon), Double.valueOf(lat), null), null, null);
+			}	
 		}
+		ApplicationManager.updateUIElementsWithValidationResults(nodeChangeSet);
 	}
 	
 	@Override

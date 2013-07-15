@@ -3,9 +3,12 @@ package org.openforis.collect.android.fields;
 import java.util.ArrayList;
 
 import org.openforis.collect.android.R;
+import org.openforis.collect.android.management.ApplicationManager;
 import org.openforis.collect.android.management.ValidationManager;
 import org.openforis.collect.android.messages.ToastMessage;
 import org.openforis.collect.android.screens.FormScreen;
+import org.openforis.collect.android.service.ServiceFactory;
+import org.openforis.collect.model.NodeChangeSet;
 import org.openforis.idm.metamodel.BooleanAttributeDefinition;
 import org.openforis.idm.metamodel.NodeDefinition;
 import org.openforis.idm.metamodel.validation.ValidationResults;
@@ -13,9 +16,12 @@ import org.openforis.idm.model.BooleanAttribute;
 import org.openforis.idm.model.BooleanValue;
 import org.openforis.idm.model.EntityBuilder;
 import org.openforis.idm.model.Node;
+import org.openforis.idm.model.TextAttribute;
+import org.openforis.idm.model.TextValue;
 
 import android.content.Context;
 import android.graphics.Color;
+import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CheckBox;
@@ -106,7 +112,7 @@ public class BooleanField extends Field {
 		this.addView(tr);
 	}
 	
-	private void validateResults(Node<? extends NodeDefinition> node){
+/*	private void validateResults(Node<? extends NodeDefinition> node){
 		ValidationResults results = ValidationManager.validateField(node); 
 		if(results.getErrors().size() > 0 || results.getFailed().size() > 0){
 			this.setBackgroundColor(Color.RED);
@@ -116,7 +122,7 @@ public class BooleanField extends Field {
 			this.setBackgroundColor(Color.TRANSPARENT);
 		}		
 	}
-	
+*/	
 	public void setValue(int position, Boolean boolValue, String path, boolean isSelectionChanged)
 	{
 		if (boolValue==null){
@@ -132,14 +138,19 @@ public class BooleanField extends Field {
 		}
 	
 		Node<? extends NodeDefinition> node = this.findParentEntity(path).get(this.nodeDefinition.getName(), position);
+		NodeChangeSet nodeChangeSet = null;
 		if (node!=null){
-			BooleanAttribute boolAtr = (BooleanAttribute)node;
-			boolAtr.setValue(new BooleanValue(boolValue));
+//			BooleanAttribute boolAtr = (BooleanAttribute)node;
+//			boolAtr.setValue(new BooleanValue(boolValue));
 			//Validate results 
-//			this.validateResults(node);
+			Log.e("Boolean field with Id: ",node.getDefinition().getId() + " is updating. Node name is: " + node.getName() + " Node ID is: " + node.getInternalId());
+			nodeChangeSet = ServiceFactory.getRecordManager().updateAttribute((BooleanAttribute)node, new BooleanValue(boolValue));
 		} else {
-			EntityBuilder.addValue(this.findParentEntity(path), this.nodeDefinition.getName(), boolValue, position);	
+//			EntityBuilder.addValue(this.findParentEntity(path), this.nodeDefinition.getName(), boolValue, position);	
+			Log.e("Buulean field","is adding attribute.");
+			nodeChangeSet = ServiceFactory.getRecordManager().addAttribute(this.findParentEntity(path), this.nodeDefinition.getName(), new BooleanValue(boolValue), null, null);
 		}
+		ApplicationManager.updateUIElementsWithValidationResults(nodeChangeSet);
 	}
 	
 	public void addOnClickListener(OnClickListener onClickListener1, OnClickListener onClickListener2) {

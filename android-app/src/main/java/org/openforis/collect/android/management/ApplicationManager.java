@@ -21,6 +21,7 @@ import org.openforis.collect.android.screens.FormScreen;
 import org.openforis.collect.android.service.ServiceFactory;
 import org.openforis.collect.manager.SurveyManager;
 
+import org.openforis.collect.model.AttributeChange;
 import org.openforis.collect.model.CollectRecord;
 import org.openforis.collect.model.CollectSurvey;
 import org.openforis.collect.model.NodeChange;
@@ -36,7 +37,7 @@ import org.openforis.idm.metamodel.LanguageSpecificText;
 import org.openforis.idm.metamodel.NodeDefinition;
 import org.openforis.idm.metamodel.NodeLabel.Type;
 import org.openforis.idm.metamodel.Survey;
-
+import org.openforis.idm.metamodel.validation.ValidationResults;
 
 import org.openforis.idm.model.Entity;
 
@@ -682,13 +683,34 @@ public class ApplicationManager extends BaseActivity {
 
     public static void updateUIElementsWithValidationResults(NodeChangeSet nodeChangeSet){
     	List<NodeChange<?>> nodeChangesList = nodeChangeSet.getChanges();
-    	Log.e("Size of NodeChangeSet","=="+nodeChangeSet.size());
     	Log.e("Size of NodeChangeList","=="+nodeChangesList.size());
     	for (NodeChange<?> nodeChange : nodeChangesList){
     		Log.e("Does nodeChange.getNode() Not Null?","=="+(nodeChange.getNode()!=null));
     		Log.e("Does nodeChange.getNode().getInternalId() Not Null","=="+(nodeChange.getNode().getInternalId()!=null));    		
     		if (nodeChange.getNode().getInternalId() !=null){
     			Log.e("Node ID","=="+nodeChange.getNode().getInternalId());
+    			//HERE WE CHECK DOES IT HAVE ANY ERRORS or WARNINGS
+    			if (nodeChange instanceof AttributeChange) {
+    				ValidationResults results = ((AttributeChange)nodeChange).getValidationResults();
+    				Log.e("VALIDATION FOR FIELD", "Errors: " + results.getErrors().size() + " : " + results.getErrors().toString());
+    				Log.d("VALIDATION FOR FIELD", "Warnings: "  + results.getWarnings().size() + " : " + results.getWarnings().toString()); 			
+    				//Make background color red or yellow if there is any errors/warnings
+//        			Log.e("ApplicationManager.getUIElement(nodeChange.getNode().getInternalId())!=null","=="+(ApplicationManager.getUIElement(nodeChange.getNode().getId())!=null));
+//        			UIElement uiEl = ApplicationManager.getUIElement(nodeChange.getNode().getInternalId());    				
+    				UIElement uiEl = ApplicationManager.getUIElement(nodeChange.getNode().getDefinition().getId());
+    				if (uiEl != null){
+        				Log.e("UI element is: ", uiEl.nodeDefinition.getName() + " with ID: " + uiEl.nodeDefinition.getId());
+        				if (results.getErrors().size() > 0)
+        					uiEl.setBackgroundColor(Color.RED);
+        				else if (results.getWarnings().size() > 0)
+        					uiEl.setBackgroundColor(Color.YELLOW);
+        				else
+        					uiEl.setBackgroundColor(Color.TRANSPARENT);
+        			}
+        			else{
+        				Log.e("ERROR!","ApplicationManager cannot find node with id: "+nodeChange.getNode().getInternalId());
+        			} 
+    			}	
 //    			UIElement uiEl = ApplicationManager.getUIElement(nodeChange.getNode().getInternalId());
     			UIElement uiEl = ApplicationManager.getUIElement(nodeChange.getNode().getDefinition().getId());
     			if (uiEl != null){
