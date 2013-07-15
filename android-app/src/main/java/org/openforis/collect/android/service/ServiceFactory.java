@@ -57,7 +57,7 @@ public class ServiceFactory {
     	surveyManager.setSurveyDao(surveyDao);
     	surveyManager.setCodeListManager(codeListManager);
     	
-    	recordManager = new RecordManager();
+    	recordManager = new RecordManager(false);
     	RecordDao recordDao = new RecordDao();
     	recordDao.setDataSource(dataSource);
     	recordManager.setRecordDao(recordDao);

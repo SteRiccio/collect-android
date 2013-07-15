@@ -3,10 +3,12 @@ package org.openforis.collect.android.fields;
 import org.openforis.collect.android.R;
 import org.openforis.collect.android.management.ApplicationManager;
 import org.openforis.collect.android.screens.FormScreen;
+import org.openforis.collect.android.service.ServiceFactory;
 import org.openforis.idm.metamodel.EntityDefinition;
 import org.openforis.idm.metamodel.NodeDefinition;
 import org.openforis.idm.metamodel.NodeLabel.Type;
 import org.openforis.idm.model.Entity;
+import org.openforis.idm.model.Node;
 
 import android.content.Context;
 import android.graphics.Color;
@@ -22,7 +24,8 @@ public class UIElement extends TableLayout{
 	
 	protected int currentInstanceNo;
 	
-	protected int elemId;	
+	protected int elemDefId;
+	protected int elemId;
 	
 	public NodeDefinition nodeDefinition;
 	
@@ -34,7 +37,9 @@ public class UIElement extends TableLayout{
 	public UIElement(Context context, NodeDefinition nodeDef){
 		super(context);
 		
-		this.elemId = nodeDef.getId();
+		this.elemDefId = nodeDef.getId();
+		this.elemId = -1;//TO BE REPLACED BY ACTUAL ID OF THE NODE REPRESENT BY THE FIELD
+
 		this.nodeDefinition = nodeDef;
 		this.form = (FormScreen)context;
 		
@@ -69,7 +74,7 @@ public class UIElement extends TableLayout{
 	}
 	
 	public int getElementId(){
-		return this.elemId;
+		return this.elemDefId;
 	}
 	
 	public int getInstancesNo(){

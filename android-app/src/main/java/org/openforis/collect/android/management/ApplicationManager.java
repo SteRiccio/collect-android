@@ -1,20 +1,10 @@
 package org.openforis.collect.android.management;
 
 import java.io.File;
-
-
-
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
-
-
-
-
-
-
 
 import org.openforis.collect.android.R;
 import org.openforis.collect.android.config.Configuration;
@@ -225,8 +215,10 @@ public class ApplicationManager extends BaseActivity {
 	        	defaultUser.setEnabled(true);
 	        	defaultUser.setId(getResources().getInteger(R.integer.defaulUsertId));
 	        	defaultUser.addRole(getResources().getString(R.string.defaultUserRole));
+	        	Log.e("!defaultUserExists","=="+(!userExists(defaultUser)));
 	        	if (!userExists(defaultUser)){
 	        		ServiceFactory.getUserManager().insert(defaultUser);
+	        		Log.e("DEFAULT USER","INSERTED");
 	        	}
 	        	ApplicationManager.loggedInUser = defaultUser;
 	        	
@@ -592,7 +584,9 @@ public class ApplicationManager extends BaseActivity {
 	private boolean userExists(User user){
 		List<User> usersList = ServiceFactory.getUserManager().loadAll();
 		boolean userExists = false;
+		Log.e("iloscUserowWBazie","=="+usersList.size());
 		for (int i=0;i<usersList.size();i++){
+			Log.e("usersList.get(i).equals(user)","=="+usersList.get(i).equals(user));
 			if (usersList.get(i).equals(user)){
 	 			userExists = true;
 	 			break;
@@ -717,6 +711,23 @@ public class ApplicationManager extends BaseActivity {
         				Log.e("ERROR!","ApplicationManager cannot find node with id: "+nodeChange.getNode().getInternalId());
         			} 
     			}	
+//    			UIElement uiEl = ApplicationManager.getUIElement(nodeChange.getNode().getInternalId());
+    			UIElement uiEl = ApplicationManager.getUIElement(nodeChange.getNode().getDefinition().getId());
+    			if (uiEl != null){
+    				Log.e("UI element is: ", uiEl.nodeDefinition.getName() + " with ID: " + uiEl.nodeDefinition.getId());
+    			}
+    			else{
+    				Log.e("ERROR!","ApplicationManager cannot find node with id: "+nodeChange.getNode().getInternalId());
+    			}
+//        		if (uiEl instanceof SummaryList){
+//        			
+//        		} else if (uiEl instanceof SummaryTable){
+//        			
+//        		} else {//single field
+//        			Log.e("single field","to change");
+//        			if (uiEl!=null)
+//        				uiEl.setBackgroundColor(Color.RED);
+//        		}	
     		}    		
     	}
     }
