@@ -99,6 +99,7 @@
     <string name="downloadingDataToServerMessage">Downloading data to device&#8230;</string>
     <string name="searchingForTaxon">Searching for species matching criteria&#8230;</string>
     <string name="backupingData">Preparing backup of data&#8230;</string>
+    <string name="refreshingScreen">Preparing requested screen&#8230;</string>
     
     <!-- lists -->
     <string name="clusterChoiceFailedBecauseNoDataSaved">No data saved in local database</string>
