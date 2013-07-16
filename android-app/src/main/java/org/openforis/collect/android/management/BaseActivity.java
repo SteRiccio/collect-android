@@ -1,14 +1,23 @@
 package org.openforis.collect.android.management;
 
+import java.io.File;
+import java.util.HashMap;
+
 import org.openforis.collect.android.R;
+import org.openforis.collect.android.config.Configuration;
+import org.openforis.collect.android.database.DatabaseHelper;
+import org.openforis.collect.android.fields.UIElement;
 import org.openforis.collect.android.lists.DownloadActivity;
 import org.openforis.collect.android.lists.UploadActivity;
 import org.openforis.collect.android.messages.AlertMessage;
 import org.openforis.collect.android.misc.RunnableHandler;
 import org.openforis.collect.android.screens.SettingsScreen;
+import org.openforis.collect.android.service.ServiceFactory;
 import org.openforis.collect.model.CollectSurvey;
+import org.openforis.collect.model.User;
 
 import android.app.Activity;
+import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
@@ -142,9 +151,29 @@ public class BaseActivity extends Activity {
 	        	dataManagerExport.saveRecordToXml(ApplicationManager.currentRecord, Environment.getExternalStorageDirectory().toString()+getResources().getString(R.string.exported_data_folder));
 	        	return true;
 	        case R.id.menu_export_all:
-	        	CollectSurvey collectSurveyExportAll = (CollectSurvey)ApplicationManager.getSurvey();	        	
-	        	DataManager dataManagerExportAll = new DataManager(collectSurveyExportAll,collectSurveyExportAll.getSchema().getRootEntityDefinitions().get(0).getName(),ApplicationManager.getLoggedInUser());
-	        	dataManagerExportAll.saveAllRecordsToFile(Environment.getExternalStorageDirectory().toString()+getResources().getString(R.string.exported_data_folder));
+	        	final ProgressDialog pd = ProgressDialog.show(this, getResources().getString(R.string.workInProgress), getResources().getString(R.string.backupingData));
+	        	Thread backupThread = new Thread() {
+	        		@Override
+	        		public void run() {
+	        			try {
+	        				super.run();
+	        				Log.i(getResources().getString(R.string.app_name),TAG+":run");
+	        				CollectSurvey collectSurveyExportAll = (CollectSurvey)ApplicationManager.getSurvey();	        	
+	        	        	DataManager dataManagerExportAll = new DataManager(collectSurveyExportAll,collectSurveyExportAll.getSchema().getRootEntityDefinitions().get(0).getName(),ApplicationManager.getLoggedInUser());
+	        	        	dataManagerExportAll.saveAllRecordsToFile(Environment.getExternalStorageDirectory().toString()+getResources().getString(R.string.exported_data_folder));
+	        			} catch (Exception e) {
+	        				RunnableHandler.reportException(e,getResources().getString(R.string.app_name),TAG+":run",
+	        	    				Environment.getExternalStorageDirectory().toString()
+	        	    				+getResources().getString(R.string.logs_folder)
+	        	    				+getResources().getString(R.string.logs_file_name)
+	        	    				+System.currentTimeMillis()
+	        	    				+getResources().getString(R.string.log_file_extension));
+	        			} finally {
+	        				pd.dismiss();
+	        			}
+	        		}
+	        	};
+	        	backupThread.start();	        	
 	        	return true;
 			case R.id.menu_upload:
 				startActivity(new Intent(BaseActivity.this, UploadActivity.class));

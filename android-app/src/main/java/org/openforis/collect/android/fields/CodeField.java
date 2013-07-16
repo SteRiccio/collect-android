@@ -134,21 +134,11 @@ public class CodeField extends InputField {
 							selectedPositionInParent--;
 							CodeListManager codeListManager = ServiceFactory.getCodeListManager();
 							List<CodeListItem> parentItems = codeListManager.loadValidItems(this.parentEntity, this.codeAttrDef);
-							CodeListItem parentItem = parentItems.get(selectedPositionInParent);
-							List<CodeListItem> childItems = codeListManager.loadChildItems(parentItem);
-							for (int i=0;i<childItems.size();i++){
-								CodeListItem item = childItems.get(i);
+							for (int i=0;i<parentItems.size();i++){
+								CodeListItem item = parentItems.get(i);
 								this.codes.add(item.getCode());
-								this.options.add(item.getLabels().get(0).getText());
+								this.options.add(item.getLabel(ApplicationManager.selectedLanguage)/*item.getLabels().get(0).getText()*/);
 							}
-							/*List<CodeListItem> parentItems = codeListManager.loadItems(this.codeAttrDef.getList(), this.codeAttrDef.getListLevelIndex() + 1);
-							CodeListItem parentItem = parentItems.get(selectedPositionInParent);
-							List<CodeListItem> childItems = codeListManager.loadChildItems(parentItem);
-							for (int i=0;i<childItems.size();i++){
-								CodeListItem item = childItems.get(i);
-								this.codes.add(item.getCode());
-								this.options.add(item.getLabels().get(0).getText());
-							}*/
 						}							
 					}
 					
@@ -217,26 +207,13 @@ public class CodeField extends InputField {
 									if (selectedPositionInParent>0){
 										selectedPositionInParent--;
 										CodeListManager codeListManager = ServiceFactory.getCodeListManager();
-										List<CodeListItem> parentItems = codeListManager.loadValidItems(currentChild.parentEntity, currentChild.codeAttrDef.getParentCodeAttributeDefinition());
-										CodeListItem parentItem = parentItems.get(selectedPositionInParent);
-										List<CodeListItem> childItems = codeListManager.loadChildItems(parentItem);
-										for (int j=0;j<childItems.size();j++){
-											CodeListItem item = childItems.get(j);
+										List<CodeListItem> parentItems = codeListManager.loadValidItems(currentChild.parentEntity, currentChild.codeAttrDef);
+										for (int j=0;j<parentItems.size();j++){
+											CodeListItem item = parentItems.get(j);
 											currentChild.codes.add(item.getCode().toString());
-											currentChild.options.add(item.getLabels().get(0).getText());
-											currentChild.aa.add(item.getLabels().get(0).getText());
+											currentChild.options.add(item.getLabel(ApplicationManager.selectedLanguage)/*item.getLabels().get(0).getText()*/);
+											currentChild.aa.add(item.getLabel(ApplicationManager.selectedLanguage)/*item.getLabels().get(0).getText()*/);
 										}
-										/*CodeListManager codeListManager = ServiceFactory.getCodeListManager();
-										CodeList list = CodeField.this.codeAttrDef.getList();
-										List<CodeListItem> parentItems = codeListManager.loadItems(list, CodeField.this.codeAttrDef.getListLevelIndex() + 1);
-										CodeListItem parentItem = parentItems.get(selectedPositionInParent);
-										List<CodeListItem> childItems = codeListManager.loadChildItems(parentItem);
-										for (int j=0;j<childItems.size();j++){									
-											CodeListItem item = childItems.get(j);
-											currentChild.codes.add(item.getCode().toString());
-											currentChild.options.add(item.getLabels().get(0).getText());
-											currentChild.aa.add(item.getLabels().get(0).getText());
-										}*/
 									}
 									if (currentChild.aa.getCount()==1){
 						    			currentChild.spinner.setEnabled(false);

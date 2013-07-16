@@ -215,11 +215,9 @@ public class ApplicationManager extends BaseActivity {
 	        	defaultUser.setEnabled(true);
 	        	defaultUser.setId(getResources().getInteger(R.integer.defaulUsertId));
 	        	defaultUser.addRole(getResources().getString(R.string.defaultUserRole));
-	        	Log.e("!defaultUserExists","=="+(!userExists(defaultUser)));
-	        	if (!userExists(defaultUser)){
+	        	/*if (!userExists(defaultUser)){
 	        		ServiceFactory.getUserManager().insert(defaultUser);
-	        		Log.e("DEFAULT USER","INSERTED");
-	        	}
+	        	}*/
 	        	ApplicationManager.loggedInUser = defaultUser;
 	        	
 	        	ApplicationManager.dataManager = null;

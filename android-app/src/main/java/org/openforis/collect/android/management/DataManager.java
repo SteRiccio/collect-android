@@ -7,7 +7,11 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 
+import org.openforis.collect.android.R;
+import org.openforis.collect.android.config.Configuration;
 import org.openforis.collect.android.database.DatabaseHelper;
+import org.openforis.collect.android.fields.UIElement;
+import org.openforis.collect.android.misc.RunnableHandler;
 import org.openforis.collect.android.service.ServiceFactory;
 import org.openforis.collect.manager.RecordManager;
 import org.openforis.collect.manager.SurveyManager;
@@ -222,4 +226,11 @@ public class DataManager {
 		Log.e("record"+recordId,"LOADED IN "+(System.currentTimeMillis()-startTime)+"ms");
 		return loadedRecord;
 	}
+	
+	private Thread creationThread = new Thread() {
+		@Override
+		public void run() {
+			
+		}
+	};
 }
