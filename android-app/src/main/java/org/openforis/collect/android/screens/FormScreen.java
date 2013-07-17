@@ -140,7 +140,7 @@ public class FormScreen extends BaseActivity implements OnClickListener {
 	{
 		super.onResume();
 		Log.i(getResources().getString(R.string.app_name),TAG+":onResume");
-    	final ProgressDialog pd = ProgressDialog.show(FormScreen.this, getResources().getString(R.string.workInProgress), getResources().getString(R.string.backupingData));
+    	final ProgressDialog pd = ProgressDialog.show(FormScreen.this, getResources().getString(R.string.workInProgress), getResources().getString(R.string.refreshingScreen));
     	Thread screenResumeThread = new Thread() {
     		@Override
     		public void run() {
