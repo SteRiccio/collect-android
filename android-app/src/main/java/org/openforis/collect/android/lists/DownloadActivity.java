@@ -437,6 +437,7 @@ public class DownloadActivity extends Activity{
             });*/
             DataManager dataManager = new DataManager((CollectSurvey) ApplicationManager.getSurvey(),ApplicationManager.getSurvey().getSchema().getRootEntityDefinition(ApplicationManager.currRootEntityId).getName(),ApplicationManager.getLoggedInUser());
             Log.e("fileNAMEtoLoad","=="+fileName);
+            fileName = Environment.getExternalStorageDirectory().toString()+getResources().getString(R.string.imported_data_folder)+"/"+fileName;
             dataManager.loadRecordFromXml(fileName);
             filesCount--;
             if (filesCount==0){

@@ -28,7 +28,6 @@ import org.openforis.idm.model.Value;
 import android.content.Context;
 import android.graphics.Color;
 import android.text.Html;
-import android.util.Log;
 import android.view.ViewGroup;
 import android.widget.TableLayout;
 import android.widget.TableRow;
@@ -100,17 +99,13 @@ public class SummaryList extends UIElement {
 			currentEntity = (Entity)parentEntity.get(entityDef.getName(), entityInstanceNo);
 		}
 
-		if (this.context.getFormScreenId()!=null){
-			
+		if (this.context.getFormScreenId()!=null){			
 			//fetching keys and their values
 			List<AttributeDefinition> keyAttrDefsList = entityDef.getKeyAttributeDefinitions();
 			for (AttributeDefinition attrDef : keyAttrDefsList){
 				List<String> key = new ArrayList<String>();
-				Value attrValue = null;
-				if (currentEntity.getId()!=null)
-					if (entityDef.getId()==currentEntity.getId()){//entityDef isn't yet in currentRecord
-						attrValue = (Value)currentEntity.getValue(attrDef.getName(),0);	
-					}				
+				Value attrValue = null;			
+				attrValue = (Value)currentEntity.getValue(attrDef.getName(),0);
 				key.add(attrDef.getName());
 				String stringValue = convertValueToString(attrValue, (NodeDefinition)attrDef);
 				if (stringValue!=null)
@@ -125,10 +120,10 @@ public class SummaryList extends UIElement {
 				} else {
 					keysLine += key.get(0) + getResources().getString(R.string.valuesEqualsTo) + key.get(1) + getResources().getString(R.string.valuesSeparator1);	
 				}
-				
 				if (keysLine.length()>threshold){
 					break;
 				}
+				
 			}
 		
 			if (keysLine.length()>threshold){

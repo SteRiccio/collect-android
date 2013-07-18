@@ -6,7 +6,6 @@ import java.util.List;
 import org.openforis.collect.android.R;
 
 import android.content.Context;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -73,17 +72,14 @@ public class FileListAdapter extends ArrayAdapter<DataFile> {
 	    	chckUpload.setChecked(true);
 	    }
 	    final int pos1 = position;
-	    final String fileName1 = dataFile.getName();
 	    chckUpload.setOnClickListener(new OnClickListener() {
 
 	  	  @Override
 	  	  public void onClick(View v) {
 	  		if (((CheckBox) v).isChecked()) {
-	  			Log.e("1checkboxCHECKED",fileName1+"=="+pos1);
 	  			Boolean[] boolArray = {true,checkList.get(pos1)[1]};
 	  			checkList.set(pos1, boolArray);
 	  		} else {
-	  			Log.e("1checkboxUNchecked",fileName1+"=="+pos1);
 	  			Boolean[] boolArray = {false,checkList.get(pos1)[1]};
 	  			checkList.set(pos1, boolArray);
 	  		}
@@ -103,11 +99,9 @@ public class FileListAdapter extends ArrayAdapter<DataFile> {
 		  	  @Override
 		  	  public void onClick(View v) {
 		  		if (((CheckBox) v).isChecked()) {
-		  			Log.e("2checkboxCHECKED",fileName2+"=="+pos2);
 		  			Boolean[] boolArray = {checkList.get(pos1)[0],true};
 		  			checkList.set(pos1, boolArray);
 		  		} else {
-		  			Log.e("2checkboxUNchecked",fileName2+"=="+pos2);
 		  			Boolean[] boolArray = {checkList.get(pos1)[0],false};
 		  			checkList.set(pos1, boolArray);
 		  		}

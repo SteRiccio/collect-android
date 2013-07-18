@@ -8,6 +8,7 @@ import org.openforis.collect.android.config.Configuration;
 import org.openforis.collect.android.database.DatabaseHelper;
 import org.openforis.collect.android.fields.UIElement;
 import org.openforis.collect.android.lists.DownloadActivity;
+import org.openforis.collect.android.lists.FileImportActivity;
 import org.openforis.collect.android.lists.UploadActivity;
 import org.openforis.collect.android.messages.AlertMessage;
 import org.openforis.collect.android.misc.RunnableHandler;
@@ -180,7 +181,10 @@ public class BaseActivity extends Activity {
 			    return true;
 			case R.id.menu_download:
 				startActivity(new Intent(BaseActivity.this, DownloadActivity.class));
-			    return true;    
+			    return true;
+			case R.id.menu_import_from_file:
+				startActivity(new Intent(BaseActivity.this, FileImportActivity.class));
+			    return true;  
 			case R.id.menu_settings:
 				startActivity(new Intent(BaseActivity.this,SettingsScreen.class));
 			    return true;	    
