@@ -109,8 +109,12 @@ public class SearchTaxonActivity extends Activity {
 		    public void onFocusChange(View v, boolean hasFocus) {
 		    	// Get current settings about software keyboard for text fields
 		    	if(hasFocus){
-				    	Map<String, ?> settings = ApplicationManager.appPreferences.getAll();
-				    	Boolean valueForText = (Boolean)settings.get(getResources().getString(R.string.showSoftKeyboardOnTextField));
+				    	//Map<String, ?> settings = ApplicationManager.appPreferences.getAll();
+				    	//Boolean valueForText = (Boolean)settings.get(getResources().getString(R.string.showSoftKeyboardOnTextField));
+				    	boolean valueForText = false;				   
+				    	if (ApplicationManager.appPreferences!=null){
+				    		valueForText = ApplicationManager.appPreferences.getBoolean(getResources().getString(R.string.showSoftKeyboardOnTextField), false);
+				    	}
 				    	// Switch on or off Software keyboard depend of settings
 				    	if(valueForText){
 				    		Log.i(getResources().getString(R.string.app_name), "From ClickListener: Setting search field is: " + valueForText);
