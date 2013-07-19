@@ -9,8 +9,6 @@ import java.util.Map;
 import org.openforis.collect.android.R;
 import org.openforis.collect.android.config.Configuration;
 import org.openforis.collect.android.database.DatabaseHelper;
-import org.openforis.collect.android.fields.SummaryList;
-import org.openforis.collect.android.fields.SummaryTable;
 import org.openforis.collect.android.fields.UIElement;
 import org.openforis.collect.android.lists.FormChoiceActivity;
 import org.openforis.collect.android.lists.RecordChoiceActivity;
@@ -27,18 +25,17 @@ import org.openforis.collect.model.CollectSurvey;
 import org.openforis.collect.model.NodeChange;
 import org.openforis.collect.model.NodeChangeSet;
 import org.openforis.collect.model.User;
-
-
-
-
+import org.openforis.collect.model.validation.ValidationMessageBuilder;
 
 import org.openforis.idm.metamodel.EntityDefinition;
 import org.openforis.idm.metamodel.LanguageSpecificText;
 import org.openforis.idm.metamodel.NodeDefinition;
 import org.openforis.idm.metamodel.NodeLabel.Type;
 import org.openforis.idm.metamodel.Survey;
+import org.openforis.idm.metamodel.validation.ValidationResult;
 import org.openforis.idm.metamodel.validation.ValidationResults;
 
+import org.openforis.idm.model.Attribute;
 import org.openforis.idm.model.Entity;
 
 
@@ -696,10 +693,16 @@ public class ApplicationManager extends BaseActivity {
 //        			Log.e("ApplicationManager.getUIElement(nodeChange.getNode().getInternalId())!=null","=="+(ApplicationManager.getUIElement(nodeChange.getNode().getId())!=null));
 //        			UIElement uiEl = ApplicationManager.getUIElement(nodeChange.getNode().getInternalId());    				
     				UIElement uiEl = ApplicationManager.getUIElement(nodeChange.getNode().getDefinition().getId());
+    				String validationMsg = "";
     				if (uiEl != null){
         				Log.e("UI element is: ", uiEl.nodeDefinition.getName() + " with ID: " + uiEl.nodeDefinition.getId());
-        				if (results.getErrors().size() > 0)
+        				if (results.getErrors().size() > 0){
         					uiEl.setBackgroundColor(Color.RED);
+        					for (ValidationResult error : results.getErrors()){
+        						validationMsg += ValidationMessageBuilder.createInstance().getValidationMessage((Attribute<?, ?>)nodeChange.getNode(), error) + " : ";
+        					}
+        					Log.d("Validation message is: ", validationMsg);        				
+        				}
         				else if (results.getWarnings().size() > 0)
         					uiEl.setBackgroundColor(Color.YELLOW);
         				else
@@ -708,24 +711,7 @@ public class ApplicationManager extends BaseActivity {
         			else{
         				Log.e("ERROR!","ApplicationManager cannot find node with id: "+nodeChange.getNode().getInternalId());
         			} 
-    			}	
-//    			UIElement uiEl = ApplicationManager.getUIElement(nodeChange.getNode().getInternalId());
-    			UIElement uiEl = ApplicationManager.getUIElement(nodeChange.getNode().getDefinition().getId());
-    			if (uiEl != null){
-    				Log.e("UI element is: ", uiEl.nodeDefinition.getName() + " with ID: " + uiEl.nodeDefinition.getId());
-    			}
-    			else{
-    				Log.e("ERROR!","ApplicationManager cannot find node with id: "+nodeChange.getNode().getInternalId());
-    			}
-//        		if (uiEl instanceof SummaryList){
-//        			
-//        		} else if (uiEl instanceof SummaryTable){
-//        			
-//        		} else {//single field
-//        			Log.e("single field","to change");
-//        			if (uiEl!=null)
-//        				uiEl.setBackgroundColor(Color.RED);
-//        		}	
+    			}		
     		}    		
     	}
     }
