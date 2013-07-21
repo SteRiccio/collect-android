@@ -631,23 +631,7 @@ public class FormScreen extends BaseActivity implements OnClickListener {
 		    				if (foundNode!=null){
 		    					Date dateValue = (Date)FormScreen.this.parentEntitySingleAttribute.getValue(nodeDef.getName(), 0);
 		    					if (dateValue!=null){
-		    						if (dateValue.getMonth()==null && dateValue.getDay()==null && dateValue.getYear()==null){
-		    							loadedValue = "";
-		    						} else if (dateValue.getMonth()==null && dateValue.getDay()==null){
-		    							loadedValue = dateValue.getYear()+getResources().getString(R.string.dateSeparator)+getResources().getString(R.string.dateSeparator);		    							
-		    						} else if (dateValue.getMonth()==null && dateValue.getYear()==null){
-		    							loadedValue = getResources().getString(R.string.dateSeparator)+getResources().getString(R.string.dateSeparator)+dateValue.getDay();
-		    						} else if (dateValue.getDay()==null && dateValue.getYear()==null){
-		    							loadedValue = getResources().getString(R.string.dateSeparator)+dateValue.getMonth()+getResources().getString(R.string.dateSeparator);
-		    						} else if (dateValue.getMonth()==null){
-		    							loadedValue = dateValue.getYear()+getResources().getString(R.string.dateSeparator)+getResources().getString(R.string.dateSeparator)+dateValue.getDay();		    							
-		    						} else if (dateValue.getDay()==null){
-		    							loadedValue = dateValue.getYear()+getResources().getString(R.string.dateSeparator)+dateValue.getMonth()+getResources().getString(R.string.dateSeparator);
-		    						} else if (dateValue.getYear()==null){
-		    							loadedValue = getResources().getString(R.string.dateSeparator)+dateValue.getMonth()+getResources().getString(R.string.dateSeparator)+dateValue.getDay();
-		    						} else {
-		    							loadedValue = dateValue.getYear()+getResources().getString(R.string.dateSeparator)+dateValue.getMonth()+getResources().getString(R.string.dateSeparator)+dateValue.getDay();
-		    						}
+		    						loadedValue = formatDate(dateValue);
 		    					}
 		    				}
 	
@@ -669,23 +653,7 @@ public class FormScreen extends BaseActivity implements OnClickListener {
 		    				if (foundNode!=null){
 		    					Date dateValue = (Date)FormScreen.this.parentEntitySingleAttribute.getValue(nodeDef.getName(), 0);
 		    					if (dateValue!=null){
-		    						if (dateValue.getMonth()==null && dateValue.getDay()==null && dateValue.getYear()==null){
-		    							loadedValue = "";
-		    						} else if (dateValue.getMonth()==null && dateValue.getDay()==null){
-		    							loadedValue = dateValue.getYear()+getResources().getString(R.string.dateSeparator)+getResources().getString(R.string.dateSeparator);		    							
-		    						} else if (dateValue.getMonth()==null && dateValue.getYear()==null){
-		    							loadedValue = getResources().getString(R.string.dateSeparator)+getResources().getString(R.string.dateSeparator)+dateValue.getDay();
-		    						} else if (dateValue.getDay()==null && dateValue.getYear()==null){
-		    							loadedValue = getResources().getString(R.string.dateSeparator)+dateValue.getMonth()+getResources().getString(R.string.dateSeparator);
-		    						} else if (dateValue.getMonth()==null){
-		    							loadedValue = dateValue.getYear()+getResources().getString(R.string.dateSeparator)+getResources().getString(R.string.dateSeparator)+dateValue.getDay();		    							
-		    						} else if (dateValue.getDay()==null){
-		    							loadedValue = dateValue.getYear()+getResources().getString(R.string.dateSeparator)+dateValue.getMonth()+getResources().getString(R.string.dateSeparator);
-		    						} else if (dateValue.getYear()==null){
-		    							loadedValue = getResources().getString(R.string.dateSeparator)+dateValue.getMonth()+getResources().getString(R.string.dateSeparator)+dateValue.getDay();
-		    						} else {
-		    							loadedValue = dateValue.getYear()+getResources().getString(R.string.dateSeparator)+dateValue.getMonth()+getResources().getString(R.string.dateSeparator)+dateValue.getDay();
-		    						}
+		    						loadedValue = formatDate(dateValue);
 		    					}
 		    				}
 	        				final DateField dateField= new DateField(FormScreen.this, nodeDef);
@@ -2037,16 +2005,11 @@ public class FormScreen extends BaseActivity implements OnClickListener {
 					String year = "";
 					Date dateValue = (Date)parentEntity.getValue(nodeDef.getName(), 0);
 					if (dateValue!=null){
-						if (dateValue.getDay()!=null)
-							day = dateValue.getDay().toString();
-						if (dateValue.getMonth()!=null)
-							month = dateValue.getMonth().toString();
-						if (dateValue.getYear()!=null)
-							year = dateValue.getYear().toString();
+						loadedValue = formatDate(dateValue);
 					}
 					DateField dateField = (DateField) ApplicationManager.getUIElement(nodeDef.getId());
 					if (dateField!=null)
-						dateField.setValue(0, year+getResources().getString(R.string.dateSeparator)+month+getResources().getString(R.string.dateSeparator)+day, this.getFormScreenId(), false);
+						dateField.setValue(0, loadedValue, this.getFormScreenId(), false);
 				} else if (nodeDef instanceof TimeAttributeDefinition){
 					String hour = "";
 					String minute = "";
@@ -2567,20 +2530,13 @@ public class FormScreen extends BaseActivity implements OnClickListener {
 					String month = "";
 					String year = "";
 					Date dateValue = (Date)parentEntity.getValue(nodeDef.getName(), this.currInstanceNo);
+					String loadedValue = "";
 					if (dateValue!=null){
-						day = dateValue.getDay().toString();
-						if (day==null)
-							day = "";
-						month = dateValue.getMonth().toString();
-						if (month==null)
-							month = "";
-						year = dateValue.getYear().toString();
-						if (year==null)
-							year = "";
-					}						
+						loadedValue = formatDate(dateValue);
+					}	
 					DateField dateField = (DateField) ApplicationManager.getUIElement(nodeDef.getId());
 					if (dateField!=null)
-						dateField.setValue(this.currInstanceNo, year+getResources().getString(R.string.dateSeparator)+month+getResources().getString(R.string.dateSeparator)+day, this.getFormScreenId(), false);
+						dateField.setValue(this.currInstanceNo, loadedValue, this.getFormScreenId(), false);
 				} else if (nodeDef instanceof TimeAttributeDefinition){
 					String hour = "";
 					String minute = "";
@@ -2654,5 +2610,40 @@ public class FormScreen extends BaseActivity implements OnClickListener {
     				+System.currentTimeMillis()
     				+getResources().getString(R.string.log_file_extension));
     	}	   
+    }
+    
+    private String formatDate(Date dateValue){
+    	String formattedDateValue = "";
+    	String year = String.valueOf(dateValue.getYear());
+    	String month = String.valueOf(dateValue.getMonth());
+    	if (month!=null){
+    		if (month.length()==1){
+    			month = "0"+month;
+    		}
+    	}
+    	String day = String.valueOf(dateValue.getDay());
+    	if (day!=null){
+    		if (day.length()==1){
+    			day = "0"+day;
+    		}
+    	}
+		if (dateValue.getMonth()==null && dateValue.getDay()==null && dateValue.getYear()==null){
+			formattedDateValue = "";
+		} else if (dateValue.getMonth()==null && dateValue.getDay()==null){
+			formattedDateValue = year+getResources().getString(R.string.dateSeparator)+getResources().getString(R.string.dateSeparator);		    							
+		} else if (dateValue.getMonth()==null && dateValue.getYear()==null){
+			formattedDateValue = getResources().getString(R.string.dateSeparator)+getResources().getString(R.string.dateSeparator)+day;
+		} else if (dateValue.getDay()==null && dateValue.getYear()==null){
+			formattedDateValue = getResources().getString(R.string.dateSeparator)+month+getResources().getString(R.string.dateSeparator);
+		} else if (dateValue.getMonth()==null){
+			formattedDateValue = year+getResources().getString(R.string.dateSeparator)+getResources().getString(R.string.dateSeparator)+day;		    							
+		} else if (dateValue.getDay()==null){
+			formattedDateValue = year+getResources().getString(R.string.dateSeparator)+month+getResources().getString(R.string.dateSeparator);
+		} else if (dateValue.getYear()==null){
+			formattedDateValue = getResources().getString(R.string.dateSeparator)+month+getResources().getString(R.string.dateSeparator)+day;
+		} else {
+			formattedDateValue = year+getResources().getString(R.string.dateSeparator)+month+getResources().getString(R.string.dateSeparator)+day;
+		}
+		return formattedDateValue;
     }
 }
