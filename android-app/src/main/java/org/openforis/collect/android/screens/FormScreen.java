@@ -21,14 +21,11 @@ import org.openforis.collect.android.fields.TimeField;
 import org.openforis.collect.android.fields.UIElement;
 import org.openforis.collect.android.management.ApplicationManager;
 import org.openforis.collect.android.management.BaseActivity;
-import org.openforis.collect.android.management.DataManager;
 import org.openforis.collect.android.messages.AlertMessage;
 import org.openforis.collect.android.misc.GpsActivity;
 import org.openforis.collect.android.misc.RunnableHandler;
 import org.openforis.collect.android.service.ServiceFactory;
 import org.openforis.collect.manager.CodeListManager;
-import org.openforis.collect.model.CollectSurvey;
-import org.openforis.collect.model.NodeChangeSet;
 import org.openforis.idm.metamodel.BooleanAttributeDefinition;
 import org.openforis.idm.metamodel.CodeAttributeDefinition;
 import org.openforis.idm.metamodel.CodeList;
@@ -59,12 +56,12 @@ import org.openforis.idm.model.TaxonOccurrence;
 import org.openforis.idm.model.TextValue;
 import org.openforis.idm.model.Time;
 
-import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
+import android.os.Debug;
 import android.os.Environment;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -408,6 +405,7 @@ public class FormScreen extends BaseActivity implements OnClickListener {
 	        				FormScreen.this.ll.addView(summaryTableView);
 	    				}
 	    			} else if (nodeDef instanceof CodeAttributeDefinition){
+	    				//Debug.startMethodTracing("codeListLoading");
 	    				loadedValue = "";
 	    				CodeAttributeDefinition codeAttrDef = (CodeAttributeDefinition)nodeDef;
 	    				ArrayList<String> options = new ArrayList<String>();
@@ -462,6 +460,7 @@ public class FormScreen extends BaseActivity implements OnClickListener {
 	        				summaryTableView.setId(nodeDef.getId());
 	        				FormScreen.this.ll.addView(summaryTableView);
 	    				}
+	    				//Debug.stopMethodTracing();
 	    			} else if (nodeDef instanceof CoordinateAttributeDefinition){
 	    				String loadedValueLon = "";
 	    				String loadedValueLat = "";
@@ -917,12 +916,25 @@ public class FormScreen extends BaseActivity implements OnClickListener {
 				
 			int backgroundColor = ApplicationManager.appPreferences.getInt(getResources().getString(R.string.backgroundColor), Color.WHITE);		
 			changeBackgroundColor(backgroundColor);
-	    	if (ApplicationManager.selectedView!=null){
+	    	/*if (ApplicationManager.selectedView!=null){
 	    		if (ApplicationManager.isToBeScrolled){
 	    			sv.scrollTo(0, ApplicationManager.selectedView.getTop());
+	    			Log.e("sv.height","=="+sv.getHeight());
+	    			Log.e("SCROLLED",ApplicationManager.selectedView.getTop()+"================");
 	            	ApplicationManager.isToBeScrolled = false;	
 	    		}
-	    	}
+	    	}*/
+	    	sv.post(new Runnable() {
+	    	    @Override
+	    	    public void run() {
+	    	    	if (ApplicationManager.selectedView!=null){
+	    	    		if (ApplicationManager.isToBeScrolled){
+	    	    			sv.scrollTo(0, ApplicationManager.selectedView.getTop());
+	    	            	ApplicationManager.isToBeScrolled = false;	
+	    	    		}
+	    	    } 
+	    	    } 	
+	    	});
 	
 			
 		} catch (Exception e){

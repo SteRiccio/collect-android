@@ -179,7 +179,7 @@ public class SummaryList extends UIElement {
 			}
 			
 			TextView tv = new TextView(context);
-			tv.setText(Html.fromHtml("<font size=\"32px\"><b>"+keysLine+"</b></font>")+"\n"+detailsLine);
+			tv.setText(keysLine+"\n"+detailsLine);
 			tv.setId(entityInstanceNo);
 			tv.setOnClickListener(listener);
 
