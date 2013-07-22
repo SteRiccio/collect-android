@@ -9,6 +9,7 @@ import java.util.Map;
 import org.openforis.collect.android.R;
 import org.openforis.collect.android.config.Configuration;
 import org.openforis.collect.android.database.DatabaseHelper;
+import org.openforis.collect.android.fields.MemoField;
 import org.openforis.collect.android.fields.UIElement;
 import org.openforis.collect.android.lists.FormChoiceActivity;
 import org.openforis.collect.android.lists.RecordChoiceActivity;
@@ -41,6 +42,7 @@ import org.openforis.idm.model.Entity;
 
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -57,10 +59,6 @@ public class ApplicationManager extends BaseActivity {
 	private static final String TAG = "ApplicationManager";
 	
 	private static String sessionId;
-
-
-
-
 
 	private static CollectSurvey survey;
 	//private static Schema schema;
@@ -98,21 +96,9 @@ public class ApplicationManager extends BaseActivity {
 	        	
 	            initSession();
 	            
-
-
-
-
 	            Configuration config = Configuration.getDefault(ApplicationManager.this);
 	            
 	            DatabaseHelper.init(ApplicationManager.this, config);
-	        	
-
-
-
-
-
-
-
 
 			    ServiceFactory.init(config);
 			    
@@ -155,25 +141,6 @@ public class ApplicationManager extends BaseActivity {
 			    //creating database
 			    /*new DatabaseWrapper(ApplicationManager.this);
 			    CollectDatabase collectDB = new CollectDatabase(DatabaseWrapper.db);	*/
-			    
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 	        	//reading form definition if it is not available in database
 	        	/*survey = surveyManager.get("Archenland NFI");//default survey
@@ -280,9 +247,6 @@ public class ApplicationManager extends BaseActivity {
 			editor.putString(getResources().getString(R.string.username), username);
 
 
-
-
-
 	    	editor.commit();
 	    		    
         	creationThread.start();
@@ -305,29 +269,6 @@ public class ApplicationManager extends BaseActivity {
 		}
 	}
 	
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
     @Override
 	public void onResume()
 	{
@@ -400,14 +341,10 @@ public class ApplicationManager extends BaseActivity {
 			 	           	
 		 	    			String sdcardPath = Environment.getExternalStorageDirectory().toString();
 
-
-
 		 		        	String selectedFormDefinitionFile = ApplicationManager.appPreferences.getString(getResources().getString(R.string.formDefinitionPath), getResources().getString(R.string.defaultFormDefinitionPath));
 		 		        	Log.e("loadingForm","=FROM=="+selectedFormDefinitionFile);
 			            	//FileInputStream fis = new FileInputStream(sdcardPath+getResources().getString(R.string.formDefinitionFile));  	
 		 		        	//FileInputStream fis = new FileInputStream(sdcardPath+selectedFormDefinitionFile);
-
-
 
 		 		        	SurveyManager surveyManager = ServiceFactory.getSurveyManager();
 		 		        	File idmlFile = new File(sdcardPath, selectedFormDefinitionFile);
@@ -701,15 +638,39 @@ public class ApplicationManager extends BaseActivity {
         					for (ValidationResult error : results.getErrors()){
         						validationMsg += ValidationMessageBuilder.createInstance().getValidationMessage((Attribute<?, ?>)nodeChange.getNode(), error) + " : ";
         					}
-        					Log.d("Validation message is: ", validationMsg);        				
+        					Log.d("Validation message is: ", validationMsg);
+        					//Show dialog
+//        					AlertMessage.createPositiveDialog(uiEl.getContext(), false, getResources().getDrawable(R.drawable.warningsign), 
+//        							"Error", validationMsg, "Ok",
+//        							new DialogInterface.OnClickListener() {
+//	    		    					@Override
+//	    		    					public void onClick(DialogInterface dialog, int which) {
+//	    		    						ApplicationManager.this.finish();
+//	    		    					}
+//    		    					}, null).show();
+        					AlertDialog alertDialog = new AlertDialog.Builder(uiEl.getContext()).create();
+        					alertDialog.setTitle("Error");
+        					alertDialog.setMessage(validationMsg);
+        					alertDialog.setButton("OK", new DialogInterface.OnClickListener() {
+	        					public void onClick(DialogInterface dialog, int which) {
+	        					 // here you can add functions
+	        						
+	        					 }
+        					 });
+        					alertDialog.show();
         				}
-        				else if (results.getWarnings().size() > 0)
+        				else if (results.getWarnings().size() > 0){
         					uiEl.setBackgroundColor(Color.YELLOW);
+        					for (ValidationResult warning : results.getWarnings()){
+        						validationMsg += ValidationMessageBuilder.createInstance().getValidationMessage((Attribute<?, ?>)nodeChange.getNode(), warning) + " : ";
+        					}
+        					Log.d("Validation message is: ", validationMsg);       					
+        				}
         				else
         					uiEl.setBackgroundColor(Color.TRANSPARENT);
         			}
         			else{
-        				Log.e("ERROR!","ApplicationManager cannot find node with id: "+nodeChange.getNode().getInternalId());
+        				Log.e("ERROR when validate!","ApplicationManager cannot find node with id: "+nodeChange.getNode().getInternalId());
         			} 
     			}		
     		}    		

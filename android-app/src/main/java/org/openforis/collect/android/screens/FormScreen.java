@@ -738,9 +738,11 @@ public class FormScreen extends BaseActivity implements OnClickListener {
 	        				final TimeField timeField= new TimeField(FormScreen.this, nodeDef);
 	        				timeField.setOnClickListener(FormScreen.this);
 	        				timeField.setId(nodeDef.getId());
+	        				Log.d("TIME FIELD DEBUG", "Set value: " + loadedValue + " from FormScreen activity"); 
 	        				timeField.setValue(0, loadedValue, FormScreen.this.getFormScreenId(),false);
 	        				timeField.addTextChangedListener(new TextWatcher(){
 	        			        public void afterTextChanged(Editable s) {
+	        			        	Log.d("TIME FIELD DEBUG", "Set value: " + s.toString() + " from FormScreen activity (from listener)");
 	        			        	timeField.setValue(0, s.toString(), FormScreen.this.getFormScreenId(),true);
 	        			        }
 	        			        public void beforeTextChanged(CharSequence s, int start, int count, int after){}
@@ -781,9 +783,11 @@ public class FormScreen extends BaseActivity implements OnClickListener {
 	        				final TimeField timeField= new TimeField(FormScreen.this, nodeDef);
 	        				timeField.setOnClickListener(FormScreen.this);
 	        				timeField.setId(nodeDef.getId());
+	        				Log.d("TIME FIELD DEBUG", "Set value: " + loadedValue + " from FormScreen activity (multiple instance)");
 	        				timeField.setValue(FormScreen.this.currInstanceNo, loadedValue, FormScreen.this.parentFormScreenId,false);
 	        				timeField.addTextChangedListener(new TextWatcher(){
 	        			        public void afterTextChanged(Editable s) {        			            
+	        			        	Log.d("TIME FIELD DEBUG", "Set value: " + s.toString() + " from FormScreen activity (from listener, multiple instance)");
 	        			        	timeField.setValue(FormScreen.this.currInstanceNo, s.toString(), FormScreen.this.parentFormScreenId,true);
 	        			        }
 	        			        public void beforeTextChanged(CharSequence s, int start, int count, int after){}
@@ -1051,6 +1055,7 @@ public class FormScreen extends BaseActivity implements OnClickListener {
 			View tempView = this.ll.getChildAt(i);
 			if (tempView instanceof Field){
 				Field field = (Field)tempView;
+				Log.d("TIME FIELD DEBUG", "changeBackgroundColor method runs. field is: " + field.getLabelText());
 				field.setLabelTextColor((backgroundColor!=Color.WHITE)?Color.WHITE:Color.BLACK);
 				if (tempView instanceof BooleanField){
 					BooleanField tempBooleanField = (BooleanField)tempView;
