@@ -145,7 +145,8 @@ public class BooleanField extends Field {
 			Log.e("Buulean field","is adding attribute.");
 			nodeChangeSet = ServiceFactory.getRecordManager().addAttribute(this.findParentEntity(path), this.nodeDefinition.getName(), new BooleanValue(boolValue), null, null);
 		}
-		ApplicationManager.updateUIElementsWithValidationResults(nodeChangeSet);
+//		ApplicationManager.updateUIElementsWithValidationResults(nodeChangeSet);
+//		validateField(nodeChangeSet);
 	}
 	
 	public void addOnClickListener(OnClickListener onClickListener1, OnClickListener onClickListener2) {

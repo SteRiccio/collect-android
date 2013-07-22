@@ -102,6 +102,7 @@ public class TextField extends InputField {
 			Log.e("Text field","is adding attribute. Node is NULL ");
 			nodeChangeSet = ServiceFactory.getRecordManager().addAttribute(parentEntity, this.nodeDefinition.getName(), new TextValue(value), null, null);
 		}
-		ApplicationManager.updateUIElementsWithValidationResults(nodeChangeSet);
+//		ApplicationManager.updateUIElementsWithValidationResults(nodeChangeSet);
+		validateField(nodeChangeSet);
 	}
 }

@@ -197,7 +197,8 @@ public class DateField extends InputField {
 				nodeChangeSet = ServiceFactory.getRecordManager().addAttribute(parentEntity, this.nodeDefinition.getName(), new Date(Integer.valueOf(year),Integer.valueOf(month),Integer.valueOf(day)), null, null);
 			}	
 		}
-		ApplicationManager.updateUIElementsWithValidationResults(nodeChangeSet);
+//		ApplicationManager.updateUIElementsWithValidationResults(nodeChangeSet);
+		validateField(nodeChangeSet);
 	}
 	
 	/*@Override

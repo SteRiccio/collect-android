@@ -166,7 +166,7 @@ public class TimeField extends InputField implements TextWatcher {
 				minute = value.substring(separatorIndex+1);
 		}
 		Log.e("TIMEsetValue","value=="+value);
-		Log.e("TIMEsetValue","hour=="+hour+"minute"+minute);
+//		Log.e("TIMEsetValue","hour=="+hour+"minute"+minute);
 		Node<? extends NodeDefinition> node = this.findParentEntity(path).get(this.nodeDefinition.getName(), position);
 		NodeChangeSet nodeChangeSet = null;
 		Entity parentEntity = this.findParentEntity(path);		
@@ -202,7 +202,8 @@ public class TimeField extends InputField implements TextWatcher {
 				nodeChangeSet = ServiceFactory.getRecordManager().addAttribute(parentEntity, this.nodeDefinition.getName(), new Time(Integer.valueOf(hour),Integer.valueOf(minute)), null, null);
 			}			
 		}
-		ApplicationManager.updateUIElementsWithValidationResults(nodeChangeSet);
+//		ApplicationManager.updateUIElementsWithValidationResults(nodeChangeSet);
+		validateField(nodeChangeSet);
 	}
 	
 	/*@Override

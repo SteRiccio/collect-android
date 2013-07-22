@@ -206,7 +206,8 @@ public class CoordinateField extends InputField implements OnClickListener {
 				nodeChangeSet = ServiceFactory.getRecordManager().addAttribute(parentEntity, this.nodeDefinition.getName(), new Coordinate(Double.valueOf(lon), Double.valueOf(lat), null), null, null);
 			}	
 		}
-		ApplicationManager.updateUIElementsWithValidationResults(nodeChangeSet);
+//		ApplicationManager.updateUIElementsWithValidationResults(nodeChangeSet);
+		validateField(nodeChangeSet);
 	}
 	
 	@Override

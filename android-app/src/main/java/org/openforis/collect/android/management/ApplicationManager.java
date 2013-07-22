@@ -13,6 +13,7 @@ import org.openforis.collect.android.fields.DateField;
 import org.openforis.collect.android.fields.MemoField;
 import org.openforis.collect.android.fields.TimeField;
 import org.openforis.collect.android.fields.UIElement;
+import org.openforis.collect.android.fields.InputField;
 import org.openforis.collect.android.lists.FormChoiceActivity;
 import org.openforis.collect.android.lists.RecordChoiceActivity;
 import org.openforis.collect.android.lists.RootEntityChoiceActivity;
@@ -614,7 +615,7 @@ public class ApplicationManager extends BaseActivity {
 		return label;
 	}
 	
-
+/*
     public static void updateUIElementsWithValidationResults(NodeChangeSet nodeChangeSet){
     	List<NodeChange<?>> nodeChangesList = nodeChangeSet.getChanges();
     	Log.e("Size of NodeChangeList","=="+nodeChangesList.size());
@@ -646,7 +647,8 @@ public class ApplicationManager extends BaseActivity {
         					if (uiEl instanceof TimeField || uiEl instanceof DateField){
         						//
         					}else{
-	        					AlertDialog alertDialog = getValidationMessageAlert(uiEl, "Error!", validationMsg);
+//	        					AlertDialog alertDialog = getValidationMessageAlert(uiEl, "Error!", validationMsg);
+        						AlertDialog alertDialog = ((InputField)uiEl).getValidationMessageAlert("Error!", validationMsg);
 	        					alertDialog.show();        						
         					}
         				}
@@ -661,8 +663,9 @@ public class ApplicationManager extends BaseActivity {
         					if (uiEl instanceof TimeField || uiEl instanceof DateField){
         						//
         					}else{
-	        					AlertDialog alertDialog = getValidationMessageAlert(uiEl, "Warning!", validationMsg);
-	        					alertDialog.show();        						
+//	        					AlertDialog alertDialog = getValidationMessageAlert(uiEl, "Warning!", validationMsg);
+        						AlertDialog alertDialog = ((InputField)uiEl).getValidationMessageAlert("Warning!", validationMsg);
+        						alertDialog.show();        						
         					}        					
         				}
         				else
@@ -676,17 +679,20 @@ public class ApplicationManager extends BaseActivity {
     	}
     }
     
-	private static AlertDialog getValidationMessageAlert(UIElement uiEl, String strTitle, String validationMsg){
-		AlertDialog alertDialog = new AlertDialog.Builder(uiEl.getContext()).create();
-		alertDialog.setTitle("Error");
-		alertDialog.setMessage(validationMsg);
-		alertDialog.setButton("OK", new DialogInterface.OnClickListener() {
-			public void onClick(DialogInterface dialog, int which) {
-			 //Finish it here
-//				ApplicationManager.this.finish();
-			 }
-		 });
-		    		
-		return alertDialog;
-	}
+    */
+	
+//	private static AlertDialog getValidationMessageAlert(UIElement uiEl, String strTitle, String validationMsg){
+//		AlertDialog alertDialog = new AlertDialog.Builder(uiEl.getContext()).create();
+//		alertDialog.setTitle(strTitle);
+//		alertDialog.setMessage(validationMsg);
+//		alertDialog.setButton("OK", new DialogInterface.OnClickListener() {
+//			public void onClick(DialogInterface dialog, int which) {
+//			 //Finish it here
+////				ApplicationManager.this.finish();
+//			 }
+//		 });
+//		    		
+//		return alertDialog;
+//	}
+	
 }
