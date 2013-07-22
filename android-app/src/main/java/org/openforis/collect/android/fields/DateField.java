@@ -200,8 +200,8 @@ public class DateField extends InputField {
 		ApplicationManager.updateUIElementsWithValidationResults(nodeChangeSet);
 	}
 	
-	@Override
+	/*@Override
 	public void afterTextChanged(Editable s) {
 		this.setValue(0, s.toString(), DateField.this.form.getFormScreenId(),true);
-	}
+	}*/
 }

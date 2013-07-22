@@ -21,14 +21,11 @@ import org.openforis.collect.android.fields.TimeField;
 import org.openforis.collect.android.fields.UIElement;
 import org.openforis.collect.android.management.ApplicationManager;
 import org.openforis.collect.android.management.BaseActivity;
-import org.openforis.collect.android.management.DataManager;
 import org.openforis.collect.android.messages.AlertMessage;
 import org.openforis.collect.android.misc.GpsActivity;
 import org.openforis.collect.android.misc.RunnableHandler;
 import org.openforis.collect.android.service.ServiceFactory;
 import org.openforis.collect.manager.CodeListManager;
-import org.openforis.collect.model.CollectSurvey;
-import org.openforis.collect.model.NodeChangeSet;
 import org.openforis.idm.metamodel.BooleanAttributeDefinition;
 import org.openforis.idm.metamodel.CodeAttributeDefinition;
 import org.openforis.idm.metamodel.CodeList;
@@ -59,12 +56,12 @@ import org.openforis.idm.model.TaxonOccurrence;
 import org.openforis.idm.model.TextValue;
 import org.openforis.idm.model.Time;
 
-import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
+import android.os.Debug;
 import android.os.Environment;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -408,6 +405,7 @@ public class FormScreen extends BaseActivity implements OnClickListener {
 	        				FormScreen.this.ll.addView(summaryTableView);
 	    				}
 	    			} else if (nodeDef instanceof CodeAttributeDefinition){
+	    				//Debug.startMethodTracing("codeListLoading");
 	    				loadedValue = "";
 	    				CodeAttributeDefinition codeAttrDef = (CodeAttributeDefinition)nodeDef;
 	    				ArrayList<String> options = new ArrayList<String>();
@@ -462,6 +460,7 @@ public class FormScreen extends BaseActivity implements OnClickListener {
 	        				summaryTableView.setId(nodeDef.getId());
 	        				FormScreen.this.ll.addView(summaryTableView);
 	    				}
+	    				//Debug.stopMethodTracing();
 	    			} else if (nodeDef instanceof CoordinateAttributeDefinition){
 	    				String loadedValueLon = "";
 	    				String loadedValueLat = "";
@@ -632,23 +631,7 @@ public class FormScreen extends BaseActivity implements OnClickListener {
 		    				if (foundNode!=null){
 		    					Date dateValue = (Date)FormScreen.this.parentEntitySingleAttribute.getValue(nodeDef.getName(), 0);
 		    					if (dateValue!=null){
-		    						if (dateValue.getMonth()==null && dateValue.getDay()==null && dateValue.getYear()==null){
-		    							loadedValue = "";
-		    						} else if (dateValue.getMonth()==null && dateValue.getDay()==null){
-		    							loadedValue = dateValue.getYear()+getResources().getString(R.string.dateSeparator)+getResources().getString(R.string.dateSeparator);		    							
-		    						} else if (dateValue.getMonth()==null && dateValue.getYear()==null){
-		    							loadedValue = getResources().getString(R.string.dateSeparator)+getResources().getString(R.string.dateSeparator)+dateValue.getDay();
-		    						} else if (dateValue.getDay()==null && dateValue.getYear()==null){
-		    							loadedValue = getResources().getString(R.string.dateSeparator)+dateValue.getMonth()+getResources().getString(R.string.dateSeparator);
-		    						} else if (dateValue.getMonth()==null){
-		    							loadedValue = dateValue.getYear()+getResources().getString(R.string.dateSeparator)+getResources().getString(R.string.dateSeparator)+dateValue.getDay();		    							
-		    						} else if (dateValue.getDay()==null){
-		    							loadedValue = dateValue.getYear()+getResources().getString(R.string.dateSeparator)+dateValue.getMonth()+getResources().getString(R.string.dateSeparator);
-		    						} else if (dateValue.getYear()==null){
-		    							loadedValue = getResources().getString(R.string.dateSeparator)+dateValue.getMonth()+getResources().getString(R.string.dateSeparator)+dateValue.getDay();
-		    						} else {
-		    							loadedValue = dateValue.getYear()+getResources().getString(R.string.dateSeparator)+dateValue.getMonth()+getResources().getString(R.string.dateSeparator)+dateValue.getDay();
-		    						}
+		    						loadedValue = formatDate(dateValue);
 		    					}
 		    				}
 	
@@ -670,23 +653,7 @@ public class FormScreen extends BaseActivity implements OnClickListener {
 		    				if (foundNode!=null){
 		    					Date dateValue = (Date)FormScreen.this.parentEntitySingleAttribute.getValue(nodeDef.getName(), 0);
 		    					if (dateValue!=null){
-		    						if (dateValue.getMonth()==null && dateValue.getDay()==null && dateValue.getYear()==null){
-		    							loadedValue = "";
-		    						} else if (dateValue.getMonth()==null && dateValue.getDay()==null){
-		    							loadedValue = dateValue.getYear()+getResources().getString(R.string.dateSeparator)+getResources().getString(R.string.dateSeparator);		    							
-		    						} else if (dateValue.getMonth()==null && dateValue.getYear()==null){
-		    							loadedValue = getResources().getString(R.string.dateSeparator)+getResources().getString(R.string.dateSeparator)+dateValue.getDay();
-		    						} else if (dateValue.getDay()==null && dateValue.getYear()==null){
-		    							loadedValue = getResources().getString(R.string.dateSeparator)+dateValue.getMonth()+getResources().getString(R.string.dateSeparator);
-		    						} else if (dateValue.getMonth()==null){
-		    							loadedValue = dateValue.getYear()+getResources().getString(R.string.dateSeparator)+getResources().getString(R.string.dateSeparator)+dateValue.getDay();		    							
-		    						} else if (dateValue.getDay()==null){
-		    							loadedValue = dateValue.getYear()+getResources().getString(R.string.dateSeparator)+dateValue.getMonth()+getResources().getString(R.string.dateSeparator);
-		    						} else if (dateValue.getYear()==null){
-		    							loadedValue = getResources().getString(R.string.dateSeparator)+dateValue.getMonth()+getResources().getString(R.string.dateSeparator)+dateValue.getDay();
-		    						} else {
-		    							loadedValue = dateValue.getYear()+getResources().getString(R.string.dateSeparator)+dateValue.getMonth()+getResources().getString(R.string.dateSeparator)+dateValue.getDay();
-		    						}
+		    						loadedValue = formatDate(dateValue);
 		    					}
 		    				}
 	        				final DateField dateField= new DateField(FormScreen.this, nodeDef);
@@ -921,12 +888,25 @@ public class FormScreen extends BaseActivity implements OnClickListener {
 				
 			int backgroundColor = ApplicationManager.appPreferences.getInt(getResources().getString(R.string.backgroundColor), Color.WHITE);		
 			changeBackgroundColor(backgroundColor);
-	    	if (ApplicationManager.selectedView!=null){
+	    	/*if (ApplicationManager.selectedView!=null){
 	    		if (ApplicationManager.isToBeScrolled){
 	    			sv.scrollTo(0, ApplicationManager.selectedView.getTop());
+	    			Log.e("sv.height","=="+sv.getHeight());
+	    			Log.e("SCROLLED",ApplicationManager.selectedView.getTop()+"================");
 	            	ApplicationManager.isToBeScrolled = false;	
 	    		}
-	    	}
+	    	}*/
+	    	sv.post(new Runnable() {
+	    	    @Override
+	    	    public void run() {
+	    	    	if (ApplicationManager.selectedView!=null){
+	    	    		if (ApplicationManager.isToBeScrolled){
+	    	    			sv.scrollTo(0, ApplicationManager.selectedView.getTop());
+	    	            	ApplicationManager.isToBeScrolled = false;	
+	    	    		}
+	    	    } 
+	    	    } 	
+	    	});
 	
 			
 		} catch (Exception e){
@@ -2030,16 +2010,11 @@ public class FormScreen extends BaseActivity implements OnClickListener {
 					String year = "";
 					Date dateValue = (Date)parentEntity.getValue(nodeDef.getName(), 0);
 					if (dateValue!=null){
-						if (dateValue.getDay()!=null)
-							day = dateValue.getDay().toString();
-						if (dateValue.getMonth()!=null)
-							month = dateValue.getMonth().toString();
-						if (dateValue.getYear()!=null)
-							year = dateValue.getYear().toString();
+						loadedValue = formatDate(dateValue);
 					}
 					DateField dateField = (DateField) ApplicationManager.getUIElement(nodeDef.getId());
 					if (dateField!=null)
-						dateField.setValue(0, year+getResources().getString(R.string.dateSeparator)+month+getResources().getString(R.string.dateSeparator)+day, this.getFormScreenId(), false);
+						dateField.setValue(0, loadedValue, this.getFormScreenId(), false);
 				} else if (nodeDef instanceof TimeAttributeDefinition){
 					String hour = "";
 					String minute = "";
@@ -2560,20 +2535,13 @@ public class FormScreen extends BaseActivity implements OnClickListener {
 					String month = "";
 					String year = "";
 					Date dateValue = (Date)parentEntity.getValue(nodeDef.getName(), this.currInstanceNo);
+					String loadedValue = "";
 					if (dateValue!=null){
-						day = dateValue.getDay().toString();
-						if (day==null)
-							day = "";
-						month = dateValue.getMonth().toString();
-						if (month==null)
-							month = "";
-						year = dateValue.getYear().toString();
-						if (year==null)
-							year = "";
-					}						
+						loadedValue = formatDate(dateValue);
+					}	
 					DateField dateField = (DateField) ApplicationManager.getUIElement(nodeDef.getId());
 					if (dateField!=null)
-						dateField.setValue(this.currInstanceNo, year+getResources().getString(R.string.dateSeparator)+month+getResources().getString(R.string.dateSeparator)+day, this.getFormScreenId(), false);
+						dateField.setValue(this.currInstanceNo, loadedValue, this.getFormScreenId(), false);
 				} else if (nodeDef instanceof TimeAttributeDefinition){
 					String hour = "";
 					String minute = "";
@@ -2647,5 +2615,40 @@ public class FormScreen extends BaseActivity implements OnClickListener {
     				+System.currentTimeMillis()
     				+getResources().getString(R.string.log_file_extension));
     	}	   
+    }
+    
+    private String formatDate(Date dateValue){
+    	String formattedDateValue = "";
+    	String year = String.valueOf(dateValue.getYear());
+    	String month = String.valueOf(dateValue.getMonth());
+    	if (month!=null){
+    		if (month.length()==1){
+    			month = "0"+month;
+    		}
+    	}
+    	String day = String.valueOf(dateValue.getDay());
+    	if (day!=null){
+    		if (day.length()==1){
+    			day = "0"+day;
+    		}
+    	}
+		if (dateValue.getMonth()==null && dateValue.getDay()==null && dateValue.getYear()==null){
+			formattedDateValue = "";
+		} else if (dateValue.getMonth()==null && dateValue.getDay()==null){
+			formattedDateValue = year+getResources().getString(R.string.dateSeparator)+getResources().getString(R.string.dateSeparator);		    							
+		} else if (dateValue.getMonth()==null && dateValue.getYear()==null){
+			formattedDateValue = getResources().getString(R.string.dateSeparator)+getResources().getString(R.string.dateSeparator)+day;
+		} else if (dateValue.getDay()==null && dateValue.getYear()==null){
+			formattedDateValue = getResources().getString(R.string.dateSeparator)+month+getResources().getString(R.string.dateSeparator);
+		} else if (dateValue.getMonth()==null){
+			formattedDateValue = year+getResources().getString(R.string.dateSeparator)+getResources().getString(R.string.dateSeparator)+day;		    							
+		} else if (dateValue.getDay()==null){
+			formattedDateValue = year+getResources().getString(R.string.dateSeparator)+month+getResources().getString(R.string.dateSeparator);
+		} else if (dateValue.getYear()==null){
+			formattedDateValue = getResources().getString(R.string.dateSeparator)+month+getResources().getString(R.string.dateSeparator)+day;
+		} else {
+			formattedDateValue = year+getResources().getString(R.string.dateSeparator)+month+getResources().getString(R.string.dateSeparator)+day;
+		}
+		return formattedDateValue;
     }
 }
