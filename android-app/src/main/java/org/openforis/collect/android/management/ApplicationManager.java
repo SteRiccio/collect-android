@@ -9,7 +9,9 @@ import java.util.Map;
 import org.openforis.collect.android.R;
 import org.openforis.collect.android.config.Configuration;
 import org.openforis.collect.android.database.DatabaseHelper;
+import org.openforis.collect.android.fields.DateField;
 import org.openforis.collect.android.fields.MemoField;
+import org.openforis.collect.android.fields.TimeField;
 import org.openforis.collect.android.fields.UIElement;
 import org.openforis.collect.android.lists.FormChoiceActivity;
 import org.openforis.collect.android.lists.RecordChoiceActivity;
@@ -639,32 +641,29 @@ public class ApplicationManager extends BaseActivity {
         						validationMsg += ValidationMessageBuilder.createInstance().getValidationMessage((Attribute<?, ?>)nodeChange.getNode(), error) + " : ";
         					}
         					Log.d("Validation message is: ", validationMsg);
-        					//Show dialog
-//        					AlertMessage.createPositiveDialog(uiEl.getContext(), false, getResources().getDrawable(R.drawable.warningsign), 
-//        							"Error", validationMsg, "Ok",
-//        							new DialogInterface.OnClickListener() {
-//	    		    					@Override
-//	    		    					public void onClick(DialogInterface dialog, int which) {
-//	    		    						ApplicationManager.this.finish();
-//	    		    					}
-//    		    					}, null).show();
-        					AlertDialog alertDialog = new AlertDialog.Builder(uiEl.getContext()).create();
-        					alertDialog.setTitle("Error");
-        					alertDialog.setMessage(validationMsg);
-        					alertDialog.setButton("OK", new DialogInterface.OnClickListener() {
-	        					public void onClick(DialogInterface dialog, int which) {
-	        					 // here you can add functions
-	        						
-	        					 }
-        					 });
-        					alertDialog.show();
+        					//Show dialog 
+        					//TODO Make it works for time and date fields
+        					if (uiEl instanceof TimeField || uiEl instanceof DateField){
+        						//
+        					}else{
+	        					AlertDialog alertDialog = getValidationMessageAlert(uiEl, "Error!", validationMsg);
+	        					alertDialog.show();        						
+        					}
         				}
         				else if (results.getWarnings().size() > 0){
         					uiEl.setBackgroundColor(Color.YELLOW);
         					for (ValidationResult warning : results.getWarnings()){
         						validationMsg += ValidationMessageBuilder.createInstance().getValidationMessage((Attribute<?, ?>)nodeChange.getNode(), warning) + " : ";
         					}
-        					Log.d("Validation message is: ", validationMsg);       					
+        					Log.d("Validation message is: ", validationMsg);  
+        					//Show dialog 
+        					//TODO Make it works for time and date fields
+        					if (uiEl instanceof TimeField || uiEl instanceof DateField){
+        						//
+        					}else{
+	        					AlertDialog alertDialog = getValidationMessageAlert(uiEl, "Warning!", validationMsg);
+	        					alertDialog.show();        						
+        					}        					
         				}
         				else
         					uiEl.setBackgroundColor(Color.TRANSPARENT);
@@ -676,4 +675,18 @@ public class ApplicationManager extends BaseActivity {
     		}    		
     	}
     }
+    
+	private static AlertDialog getValidationMessageAlert(UIElement uiEl, String strTitle, String validationMsg){
+		AlertDialog alertDialog = new AlertDialog.Builder(uiEl.getContext()).create();
+		alertDialog.setTitle("Error");
+		alertDialog.setMessage(validationMsg);
+		alertDialog.setButton("OK", new DialogInterface.OnClickListener() {
+			public void onClick(DialogInterface dialog, int which) {
+			 //Finish it here
+//				ApplicationManager.this.finish();
+			 }
+		 });
+		    		
+		return alertDialog;
+	}
 }
