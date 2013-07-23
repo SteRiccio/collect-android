@@ -20,6 +20,7 @@ import org.openforis.idm.model.Node;
 
 import android.content.Context;
 import android.text.Editable;
+import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
@@ -65,6 +66,19 @@ public class CodeField extends InputField {
 		
 		CodeField.form = (FormScreen)context;
 		
+		this.codes = new ArrayList<String>();
+		this.codes.add("null");
+		this.options = new ArrayList<String>();
+		this.options.add("");
+		CodeListManager codeListManager = ServiceFactory.getCodeListManager();
+		List<CodeListItem> parentItems = codeListManager.loadValidItems(this.parentEntity, this.codeAttrDef);
+		Log.e("parentItems.size1",this.codeAttrDef.getName()+"=="+parentItems.size());
+		for (int i=0;i<parentItems.size();i++){
+			CodeListItem item = parentItems.get(i);
+			this.codes.add(item.getCode());
+			this.options.add(item.getLabel(ApplicationManager.selectedLanguage)/*item.getLabels().get(0).getText()*/);
+		}
+		
 		this.label.setLayoutParams(new LayoutParams(0, ViewGroup.LayoutParams.WRAP_CONTENT, (float) 1));
 		this.label.setOnLongClickListener(new OnLongClickListener() {
 	        @Override
@@ -79,8 +93,7 @@ public class CodeField extends InputField {
 				public void onClick(View v) {
 					
 				}});
-		}
-		
+		}		
 		
 		if (codeAttrDef.isAllowUnlisted()){
 			this.txtBox = new EditText(context);
@@ -92,8 +105,16 @@ public class CodeField extends InputField {
 				this.spinner = new Spinner(context);
 				this.spinner.setPrompt(this.label.getText());
 				
-				this.codes = codes;
-				this.options = options;
+				/*this.codes = codes;
+				this.options = options;*/
+
+				/*CodeListManager codeListManager = ServiceFactory.getCodeListManager();
+				List<CodeListItem> parentItems = codeListManager.loadValidItems(this.parentEntity, this.codeAttrDef);
+				for (int i=0;i<parentItems.size();i++){
+					CodeListItem item = parentItems.get(i);
+					this.codes.add(item.getCode());
+					this.options.add(item.getLabel(ApplicationManager.selectedLanguage));
+				}*/
 
 				this.aa = new ArrayAdapter<String>(context, android.R.layout.simple_spinner_item, this.options);
 				this.aa.setDropDownViewResource(R.layout.codelistitem);
@@ -122,18 +143,18 @@ public class CodeField extends InputField {
 					this.spinner = new Spinner(context);
 					this.spinner.setPrompt(this.label.getText());
 					
-					this.codes = new ArrayList<String>();
-					this.codes.add("");
+					/*this.codes = new ArrayList<String>();
+					this.codes.add("null");
 					this.options = new ArrayList<String>();
-					this.options.add("");
+					this.options.add("");*/
 					
 					CodeField parentCodeField = (CodeField)ApplicationManager.getUIElement(this.codeAttrDef.getParentCodeAttributeDefinition().getId());
 					if (parentCodeField!=null){
 						int selectedPositionInParent = parentCodeField.spinner.getSelectedItemPosition();
 						if (selectedPositionInParent>0){
 							selectedPositionInParent--;
-							CodeListManager codeListManager = ServiceFactory.getCodeListManager();
-							List<CodeListItem> parentItems = codeListManager.loadValidItems(this.parentEntity, this.codeAttrDef);
+							/*CodeListManager */codeListManager = ServiceFactory.getCodeListManager();
+							/*List<CodeListItem> */parentItems = codeListManager.loadValidItems(this.parentEntity, this.codeAttrDef);
 							for (int i=0;i<parentItems.size();i++){
 								CodeListItem item = parentItems.get(i);
 								this.codes.add(item.getCode());
@@ -176,8 +197,8 @@ public class CodeField extends InputField {
 					this.spinner = new Spinner(context);
 					this.spinner.setPrompt(this.label.getText());
 					
-					this.codes = codes;
-					this.options = options;
+					/*this.codes = codes;
+					this.options = options;*/
 
 					this.aa = new ArrayAdapter<String>(context, android.R.layout.simple_spinner_item, this.options);
 					this.aa.setDropDownViewResource(R.layout.codelistitem);
@@ -196,7 +217,7 @@ public class CodeField extends InputField {
 					    		for (int i=0;i<CodeField.this.childrenIds.size();i++){
 					    			CodeField currentChild = (CodeField)ApplicationManager.getUIElement(CodeField.this.childrenIds.get(i));
 					    			currentChild.codes = new ArrayList<String>();
-					    			currentChild.codes.add("");
+					    			currentChild.codes.add("null");
 					    			currentChild.options = new ArrayList<String>();
 					    			currentChild.options.add("");
 					    			

@@ -137,6 +137,7 @@ public class FormScreen extends BaseActivity implements OnClickListener {
 	{
 		super.onResume();
 		Log.i(getResources().getString(R.string.app_name),TAG+":onResume");
+		long startTime = System.currentTimeMillis();
 		//Log.e("onresume","FormScreen.this.getFormScreenId()=="+FormScreen.this.getFormScreenId());
 		//Log.e("onresume","FormScreen.this.parentFormScreenId=="+FormScreen.this.parentFormScreenId);
 		try{
@@ -414,18 +415,13 @@ public class FormScreen extends BaseActivity implements OnClickListener {
 	    				codes.add("null");
 	    				CodeListManager codeListManager = ServiceFactory.getCodeListManager();
 						CodeList list = codeAttrDef.getList();
-						if ( ! list.isExternal() ) {
+						/*if ( ! list.isExternal() ) {
 							List<CodeListItem> codeListItemsList = codeListManager.loadRootItems(list);
 							for (CodeListItem codeListItem : codeListItemsList){
 								codes.add(codeListItem.getCode());
-								/*if (codeListItem.getLabel(null)==null){
-	    						options.add(codeListItem.getLabel("en"));
-	    					} else {
-	    						options.add(codeListItem.getLabel(null));	    						
-	    					}	*/
 								options.add(CodeField.getLabelForCodeListItem(codeListItem));
 							}
-						}
+						}*/
 	    				if (!nodeDef.isMultiple()){
 	    					Node<?> foundNode = FormScreen.this.parentEntitySingleAttribute.get(nodeDef.getName(), 0);
 		    				if (foundNode!=null){
@@ -917,6 +913,7 @@ public class FormScreen extends BaseActivity implements OnClickListener {
 					+System.currentTimeMillis()
 					+getResources().getString(R.string.log_file_extension));
 		}
+		Log.e("onRESUME time","=="+(System.currentTimeMillis()-startTime));
 	}
     
     @Override
