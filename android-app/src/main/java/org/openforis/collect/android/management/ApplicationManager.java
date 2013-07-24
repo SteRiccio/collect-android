@@ -685,23 +685,14 @@ public class ApplicationManager extends BaseActivity {
 
 	public static ItemsStorage getStoredItems(Integer definitionId, Integer selectedPosition){
 		ItemsStorage foundItemsStorage = null;
-		Log.e("searching for",definitionId+"=="+selectedPosition);
-		//Log.e("iloscSTOREDItems","=="+ApplicationManager.storedItemsList.size());
 		for (ItemsStorage storage : ApplicationManager.storedItemsList){
-			//Log.e("searching for2",definitionId+"=="+selectedPosition);
-			//Log.e("STOREDITEM",storage.definitionId+"=="+storage.selectedPositionInParent);
-			//Log.e("storage.defId==defID",storage.definitionId+"=="+definitionId);
 			if (storage.definitionId.equals(definitionId)){
-				//Log.e("definitionID match","==");
-				//Log.e("stporage.selected==selected",storage.selectedPositionInParent+"=="+selectedPosition);
 				if (storage.selectedPositionInParent.equals(selectedPosition)){
-					//Log.e("selectedPositionInParent match","==");
 					foundItemsStorage = storage;
 					break;
 				}				
 			}
 		}
-		Log.e("FOUND?","=="+(foundItemsStorage!=null));
 		return foundItemsStorage;
 	}
 }

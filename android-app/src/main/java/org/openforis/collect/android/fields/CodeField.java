@@ -21,7 +21,6 @@ import org.openforis.idm.model.Node;
 
 import android.content.Context;
 import android.text.Editable;
-import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
@@ -59,7 +58,6 @@ public class CodeField extends InputField {
 		this.parentEntity = this.findParentEntity(path);
 		
 		this.codeAttrDef = (CodeAttributeDefinition)this.nodeDefinition;
-		Log.e("codeAttrDef",this.codeAttrDef.getId()+"=="+this.codeAttrDef.getName());
 		this.childrenIds = new ArrayList<Integer>();
 		
 		this.searchable = true;
@@ -117,7 +115,6 @@ public class CodeField extends InputField {
 					//parentItems = ApplicationManager.storedItemsList.getItems(currentChild.getId(),positionToLoadItemsFrom).items;							
 				} else {
 					CodeListManager codeListManager = ServiceFactory.getCodeListManager();
-					Log.e("constructor","LOADVALIDITEMS1");
 					parentItems = codeListManager.loadValidItems(this.parentEntity, this.codeAttrDef);
 					ItemsStorage storage = new ItemsStorage();
 					storage.setDefinitionId(this.codeAttrDef.getId());
@@ -204,7 +201,6 @@ public class CodeField extends InputField {
 								//parentItems = ApplicationManager.storedItemsList.getItems(currentChild.getId(),positionToLoadItemsFrom).items;							
 							} else {
 								CodeListManager codeListManager = ServiceFactory.getCodeListManager();
-								Log.e("constructor","LOADVALIDITEMS4");
 								parentItems = codeListManager.loadValidItems(this.parentEntity, this.codeAttrDef);
 								ItemsStorage storage = new ItemsStorage();
 								storage.setDefinitionId(this.codeAttrDef.getId());
@@ -252,7 +248,6 @@ public class CodeField extends InputField {
 					}
 				}			
 				else {
-					Log.e("ELSE",this.codeAttrDef.getName()+"==="+this.codeAttrDef.getId());
 					this.spinner = new Spinner(context);
 					this.spinner.setPrompt(this.label.getText());
 					
@@ -267,7 +262,6 @@ public class CodeField extends InputField {
 						//parentItems = ApplicationManager.storedItemsList.getItems(currentChild.getId(),positionToLoadItemsFrom).items;							
 					} else {
 						CodeListManager codeListManager = ServiceFactory.getCodeListManager();
-						Log.e("constructor","LOADVALIDITEMS4");
 						parentItems = codeListManager.loadValidItems(this.parentEntity, this.codeAttrDef);
 						ItemsStorage storage = new ItemsStorage();
 						storage.setDefinitionId(this.codeAttrDef.getId());
@@ -317,7 +311,6 @@ public class CodeField extends InputField {
 											//parentItems = ApplicationManager.storedItemsList.getItems(currentChild.getId(),positionToLoadItemsFrom).items;							
 										} else {
 											CodeListManager codeListManager = ServiceFactory.getCodeListManager();
-											Log.e("constructor","LOADVALIDITEMS3");
 											parentItems = codeListManager.loadValidItems(currentChild.parentEntity, currentChild.codeAttrDef);
 											ItemsStorage storage = new ItemsStorage();
 											storage.setDefinitionId(currentChild.codeAttrDef.getId());
