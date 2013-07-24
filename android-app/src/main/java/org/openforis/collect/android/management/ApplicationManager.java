@@ -9,43 +9,27 @@ import java.util.Map;
 import org.openforis.collect.android.R;
 import org.openforis.collect.android.config.Configuration;
 import org.openforis.collect.android.database.DatabaseHelper;
-import org.openforis.collect.android.fields.DateField;
-import org.openforis.collect.android.fields.MemoField;
-import org.openforis.collect.android.fields.TimeField;
 import org.openforis.collect.android.fields.UIElement;
-import org.openforis.collect.android.fields.InputField;
 import org.openforis.collect.android.lists.FormChoiceActivity;
 import org.openforis.collect.android.lists.RecordChoiceActivity;
 import org.openforis.collect.android.lists.RootEntityChoiceActivity;
 import org.openforis.collect.android.messages.AlertMessage;
+import org.openforis.collect.android.misc.ItemsStorage;
 import org.openforis.collect.android.misc.RunnableHandler;
 import org.openforis.collect.android.screens.FormScreen;
 import org.openforis.collect.android.service.ServiceFactory;
 import org.openforis.collect.manager.SurveyManager;
-
-import org.openforis.collect.model.AttributeChange;
 import org.openforis.collect.model.CollectRecord;
 import org.openforis.collect.model.CollectSurvey;
-import org.openforis.collect.model.NodeChange;
-import org.openforis.collect.model.NodeChangeSet;
 import org.openforis.collect.model.User;
-import org.openforis.collect.model.validation.ValidationMessageBuilder;
-
 import org.openforis.idm.metamodel.EntityDefinition;
 import org.openforis.idm.metamodel.LanguageSpecificText;
 import org.openforis.idm.metamodel.NodeDefinition;
 import org.openforis.idm.metamodel.NodeLabel.Type;
 import org.openforis.idm.metamodel.Survey;
-import org.openforis.idm.metamodel.validation.ValidationResult;
-import org.openforis.idm.metamodel.validation.ValidationResults;
-
-import org.openforis.idm.model.Attribute;
 import org.openforis.idm.model.Entity;
 
-
-
 import android.app.Activity;
-import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -90,6 +74,8 @@ public class ApplicationManager extends BaseActivity {
 	public static List<Activity> formScreenActivityList;
 	public static Activity formSelectionActivity;
 	
+	public static List<ItemsStorage> storedItemsList;
+	
 	private Thread creationThread = new Thread() {
 		@Override
 		public void run() {
@@ -109,6 +95,8 @@ public class ApplicationManager extends BaseActivity {
 	            ApplicationManager.currRootEntityId = -1;
 	            ApplicationManager.selectedView = null;
 	            ApplicationManager.isToBeScrolled = false;
+	            
+	            ApplicationManager.storedItemsList = new ArrayList<ItemsStorage>();
 	            
 //	            ApplicationManager.appPreferences = getPreferences(MODE_PRIVATE);
 //				int backgroundColor = ApplicationManager.appPreferences.getInt(getResources().getString(R.string.backgroundColor), Color.WHITE);
@@ -694,5 +682,26 @@ public class ApplicationManager extends BaseActivity {
 //		    		
 //		return alertDialog;
 //	}
-	
+
+	public static ItemsStorage getStoredItems(Integer definitionId, Integer selectedPosition){
+		ItemsStorage foundItemsStorage = null;
+		Log.e("searching for",definitionId+"=="+selectedPosition);
+		//Log.e("iloscSTOREDItems","=="+ApplicationManager.storedItemsList.size());
+		for (ItemsStorage storage : ApplicationManager.storedItemsList){
+			//Log.e("searching for2",definitionId+"=="+selectedPosition);
+			//Log.e("STOREDITEM",storage.definitionId+"=="+storage.selectedPositionInParent);
+			//Log.e("storage.defId==defID",storage.definitionId+"=="+definitionId);
+			if (storage.definitionId.equals(definitionId)){
+				//Log.e("definitionID match","==");
+				//Log.e("stporage.selected==selected",storage.selectedPositionInParent+"=="+selectedPosition);
+				if (storage.selectedPositionInParent.equals(selectedPosition)){
+					//Log.e("selectedPositionInParent match","==");
+					foundItemsStorage = storage;
+					break;
+				}				
+			}
+		}
+		Log.e("FOUND?","=="+(foundItemsStorage!=null));
+		return foundItemsStorage;
+	}
 }

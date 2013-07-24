@@ -6,6 +6,7 @@ import java.util.List;
 import org.openforis.collect.android.R;
 import org.openforis.collect.android.management.ApplicationManager;
 import org.openforis.collect.android.messages.ToastMessage;
+import org.openforis.collect.android.misc.ItemsStorage;
 import org.openforis.collect.android.screens.FormScreen;
 import org.openforis.collect.android.service.ServiceFactory;
 import org.openforis.collect.manager.CodeListManager;
@@ -48,17 +49,17 @@ public class CodeField extends InputField {
 	
 	private ArrayList<Integer> childrenIds;
 	
-	private Entity parentEntity;
+	private Entity parentEntity;	
 	
 	public CodeField(Context context, NodeDefinition nodeDef, 
 			ArrayList<String> codes, ArrayList<String> options, 
 			String selectedItem, String path) {
 		super(context, nodeDef);
-
+		
 		this.parentEntity = this.findParentEntity(path);
 		
 		this.codeAttrDef = (CodeAttributeDefinition)this.nodeDefinition;
-		
+		Log.e("codeAttrDef",this.codeAttrDef.getId()+"=="+this.codeAttrDef.getName());
 		this.childrenIds = new ArrayList<Integer>();
 		
 		this.searchable = true;
@@ -70,14 +71,14 @@ public class CodeField extends InputField {
 		this.codes.add("null");
 		this.options = new ArrayList<String>();
 		this.options.add("");
-		CodeListManager codeListManager = ServiceFactory.getCodeListManager();
+		/*CodeListManager codeListManager = ServiceFactory.getCodeListManager();
+		Log.e("constructor","LOADVALIDITEMS1");
 		List<CodeListItem> parentItems = codeListManager.loadValidItems(this.parentEntity, this.codeAttrDef);
-		Log.e("parentItems.size1",this.codeAttrDef.getName()+"=="+parentItems.size());
 		for (int i=0;i<parentItems.size();i++){
 			CodeListItem item = parentItems.get(i);
 			this.codes.add(item.getCode());
-			this.options.add(item.getLabel(ApplicationManager.selectedLanguage)/*item.getLabels().get(0).getText()*/);
-		}
+			this.options.add(item.getLabel(ApplicationManager.selectedLanguage));
+		}*/
 		
 		this.label.setLayoutParams(new LayoutParams(0, ViewGroup.LayoutParams.WRAP_CONTENT, (float) 1));
 		this.label.setOnLongClickListener(new OnLongClickListener() {
@@ -107,8 +108,31 @@ public class CodeField extends InputField {
 				
 				/*this.codes = codes;
 				this.options = options;*/
-
-				/*CodeListManager codeListManager = ServiceFactory.getCodeListManager();
+				ItemsStorage foundItemsStorage = ApplicationManager.getStoredItems(this.nodeDefinition.getId(),0);			
+				List<CodeListItem> parentItems = null;
+				if (foundItemsStorage!=null){
+					parentItems = foundItemsStorage.items;
+				}
+				if (parentItems!=null){
+					//parentItems = ApplicationManager.storedItemsList.getItems(currentChild.getId(),positionToLoadItemsFrom).items;							
+				} else {
+					CodeListManager codeListManager = ServiceFactory.getCodeListManager();
+					Log.e("constructor","LOADVALIDITEMS1");
+					parentItems = codeListManager.loadValidItems(this.parentEntity, this.codeAttrDef);
+					ItemsStorage storage = new ItemsStorage();
+					storage.setDefinitionId(this.codeAttrDef.getId());
+					storage.setItems(parentItems);
+					storage.addSelectedPositionInParent(0);
+					ApplicationManager.storedItemsList.add(storage);
+				}
+				for (int j=0;j<parentItems.size();j++){
+					CodeListItem item = parentItems.get(j);
+					this.codes.add(item.getCode().toString());
+					this.options.add(item.getLabel(ApplicationManager.selectedLanguage)/*item.getLabels().get(0).getText()*/);
+					//currentChild.aa.add(item.getLabel(ApplicationManager.selectedLanguage)/*item.getLabels().get(0).getText()*/);
+				}
+				/*Log.e("constructor","LOADVALIDITEMS1");
+				CodeListManager codeListManager = ServiceFactory.getCodeListManager();
 				List<CodeListItem> parentItems = codeListManager.loadValidItems(this.parentEntity, this.codeAttrDef);
 				for (int i=0;i<parentItems.size();i++){
 					CodeListItem item = parentItems.get(i);
@@ -148,17 +172,51 @@ public class CodeField extends InputField {
 					this.options = new ArrayList<String>();
 					this.options.add("");*/
 					
+					/*CodeListManager codeListManager = ServiceFactory.getCodeListManager();
+					Log.e("constructor","LOADVALIDITEMS2");
+					List<CodeListItem> parentItems = codeListManager.loadValidItems(this.parentEntity, this.codeAttrDef.getParentCodeAttributeDefinition());
+					Log.e("parentItemsize"+parentItems.size(),this.codeAttrDef.getParentCodeAttributeDefinition().getId()+"==");
+					for (int i=0;i<parentItems.size();i++){
+						CodeListItem item = parentItems.get(i);
+						this.codes.add(item.getCode());
+						this.options.add(item.getLabel(ApplicationManager.selectedLanguage));
+					}*/
+					
 					CodeField parentCodeField = (CodeField)ApplicationManager.getUIElement(this.codeAttrDef.getParentCodeAttributeDefinition().getId());
 					if (parentCodeField!=null){
 						int selectedPositionInParent = parentCodeField.spinner.getSelectedItemPosition();
 						if (selectedPositionInParent>0){
 							selectedPositionInParent--;
-							/*CodeListManager */codeListManager = ServiceFactory.getCodeListManager();
-							/*List<CodeListItem> */parentItems = codeListManager.loadValidItems(this.parentEntity, this.codeAttrDef);
+							/*CodeListManager codeListManager = ServiceFactory.getCodeListManager();
+							Log.e("constructor","LOADVALIDITEMS2");
+							List<CodeListItem> parentItems = codeListManager.loadValidItems(this.parentEntity, this.codeAttrDef);
 							for (int i=0;i<parentItems.size();i++){
 								CodeListItem item = parentItems.get(i);
 								this.codes.add(item.getCode());
+								this.options.add(item.getLabel(ApplicationManager.selectedLanguage)item.getLabels().get(0).getText());
+							}*/
+							ItemsStorage foundItemsStorage = ApplicationManager.getStoredItems(this.codeAttrDef.getId(),selectedPositionInParent);			
+							List<CodeListItem> parentItems = null;
+							if (foundItemsStorage!=null){
+								parentItems = foundItemsStorage.items;
+							}
+							if (parentItems!=null){
+								//parentItems = ApplicationManager.storedItemsList.getItems(currentChild.getId(),positionToLoadItemsFrom).items;							
+							} else {
+								CodeListManager codeListManager = ServiceFactory.getCodeListManager();
+								Log.e("constructor","LOADVALIDITEMS4");
+								parentItems = codeListManager.loadValidItems(this.parentEntity, this.codeAttrDef);
+								ItemsStorage storage = new ItemsStorage();
+								storage.setDefinitionId(this.codeAttrDef.getId());
+								storage.setItems(parentItems);
+								storage.addSelectedPositionInParent(selectedPositionInParent);
+								ApplicationManager.storedItemsList.add(storage);
+							}
+							for (int j=0;j<parentItems.size();j++){
+								CodeListItem item = parentItems.get(j);
+								this.codes.add(item.getCode().toString());
 								this.options.add(item.getLabel(ApplicationManager.selectedLanguage)/*item.getLabels().get(0).getText()*/);
+								//currentChild.aa.add(item.getLabel(ApplicationManager.selectedLanguage)/*item.getLabels().get(0).getText()*/);
 							}
 						}							
 					}
@@ -194,12 +252,36 @@ public class CodeField extends InputField {
 					}
 				}			
 				else {
+					Log.e("ELSE",this.codeAttrDef.getName()+"==="+this.codeAttrDef.getId());
 					this.spinner = new Spinner(context);
 					this.spinner.setPrompt(this.label.getText());
 					
 					/*this.codes = codes;
 					this.options = options;*/
-
+					ItemsStorage foundItemsStorage = ApplicationManager.getStoredItems(this.codeAttrDef.getId(),0);			
+					List<CodeListItem> parentItems = null;
+					if (foundItemsStorage!=null){
+						parentItems = foundItemsStorage.items;
+					}
+					if (parentItems!=null){
+						//parentItems = ApplicationManager.storedItemsList.getItems(currentChild.getId(),positionToLoadItemsFrom).items;							
+					} else {
+						CodeListManager codeListManager = ServiceFactory.getCodeListManager();
+						Log.e("constructor","LOADVALIDITEMS4");
+						parentItems = codeListManager.loadValidItems(this.parentEntity, this.codeAttrDef);
+						ItemsStorage storage = new ItemsStorage();
+						storage.setDefinitionId(this.codeAttrDef.getId());
+						storage.setItems(parentItems);
+						storage.addSelectedPositionInParent(0);
+						ApplicationManager.storedItemsList.add(storage);
+					}
+					for (int j=0;j<parentItems.size();j++){
+						CodeListItem item = parentItems.get(j);
+						this.codes.add(item.getCode().toString());
+						this.options.add(item.getLabel(ApplicationManager.selectedLanguage)/*item.getLabels().get(0).getText()*/);
+						//currentChild.aa.add(item.getLabel(ApplicationManager.selectedLanguage)/*item.getLabels().get(0).getText()*/);
+					}
+					
 					this.aa = new ArrayAdapter<String>(context, android.R.layout.simple_spinner_item, this.options);
 					this.aa.setDropDownViewResource(R.layout.codelistitem);
 
@@ -223,12 +305,26 @@ public class CodeField extends InputField {
 					    			
 									currentChild.aa.clear();
 					    			currentChild.aa.add("");
-					    			
 					    			int selectedPositionInParent = spinner.getSelectedItemPosition();
 									if (selectedPositionInParent>0){
 										selectedPositionInParent--;
-										CodeListManager codeListManager = ServiceFactory.getCodeListManager();
-										List<CodeListItem> parentItems = codeListManager.loadValidItems(currentChild.parentEntity, currentChild.codeAttrDef);
+										ItemsStorage foundItemsStorage = ApplicationManager.getStoredItems(currentChild.nodeDefinition.getId(),selectedPositionInParent);			
+										List<CodeListItem> parentItems = null;
+										if (foundItemsStorage!=null){
+											parentItems = foundItemsStorage.items;
+										}
+										if (parentItems!=null){
+											//parentItems = ApplicationManager.storedItemsList.getItems(currentChild.getId(),positionToLoadItemsFrom).items;							
+										} else {
+											CodeListManager codeListManager = ServiceFactory.getCodeListManager();
+											Log.e("constructor","LOADVALIDITEMS3");
+											parentItems = codeListManager.loadValidItems(currentChild.parentEntity, currentChild.codeAttrDef);
+											ItemsStorage storage = new ItemsStorage();
+											storage.setDefinitionId(currentChild.codeAttrDef.getId());
+											storage.setItems(parentItems);
+											storage.addSelectedPositionInParent(selectedPositionInParent);
+											ApplicationManager.storedItemsList.add(storage);
+										}
 										for (int j=0;j<parentItems.size();j++){
 											CodeListItem item = parentItems.get(j);
 											currentChild.codes.add(item.getCode().toString());
@@ -250,7 +346,7 @@ public class CodeField extends InputField {
 					    	
 					    }
 
-					});					
+					});
 				}
 			}//end of hierarchical list
 			setSpinnerSelection(selectedItem);
@@ -330,4 +426,6 @@ public class CodeField extends InputField {
 		else
 			this.spinner.setSelection(0);
 	}
+	
+
 }
