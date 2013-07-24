@@ -587,12 +587,8 @@ public class ApplicationManager extends BaseActivity {
 		return ApplicationManager.sessionId;
 	}
 	
-	public static String getLabel(NodeDefinition nodeDef/*, String language*/){
-		//Log.e("getLabel","=="+ApplicationManager.selectedLanguage);
+	public static String getLabel(NodeDefinition nodeDef){
 		String label = nodeDef.getLabel(Type.INSTANCE, ApplicationManager.selectedLanguage);
-		/*if (label==null){
-			label = nodeDef.getLabel(Type.INSTANCE, "en");
-		}*/
 		if (label==null){
 			if (nodeDef.getLabels().size()>0){
 				label = nodeDef.getLabels().get(0).getText();	

@@ -31,34 +31,12 @@ public class ListSearchActivity extends ListActivity implements TextWatcher{
 		this.txtSearchByName = (EditText)this.findViewById(R.id.txtSearchByName);
 		this.txtSearchByName.addTextChangedListener(this);
 		
-		this.listName = this.getIntent().getStringExtra("listName");
-		
-		/*this.itemsList = TabManager.survey.getCodeList(this.listName).getItems();
-		for (CodeListItem codeListItem : this.itemsList){
-			this.codes.add(codeListItem.getCode());
-			this.treeData.add(codeListItem.getLabel(null));
-		}
-        //this.codes = ;//this.getIntent().getStringExtra("codes").split("\\\");
-        //this.treeData = ;//this.getIntent().getStringExtra("options").split("\\\");
-        this.adapter = new ArrayAdapter<String>(this, R.layout.row, R.id.label, treeData);
-		this.setListAdapter(this.adapter);		*/		
+		this.listName = this.getIntent().getStringExtra("listName");	
 	}
 
 	@Override
 	protected void onListItemClick(ListView l, View v, int position, long id) {
 		super.onListItemClick(l, v, position, id);
-		/*if (!getListAdapter().getItem(position).toString().equals("No tree matches keyword entered...")){
-				//saving selected value
-				this.pref_db.saveItem(constants.PREFselectedItem, getListAdapter().getItem(position).toString());
-				for (int i=0;i<treeData.length;i++){
-					if (treeData[i].equals(getListAdapter().getItem(position).toString())){
-						position = i;
-						break;
-					}
-				}
-				this.pref_db.saveItem(constants.PREFselectedItemCode, this.codes[position]);
-		        finish();
-		}*/
 	}
     
 	private void doSearch(){

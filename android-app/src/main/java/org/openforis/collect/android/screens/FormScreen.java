@@ -413,8 +413,8 @@ public class FormScreen extends BaseActivity implements OnClickListener {
 	    				ArrayList<String> codes = new ArrayList<String>();
 	    				options.add("");
 	    				codes.add("null");
-	    				CodeListManager codeListManager = ServiceFactory.getCodeListManager();
-						CodeList list = codeAttrDef.getList();
+	    				/*CodeListManager codeListManager = ServiceFactory.getCodeListManager();
+						CodeList list = codeAttrDef.getList();*/
 						/*if ( ! list.isExternal() ) {
 							List<CodeListItem> codeListItemsList = codeListManager.loadRootItems(list);
 							for (CodeListItem codeListItem : codeListItemsList){
@@ -1032,7 +1032,6 @@ public class FormScreen extends BaseActivity implements OnClickListener {
 			View tempView = this.ll.getChildAt(i);
 			if (tempView instanceof Field){
 				Field field = (Field)tempView;
-				Log.d("TIME FIELD DEBUG", "changeBackgroundColor method runs. field is: " + field.getLabelText());
 				field.setLabelTextColor((backgroundColor!=Color.WHITE)?Color.WHITE:Color.BLACK);
 				if (tempView instanceof BooleanField){
 					BooleanField tempBooleanField = (BooleanField)tempView;
@@ -1430,7 +1429,7 @@ public class FormScreen extends BaseActivity implements OnClickListener {
 	    				for (CodeListItem codeListItem : codeListItemsList){
 	    					codes.add(codeListItem.getCode());
 	    					if (codeListItem.getLabel(null)==null){
-	    						options.add(codeListItem.getLabel("en"));
+	    						options.add(codeListItem.getLabel(ApplicationManager.selectedLanguage));
 	    					} else {
 	    						options.add(codeListItem.getLabel(null));	    						
 	    					}

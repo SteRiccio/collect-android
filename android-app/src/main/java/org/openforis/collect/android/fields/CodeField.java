@@ -211,7 +211,7 @@ public class CodeField extends InputField {
 							for (int j=0;j<parentItems.size();j++){
 								CodeListItem item = parentItems.get(j);
 								this.codes.add(item.getCode().toString());
-								this.options.add(item.getLabel(ApplicationManager.selectedLanguage)/*item.getLabels().get(0).getText()*/);
+								this.options.add(item.getLabel(ApplicationManager.selectedLanguage));
 								//currentChild.aa.add(item.getLabel(ApplicationManager.selectedLanguage)/*item.getLabels().get(0).getText()*/);
 							}
 						}							

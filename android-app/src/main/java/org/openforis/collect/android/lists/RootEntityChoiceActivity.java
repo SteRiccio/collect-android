@@ -97,12 +97,7 @@ public class RootEntityChoiceActivity extends BaseListActivity{
 		String[] clusterList = new String[rootEntitiesList.size()];
 		for (int i=0;i<rootEntitiesList.size();i++){
 			EntityDefinition rootEntity = rootEntitiesList.get(i);
-			//clusterList[i] = rootEntity.getId()+" "+rootEntity.getName();
-			/*String label = rootEntity.getLabel(Type.INSTANCE, null);
-			if (label==null){
-				label = rootEntity.getLabel(Type.INSTANCE, "en").toString();
-			}*/
-			clusterList[i] = ApplicationManager.getLabel(rootEntity/*, null*/);
+			clusterList[i] = ApplicationManager.getLabel(rootEntity);
 		}
 		int layout = (backgroundColor!=Color.WHITE)?R.layout.localclusterrow_white:R.layout.localclusterrow_black;
         this.adapter = new ArrayAdapter<String>(this, layout, R.id.plotlabel, clusterList);
