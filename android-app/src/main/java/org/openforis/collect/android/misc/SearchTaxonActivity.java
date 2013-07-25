@@ -7,14 +7,13 @@ import java.util.Map;
 import org.openforis.collect.android.R;
 import org.openforis.collect.android.database.DatabaseHelper;
 import org.openforis.collect.android.fields.TaxonField;
-import org.openforis.collect.android.lists.DownloadActivity;
 import org.openforis.collect.android.management.ApplicationManager;
 import org.openforis.collect.android.management.TaxonManager;
+import org.openforis.collect.android.service.ServiceFactory;
 import org.openforis.collect.persistence.TaxonDao;
 import org.openforis.collect.persistence.TaxonVernacularNameDao;
 import org.openforis.collect.persistence.TaxonomyDao;
 import org.openforis.idm.model.TaxonOccurrence;
-import org.springframework.jdbc.core.support.JdbcDaoSupport;
 
 import android.app.Activity;
 import android.app.ProgressDialog;
@@ -132,8 +131,12 @@ public class SearchTaxonActivity extends Activity {
 		this.txtSearch.setOnClickListener(new OnClickListener(){
 			@Override
 			public void onClick(View arg0) {
-		    	Map<String, ?> settings = ApplicationManager.appPreferences.getAll();
-		    	Boolean valueForText = (Boolean)settings.get(getResources().getString(R.string.showSoftKeyboardOnTextField));
+		    	//Map<String, ?> settings = ApplicationManager.appPreferences.getAll();
+		    	//Boolean valueForText = (Boolean)settings.get(getResources().getString(R.string.showSoftKeyboardOnTextField));
+		    	boolean valueForText = false;				   
+		    	if (ApplicationManager.appPreferences!=null){
+		    		valueForText = ApplicationManager.appPreferences.getBoolean(getResources().getString(R.string.showSoftKeyboardOnTextField), false);
+		    	}
 		    	// Switch on or off Software keyboard depend of settings
 		    	if(valueForText){
 		    		Log.i(getResources().getString(R.string.app_name), "From ClickListener: Setting search field is: " + valueForText);
@@ -199,28 +202,26 @@ public class SearchTaxonActivity extends Activity {
         @Override
         public void run() {         
         	//Open connection with database
-//        	JdbcDaoSupport jdbcDao  = new JdbcDaoSupport();
-//        	jdbcDao.getConnection();    	
-        	//Search results 
+        	//JdbcDaoSupport jdbcDao  = new JdbcDaoSupport();
+        	//jdbcDao.getConnection();	
+        	//Search results
         	this.lstTaxonOccurence = new ArrayList<TaxonOccurrence>();
-        	if(SearchTaxonActivity.this.taxonManager != null){
-        		Log.i(getResources().getString(R.string.app_name), "Search by: " + SearchTaxonActivity.this.criteria);
-        		    		
+        	if(ServiceFactory.getTaxonManager() != null){
+        		Log.i(getResources().getString(R.string.app_name), "Search by: " + SearchTaxonActivity.this.criteria);        		    		
         		if(SearchTaxonActivity.this.criteria.equalsIgnoreCase("Code")){
     				Log.i(getResources().getString(R.string.app_name), "Search by Code");
-    				lstTaxonOccurence = SearchTaxonActivity.this.taxonManager.findByCode(SearchTaxonActivity.this.taxonomy, strSearch, 1000);			
+    				lstTaxonOccurence = ServiceFactory.getTaxonManager().findByCode(SearchTaxonActivity.this.taxonomy, strSearch, 1000);			
     			}
     			else if (SearchTaxonActivity.this.criteria.equalsIgnoreCase("SciName")){
     				Log.i(getResources().getString(R.string.app_name), "Search by Scientific name");
-    				lstTaxonOccurence = SearchTaxonActivity.this.taxonManager.findByScientificName(SearchTaxonActivity.this.taxonomy, strSearch, 1000);		
+    				lstTaxonOccurence = ServiceFactory.getTaxonManager().findByScientificName(SearchTaxonActivity.this.taxonomy, strSearch, 1000);		
     			}
     			else if (SearchTaxonActivity.this.criteria.equalsIgnoreCase("VernacularName")){
     				Log.i(getResources().getString(R.string.app_name), "Search by VernacularName");
-    				lstTaxonOccurence = SearchTaxonActivity.this.taxonManager.findByVernacularName(SearchTaxonActivity.this.taxonomy, strSearch, 1000);
+    				lstTaxonOccurence = ServiceFactory.getTaxonManager().findByVernacularName(SearchTaxonActivity.this.taxonomy, strSearch, 1000);
     					
 
-    			}    		
-    			else{
+    			} else{
     				Log.i(getResources().getString(R.string.app_name), "Undefined criteria is: " + SearchTaxonActivity.this.criteria);
     			}
     		}else{

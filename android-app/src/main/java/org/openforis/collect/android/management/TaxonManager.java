@@ -8,6 +8,7 @@ package org.openforis.collect.android.management;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.openforis.collect.android.service.ServiceFactory;
 import org.openforis.collect.persistence.TaxonDao;
 import org.openforis.collect.persistence.TaxonVernacularNameDao;
 import org.openforis.collect.persistence.TaxonomyDao;
