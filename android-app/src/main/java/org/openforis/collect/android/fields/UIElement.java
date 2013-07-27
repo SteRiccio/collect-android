@@ -12,6 +12,7 @@ import org.openforis.idm.model.Node;
 
 import android.content.Context;
 import android.graphics.Color;
+import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.TableLayout;
 import android.widget.TextView;
@@ -21,6 +22,7 @@ public class UIElement extends TableLayout{
 	protected LinearLayout container;
 	
 	protected TextView label;
+	protected TextView extendedLabel;
 	
 	protected int currentInstanceNo;
 	
@@ -65,6 +67,11 @@ public class UIElement extends TableLayout{
 		if (!(nodeDef instanceof EntityDefinition)&& !(nodeDef.isMultiple()))
 			this.addView(this.label);
 		
+		this.extendedLabel = new TextView(context);
+		this.extendedLabel.setTextColor(Color.BLACK);
+		this.extendedLabel.setVisibility(View.GONE);
+		if (!(nodeDef instanceof EntityDefinition)&& !(nodeDef.isMultiple()))
+			this.addView(this.extendedLabel);
 		
 		
 		this.container = new LinearLayout(context);

@@ -113,7 +113,6 @@ public class DataManager {
 	}
 	
 	public void saveAllRecordsToFile(String folderToSave){
-		Log.e("saveAllRecordsToFile","=");
 		try{
 			BackupProcess backup = new BackupProcess(ServiceFactory.getSurveyManager(), ServiceFactory.getRecordManager(), 
 					this.dataMarshaller, new File(folderToSave),
@@ -146,8 +145,7 @@ public class DataManager {
 			e.printStackTrace();
 		} finally {
 
-		}	
-		Log.e("record","SAVED IN XML IN "+(System.currentTimeMillis()-startTime)/1000+"s");
+		}
 		return 0;
 	}
 	

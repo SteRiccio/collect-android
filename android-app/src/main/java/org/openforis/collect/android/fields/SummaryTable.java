@@ -4,6 +4,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.openforis.collect.android.R;
+import org.openforis.collect.android.management.ApplicationManager;
+import org.openforis.collect.android.messages.AlertMessage;
+import org.openforis.collect.android.screens.FormScreen;
+import org.openforis.collect.android.service.ServiceFactory;
 import org.openforis.idm.metamodel.BooleanAttributeDefinition;
 import org.openforis.idm.metamodel.CodeAttributeDefinition;
 import org.openforis.idm.metamodel.CoordinateAttributeDefinition;
@@ -33,9 +37,12 @@ import org.openforis.idm.model.TextValue;
 import org.openforis.idm.model.Time;
 
 import android.content.Context;
+import android.content.DialogInterface;
 import android.graphics.Color;
 import android.view.Gravity;
+import android.view.View;
 import android.view.ViewGroup;
+import android.view.View.OnLongClickListener;
 import android.widget.TableLayout;
 import android.widget.TableRow;
 import android.widget.TextView;
@@ -64,6 +71,8 @@ public class SummaryTable extends UIElement {
 		    this.values.add(newValue);
 			//EntityBuilder.addValue(parentEntity, nodeDef.getName(), newValue, 0);
 	    }
+	    
+	    
 
 	    for (int i=0;i<listOfNodes.size();i++){
 	    	Node<?> foundNode = parentEntity.get(nodeDef.getName(), i);
@@ -229,15 +238,35 @@ public class SummaryTable extends UIElement {
 				}				
 				cell.setId(i);
 				cell.setOnClickListener(listener);
-				/*cell.setOnClickListener(new OnClickListener() {                      
-					@Override
-					public void onClick(View arg0) {
-						TextView tv = (TextView)arg0;
-						Log.e("klikniety","=="+tv.getText().toString());
-					}
-				});*/
+				final Node<?> nodeToDelete = parentEntity.get(nodeDef.getName(), i);
+				cell.setOnLongClickListener(new OnLongClickListener() {
+			        @Override
+			        public boolean onLongClick(View v) {
+			        	AlertMessage.createPositiveNegativeDialog(SummaryTable.this.getContext(), false, getResources().getDrawable(R.drawable.warningsign),
+			 					getResources().getString(R.string.deleteAttributeTitle), getResources().getString(R.string.deleteAttribute),
+			 					getResources().getString(R.string.yes), getResources().getString(R.string.no),
+			 		    		new DialogInterface.OnClickListener() {
+			 						@Override
+			 						public void onClick(DialogInterface dialog, int which) {
+			 							ServiceFactory.getRecordManager().deleteNode(nodeToDelete);
+			 							ApplicationManager.isToBeScrolled = true;
+			 							ApplicationManager.selectedView = SummaryTable.this;
+			 							((FormScreen)SummaryTable.this.getContext()).onResume();
+			 						}
+			 					},
+			 		    		new DialogInterface.OnClickListener() {
+			 						@Override
+			 						public void onClick(DialogInterface dialog, int which) {
+
+			 						}
+			 					},
+			 					null).show();
+			            return true;
+			        }
+			    });
 				tempRow.addView(cell);
 			}
+			
 			this.tableLayout.addView(tempRow);
 		}
 		

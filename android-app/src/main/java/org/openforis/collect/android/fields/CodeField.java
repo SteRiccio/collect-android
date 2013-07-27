@@ -20,6 +20,7 @@ import org.openforis.idm.model.EntityBuilder;
 import org.openforis.idm.model.Node;
 
 import android.content.Context;
+import android.os.Debug;
 import android.text.Editable;
 import android.view.View;
 import android.view.ViewGroup;
@@ -92,7 +93,7 @@ public class CodeField extends InputField {
 				public void onClick(View v) {
 					
 				}});
-		}		
+		}	
 		
 		if (codeAttrDef.isAllowUnlisted()){
 			this.txtBox = new EditText(context);
@@ -115,12 +116,14 @@ public class CodeField extends InputField {
 					//parentItems = ApplicationManager.storedItemsList.getItems(currentChild.getId(),positionToLoadItemsFrom).items;							
 				} else {
 					CodeListManager codeListManager = ServiceFactory.getCodeListManager();
+					//Debug.startMethodTracing("codeListLoading3");
 					parentItems = codeListManager.loadValidItems(this.parentEntity, this.codeAttrDef);
+					//Debug.stopMethodTracing();
 					ItemsStorage storage = new ItemsStorage();
 					storage.setDefinitionId(this.codeAttrDef.getId());
 					storage.setItems(parentItems);
 					storage.addSelectedPositionInParent(0);
-					ApplicationManager.storedItemsList.add(storage);
+					ApplicationManager.storedItemsList.add(storage);					
 				}
 				for (int j=0;j<parentItems.size();j++){
 					CodeListItem item = parentItems.get(j);
@@ -311,7 +314,9 @@ public class CodeField extends InputField {
 											//parentItems = ApplicationManager.storedItemsList.getItems(currentChild.getId(),positionToLoadItemsFrom).items;							
 										} else {
 											CodeListManager codeListManager = ServiceFactory.getCodeListManager();
+											Debug.startMethodTracing("codeListLoadingHierarchical");
 											parentItems = codeListManager.loadValidItems(currentChild.parentEntity, currentChild.codeAttrDef);
+											Debug.stopMethodTracing();
 											ItemsStorage storage = new ItemsStorage();
 											storage.setDefinitionId(currentChild.codeAttrDef.getId());
 											storage.setItems(parentItems);

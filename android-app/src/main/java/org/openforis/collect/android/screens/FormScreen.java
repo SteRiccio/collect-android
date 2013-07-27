@@ -405,8 +405,7 @@ public class FormScreen extends BaseActivity implements OnClickListener {
 	        				summaryTableView.setId(nodeDef.getId());
 	        				FormScreen.this.ll.addView(summaryTableView);
 	    				}
-	    			} else if (nodeDef instanceof CodeAttributeDefinition){
-	    				//Debug.startMethodTracing("codeListLoading");
+	    			} else if (nodeDef instanceof CodeAttributeDefinition){	    				
 	    				loadedValue = "";
 	    				CodeAttributeDefinition codeAttrDef = (CodeAttributeDefinition)nodeDef;
 	    				ArrayList<String> options = new ArrayList<String>();
@@ -456,7 +455,7 @@ public class FormScreen extends BaseActivity implements OnClickListener {
 	        				summaryTableView.setId(nodeDef.getId());
 	        				FormScreen.this.ll.addView(summaryTableView);
 	    				}
-	    				//Debug.stopMethodTracing();
+	    				
 	    			} else if (nodeDef instanceof CoordinateAttributeDefinition){
 	    				String loadedValueLon = "";
 	    				String loadedValueLat = "";

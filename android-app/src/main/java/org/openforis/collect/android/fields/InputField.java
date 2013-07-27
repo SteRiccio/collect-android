@@ -21,6 +21,7 @@ import android.text.TextWatcher;
 import android.text.method.DigitsKeyListener;
 import android.text.method.KeyListener;
 import android.util.Log;
+import android.view.View;
 import android.widget.EditText;
 
 public class InputField extends Field implements TextWatcher {
@@ -99,34 +100,51 @@ public class InputField extends Field implements TextWatcher {
     				String validationMsg = "";
     				if (results.getErrors().size() > 0){
     					setBackgroundColor(Color.RED);
-    					for (ValidationResult error : results.getErrors()){
-    						validationMsg += ValidationMessageBuilder.createInstance().getValidationMessage((Attribute<?, ?>)nodeChange.getNode(), error) + " : ";
-    					}
+    					for (int i=0;i<results.getErrors().size();i++){
+    						ValidationResult error = results.getErrors().get(i);
+    						if (i<results.getErrors().size()-1)
+    							validationMsg += ValidationMessageBuilder.createInstance().getValidationMessage((Attribute<?, ?>)nodeChange.getNode(), error) + "\r\n";
+    						else
+    							validationMsg += ValidationMessageBuilder.createInstance().getValidationMessage((Attribute<?, ?>)nodeChange.getNode(), error);
+    					}    				
     					Log.d("Validation message is: ", validationMsg);
     					//Show dialog 
     					if (this instanceof TimeField || this instanceof DateField){
     						//Just change background for first time
     					}else{
-							AlertDialog alertDialog = getValidationMessageAlert("Error!", validationMsg);
-	    					alertDialog.show();       
+							/*AlertDialog alertDialog = getValidationMessageAlert("Error!", validationMsg);
+	    					alertDialog.show();*/
+    						this.extendedLabel.setVisibility(View.VISIBLE);
+    						this.extendedLabel.setText("Error: "+validationMsg);
     					} 						
     				}
     				else if (results.getWarnings().size() > 0){
     					setBackgroundColor(Color.YELLOW);
-    					for (ValidationResult warning : results.getWarnings()){
-    						validationMsg += ValidationMessageBuilder.createInstance().getValidationMessage((Attribute<?, ?>)nodeChange.getNode(), warning) + " : ";
+    					for (int i=0;i<results.getWarnings().size();i++){
+    						ValidationResult warning = results.getErrors().get(i);
+    						if (i<results.getErrors().size()-1)
+    							validationMsg += ValidationMessageBuilder.createInstance().getValidationMessage((Attribute<?, ?>)nodeChange.getNode(), warning) + "\r\n";
+    						else
+    							validationMsg += ValidationMessageBuilder.createInstance().getValidationMessage((Attribute<?, ?>)nodeChange.getNode(), warning);
     					}
+    					
     					Log.d("Validation message is: ", validationMsg);  
     					//Show dialog 
     					if (this instanceof TimeField || this instanceof DateField){
     						//Just change background for first time
     					}else{
-							AlertDialog alertDialog = getValidationMessageAlert("Warning!", validationMsg);
-	    					alertDialog.show();       
+							/*AlertDialog alertDialog = getValidationMessageAlert("Warning!", validationMsg);
+	    					alertDialog.show();*/
+    						this.extendedLabel.setVisibility(View.VISIBLE);
+    						this.extendedLabel.setText("Warning"+validationMsg);
     					}      						       					
     				}
-    				else
-    					setBackgroundColor(Color.TRANSPARENT); 
+    				else {
+    					setBackgroundColor(Color.TRANSPARENT);
+    					this.extendedLabel.setText("");
+    					this.extendedLabel.setVisibility(View.GONE);
+    				}
+    					
     			}		
     		}    				
 	}

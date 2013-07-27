@@ -5,7 +5,10 @@ import java.util.List;
 
 import org.openforis.collect.android.R;
 import org.openforis.collect.android.management.ApplicationManager;
+import org.openforis.collect.android.management.DataManager;
+import org.openforis.collect.android.messages.AlertMessage;
 import org.openforis.collect.android.screens.FormScreen;
+import org.openforis.collect.android.service.ServiceFactory;
 import org.openforis.idm.metamodel.AttributeDefinition;
 import org.openforis.idm.metamodel.CodeAttributeDefinition;
 import org.openforis.idm.metamodel.EntityDefinition;
@@ -26,8 +29,10 @@ import org.openforis.idm.model.Time;
 import org.openforis.idm.model.Value;
 
 import android.content.Context;
+import android.content.DialogInterface;
 import android.graphics.Color;
-import android.text.Html;
+import android.util.Log;
+import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TableLayout;
 import android.widget.TableRow;
@@ -179,9 +184,35 @@ public class SummaryList extends UIElement {
 			}
 			
 			TextView tv = new TextView(context);
-			tv.setText(keysLine+"\n"+detailsLine);
+			tv.setText(keysLine+"\r\n"+detailsLine);
 			tv.setId(entityInstanceNo);
 			tv.setOnClickListener(listener);
+			final Entity entityToRemove = currentEntity;
+			tv.setOnLongClickListener(new OnLongClickListener() {
+		        @Override
+		        public boolean onLongClick(View v) {		        
+		        	AlertMessage.createPositiveNegativeDialog(SummaryList.this.context, false, getResources().getDrawable(R.drawable.warningsign),
+		 					getResources().getString(R.string.deleteEntityTitle), getResources().getString(R.string.deleteEntity),
+		 					getResources().getString(R.string.yes), getResources().getString(R.string.no),
+		 		    		new DialogInterface.OnClickListener() {
+		 						@Override
+		 						public void onClick(DialogInterface dialog, int which) {
+		 							ServiceFactory.getRecordManager().deleteNode(entityToRemove);
+		 							ApplicationManager.isToBeScrolled = true;
+		 							ApplicationManager.selectedView = SummaryList.this;
+		 							((FormScreen)SummaryList.this.context).onResume();
+		 						}
+		 					},
+		 		    		new DialogInterface.OnClickListener() {
+		 						@Override
+		 						public void onClick(DialogInterface dialog, int which) {
+
+		 						}
+		 					},
+		 					null).show();
+		            return true;
+		        }
+		    });
 
 			TableRow tr = new TableRow(context);
 			tr.addView(tv);

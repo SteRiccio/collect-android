@@ -38,6 +38,10 @@
     <string name="editingMemoField">Editing</string>
     <string name="deleteRecordTitle">Deleting&#8230;</string>
     <string name="deleteRecord">Do you want to delete the record?</string>
+    <string name="deleteEntityTitle">Deleting&#8230;</string>
+    <string name="deleteEntity">Do you want to delete the entity?</string>  
+    <string name="deleteAttributeTitle">Deleting&#8230;</string>
+    <string name="deleteAttribute">Do you want to delete the attribute\'s value?</string>      
     <string name="noInternetTitle">No connection&#8230;</string>    
     <string name="noInternetMessage">There is no connection to Internet available. Make sure you are connected to network and then try to upload data again.</string>
     <string name="maxCountTitle">Too many&#8230;</string>
