@@ -1,15 +1,22 @@
 package org.openforis.collect.android.fields;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import org.openforis.collect.android.R;
 import org.openforis.collect.android.management.ApplicationManager;
 import org.openforis.collect.android.messages.ToastMessage;
 import org.openforis.collect.android.screens.FormScreen;
 import org.openforis.collect.android.service.ServiceFactory;
+import org.openforis.collect.model.AttributeChange;
+import org.openforis.collect.model.NodeChange;
 import org.openforis.collect.model.NodeChangeSet;
+import org.openforis.collect.model.validation.ValidationMessageBuilder;
 import org.openforis.idm.metamodel.BooleanAttributeDefinition;
 import org.openforis.idm.metamodel.NodeDefinition;
+import org.openforis.idm.metamodel.validation.ValidationResult;
+import org.openforis.idm.metamodel.validation.ValidationResults;
+import org.openforis.idm.model.Attribute;
 import org.openforis.idm.model.BooleanAttribute;
 import org.openforis.idm.model.BooleanValue;
 import org.openforis.idm.model.Node;
@@ -107,17 +114,6 @@ public class BooleanField extends Field {
 		this.addView(tr);
 	}
 	
-/*	private void validateResults(Node<? extends NodeDefinition> node){
-		ValidationResults results = ValidationManager.validateField(node); 
-		if(results.getErrors().size() > 0 || results.getFailed().size() > 0){
-			this.setBackgroundColor(Color.RED);
-		}else if (results.getWarnings().size() > 0){
-			this.setBackgroundColor(Color.YELLOW);
-		}else{
-			this.setBackgroundColor(Color.TRANSPARENT);
-		}		
-	}
-*/	
 	public void setValue(int position, Boolean boolValue, String path, boolean isSelectionChanged)
 	{
 		if (boolValue==null){
@@ -145,8 +141,8 @@ public class BooleanField extends Field {
 			Log.e("Buulean field","is adding attribute.");
 			nodeChangeSet = ServiceFactory.getRecordManager().addAttribute(this.findParentEntity(path), this.nodeDefinition.getName(), new BooleanValue(boolValue), null, null);
 		}
-//		ApplicationManager.updateUIElementsWithValidationResults(nodeChangeSet);
-//		validateField(nodeChangeSet);
+		//Validation
+		validateField(nodeChangeSet);
 	}
 	
 	public void addOnClickListener(OnClickListener onClickListener1, OnClickListener onClickListener2) {
@@ -157,5 +153,58 @@ public class BooleanField extends Field {
 	public void setChoiceLabelsTextColor(int color){
 		this.label1.setTextColor(color);
 		this.label2.setTextColor(color);
+	}
+	
+	/**
+	 * It validates value into the field
+	 * @param nodeChangeSet
+	 */
+	private void validateField(NodeChangeSet nodeChangeSet){
+    	List<NodeChange<?>> nodeChangesList = nodeChangeSet.getChanges();
+    	Log.d("Validation for BooleanField starts. Size of NodeChangeList","== " + nodeChangesList.size());
+    	for (NodeChange<?> nodeChange : nodeChangesList){
+			//HERE WE CHECK DOES IT HAVE ANY ERRORS or WARNINGS
+			if (nodeChange instanceof AttributeChange) {
+				ValidationResults results = ((AttributeChange)nodeChange).getValidationResults();
+				Log.e("VALIDATION FOR BOOLEAN FIELD", "Errors: " + results.getErrors().size() + " : " + results.getErrors().toString());
+				Log.d("VALIDATION FOR BOOLEAN FIELD", "Warnings: "  + results.getWarnings().size() + " : " + results.getWarnings().toString()); 			
+				//Make background color red or yellow if there is any errors/warnings 				
+				String validationMsg = "";
+				if (results.getErrors().size() > 0){
+					setBackgroundColor(Color.RED);
+					for (int i=0;i<results.getErrors().size();i++){
+						ValidationResult error = results.getErrors().get(i);
+						if (i<results.getErrors().size()-1)
+							validationMsg += ValidationMessageBuilder.createInstance().getValidationMessage((Attribute<?, ?>)nodeChange.getNode(), error) + "\r\n";
+						else
+							validationMsg += ValidationMessageBuilder.createInstance().getValidationMessage((Attribute<?, ?>)nodeChange.getNode(), error);
+					}    				
+					Log.d("Validation message is: ", validationMsg);
+					//Show dialog 
+					this.extendedLabel.setVisibility(View.VISIBLE);
+					this.extendedLabel.setText("Error: "+validationMsg); 						
+				}
+				else if (results.getWarnings().size() > 0){
+					setBackgroundColor(Color.YELLOW);
+					for (int i=0;i<results.getWarnings().size();i++){
+						ValidationResult warning = results.getErrors().get(i);
+						if (i<results.getErrors().size()-1)
+							validationMsg += ValidationMessageBuilder.createInstance().getValidationMessage((Attribute<?, ?>)nodeChange.getNode(), warning) + "\r\n";
+						else
+							validationMsg += ValidationMessageBuilder.createInstance().getValidationMessage((Attribute<?, ?>)nodeChange.getNode(), warning);
+					}
+					
+					Log.d("Validation message is: ", validationMsg);  
+					//Show dialog 
+					this.extendedLabel.setVisibility(View.VISIBLE);
+					this.extendedLabel.setText("Warning"+validationMsg);     						       					
+				}
+				else {
+					setBackgroundColor(Color.TRANSPARENT);
+					this.extendedLabel.setText("");
+					this.extendedLabel.setVisibility(View.GONE);
+				}	
+			}		
+    	}    				
 	}
 }
