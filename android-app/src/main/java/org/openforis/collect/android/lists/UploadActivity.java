@@ -264,9 +264,6 @@ public class UploadActivity extends Activity{
     
     private class SendData extends AsyncTask {
     	 
-        /**
-         * Let's make the http request and return the result as a String.
-         */
         protected String doInBackground(Object... args) {
             try {            
             	String survey_id = ApplicationManager.appPreferences.getString(getResources().getString(R.string.surveyId), "99");
@@ -283,7 +280,6 @@ public class UploadActivity extends Activity{
          * view.
          */
         protected void onPostExecute(Object objResult) {
-        	Log.e("onPostExecute","=="+objResult);
         	filesCount--;
 
             if(objResult != null && objResult instanceof String) {

@@ -3,10 +3,10 @@
     <string name="app_name">OFC Mobile</string>
     <!-- about tab -->
     <string name="aboutTabTitle">About</string>
-    <string name="lblApplicationName">Application name:</string>
-    <string name="lblProgramVersionName">Application version:</string>
-    <string name="lblFormVersionName">Form version:</string>
-    <string name="lblLoadedDataFileName">Loaded data file:</string>
+    <string name="lblApplicationName">Application name:\u0020</string>
+    <string name="lblProgramVersionName">Application version:\u0020</string>
+    <string name="lblFormVersionName">Form version:\u0020</string>
+    <string name="lblLoadedDataFileName">Loaded data file:\u0020</string>
     <string name="lblGpsTimeout">GPS timeout:\u0020</string>
     <string name="txtGpsTimeout">set GPS timeout</string>
     <string name="lblLanguage">Language:\u0020</string>
@@ -76,6 +76,7 @@
     <string name="export_to_xml">Export to XML</string>
     <string name="export_all_to_zip">Export all</string>
     <string name="import_from_xml_file">Import from XML</string>
+    <string name="import_codelist_from_csv_file">Import code list from CSV</string>
     <string name="download_from_server">Download XML</string>    
     <string name="upload_to_server">Upload XML</string>
     <string name="settings">Settings</string>

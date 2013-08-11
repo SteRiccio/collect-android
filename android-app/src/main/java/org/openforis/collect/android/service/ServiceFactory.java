@@ -49,7 +49,6 @@ public class ServiceFactory {
 	    	}
 	    	codeListManager = new CodeListManager();
 	    	CodeListItemDao codeListItemDao = new CodeListItemDao();
-	    	Log.e("dataSource==null","=="+(dataSource==null));
 	    	codeListItemDao.setDataSource(dataSource);
 			codeListManager.setCodeListItemDao(codeListItemDao);
 			CollectCodeListService codeListService = new CollectCodeListService();

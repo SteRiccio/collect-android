@@ -14,8 +14,10 @@ import org.openforis.collect.android.messages.AlertMessage;
 import org.openforis.collect.android.misc.RunnableHandler;
 import org.openforis.collect.android.screens.SettingsScreen;
 import org.openforis.collect.android.service.ServiceFactory;
+import org.openforis.collect.manager.codelistimport.CodeListImportProcess;
 import org.openforis.collect.model.CollectSurvey;
 import org.openforis.collect.model.User;
+import org.openforis.idm.metamodel.CodeList.CodeScope;
 
 import android.app.Activity;
 import android.app.ProgressDialog;
@@ -184,7 +186,19 @@ public class BaseActivity extends Activity {
 			    return true;
 			case R.id.menu_import_from_file:
 				startActivity(new Intent(BaseActivity.this, FileImportActivity.class));
-			    return true;  
+			    return true; 
+			/*case R.id.menu_import_codelist_from_file:				
+				try {
+					String sdcardPath = Environment.getExternalStorageDirectory().toString();
+				    CodeListImportProcess codeListImportProcess = new CodeListImportProcess(
+				    		ServiceFactory.getCodeListManager(),
+				    		ApplicationManager.getSurvey().getCodeList("species_code"), CodeScope.LOCAL, "en",
+							new File(sdcardPath+getResources().getString(R.string.codelists_folder)+"/treecodes.csv"), true);
+					codeListImportProcess.startProcessing();
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			    return true;*/
 			case R.id.menu_settings:
 				startActivity(new Intent(BaseActivity.this,SettingsScreen.class));
 			    return true;	    
@@ -195,13 +209,20 @@ public class BaseActivity extends Activity {
 				} catch (NameNotFoundException e) {
 					versionName = "";
 				}
-				AlertMessage.createPositiveDialog(BaseActivity.this, true, null,
-						getResources().getString(R.string.aboutTabTitle), 
-						getResources().getString(R.string.lblApplicationName)+getResources().getString(R.string.app_name)
+				String aboutText = 						getResources().getString(R.string.lblApplicationName)+getResources().getString(R.string.app_name)
 						+"\n"
 						+getResources().getString(R.string.lblProgramVersionName)+versionName
 						+"\n"
-						+getResources().getString(R.string.lblFormVersionName)+ApplicationManager.getSurvey().getProjectName(null)+" "+ApplicationManager.getSurvey().getVersions().get(ApplicationManager.getSurvey().getVersions().size()-1).getName(),
+						+getResources().getString(R.string.lblFormVersionName)
+						+ApplicationManager.getSurvey().getProjectName(ApplicationManager.selectedLanguage);
+				if (ApplicationManager.getSurvey().getVersions()!=null){
+					if (ApplicationManager.getSurvey().getVersions().size()>0){
+						aboutText += " "+ApplicationManager.getSurvey().getVersions().get(ApplicationManager.getSurvey().getVersions().size()-1).getName();	
+					}					
+				}
+				AlertMessage.createPositiveDialog(BaseActivity.this, true, null,
+						getResources().getString(R.string.aboutTabTitle), 
+						aboutText,
 							getResources().getString(R.string.okay),
 				    		new DialogInterface.OnClickListener() {
 								@Override

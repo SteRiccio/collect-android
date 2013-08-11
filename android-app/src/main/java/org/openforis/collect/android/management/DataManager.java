@@ -136,8 +136,20 @@ public class DataManager {
 			} else {
 				recordToSave.setModifiedDate(new Date());
 			}
-			
-			FileWriter fwr = new FileWriter(folderToSave+"/"+ApplicationManager.currentRecord.getId()+"_"+ApplicationManager.currRootEntityId+"_"+ApplicationManager.currentRecord.getCreationDate().getDay()+"_"+ApplicationManager.currentRecord.getCreationDate().getMonth()+"_"+ApplicationManager.currentRecord.getCreationDate().getYear()+"_"+ApplicationManager.currentRecord.getCreationDate().getHours()+"_"+ApplicationManager.currentRecord.getCreationDate().getMinutes()+"_"+ApplicationManager.currentRecord.getCreatedBy().getName()+".xml");
+			List<String> rootEntityKeyValuesList = ApplicationManager.currentRecord.getRootEntityKeyValues();
+			FileWriter fwr;
+			String fileName = folderToSave+"/";
+			Log.e("rootEntityKeyValuesList!=null","=="+(rootEntityKeyValuesList!=null));
+			if (rootEntityKeyValuesList!=null){
+				Log.e("rootEntityKeyValuesList.size","=="+rootEntityKeyValuesList.size());
+				for (String rootEntityKeyValue : rootEntityKeyValuesList){
+					fileName += rootEntityKeyValue + "_";
+					Log.e("rootEntityKeyValue","=="+rootEntityKeyValue);
+				}
+			}
+			fileName += ApplicationManager.currentRecord.getId()+"_"+ApplicationManager.currRootEntityId+"_"+ApplicationManager.currentRecord.getCreationDate().getDay()+"_"+ApplicationManager.currentRecord.getCreationDate().getMonth()+"_"+ApplicationManager.currentRecord.getCreationDate().getYear()+"_"+ApplicationManager.currentRecord.getCreationDate().getHours()+"_"+ApplicationManager.currentRecord.getCreationDate().getMinutes()+"_"+ApplicationManager.currentRecord.getCreatedBy().getName();
+			fileName += ".xml";
+			fwr = new FileWriter(fileName);
 			this.dataMarshaller.write(recordToSave, fwr);
 		} catch (IOException e) {
 			e.printStackTrace();

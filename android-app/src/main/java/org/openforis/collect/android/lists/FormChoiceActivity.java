@@ -12,6 +12,7 @@ import org.openforis.collect.model.CollectSurvey;
 
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
@@ -95,6 +96,28 @@ public class FormChoiceActivity extends BaseListActivity {
 				Intent resultHolder = new Intent();
 				if (position<this.surveysList.size()){
 					ApplicationManager.setSurvey(this.surveysList.get(position));
+					SharedPreferences.Editor editor = ApplicationManager.appPreferences.edit();
+					String language = ApplicationManager.appPreferences.getString(getResources().getString(R.string.selectedLanguage), getResources().getString(R.string.defaultLanguage));			
+					boolean languageFound = false;
+					List<String> languageList = ApplicationManager.getSurvey().getLanguages();
+					if (ApplicationManager.getSurvey()!=null){	        		        
+			    		for (int i=0;i<languageList.size();i++){
+			    			if (languageList.get(i).equals(language)){
+			    				languageFound = true;
+			    			}
+			    		}
+			        }
+					if (!languageFound){
+						if (languageList.size()>0){
+							language = languageList.get(0);
+						} else {
+							language = "null";
+						}
+					}
+					editor = ApplicationManager.appPreferences.edit();
+					editor.putString(getResources().getString(R.string.selectedLanguage), language);
+					editor.commit();
+					ApplicationManager.selectedLanguage = language;
 					resultHolder.putExtra(getResources().getString(R.string.formId), this.surveysList.get(position).getId());	
 				} else {					
 					resultHolder.putExtra(getResources().getString(R.string.formId), -1);					

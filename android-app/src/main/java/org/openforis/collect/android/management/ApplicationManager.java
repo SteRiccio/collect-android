@@ -18,13 +18,17 @@ import org.openforis.collect.android.misc.ItemsStorage;
 import org.openforis.collect.android.misc.RunnableHandler;
 import org.openforis.collect.android.screens.FormScreen;
 import org.openforis.collect.android.service.ServiceFactory;
+import org.openforis.collect.manager.CodeListManager;
 import org.openforis.collect.manager.SurveyManager;
+import org.openforis.collect.manager.codelistimport.CodeListImportProcess;
 import org.openforis.collect.model.CollectRecord;
 import org.openforis.collect.model.CollectSurvey;
 import org.openforis.collect.model.User;
+import org.openforis.idm.metamodel.CodeList;
 import org.openforis.idm.metamodel.EntityDefinition;
 import org.openforis.idm.metamodel.LanguageSpecificText;
 import org.openforis.idm.metamodel.NodeDefinition;
+import org.openforis.idm.metamodel.CodeList.CodeScope;
 import org.openforis.idm.metamodel.NodeLabel.Type;
 import org.openforis.idm.metamodel.Survey;
 import org.openforis.idm.model.Entity;
@@ -89,30 +93,14 @@ public class ApplicationManager extends BaseActivity {
 	            
 	            DatabaseHelper.init(ApplicationManager.this, config);
 
-			    ServiceFactory.init(config);
+			    ServiceFactory.init(config);			   
 			    
 	            ApplicationManager.currentRecord = null;
 	            ApplicationManager.currRootEntityId = -1;
 	            ApplicationManager.selectedView = null;
 	            ApplicationManager.isToBeScrolled = false;
 	            
-	            ApplicationManager.storedItemsList = new ArrayList<ItemsStorage>();
-	            
-//	            ApplicationManager.appPreferences = getPreferences(MODE_PRIVATE);
-//				int backgroundColor = ApplicationManager.appPreferences.getInt(getResources().getString(R.string.backgroundColor), Color.WHITE);
-//				SharedPreferences.Editor editor = ApplicationManager.appPreferences.edit();
-//				editor.putInt(getResources().getString(R.string.backgroundColor), backgroundColor);
-//				//editor.commit();
-//	            
-//				//Set virtual keyboard to 'false' if it's NULL
-//		    	Map<String, ?> settings = ApplicationManager.appPreferences.getAll();
-//		    	Boolean valueForNum = (Boolean)settings.get(getResources().getString(R.string.showSoftKeyboardOnNumericField));			
-//		    	Boolean valueForText = (Boolean)settings.get(getResources().getString(R.string.showSoftKeyboardOnTextField));
-//		    	if(valueForNum == null)
-//		    		editor.putBoolean(getResources().getString(R.string.showSoftKeyboardOnNumericField), false);
-//		    	if(valueForText == null)
-//		    		editor.putBoolean(getResources().getString(R.string.showSoftKeyboardOnTextField), false);	    	
-//		    	editor.commit();			
+	            ApplicationManager.storedItemsList = new ArrayList<ItemsStorage>();	            	
 				
 				//creating file structure used by the application
 	        	String sdcardPath = Environment.getExternalStorageDirectory().toString();
@@ -128,39 +116,9 @@ public class ApplicationManager extends BaseActivity {
 			    folder.mkdirs();
 			    folder = new File(sdcardPath+getResources().getString(R.string.logs_folder));
 			    folder.mkdirs();
+			    folder = new File(sdcardPath+getResources().getString(R.string.codelists_folder));
+			    folder.mkdirs();			  
 			    
-			    //creating database
-			    /*new DatabaseWrapper(ApplicationManager.this);
-			    CollectDatabase collectDB = new CollectDatabase(DatabaseWrapper.db);	*/
-
-	        	//reading form definition if it is not available in database
-	        	/*survey = surveyManager.get("Archenland NFI");//default survey
-	        	if (survey==null){
-	            	long startTimeParsing = System.currentTimeMillis();
-	            	FileInputStream fis = new FileInputStream(sdcardPath+getResources().getString(R.string.formDefinitionFileTest));        	
-	            	SurveyIdmlBinder binder = new SurveyIdmlBinder(collectSurveyContext);
-	        		binder.addApplicationOptionsBinder(new UIOptionsBinder());
-	        		survey = (CollectSurvey) binder.unmarshal(fis);
-	        		List<LanguageSpecificText> projectNamesList = survey.getProjectNames();
-	        		if (projectNamesList.size()>0){
-	        			survey.setName(projectNamesList.get(0).getText());
-	        		} else {
-	        			survey.setName("defaultSurveyName");
-	        		}
-	        		Log.e("surveyToLoad","name=="+survey.getName());
-	        		CollectSurvey loadedSurvey = surveyManager.get(survey.getName());
-	        		if (loadedSurvey==null){
-		        		surveyManager.importModel(survey);
-	        		} else {
-	        			survey = loadedSurvey;
-	        		}
-	            	Log.e("parsingTIME","=="+(System.currentTimeMillis()-startTimeParsing));
-	        	}
-	        	schema = survey.getSchema();*/
-	        	//ApplicationManager.fieldsDefList = new ArrayList<NodeDefinition>();        	
-	        	//List<EntityDefinition> rootEntitiesDefsList = schema.getRootEntityDefinitions();
-	        	//getAllFormFields(rootEntitiesDefsList);
-	        	
 	        	ApplicationManager.uiElementsMap = new HashMap<Integer,UIElement>();        	
 	        	
 	        	//adding default user to database if not exists        	
@@ -176,9 +134,6 @@ public class ApplicationManager extends BaseActivity {
 	        	ApplicationManager.loggedInUser = defaultUser;
 	        	
 	        	ApplicationManager.dataManager = null;
-	    		
-
-
 	            ApplicationManager.pd.dismiss();
 	            
 	            //showRootEntitiesListScreen();
@@ -222,10 +177,26 @@ public class ApplicationManager extends BaseActivity {
 	    	if(valueForText == null)
 	    		editor.putBoolean(getResources().getString(R.string.showSoftKeyboardOnTextField), false);
 	    	
-	    	String language = ApplicationManager.appPreferences.getString(getResources().getString(R.string.selectedLanguage), getResources().getString(R.string.defaultLanguage));
+	    	/*String language = ApplicationManager.appPreferences.getString(getResources().getString(R.string.selectedLanguage), getResources().getString(R.string.defaultLanguage));			
+			boolean languageFound = false;
+			List<String> languageList = ApplicationManager.getSurvey().getLanguages();
+			if (ApplicationManager.getSurvey()!=null){	        		        
+	    		for (int i=0;i<languageList.size();i++){
+	    			if (languageList.get(i).equals(language)){
+	    				languageFound = true;
+	    			}
+	    		}
+	        }
+			if (!languageFound){
+				if (languageList.size()>0){
+					language = languageList.get(0);
+				} else {
+					language = "null";
+				}
+			}
 			editor = ApplicationManager.appPreferences.edit();
 			editor.putString(getResources().getString(R.string.selectedLanguage), language);
-			ApplicationManager.selectedLanguage = language;
+			ApplicationManager.selectedLanguage = language;*/
 			
 			String formDefinitionPath = ApplicationManager.appPreferences.getString(getResources().getString(R.string.formDefinitionPath), getResources().getString(R.string.defaultFormDefinitionPath));
 			editor = ApplicationManager.appPreferences.edit();
@@ -237,9 +208,11 @@ public class ApplicationManager extends BaseActivity {
 			String username = ApplicationManager.appPreferences.getString(getResources().getString(R.string.username), getResources().getString(R.string.defaultUsername));
 			editor.putString(getResources().getString(R.string.username), username);
 
-
 	    	editor.commit();
-	    		    
+	    	
+	    	
+	    	
+	    	
         	creationThread.start();
         	
     		Thread thread = new Thread(new RunnableHandler(0, Environment.getExternalStorageDirectory().toString()

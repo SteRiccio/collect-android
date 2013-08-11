@@ -11,7 +11,7 @@
           android:title="@string/export_all_to_zip" />
     
     <item android:id="@+id/menu_import_from_file"
-    	  android:title="@string/import_from_xml_file" />    
+    	  android:title="@string/import_from_xml_file" />   
     
     <item android:id="@+id/menu_download"
     	  android:title="@string/download_from_server" />       
@@ -19,6 +19,9 @@
     <item android:id="@+id/menu_upload"
       android:title="@string/upload_to_server" />
     
+   	<!--<item android:id="@+id/menu_import_codelist_from_file"
+  	  android:title="@string/import_codelist_from_csv_file" />-->
+    	  
     <item android:id="@+id/menu_settings"
           android:title="@string/settings" />
     
