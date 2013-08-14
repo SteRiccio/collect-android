@@ -1,20 +1,22 @@
 package org.openforis.collect.android.fields;
 
 
-import java.util.Map;
+import java.util.ArrayList;
+import java.util.List;
+
 import org.openforis.collect.android.R;
 import org.openforis.collect.android.management.ApplicationManager;
 import org.openforis.collect.android.messages.ToastMessage;
 import org.openforis.collect.android.screens.FormScreen;
 import org.openforis.collect.android.service.ServiceFactory;
 import org.openforis.collect.model.NodeChangeSet;
+import org.openforis.idm.metamodel.CoordinateAttributeDefinition;
 import org.openforis.idm.metamodel.NodeDefinition;
+import org.openforis.idm.metamodel.SpatialReferenceSystem;
+import org.openforis.idm.metamodel.Unit;
 import org.openforis.idm.model.Coordinate;
 import org.openforis.idm.model.CoordinateAttribute;
 import org.openforis.idm.model.Entity;
-import org.openforis.idm.model.EntityBuilder;
-import org.openforis.idm.model.IntegerAttribute;
-import org.openforis.idm.model.IntegerValue;
 import org.openforis.idm.model.Node;
 
 import android.content.Context;
@@ -26,8 +28,12 @@ import android.text.method.KeyListener;
 import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemSelectedListener;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.Spinner;
 import android.widget.Toast;
 
 public class CoordinateField extends InputField implements OnClickListener {
@@ -37,6 +43,15 @@ public class CoordinateField extends InputField implements OnClickListener {
 	private Button btnGetCoordinates;
 	
 	private static FormScreen form;
+	
+	ArrayList<String> options;
+	ArrayList<String> codes;
+	
+	private ArrayAdapter<String> aa;
+	private Spinner spinner;
+	
+	private SpatialReferenceSystem srs;
+	private List<SpatialReferenceSystem> srsList;
 	
 	public CoordinateField(Context context, NodeDefinition nodeDef) {		
 		super(context, nodeDef);
@@ -158,6 +173,42 @@ public class CoordinateField extends InputField implements OnClickListener {
 		this.addView(this.txtLongitude);
 		this.addView(this.txtLatitude);
 		
+		this.srsList = ApplicationManager.getSurvey().getSpatialReferenceSystems();
+		if (this.srsList.size()>0){
+			this.codes = new ArrayList<String>();
+			this.codes.add("null");
+			this.options = new ArrayList<String>();
+			this.options.add("");
+			for (int i=0;i<this.srsList.size();i++){
+				SpatialReferenceSystem srs = this.srsList.get(i);
+				this.codes.add(srs.getLabel(ApplicationManager.selectedLanguage));
+				this.options.add(srs.getLabel(ApplicationManager.selectedLanguage));
+			}
+			this.spinner = new Spinner(context);
+			this.spinner.setPrompt(this.label.getText());
+			this.aa = new ArrayAdapter<String>(context, android.R.layout.simple_spinner_item, this.options);
+			this.aa.setDropDownViewResource(R.layout.codelistitem);
+			this.spinner.setAdapter(aa);
+			//this.spinner.setLayoutParams(new LayoutParams(0,ViewGroup.LayoutParams.WRAP_CONTENT,(float) 3));
+			this.spinner.setOnItemSelectedListener(new OnItemSelectedListener() {
+			    @Override
+			    public void onItemSelected(AdapterView<?> parentView, View selectedItemView, int position, long id) {
+			    	if (position>0)
+			    		CoordinateField.this.srs = CoordinateField.this.srsList.get(position-1);
+			    	else
+			    		CoordinateField.this.srs = null;
+			    }
+
+			    @Override
+			    public void onNothingSelected(AdapterView<?> parentView) {
+			    	
+			    }
+
+			});
+			this.spinner.setSelection(0);
+			this.addView(this.spinner);
+		}	
+		
 		this.btnGetCoordinates = new Button(context);
 		this.btnGetCoordinates.setText(getResources().getString(R.string.internalGpsButton));
 		this.btnGetCoordinates.setOnClickListener(this);  
@@ -174,36 +225,40 @@ public class CoordinateField extends InputField implements OnClickListener {
 		Node<? extends NodeDefinition> node = this.findParentEntity(path).get(this.nodeDefinition.getName(), position);
 		NodeChangeSet nodeChangeSet = null;
 		Entity parentEntity = this.findParentEntity(path);
+		String srsLabel = null;
+		if (this.srs!=null){
+			srsLabel = this.srs.getLabel(ApplicationManager.selectedLanguage);
+		}
 		if (node!=null){
 //			CoordinateAttribute coordAtr = (CoordinateAttribute)node;
 			Log.e("Coordinate field with Id: ",node.getDefinition().getId() + " is updating. Node name is: " + node.getName() + " Node ID is: " + node.getInternalId());
 			if ((lat.equals("")&&lon.equals(""))){
 //				coordAtr.setValue(new Coordinate(null, null, null));	
-				nodeChangeSet = ServiceFactory.getRecordManager().updateAttribute((CoordinateAttribute)node, new Coordinate(null, null, null));
+				nodeChangeSet = ServiceFactory.getRecordManager().updateAttribute((CoordinateAttribute)node, new Coordinate(null, null, srsLabel));
 			} else if (lat.equals("")){
 //				coordAtr.setValue(new Coordinate(Double.valueOf(lon), null, null));
-				nodeChangeSet = ServiceFactory.getRecordManager().updateAttribute((CoordinateAttribute)node, new Coordinate(Double.valueOf(lon), null, null));
+				nodeChangeSet = ServiceFactory.getRecordManager().updateAttribute((CoordinateAttribute)node, new Coordinate(Double.valueOf(lon), null, srsLabel));
 			} else if (lon.equals("")){
 //				coordAtr.setValue(new Coordinate(null, Double.valueOf(lat), null));
-				nodeChangeSet = ServiceFactory.getRecordManager().updateAttribute((CoordinateAttribute)node, new Coordinate(null,  Double.valueOf(lat), null));
+				nodeChangeSet = ServiceFactory.getRecordManager().updateAttribute((CoordinateAttribute)node, new Coordinate(null,  Double.valueOf(lat), srsLabel));
 			} else {
 //				coordAtr.setValue(new Coordinate(Double.valueOf(lon), Double.valueOf(lat), null));
-				nodeChangeSet = ServiceFactory.getRecordManager().updateAttribute((CoordinateAttribute)node, new Coordinate(Double.valueOf(lon),  Double.valueOf(lat), null));
+				nodeChangeSet = ServiceFactory.getRecordManager().updateAttribute((CoordinateAttribute)node, new Coordinate(Double.valueOf(lon),  Double.valueOf(lat), srsLabel));
 			}
 		} else {
 			Log.e("Coordinate field","is adding attribute.");
 			if ((lat.equals("")&&lon.equals(""))){
 //				EntityBuilder.addValue(this.findParentEntity(path), this.nodeDefinition.getName(), new Coordinate(null, null, null), position);
-				nodeChangeSet = ServiceFactory.getRecordManager().addAttribute(parentEntity, this.nodeDefinition.getName(), new Coordinate(null, null, null), null, null);
+				nodeChangeSet = ServiceFactory.getRecordManager().addAttribute(parentEntity, this.nodeDefinition.getName(), new Coordinate(null, null, srsLabel), null, null);
 			} else if (lat.equals("")){
 //				EntityBuilder.addValue(this.findParentEntity(path), this.nodeDefinition.getName(), new Coordinate(Double.valueOf(lon), null, null), position);
-				nodeChangeSet = ServiceFactory.getRecordManager().addAttribute(parentEntity, this.nodeDefinition.getName(), new Coordinate(Double.valueOf(lon), null, null), null, null);
+				nodeChangeSet = ServiceFactory.getRecordManager().addAttribute(parentEntity, this.nodeDefinition.getName(), new Coordinate(Double.valueOf(lon), null, srsLabel), null, null);
 			} else if (lon.equals("")){
 //				EntityBuilder.addValue(this.findParentEntity(path), this.nodeDefinition.getName(), new Coordinate(null, Double.valueOf(lat), null), position);
-				nodeChangeSet = ServiceFactory.getRecordManager().addAttribute(parentEntity, this.nodeDefinition.getName(), new Coordinate(null, Double.valueOf(lat), null), null, null);
+				nodeChangeSet = ServiceFactory.getRecordManager().addAttribute(parentEntity, this.nodeDefinition.getName(), new Coordinate(null, Double.valueOf(lat), srsLabel), null, null);
 			} else {
 //				EntityBuilder.addValue(this.findParentEntity(path), this.nodeDefinition.getName(), new Coordinate(Double.valueOf(lon), Double.valueOf(lat), null), position);
-				nodeChangeSet = ServiceFactory.getRecordManager().addAttribute(parentEntity, this.nodeDefinition.getName(), new Coordinate(Double.valueOf(lon), Double.valueOf(lat), null), null, null);
+				nodeChangeSet = ServiceFactory.getRecordManager().addAttribute(parentEntity, this.nodeDefinition.getName(), new Coordinate(Double.valueOf(lon), Double.valueOf(lat), srsLabel), null, null);
 			}	
 		}
 //		ApplicationManager.updateUIElementsWithValidationResults(nodeChangeSet);

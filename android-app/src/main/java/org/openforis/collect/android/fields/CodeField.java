@@ -314,9 +314,9 @@ public class CodeField extends InputField {
 											//parentItems = ApplicationManager.storedItemsList.getItems(currentChild.getId(),positionToLoadItemsFrom).items;							
 										} else {
 											CodeListManager codeListManager = ServiceFactory.getCodeListManager();
-											Debug.startMethodTracing("codeListLoadingHierarchical");
+											//Debug.startMethodTracing("codeListLoadingHierarchical");
 											parentItems = codeListManager.loadValidItems(currentChild.parentEntity, currentChild.codeAttrDef);
-											Debug.stopMethodTracing();
+											//Debug.stopMethodTracing();
 											ItemsStorage storage = new ItemsStorage();
 											storage.setDefinitionId(currentChild.codeAttrDef.getId());
 											storage.setItems(parentItems);
@@ -334,7 +334,8 @@ public class CodeField extends InputField {
 						    			currentChild.spinner.setEnabled(false);
 									} else {
 										currentChild.spinner.setEnabled(true);
-									}									
+									}
+									currentChild.spinner.setSelection(0);
 					    		}					    		
 					    	}
 					    }

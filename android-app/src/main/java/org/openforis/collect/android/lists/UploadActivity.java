@@ -146,41 +146,50 @@ public class UploadActivity extends Activity{
     public void onResume(){
 		super.onResume();
 		Log.i(getResources().getString(R.string.app_name),TAG+":onResume");
-		
-		int backgroundColor = ApplicationManager.appPreferences.getInt(getResources().getString(R.string.backgroundColor), Color.WHITE);	
-		changeBackgroundColor(backgroundColor);
-		
-		/*File dataFilesFolder = new File(path);
-		File[] dataFiles = dataFilesFolder.listFiles();
-		int filesNo = dataFiles.length;
-		filesList = new String[filesNo];
-		this.selections = new Boolean[filesNo];
-		for (int i=0;i<filesNo;i++) {
-			File inFile = dataFiles[i];
-	        filesList[i] = inFile.getName();
-	        this.selections[i] = false;
-		}
-		if (filesNo==0){
-			this.activityLabel.setText(getResources().getString(R.string.noDataToUpload)+" "+getResources().getString(R.string.exported_data_folder));
-		}*/
-		dataFilesList = new ArrayList<DataFile>();
-		File dataFilesFolder = new File(path);
-		File[] dataFiles = dataFilesFolder.listFiles();
-		int filesNo = dataFiles.length;
-		for (int i=0;i<filesNo;i++) {
-	        //filesList[i] = serverFiles.get(i);
-	        dataFilesList.add(new DataFile(dataFiles[i].getName(),"xml_icon"));
-		}
-		if (filesNo==0){
-			this.activityLabel.setText(getResources().getString(R.string.noDataToDownload));
-		}
-		//int layout = (backgroundColor!=Color.WHITE)?R.layout.selectableitem_white:R.layout.selectableitem_black;
-		int layout = (backgroundColor!=Color.WHITE)?R.layout.upload_list_item_white:R.layout.upload_list_item_black;
-		//this.adapter = new ArrayAdapter<String>(this,layout,filesList);
-		/*this.adapter = new ArrayAdapter<String>(this, layout, R.id.lblFileName, filesList);
-		this.setListAdapter(this.adapter);*/
-		this.adapter = new FileListAdapter(this, layout, dataFilesList, "upload");
-		lv.setAdapter(this.adapter);
+		try {
+			int backgroundColor = ApplicationManager.appPreferences.getInt(getResources().getString(R.string.backgroundColor), Color.WHITE);	
+			changeBackgroundColor(backgroundColor);
+			
+			/*File dataFilesFolder = new File(path);
+			File[] dataFiles = dataFilesFolder.listFiles();
+			int filesNo = dataFiles.length;
+			filesList = new String[filesNo];
+			this.selections = new Boolean[filesNo];
+			for (int i=0;i<filesNo;i++) {
+				File inFile = dataFiles[i];
+		        filesList[i] = inFile.getName();
+		        this.selections[i] = false;
+			}
+			if (filesNo==0){
+				this.activityLabel.setText(getResources().getString(R.string.noDataToUpload)+" "+getResources().getString(R.string.exported_data_folder));
+			}*/
+			dataFilesList = new ArrayList<DataFile>();
+			File dataFilesFolder = new File(path);
+			File[] dataFiles = dataFilesFolder.listFiles();
+			int filesNo = dataFiles.length;
+			for (int i=0;i<filesNo;i++) {
+		        //filesList[i] = serverFiles.get(i);
+		        dataFilesList.add(new DataFile(dataFiles[i].getName(),"xml_icon"));
+			}
+			if (filesNo==0){
+				this.activityLabel.setText(getResources().getString(R.string.noDataToDownload));
+			}
+			//int layout = (backgroundColor!=Color.WHITE)?R.layout.selectableitem_white:R.layout.selectableitem_black;
+			int layout = (backgroundColor!=Color.WHITE)?R.layout.upload_list_item_white:R.layout.upload_list_item_black;
+			//this.adapter = new ArrayAdapter<String>(this,layout,filesList);
+			/*this.adapter = new ArrayAdapter<String>(this, layout, R.id.lblFileName, filesList);
+			this.setListAdapter(this.adapter);*/
+			this.adapter = new FileListAdapter(this, layout, dataFilesList, "upload");
+			lv.setAdapter(this.adapter);
+		} catch (Exception e){
+    		RunnableHandler.reportException(e,getResources().getString(R.string.app_name),TAG+":onCreate",
+    				Environment.getExternalStorageDirectory().toString()
+    				+getResources().getString(R.string.logs_folder)
+    				+getResources().getString(R.string.logs_file_name)
+    				+System.currentTimeMillis()
+    				+getResources().getString(R.string.log_file_extension));
+        }
+	
     }
     
     /*@Override

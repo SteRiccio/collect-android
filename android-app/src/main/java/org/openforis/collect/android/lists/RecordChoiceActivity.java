@@ -18,6 +18,8 @@ import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.os.Environment;
+import android.os.Handler;
+import android.os.Message;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
@@ -39,6 +41,8 @@ public class RecordChoiceActivity extends BaseListActivity implements OnItemLong
 	private ArrayAdapter<String> adapter;
 	
 	private EntityDefinition rootEntityDef;
+	
+	private String[] clusterList;
 	
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -149,40 +153,56 @@ public class RecordChoiceActivity extends BaseListActivity implements OnItemLong
 	}
 	
 	public void refreshRecordsList(){
-		this.rootEntityDef = ApplicationManager.getSurvey().getSchema().getRootEntityDefinition(getIntent().getIntExtra(getResources().getString(R.string.rootEntityId),1));
+		 final Handler handler = new Handler(){
+			    @Override
+			    public void handleMessage(Message msg) {
+			    	int layout = (backgroundColor!=Color.WHITE)?R.layout.localclusterrow_white:R.layout.localclusterrow_black;
+					RecordChoiceActivity.this.adapter = new ArrayAdapter<String>(RecordChoiceActivity.this, layout, R.id.plotlabel, clusterList);
+					RecordChoiceActivity.this.setListAdapter(RecordChoiceActivity.this.adapter);
+			        }
+			    };
+		  new Thread(new Runnable() {
+			    public void run() {
+			    	RecordChoiceActivity.this.rootEntityDef = ApplicationManager.getSurvey().getSchema().getRootEntityDefinition(getIntent().getIntExtra(getResources().getString(R.string.rootEntityId),1));
+					
+					CollectSurvey collectSurvey = (CollectSurvey)ApplicationManager.getSurvey();	        	
+			    	DataManager dataManager = new DataManager(collectSurvey,RecordChoiceActivity.this.rootEntityDef.getName(),ApplicationManager.getLoggedInUser());
+			    	RecordChoiceActivity.this.recordsList = dataManager.loadSummaries();
+			    	if (RecordChoiceActivity.this.recordsList.size()==0){
+			    		Intent resultHolder = new Intent();
+						resultHolder.putExtra(getResources().getString(R.string.recordId), -1);	
+						setResult(getResources().getInteger(R.integer.clusterChoiceSuccessful),resultHolder);
+						RecordChoiceActivity.this.finish();	
+			    	}
+					
+					if (RecordChoiceActivity.this.recordsList.size()==0){
+						clusterList = new String[1];
+					} else {
+						clusterList = new String[recordsList.size()+2];
+					}
+					for (int i=0;i<recordsList.size();i++){
+						CollectRecord record = recordsList.get(i);
+						clusterList[i] = record.getId()+" "+record.getCreatedBy().getName()
+								+"\n"+record.getCreationDate();
+						if (record.getModifiedDate()!=null){
+							clusterList[i] += "\n"+record.getModifiedDate();
+						}
+					}
+					if (RecordChoiceActivity.this.recordsList.size()==0){		
+						clusterList[0]=getResources().getString(R.string.addNewRecord)+" "+ApplicationManager.getLabel(RecordChoiceActivity.this.rootEntityDef);;
+					} else {
+						clusterList[recordsList.size()]="";
+						clusterList[recordsList.size()+1]=getResources().getString(R.string.addNewRecord)+" "+ApplicationManager.getLabel(RecordChoiceActivity.this.rootEntityDef);;
+					}
+					
+					 Message msg = Message.obtain();
+			            msg.what = 1;
+					handler.sendMessage(msg);
+			    }
+			  }).start();
+		  
+		 
+		  	
 		
-		CollectSurvey collectSurvey = (CollectSurvey)ApplicationManager.getSurvey();	        	
-    	DataManager dataManager = new DataManager(collectSurvey,this.rootEntityDef.getName(),ApplicationManager.getLoggedInUser());
-    	this.recordsList = dataManager.loadSummaries();
-    	if (this.recordsList.size()==0){
-    		Intent resultHolder = new Intent();
-			resultHolder.putExtra(getResources().getString(R.string.recordId), -1);	
-			setResult(getResources().getInteger(R.integer.clusterChoiceSuccessful),resultHolder);
-			RecordChoiceActivity.this.finish();	
-    	}
-		String[] clusterList;
-		if (this.recordsList.size()==0){
-			clusterList = new String[1];
-		} else {
-			clusterList = new String[recordsList.size()+2];
-		}
-		for (int i=0;i<recordsList.size();i++){
-			CollectRecord record = recordsList.get(i);
-			clusterList[i] = record.getId()+" "+record.getCreatedBy().getName()
-					+"\n"+record.getCreationDate();
-			if (record.getModifiedDate()!=null){
-				clusterList[i] += "\n"+record.getModifiedDate();
-			}
-		}
-		if (this.recordsList.size()==0){			
-			clusterList[0]=getResources().getString(R.string.addNewRecord)+" "+ApplicationManager.getLabel(this.rootEntityDef);;
-		} else {
-			clusterList[recordsList.size()]="";
-			clusterList[recordsList.size()+1]=getResources().getString(R.string.addNewRecord)+" "+ApplicationManager.getLabel(this.rootEntityDef);;
-		}
-		
-		int layout = (backgroundColor!=Color.WHITE)?R.layout.localclusterrow_white:R.layout.localclusterrow_black;
-        this.adapter = new ArrayAdapter<String>(this, layout, R.id.plotlabel, clusterList);
-		this.setListAdapter(this.adapter);
 	}
 }
