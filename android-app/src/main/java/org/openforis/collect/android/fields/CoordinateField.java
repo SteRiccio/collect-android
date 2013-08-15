@@ -10,10 +10,8 @@ import org.openforis.collect.android.messages.ToastMessage;
 import org.openforis.collect.android.screens.FormScreen;
 import org.openforis.collect.android.service.ServiceFactory;
 import org.openforis.collect.model.NodeChangeSet;
-import org.openforis.idm.metamodel.CoordinateAttributeDefinition;
 import org.openforis.idm.metamodel.NodeDefinition;
 import org.openforis.idm.metamodel.SpatialReferenceSystem;
-import org.openforis.idm.metamodel.Unit;
 import org.openforis.idm.model.Coordinate;
 import org.openforis.idm.model.CoordinateAttribute;
 import org.openforis.idm.model.Entity;
@@ -34,6 +32,7 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Spinner;
+import android.widget.TextView;
 import android.widget.Toast;
 
 public class CoordinateField extends InputField implements OnClickListener {
@@ -41,6 +40,8 @@ public class CoordinateField extends InputField implements OnClickListener {
 	private EditText txtLatitude;
 	private EditText txtLongitude;
 	private Button btnGetCoordinates;
+	
+	private TextView coordLabel;
 	
 	private static FormScreen form;
 	
@@ -175,6 +176,9 @@ public class CoordinateField extends InputField implements OnClickListener {
 		
 		this.srsList = ApplicationManager.getSurvey().getSpatialReferenceSystems();
 		if (this.srsList.size()>0){
+			this.coordLabel = new TextView(context);
+			this.coordLabel.setText(getResources().getString(R.string.spatialReferenceSystemLabel));
+
 			this.codes = new ArrayList<String>();
 			this.codes.add("null");
 			this.options = new ArrayList<String>();
@@ -206,6 +210,8 @@ public class CoordinateField extends InputField implements OnClickListener {
 
 			});
 			this.spinner.setSelection(0);
+			
+			this.addView(this.coordLabel);
 			this.addView(this.spinner);
 		}	
 		
@@ -303,5 +309,9 @@ public class CoordinateField extends InputField implements OnClickListener {
 	public void onClick(View arg0) {
 		CoordinateField.form.currentCoordinateField = this;
 		CoordinateField.form.startInternalGps(this);
+	}
+	
+	public void setCoordinateLabelTextColor(int color){
+		this.coordLabel.setTextColor(color);
 	}
 }

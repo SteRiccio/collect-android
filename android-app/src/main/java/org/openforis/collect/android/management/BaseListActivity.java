@@ -1,9 +1,7 @@
 package org.openforis.collect.android.management;
 
 import org.openforis.collect.android.R;
-import org.openforis.collect.android.lists.DownloadActivity;
 import org.openforis.collect.android.lists.FileImportActivity;
-import org.openforis.collect.android.lists.UploadActivity;
 import org.openforis.collect.android.messages.AlertMessage;
 import org.openforis.collect.android.misc.RunnableHandler;
 import org.openforis.collect.android.screens.SettingsScreen;
@@ -14,8 +12,10 @@ import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.content.pm.PackageManager.NameNotFoundException;
 import android.graphics.Color;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
+import android.support.v4.app.ActivityCompat;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -47,6 +47,13 @@ public class BaseListActivity extends ListActivity {
 		Log.i(getResources().getString(R.string.app_name),TAG+":onResume");
 		try {
 			this.backgroundColor = ApplicationManager.appPreferences.getInt(getResources().getString(R.string.backgroundColor), Color.WHITE);
+			if (ApplicationManager.getSurvey()==null){
+				Log.e("channging menu","====================");
+				if (Build.VERSION.SDK_INT >= 11) {
+					//invalidateOptionsMenu();
+					ActivityCompat.invalidateOptionsMenu(BaseListActivity.this);
+				}
+			}
 		}		
 		catch (Exception e){
 			e.printStackTrace();
@@ -67,6 +74,13 @@ public class BaseListActivity extends ListActivity {
     {
         MenuInflater menuInflater = getMenuInflater();
         menuInflater.inflate(R.layout.list_menu, menu);
+        return true;
+    }
+    
+    @Override
+    public boolean onPrepareOptionsMenu (Menu menu) {
+    	Log.e("onPrepareOptionsMenu","=="+(ApplicationManager.getSurvey()!=null));
+    	menu.findItem(R.id.menu_import_from_file).setVisible(ApplicationManager.getSurvey()!=null);
         return true;
     }
  
@@ -102,15 +116,40 @@ public class BaseListActivity extends ListActivity {
 	 					},
 	 					null).show();
 			    return true;
-			case R.id.menu_upload:
+        	/*case R.id.menu_export_all:
+	        	final ProgressDialog pd = ProgressDialog.show(this, getResources().getString(R.string.workInProgress), getResources().getString(R.string.backupingData));
+	        	Thread backupThread = new Thread() {
+	        		@Override
+	        		public void run() {
+	        			try {
+	        				super.run();
+	        				Log.i(getResources().getString(R.string.app_name),TAG+":run");
+	        				CollectSurvey collectSurveyExportAll = (CollectSurvey)ApplicationManager.getSurvey();	        	
+	        	        	DataManager dataManagerExportAll = new DataManager(collectSurveyExportAll,collectSurveyExportAll.getSchema().getRootEntityDefinitions().get(0).getName(),ApplicationManager.getLoggedInUser());
+	        	        	dataManagerExportAll.saveAllRecordsToFile(Environment.getExternalStorageDirectory().toString()+getResources().getString(R.string.exported_data_folder));
+	        			} catch (Exception e) {
+	        				RunnableHandler.reportException(e,getResources().getString(R.string.app_name),TAG+":run",
+	        	    				Environment.getExternalStorageDirectory().toString()
+	        	    				+getResources().getString(R.string.logs_folder)
+	        	    				+getResources().getString(R.string.logs_file_name)
+	        	    				+System.currentTimeMillis()
+	        	    				+getResources().getString(R.string.log_file_extension));
+	        			} finally {
+	        				pd.dismiss();
+	        			}
+	        		}
+	        	};
+	        	backupThread.start();	        	
+	        	return true;*/    
+			/*case R.id.menu_upload:
 				startActivity(new Intent(BaseListActivity.this, UploadActivity.class));
 			    return true;
 			case R.id.menu_download:
 				startActivity(new Intent(BaseListActivity.this, DownloadActivity.class));
-			    return true;
+			    return true;*/
 			case R.id.menu_import_from_file:
 				startActivity(new Intent(BaseListActivity.this, FileImportActivity.class));
-			    return true;  
+			    return true; 
 			case R.id.menu_settings:
 				startActivity(new Intent(BaseListActivity.this, SettingsScreen.class));
 			    return true;			    

@@ -195,14 +195,10 @@ public class RecordChoiceActivity extends BaseListActivity implements OnItemLong
 						clusterList[recordsList.size()+1]=getResources().getString(R.string.addNewRecord)+" "+ApplicationManager.getLabel(RecordChoiceActivity.this.rootEntityDef);;
 					}
 					
-					 Message msg = Message.obtain();
-			            msg.what = 1;
+					Message msg = Message.obtain();
+			        msg.what = 1;
 					handler.sendMessage(msg);
 			    }
 			  }).start();
-		  
-		 
-		  	
-		
 	}
 }

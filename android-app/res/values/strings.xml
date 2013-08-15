@@ -60,6 +60,7 @@
     <string name="okay">OK</string>
     <string name="previousInstanceButton">PREVIOUS</string>
     <string name="nextInstanceButton">NEXT</string>
+    <string name="spatialReferenceSystemLabel">Spatial reference system</string>
     <string name="internalGpsButton">Get from GPS</string>
     <string name="uploadToServerButton">Upload</string>
     <string name="downloadFromServerButton">Download</string>

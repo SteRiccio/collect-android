@@ -52,7 +52,7 @@ public class FileImportActivity extends Activity{
     int downloadedSize = 0;
     int totalSize = 0;
     TextView cur_val;
-    String dwnload_file_path = "http://ar5.arbonaut.com/awfdatademo/planned/";
+    //String dwnload_file_path = "http://ar5.arbonaut.com/awfdatademo/planned/";
 	
     @Override
     public void onCreate(Bundle savedInstanceState) {

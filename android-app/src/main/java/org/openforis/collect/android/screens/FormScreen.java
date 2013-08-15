@@ -1038,8 +1038,11 @@ public class FormScreen extends BaseActivity implements OnClickListener {
 				} else if (tempView instanceof TaxonField){
 					TaxonField tempTaxonField = (TaxonField)tempView;
 					tempTaxonField.setFieldsLabelsTextColor((backgroundColor!=Color.WHITE)?Color.WHITE:Color.BLACK);
+				} else if (tempView instanceof CoordinateField){
+					CoordinateField tempCoordinateField = (CoordinateField)tempView;
+					tempCoordinateField.setCoordinateLabelTextColor((backgroundColor!=Color.WHITE)?Color.WHITE:Color.BLACK);
 				}
-			}	
+			}
 			else if (tempView instanceof UIElement){
 				if (tempView instanceof SummaryList){
 					SummaryList tempSummaryList = (SummaryList)tempView;

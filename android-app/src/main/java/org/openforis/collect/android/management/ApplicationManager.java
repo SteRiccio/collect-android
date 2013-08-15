@@ -319,9 +319,7 @@ public class ApplicationManager extends BaseActivity {
 			        		} else {
 			        			survey.setName("defaultSurveyName");
 			        		}
-			        		Log.e("surveyToLoad","name=="+survey.getName());
 			        		CollectSurvey loadedSurvey = surveyManager.get(survey.getName());
-			        		Log.e("loadedSurvey==null","=="+(loadedSurvey==null));
 			        		if (loadedSurvey==null){
 								survey = surveyManager.importModel(idmlFile, survey.getName(), false);
 			        		} else {
@@ -330,7 +328,6 @@ public class ApplicationManager extends BaseActivity {
 			        		Log.e("survey","=="+(survey.getName()));
 			            	Log.e("parsingTIME","=="+(System.currentTimeMillis()-startTimeParsing));			           
 	 	    			} catch (Exception e){
-	 	    				Log.e("parsingEXCEPTION","===");
 	 	    				e.printStackTrace();
 	 	    				survey = null;
 	 	    			}
