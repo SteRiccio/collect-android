@@ -188,6 +188,7 @@ public class SummaryList extends UIElement {
 			tv.setId(entityInstanceNo);
 			tv.setOnClickListener(listener);
 			final Entity entityToRemove = currentEntity;
+			final Entity parent = parentEntity;
 			tv.setOnLongClickListener(new OnLongClickListener() {
 		        @Override
 		        public boolean onLongClick(View v) {		        
@@ -197,16 +198,19 @@ public class SummaryList extends UIElement {
 		 		    		new DialogInterface.OnClickListener() {
 		 						@Override
 		 						public void onClick(DialogInterface dialog, int which) {
+		 							Log.i("SummaryList", "Yes-button has been pressed from " + entityToRemove.getName());
 		 							ServiceFactory.getRecordManager().deleteNode(entityToRemove);
 		 							ApplicationManager.isToBeScrolled = true;
 		 							ApplicationManager.selectedView = SummaryList.this;
 		 							((FormScreen)SummaryList.this.context).onResume();
+		 							//TODO: Validation. What exactly to validate if entityToRemove was deleted?
 		 						}
 		 					},
 		 		    		new DialogInterface.OnClickListener() {
 		 						@Override
 		 						public void onClick(DialogInterface dialog, int which) {
-
+		 							Log.i("SummaryList", "No-button has been pressed from " + entityToRemove.getName());
+		 							Log.i("SummaryList", "No-button has been pressed. Parent entity is:  " + parent.getName());
 		 						}
 		 					},
 		 					null).show();

@@ -14,7 +14,7 @@ import org.openforis.collect.android.messages.AlertMessage;
 import org.openforis.collect.android.misc.RunnableHandler;
 import org.openforis.collect.android.screens.SettingsScreen;
 import org.openforis.collect.android.service.ServiceFactory;
-import org.openforis.collect.manager.codelistimport.CodeListImportProcess;
+//import org.openforis.collect.manager.codelistimport.CodeListImportProcess;
 import org.openforis.collect.model.CollectSurvey;
 import org.openforis.collect.model.User;
 import org.openforis.idm.metamodel.CodeList.CodeScope;

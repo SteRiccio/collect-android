@@ -30,29 +30,49 @@ public abstract class DatabaseHelper {
 	private static final String LIQUIBASE_CHANGELOG = "org/openforis/collect/db/changelog/db.changelog-master.xml";
 	
 	public static void init(Context ctx, Configuration config){
-        createDatabase(ctx, config);
+		Log.e("FROM DB CREATING", "Try to init db");
+		createDatabase(ctx, config);
+		Log.e("FROM DB CREATING", "Finish init db");
 	}
 
 	private static void createDatabase(Context ctx, Configuration config) {
-		OpenHelper openHelper = new OpenHelper(ctx, config);
-       	SQLiteDatabase db = openHelper.getWritableDatabase();
-       	if ( db == null ) {
-       		throw new RuntimeException("Null db");
+			OpenHelper openHelper = new OpenHelper(ctx, config);
+	       	SQLiteDatabase db = openHelper.getWritableDatabase();
+	       	Log.e("FROM DB CREATING", "Try to create db");
+	       	try{
+	       		if ( db == null ) {
+	       		throw new RuntimeException("Null db");
+	       	}
+	       	db.close();
+       	}catch(Exception e){
+       		Log.d("FROM DB CREATING", "Got an error when tried to create db");
+       		e.printStackTrace();
+       	}finally{
+       		db.close();
        	}
-       	db.close();
 	}
 
 	public static void updateDBSchema() {
 		Connection c = null;
 		try {
+			Log.e("FROM DB UPDATE SCHEMA", "Try to update db");
 			c = ServiceFactory.getDataSource().getConnection();
 			LogFactory.putLogger(new AndroidLiquibaseLogger());
+			Log.e("FROM DB UPDATE SCHEMA", "new sqlLite db");
 			Database database = new AndroidSQLiteDatabase();
+			Log.e("FROM DB UPDATE SCHEMA", "Set connection");
 			database.setConnection(new JdbcConnection(c));
+			Log.e("FROM DB UPDATE SCHEMA", "Create Liqui db");
 			Liquibase liquibase = new Liquibase(LIQUIBASE_CHANGELOG, 
 					new ClassLoaderResourceAccessor(), database);
-		    liquibase.update(null);
+			Log.e("FROM DB UPDATE SCHEMA", "Update Liqui db");
+			liquibase.update(null);
+			Log.e("FROM DB UPDATE SCHEMA", "Liqui db was updated");
+			Log.e("FROM DB UPDATE SCHEMA", "Close db");
+			database.close();
+//		    c.close();
 		} catch(Exception e) {
+			Log.e("FROM DB UPDATE SCHEMA", "Exception when update db");
 			Log.e("==", e.getMessage(), e);
 			if (c != null) {
                 try {

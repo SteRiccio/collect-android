@@ -39,6 +39,7 @@ import org.openforis.idm.model.Time;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.graphics.Color;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
@@ -257,7 +258,7 @@ public class SummaryTable extends UIElement {
 			 		    		new DialogInterface.OnClickListener() {
 			 						@Override
 			 						public void onClick(DialogInterface dialog, int which) {
-
+			 							Log.i("From SummaryTable", "No-button has been pressed from " + nodeToDelete.getName());
 			 						}
 			 					},
 			 					null).show();
