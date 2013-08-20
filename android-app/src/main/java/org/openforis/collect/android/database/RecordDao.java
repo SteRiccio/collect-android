@@ -1,6 +1,5 @@
 package org.openforis.collect.android.database;
 
-import static org.openforis.collect.persistence.RecordDao.SUMMARY_FIELDS;
 import static org.openforis.collect.persistence.jooq.Tables.OFC_RECORD;
 
 import java.util.ArrayList;
@@ -12,6 +11,7 @@ import org.openforis.collect.model.CollectSurvey;
 import org.openforis.collect.model.RecordSummarySortField;
 import org.openforis.idm.metamodel.EntityDefinition;
 import org.openforis.idm.metamodel.Schema;
+import org.openforis.idm.model.Date;
 import org.springframework.transaction.annotation.Transactional;
 
 import android.database.Cursor;
@@ -93,6 +93,13 @@ public class RecordDao extends org.openforis.collect.persistence.RecordDao {
 			for (int i=0;i<cursor.getColumnCount();i++){
 				Log.e(cursor.getColumnName(i)+"=","=="+cursor.getString(i));
 			}
+			Log.e("VERSION","=="+ survey.getVersion(cursor.getString(cursor.getColumnIndex(OFC_RECORD.MODEL_VERSION.getName()))).toString());
+			CollectRecord collectRecord = new CollectRecord(survey, survey.getVersion(cursor.getString(cursor.getColumnIndex(OFC_RECORD.MODEL_VERSION.getName()))).getName());
+			//collectRecord.setCreatedBy();
+			//collectRecord.setCreationDate(new Date(cursor.getString(cursor.getColumnIndex(OFC_RECORD.DATE_CREATED.getName()))));
+			collectRecord.setId(cursor.getInt(cursor.getColumnIndex(OFC_RECORD.ID.getName())));
+
+			result.add(collectRecord);
 		}	
 		
 		Log.e("MOBILE RECORD DAO", "Total time: "+(System.currentTimeMillis()-startTime));

@@ -182,8 +182,8 @@ public class RecordChoiceActivity extends BaseListActivity implements OnItemLong
 					}
 					for (int i=0;i<recordsList.size();i++){
 						CollectRecord record = recordsList.get(i);
-						clusterList[i] = record.getId()+" "+record.getCreatedBy().getName()
-								+"\n"+record.getCreationDate();
+						clusterList[i] = record.getId()+" ";//+record.getCreatedBy().getName()
+								//+"\n"+record.getCreationDate();
 						if (record.getModifiedDate()!=null){
 							clusterList[i] += "\n"+record.getModifiedDate();
 						}
