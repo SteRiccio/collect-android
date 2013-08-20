@@ -93,7 +93,7 @@ public class ApplicationManager extends BaseActivity {
 	            
 	            DatabaseHelper.init(ApplicationManager.this, config);
 
-			    ServiceFactory.init(config);			   
+			    ServiceFactory.init(config);   
 			    
 	            ApplicationManager.currentRecord = null;
 	            ApplicationManager.currRootEntityId = -1;

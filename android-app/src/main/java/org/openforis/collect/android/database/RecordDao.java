@@ -1,23 +1,23 @@
 package org.openforis.collect.android.database;
 
-import static org.openforis.collect.persistence.jooq.tables.OfcCodeList.OFC_CODE_LIST;
+import static org.openforis.collect.persistence.RecordDao.SUMMARY_FIELDS;
+import static org.openforis.collect.persistence.jooq.Tables.OFC_RECORD;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import org.jooq.TableField;
-import org.openforis.collect.android.management.ApplicationManager;
+import org.openforis.collect.model.CollectRecord;
+import org.openforis.collect.model.CollectRecord.Step;
 import org.openforis.collect.model.CollectSurvey;
-import org.openforis.collect.persistence.jooq.tables.records.OfcCodeListRecord;
-import org.openforis.idm.metamodel.CodeList;
-import org.openforis.idm.metamodel.CodeListItem;
-import org.openforis.idm.metamodel.LanguageSpecificText;
-import org.openforis.idm.metamodel.ModelVersion;
-import org.openforis.idm.metamodel.PersistedCodeListItem;
+import org.openforis.collect.model.RecordSummarySortField;
+import org.openforis.idm.metamodel.EntityDefinition;
+import org.openforis.idm.metamodel.Schema;
+import org.springframework.transaction.annotation.Transactional;
 
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.util.Log;
+
 //import org.jooq.SelectQuery;
 //import org.jooq.Record;
 //import org.jooq.Result;
@@ -25,13 +25,81 @@ import android.util.Log;
 //import org.openforis.collect.persistence.CodeListItemDao.JooqFactory;
 
 
-public class CodeListItemDao extends org.openforis.collect.persistence.CodeListItemDao {
+public class RecordDao extends org.openforis.collect.persistence.RecordDao {
 
-	public CodeListItemDao() {
+	public RecordDao() {
 		super();
 	}
 	
 	@Override
+	@Transactional
+	public List<CollectRecord> loadSummaries(CollectSurvey survey, String rootEntity, Step step, int offset, int maxRecords, 
+			List<RecordSummarySortField> sortFields, String... keyValues) {
+		/*JooqFactory jf = getMappingJooqFactory(survey);
+		SelectQuery q = jf.selectQuery();	
+		q.addFrom(OFC_RECORD);
+		q.addSelect(SUMMARY_FIELDS);
+
+		Schema schema = survey.getSchema();
+		EntityDefinition rootEntityDefn = schema.getRootEntityDefinition(rootEntity);
+		Integer rootEntityDefnId = rootEntityDefn.getId();
+		q.addConditions(OFC_RECORD.SURVEY_ID.equal(survey.getId()));
+		q.addConditions(OFC_RECORD.ROOT_ENTITY_DEFINITION_ID.equal(rootEntityDefnId));
+		if ( step != null ) {
+			q.addConditions(OFC_RECORD.STEP.equal(step.getStepNumber()));
+		}
+		addFilterByKeyConditions(q, keyValues);
+		
+		if ( sortFields != null ) {
+			for (RecordSummarySortField sortField : sortFields) {
+				addOrderBy(q, sortField);
+			}
+		}
+		
+		//always order by ID to avoid pagination issues
+		q.addOrderBy(OFC_RECORD.ID);
+		
+		//add limit
+		q.addLimit(offset, maxRecords);
+		
+		//fetch results
+		Result<Record> result = q.fetch();
+		
+		return jf.fromResult(result);*/
+		long startTime = System.currentTimeMillis();
+		List<CollectRecord> result = new ArrayList<CollectRecord>();
+		//preparing data for query
+		Schema schema = survey.getSchema();
+		EntityDefinition rootEntityDefn = schema.getRootEntityDefinition(rootEntity);
+		Integer rootEntityDefnId = rootEntityDefn.getId();
+		
+		//query string
+		String query = "SELECT " + 
+				OFC_RECORD.DATE_CREATED + "," + OFC_RECORD.CREATED_BY_ID + "," + OFC_RECORD.DATE_MODIFIED + "," + OFC_RECORD.ERRORS + "," + OFC_RECORD.ID + "," + 
+			     OFC_RECORD.MISSING + "," + OFC_RECORD.MODEL_VERSION + "," + OFC_RECORD.MODIFIED_BY_ID + "," + 
+			     OFC_RECORD.ROOT_ENTITY_DEFINITION_ID + "," + OFC_RECORD.SKIPPED + "," + OFC_RECORD.STATE + "," + OFC_RECORD.STEP + "," + OFC_RECORD.SURVEY_ID + "," + 
+			     OFC_RECORD.WARNINGS + "," + OFC_RECORD.KEY1 + "," + OFC_RECORD.KEY2 + "," + OFC_RECORD.KEY3 + "," + 
+			     OFC_RECORD.COUNT1 + "," + OFC_RECORD.COUNT2 + "," + OFC_RECORD.COUNT3 + "," + OFC_RECORD.COUNT4 + "," + OFC_RECORD.COUNT5
+			     + " FROM " + OFC_RECORD;				
+		Log.e("MOBILE RECORD DAO","=="+query);
+		
+		//executing query
+		SQLiteDatabase db = DatabaseHelper.getDb();
+		Cursor cursor = db.rawQuery(query, null);
+		Log.e("Mobile RECORD DAO", "Number of rows is: " + cursor.getCount());
+		db.close();
+		//preparing result
+		while (cursor.moveToNext()) {
+			for (int i=0;i<cursor.getColumnCount();i++){
+				Log.e(cursor.getColumnName(i)+"=","=="+cursor.getString(i));
+			}
+		}	
+		
+		Log.e("MOBILE RECORD DAO", "Total time: "+(System.currentTimeMillis()-startTime));
+		return result;
+	}
+	
+	/*@Override
 	protected List<PersistedCodeListItem> loadChildItems(CodeList codeList, Integer parentItemId, ModelVersion version) {
 		long startTime = System.currentTimeMillis();
 		List<PersistedCodeListItem> result = new ArrayList<PersistedCodeListItem>();
@@ -63,9 +131,9 @@ public class CodeListItemDao extends org.openforis.collect.persistence.CodeListI
 		db.close();
 		//Prepare result
 		while (cursor.moveToNext()) {
-			/*for (int i=0;i<cursor.getColumnCount();i++){
+			for (int i=0;i<cursor.getColumnCount();i++){
 				Log.e(cursor.getColumnName(i)+"=","=="+cursor.getString(i));
-			}*/
+			}
 			CodeListItem codeListItem = new CodeListItem(codeList, codeList.getId());
 			//codeListItem.setAnnotation(qname, value);
 			//Log.e("CODE","=="+cursor.getString(cursor.getColumnIndex(OFC_CODE_LIST.CODE.getName())));
@@ -103,6 +171,6 @@ public class CodeListItemDao extends org.openforis.collect.persistence.CodeListI
 		//Log.e("Mobile DAO", "Ready to return child item: " + System.currentTimeMillis());
 		Log.e("MOBILE DAO", "Total time: "+(System.currentTimeMillis()-startTime));
 		return result;
-	}
+	}*/
 	
 }

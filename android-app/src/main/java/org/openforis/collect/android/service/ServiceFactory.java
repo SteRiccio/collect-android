@@ -29,7 +29,7 @@ import android.util.Log;
  */
 public class ServiceFactory {
 
-	private static RecordManager recordManager;
+	private static org.openforis.collect.android.management.RecordManager recordManager;
 	private static SurveyManager surveyManager;
 	private static UserManager userManager;
 	private static TaxonManager taxonManager;
@@ -71,8 +71,8 @@ public class ServiceFactory {
 	    	surveyManager.setSurveyDao(surveyDao);
 	    	surveyManager.setCodeListManager(codeListManager);
 	    	
-	    	recordManager = new RecordManager(false);
-	    	RecordDao recordDao = new RecordDao();
+	    	org.openforis.collect.android.database.RecordDao recordDao = new org.openforis.collect.android.database.RecordDao();
+	    	recordManager = new org.openforis.collect.android.management.RecordManager(false, recordDao);	    	
 	    	recordDao.setDataSource(dataSource);
 	    	recordManager.setRecordDao(recordDao);
 	    	
@@ -100,7 +100,7 @@ public class ServiceFactory {
 		return dataSource;
 	}
 	
-	public static RecordManager getRecordManager() {
+	public static org.openforis.collect.android.management.RecordManager getRecordManager() {
 		return recordManager;
 	}
 	

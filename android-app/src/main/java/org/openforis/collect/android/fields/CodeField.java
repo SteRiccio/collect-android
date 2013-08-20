@@ -122,9 +122,7 @@ public class CodeField extends InputField {
 //					org.openforis.collect.android.database.CodeListItemDao codeListItemDao = new org.openforis.collect.android.database.CodeListItemDao();
 //					org.openforis.collect.android.management.CodeListManager codeListManager = new org.openforis.collect.android.management.CodeListManager();
 //					codeListManager.setCodeListItemDao(codeListItemDao);
-					//Debug.startMethodTracing("codeListLoading3");
 					parentItems = codeListManager.loadValidItems(this.parentEntity, this.codeAttrDef);
-					//Debug.stopMethodTracing();
 					ItemsStorage storage = new ItemsStorage();
 					storage.setDefinitionId(this.codeAttrDef.getId());
 					storage.setItems(parentItems);
