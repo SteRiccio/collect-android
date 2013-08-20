@@ -4,12 +4,14 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.openforis.collect.android.R;
+import org.openforis.collect.android.database.CodeListItemDao;
+import org.openforis.collect.android.management.CodeListManager;
 import org.openforis.collect.android.management.ApplicationManager;
 import org.openforis.collect.android.messages.ToastMessage;
 import org.openforis.collect.android.misc.ItemsStorage;
 import org.openforis.collect.android.screens.FormScreen;
 import org.openforis.collect.android.service.ServiceFactory;
-import org.openforis.collect.manager.CodeListManager;
+//import org.openforis.collect.manager.CodeListManager;
 import org.openforis.idm.metamodel.CodeAttributeDefinition;
 import org.openforis.idm.metamodel.CodeListItem;
 import org.openforis.idm.metamodel.NodeDefinition;
@@ -22,6 +24,7 @@ import org.openforis.idm.model.Node;
 import android.content.Context;
 import android.os.Debug;
 import android.text.Editable;
+import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
@@ -116,6 +119,9 @@ public class CodeField extends InputField {
 					//parentItems = ApplicationManager.storedItemsList.getItems(currentChild.getId(),positionToLoadItemsFrom).items;							
 				} else {
 					CodeListManager codeListManager = ServiceFactory.getCodeListManager();
+//					org.openforis.collect.android.database.CodeListItemDao codeListItemDao = new org.openforis.collect.android.database.CodeListItemDao();
+//					org.openforis.collect.android.management.CodeListManager codeListManager = new org.openforis.collect.android.management.CodeListManager();
+//					codeListManager.setCodeListItemDao(codeListItemDao);
 					//Debug.startMethodTracing("codeListLoading3");
 					parentItems = codeListManager.loadValidItems(this.parentEntity, this.codeAttrDef);
 					//Debug.stopMethodTracing();
@@ -265,6 +271,7 @@ public class CodeField extends InputField {
 						//parentItems = ApplicationManager.storedItemsList.getItems(currentChild.getId(),positionToLoadItemsFrom).items;							
 					} else {
 						CodeListManager codeListManager = ServiceFactory.getCodeListManager();
+						Log.e("Test from CodeField", "CodeListManager is: " + codeListManager.toString());
 						parentItems = codeListManager.loadValidItems(this.parentEntity, this.codeAttrDef);
 						ItemsStorage storage = new ItemsStorage();
 						storage.setDefinitionId(this.codeAttrDef.getId());

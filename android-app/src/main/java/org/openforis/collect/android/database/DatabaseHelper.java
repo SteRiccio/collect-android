@@ -29,15 +29,28 @@ public abstract class DatabaseHelper {
 	
 	private static final String LIQUIBASE_CHANGELOG = "org/openforis/collect/db/changelog/db.changelog-master.xml";
 	
+	private static Context contex;
+	private static Configuration config;
+	
+	
+	
+	public static SQLiteDatabase getDb() {
+		OpenHelper openHelper = new OpenHelper(contex, config);
+		SQLiteDatabase db = openHelper.getWritableDatabase();
+		return db;
+	}
+	
 	public static void init(Context ctx, Configuration config){
 		Log.e("FROM DB CREATING", "Try to init db");
 		createDatabase(ctx, config);
+		contex = ctx;
+		DatabaseHelper.config = config;
 		Log.e("FROM DB CREATING", "Finish init db");
 	}
 
 	private static void createDatabase(Context ctx, Configuration config) {
 			OpenHelper openHelper = new OpenHelper(ctx, config);
-	       	SQLiteDatabase db = openHelper.getWritableDatabase();
+			SQLiteDatabase db = openHelper.getWritableDatabase();
 	       	Log.e("FROM DB CREATING", "Try to create db");
 	       	try{
 	       		if ( db == null ) {
@@ -98,7 +111,6 @@ public abstract class DatabaseHelper {
 			}
 		} catch(Exception e) {}
 	}
-	
 
 	private static class OpenHelper extends SQLiteOpenHelper {
 		OpenHelper(Context context, Configuration config) {
