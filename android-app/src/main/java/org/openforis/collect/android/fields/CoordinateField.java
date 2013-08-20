@@ -312,6 +312,7 @@ public class CoordinateField extends InputField implements OnClickListener {
 	}
 	
 	public void setCoordinateLabelTextColor(int color){
-		this.coordLabel.setTextColor(color);
+		if (this.coordLabel!=null)
+			this.coordLabel.setTextColor(color);
 	}
 }
