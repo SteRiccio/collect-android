@@ -10,6 +10,9 @@ import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
+import org.apache.commons.lang3.StringUtils;
+import org.jooq.Field;
+import org.openforis.collect.android.management.ApplicationManager;
 import org.openforis.collect.model.CollectRecord;
 import org.openforis.collect.model.CollectRecord.Step;
 import org.openforis.collect.model.CollectSurvey;
@@ -85,7 +88,29 @@ public class RecordDao extends org.openforis.collect.persistence.RecordDao {
 			     OFC_RECORD.ROOT_ENTITY_DEFINITION_ID + "," + OFC_RECORD.SKIPPED + "," + OFC_RECORD.STATE + "," + OFC_RECORD.STEP + "," + OFC_RECORD.SURVEY_ID + "," + 
 			     OFC_RECORD.WARNINGS + "," + OFC_RECORD.KEY1 + "," + OFC_RECORD.KEY2 + "," + OFC_RECORD.KEY3 + "," + 
 			     OFC_RECORD.COUNT1 + "," + OFC_RECORD.COUNT2 + "," + OFC_RECORD.COUNT3 + "," + OFC_RECORD.COUNT4 + "," + OFC_RECORD.COUNT5
-			     + " FROM " + OFC_RECORD;				
+			     + " FROM " + OFC_RECORD
+			     + " WHERE " + OFC_RECORD.SURVEY_ID + " = " + survey.getId()
+			     + " AND " + OFC_RECORD.ROOT_ENTITY_DEFINITION_ID + " = " + rootEntityDefnId;
+		
+		if ( step != null ) {
+			query += " AND " + OFC_RECORD.STEP + " = " + step.getStepNumber();
+		}
+		Log.e("keyValues!=null","=="+(keyValues!=null));
+		if ( keyValues != null ) {
+			String key = keyValues[1];
+			Log.e("keyValues[1]","=="+keyValues[1]);
+			/*if(StringUtils.isNotBlank(key)) {
+				@SuppressWarnings("unchecked")
+				OFC_RECORD.KEY1, OFC_RECORD.KEY2, OFC_RECORD.KEY3
+				Field<String> keyField = (Field<String>) KEY_FIELDS[i];
+				q.addConditions(keyField.upper().equal(key.toUpperCase()));
+				query += " AND " + OFC_RECORD.KEY1 = 
+			}*/
+		}
+
+		query += " ORDER BY " + OFC_RECORD.ID; 
+		query += " LIMIT " + maxRecords;
+		
 		Log.e("MOBILE RECORD DAO","=="+query);
 		
 		//executing query
@@ -98,15 +123,8 @@ public class RecordDao extends org.openforis.collect.persistence.RecordDao {
 			for (int i=0;i<cursor.getColumnCount();i++){
 				Log.e(cursor.getColumnName(i)+"=","=="+cursor.getString(i));
 			}
-			Log.e("VERSION","=="+ survey.getVersion(cursor.getString(cursor.getColumnIndex(OFC_RECORD.MODEL_VERSION.getName()))).toString());
 			CollectRecord collectRecord = new CollectRecord(survey, survey.getVersion(cursor.getString(cursor.getColumnIndex(OFC_RECORD.MODEL_VERSION.getName()))).getName());
-        	/*User defaultUser = new User();
-        	defaultUser.setName(getResources().getString(R.string.defaultUsername));
-        	defaultUser.setPassword(getResources().getString(R.string.defaultUserPassword));
-        	defaultUser.setEnabled(true);
-        	defaultUser.setId(getResources().getInteger(R.integer.defaulUsertId));
-        	defaultUser.addRole(getResources().getString(R.string.defaultUserRole));
-			collectRecord.setCreatedBy(user);*/
+			
 			query = "SELECT " + OFC_USER.USERNAME + " FROM " + OFC_USER
 					+ " WHERE " + OFC_USER.ID + " = " + cursor.getColumnIndex(OFC_RECORD.CREATED_BY_ID.getName());
 
@@ -129,7 +147,9 @@ public class RecordDao extends org.openforis.collect.persistence.RecordDao {
 			}
 			
 			collectRecord.setId(cursor.getInt(cursor.getColumnIndex(OFC_RECORD.ID.getName())));
+			Log.e("currentRootEntityId","=="+ApplicationManager.currRootEntityId);
 
+			
 			result.add(collectRecord);
 		}	
 		db.close();
