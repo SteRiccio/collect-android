@@ -76,7 +76,6 @@ public class CodeListItemDao extends org.openforis.collect.persistence.CodeListI
 				entity.setCode(cursor.getString(cursor.getColumnIndex(OFC_CODE_LIST.CODE.getName())));
 				entity.setParentId(cursor.getInt(cursor.getColumnIndex(OFC_CODE_LIST.PARENT_ID.getName())));
 				entity.setQualifiable(Boolean.parseBoolean(cursor.getString(cursor.getColumnIndex(OFC_CODE_LIST.QUALIFIABLE.getName()))));
-				Log.e("versionIdFromDB","=="+cursor.getInt(cursor.getColumnIndex(OFC_CODE_LIST.SINCE_VERSION_ID.getName())));
 				entity.setSinceVersion(extractModelVersion(entity, cursor.getInt(cursor.getColumnIndex(OFC_CODE_LIST.SINCE_VERSION_ID.getName()))));
 				entity.setDeprecatedVersion(extractModelVersion(entity, cursor.getInt(cursor.getColumnIndex(OFC_CODE_LIST.DEPRECATED_VERSION_ID.getName()))));
 				extractLabels(codeList, cursor, entity);
@@ -93,7 +92,6 @@ public class CodeListItemDao extends org.openforis.collect.persistence.CodeListI
 	
 	protected ModelVersion extractModelVersion(SurveyObject surveyObject, Integer versionId) {
 		Survey survey = surveyObject.getSurvey();
-		Log.e("versionID ","=="+versionId);
 		ModelVersion version = ((versionId == null)||(versionId == 0)) ? null: survey.getVersionById(versionId);
 		return version;
 	}
