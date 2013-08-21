@@ -1,17 +1,22 @@
 package org.openforis.collect.android.database;
 
 import static org.openforis.collect.persistence.jooq.Tables.OFC_RECORD;
+import static org.openforis.collect.persistence.jooq.tables.OfcUser.OFC_USER;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 
 import org.openforis.collect.model.CollectRecord;
 import org.openforis.collect.model.CollectRecord.Step;
 import org.openforis.collect.model.CollectSurvey;
 import org.openforis.collect.model.RecordSummarySortField;
+import org.openforis.collect.model.User;
 import org.openforis.idm.metamodel.EntityDefinition;
 import org.openforis.idm.metamodel.Schema;
-import org.openforis.idm.model.Date;
 import org.springframework.transaction.annotation.Transactional;
 
 import android.database.Cursor;
@@ -87,7 +92,7 @@ public class RecordDao extends org.openforis.collect.persistence.RecordDao {
 		SQLiteDatabase db = DatabaseHelper.getDb();
 		Cursor cursor = db.rawQuery(query, null);
 		Log.e("Mobile RECORD DAO", "Number of rows is: " + cursor.getCount());
-		db.close();
+		
 		//preparing result
 		while (cursor.moveToNext()) {
 			for (int i=0;i<cursor.getColumnCount();i++){
@@ -95,13 +100,39 @@ public class RecordDao extends org.openforis.collect.persistence.RecordDao {
 			}
 			Log.e("VERSION","=="+ survey.getVersion(cursor.getString(cursor.getColumnIndex(OFC_RECORD.MODEL_VERSION.getName()))).toString());
 			CollectRecord collectRecord = new CollectRecord(survey, survey.getVersion(cursor.getString(cursor.getColumnIndex(OFC_RECORD.MODEL_VERSION.getName()))).getName());
-			//collectRecord.setCreatedBy();
-			//collectRecord.setCreationDate(new Date(cursor.getString(cursor.getColumnIndex(OFC_RECORD.DATE_CREATED.getName()))));
+        	/*User defaultUser = new User();
+        	defaultUser.setName(getResources().getString(R.string.defaultUsername));
+        	defaultUser.setPassword(getResources().getString(R.string.defaultUserPassword));
+        	defaultUser.setEnabled(true);
+        	defaultUser.setId(getResources().getInteger(R.integer.defaulUsertId));
+        	defaultUser.addRole(getResources().getString(R.string.defaultUserRole));
+			collectRecord.setCreatedBy(user);*/
+			query = "SELECT " + OFC_USER.USERNAME + " FROM " + OFC_USER
+					+ " WHERE " + OFC_USER.ID + " = " + cursor.getColumnIndex(OFC_RECORD.CREATED_BY_ID.getName());
+
+			Cursor userCursor = db.rawQuery(query, null);
+			if (userCursor.moveToFirst()){
+				User user = new User();
+	        	user.setName(userCursor.getString(0));
+	        	collectRecord.setCreatedBy(user);	
+			}
+			try {
+				Date creationDate = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS", Locale.ENGLISH).parse(cursor.getString(cursor.getColumnIndex(OFC_RECORD.DATE_CREATED.getName())));
+				collectRecord.setCreationDate(creationDate);
+				Date modificationDate = null;
+				if (cursor.getString(cursor.getColumnIndex(OFC_RECORD.DATE_CREATED.getName()))!=null){
+					modificationDate = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS", Locale.ENGLISH).parse(cursor.getString(cursor.getColumnIndex(OFC_RECORD.DATE_CREATED.getName())));
+				}
+				collectRecord.setModifiedDate(modificationDate);
+			} catch (ParseException e) {
+				e.printStackTrace();
+			}
+			
 			collectRecord.setId(cursor.getInt(cursor.getColumnIndex(OFC_RECORD.ID.getName())));
 
 			result.add(collectRecord);
 		}	
-		
+		db.close();
 		Log.e("MOBILE RECORD DAO", "Total time: "+(System.currentTimeMillis()-startTime));
 		return result;
 	}
