@@ -459,6 +459,7 @@ public class FormScreen extends BaseActivity implements OnClickListener {
 	    			} else if (nodeDef instanceof CoordinateAttributeDefinition){
 	    				String loadedValueLon = "";
 	    				String loadedValueLat = "";
+	    				String loadedSrsId = "";
 	    				if (!nodeDef.isMultiple()){
 	        				final CoordinateField coordField= new CoordinateField(FormScreen.this, nodeDef);
 	        				if (FormScreen.this.currentCoordinateField!=null){
@@ -466,7 +467,11 @@ public class FormScreen extends BaseActivity implements OnClickListener {
 	        						FormScreen.this.longitude = "";
 	        					if (FormScreen.this.latitude==null)
 	        						FormScreen.this.latitude = "";
-	        					coordField.setValue(0, FormScreen.this.longitude, FormScreen.this.latitude, FormScreen.this.getFormScreenId(), false);
+	        					String srsId = null;
+	        					if (FormScreen.this.currentCoordinateField.srs!=null){						
+	        						srsId = FormScreen.this.currentCoordinateField.srs.getId();
+	        					}
+	        					coordField.setValue(0, FormScreen.this.longitude, FormScreen.this.latitude, srsId, FormScreen.this.getFormScreenId(), false);
 	    		    			FormScreen.this.currentCoordinateField = null;
 	    		    			FormScreen.this.longitude = null;
 	    		    			FormScreen.this.latitude = null;
@@ -479,12 +484,14 @@ public class FormScreen extends BaseActivity implements OnClickListener {
 		    							loadedValueLon = coordValue.getX().toString();
 		    						if (coordValue.getY()!=null)
 		    							loadedValueLat = coordValue.getY().toString();
+		    						if (coordValue.getSrsId()!=null)
+		    							loadedSrsId = coordValue.getSrsId().toString();
 		    					}	    				
 		    				}
 		    				//coordField = new CoordinateField(FormScreen.this, nodeDef);
 	        				coordField.setOnClickListener(FormScreen.this);
 	        				coordField.setId(nodeDef.getId());
-	        				coordField.setValue(0, loadedValueLon, loadedValueLat, FormScreen.this.getFormScreenId(),false);
+	        				coordField.setValue(0, loadedValueLon, loadedValueLat, loadedSrsId, FormScreen.this.getFormScreenId(),false);
 	        				ApplicationManager.putUIElement(coordField.getId(), coordField);
 	        				FormScreen.this.ll.addView(coordField);
 	    				} else if (FormScreen.this.intentType==getResources().getInteger(R.integer.multipleAttributeIntent)){
@@ -494,7 +501,11 @@ public class FormScreen extends BaseActivity implements OnClickListener {
 	        						FormScreen.this.longitude = "";
 	        					if (FormScreen.this.latitude==null)
 	        						FormScreen.this.latitude = "";
-	        					coordField.setValue(FormScreen.this.currInstanceNo, FormScreen.this.longitude, FormScreen.this.latitude, FormScreen.this.parentFormScreenId,false);
+	        					String srsId = null;
+	        					if (FormScreen.this.currentCoordinateField.srs!=null){						
+	        						srsId = FormScreen.this.currentCoordinateField.srs.getId();
+	        					}
+	        					coordField.setValue(FormScreen.this.currInstanceNo, FormScreen.this.longitude, FormScreen.this.latitude, srsId, FormScreen.this.parentFormScreenId,false);
 	    		    			FormScreen.this.currentCoordinateField = null;
 	    		    			FormScreen.this.longitude = null;
 	    		    			FormScreen.this.latitude = null;
@@ -507,12 +518,14 @@ public class FormScreen extends BaseActivity implements OnClickListener {
 		    							loadedValueLon = coordValue.getX().toString();
 		    						if (coordValue.getY()!=null)
 		    							loadedValueLat = coordValue.getY().toString();
+		    						if (coordValue.getSrsId()!=null)
+		    							loadedSrsId = coordValue.getSrsId().toString();
 		    					}   				
 		    				}
 	        				//coordField= new CoordinateField(FormScreen.this, nodeDef);
 	        				coordField.setOnClickListener(FormScreen.this);
 	        				coordField.setId(nodeDef.getId());
-	        				coordField.setValue(FormScreen.this.currInstanceNo, loadedValueLon, loadedValueLat, FormScreen.this.parentFormScreenId,false);
+	        				coordField.setValue(FormScreen.this.currInstanceNo, loadedValueLon, loadedValueLat, loadedSrsId, FormScreen.this.parentFormScreenId,false);
 	        				ApplicationManager.putUIElement(coordField.getId(), coordField);
 	        				FormScreen.this.ll.addView(coordField);
 	    				} else {//multiple attribute summary    			    		
@@ -1482,7 +1495,11 @@ public class FormScreen extends BaseActivity implements OnClickListener {
         						this.longitude = "";
         					if (this.latitude==null)
         						this.latitude = "";
-        					coordField.setValue(0, this.longitude, this.latitude, this.parentFormScreenId,false);
+        					String srsId = null;
+        					if (FormScreen.this.currentCoordinateField.srs!=null){						
+        						srsId = FormScreen.this.currentCoordinateField.srs.getId();
+        					}
+        					coordField.setValue(0, this.longitude, this.latitude, srsId, this.parentFormScreenId,false);
     		    			this.currentCoordinateField = null;
     		    			this.longitude = null;
     		    			this.latitude = null;
@@ -1510,7 +1527,11 @@ public class FormScreen extends BaseActivity implements OnClickListener {
         						this.longitude = "";
         					if (this.latitude==null)
         						this.latitude = "";
-        					coordField.setValue(this.currInstanceNo, this.longitude, this.latitude, this.parentFormScreenId,false);
+        					String srsId = null;
+        					if (FormScreen.this.currentCoordinateField.srs!=null){						
+        						srsId = FormScreen.this.currentCoordinateField.srs.getId();
+        					}
+        					coordField.setValue(this.currInstanceNo, this.longitude, this.latitude, srsId, this.parentFormScreenId,false);
     		    			this.currentCoordinateField = null;
     		    			this.longitude = null;
     		    			this.latitude = null;
@@ -1965,17 +1986,20 @@ public class FormScreen extends BaseActivity implements OnClickListener {
 				} else if (nodeDef instanceof CoordinateAttributeDefinition){
 					String loadedValueLat = "";
 					String loadedValueLon = "";
+					String loadedSrsId = "";
 					Coordinate coordValue = (Coordinate)parentEntity.getValue(nodeDef.getName(), 0);
 					if (coordValue!=null){
 						if (coordValue.getX()!=null)
 							loadedValueLon = coordValue.getX().toString();
 						if (coordValue.getY()!=null)
 							loadedValueLat = coordValue.getY().toString();
+						if (coordValue.getSrsId()!=null)
+							loadedSrsId = coordValue.getSrsId().toString();
 					}
 						
 					CoordinateField coordField = (CoordinateField) ApplicationManager.getUIElement(nodeDef.getId());
 					if (coordField!=null)
-						coordField.setValue(0, loadedValueLon, loadedValueLat, this.getFormScreenId(), false);
+						coordField.setValue(0, loadedValueLon, loadedValueLat, loadedSrsId, this.getFormScreenId(), false);
 				} else if (nodeDef instanceof RangeAttributeDefinition){
 					String from = "";
 					String to = "";
@@ -2162,6 +2186,7 @@ public class FormScreen extends BaseActivity implements OnClickListener {
 				} else if (nodeDef instanceof CoordinateAttributeDefinition){
 					String loadedValueLat = "";
 					String loadedValueLon = "";
+					String loadedSrsId = "";
 					Coordinate coordValue = (Coordinate)parentEntity.getValue(nodeDef.getName(), this.currInstanceNo);
 					if (coordValue!=null){
 						loadedValueLon = coordValue.getX().toString();
@@ -2170,10 +2195,13 @@ public class FormScreen extends BaseActivity implements OnClickListener {
 						loadedValueLat = coordValue.getY().toString();
 						if (loadedValueLat==null)
 							loadedValueLat = "";
+						loadedSrsId = coordValue.getSrsId().toString();
+						if (loadedSrsId==null)
+							loadedSrsId = "";
 					}						
 					CoordinateField coordField = (CoordinateField) ApplicationManager.getUIElement(nodeDef.getId());
 					if (coordField!=null)
-						coordField.setValue(this.currInstanceNo, loadedValueLon, loadedValueLat, this.getFormScreenId(), false);
+						coordField.setValue(this.currInstanceNo, loadedValueLon, loadedValueLat, loadedSrsId, this.getFormScreenId(), false);
 				} else if (nodeDef instanceof RangeAttributeDefinition){
 					String from = "";
 					String to = "";

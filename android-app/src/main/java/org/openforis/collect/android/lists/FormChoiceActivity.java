@@ -80,6 +80,8 @@ public class FormChoiceActivity extends BaseListActivity {
 		int layout = (backgroundColor!=Color.WHITE)?R.layout.localclusterrow_white:R.layout.localclusterrow_black;
         this.adapter = new ArrayAdapter<String>(this, layout, R.id.plotlabel, formsList);
 		this.setListAdapter(this.adapter);
+		
+		ApplicationManager.setSurvey(null);
     }
     
     @Override

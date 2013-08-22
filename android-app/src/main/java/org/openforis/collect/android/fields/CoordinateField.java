@@ -51,7 +51,7 @@ public class CoordinateField extends InputField implements OnClickListener {
 	private ArrayAdapter<String> aa;
 	private Spinner spinner;
 	
-	private SpatialReferenceSystem srs;
+	public SpatialReferenceSystem srs;
 	private List<SpatialReferenceSystem> srsList;
 	
 	public CoordinateField(Context context, NodeDefinition nodeDef) {		
@@ -201,10 +201,15 @@ public class CoordinateField extends InputField implements OnClickListener {
 			    		CoordinateField.this.srs = CoordinateField.this.srsList.get(position-1);
 			    	else
 			    		CoordinateField.this.srs = null;
+
+					String srsId = null;
+					if (CoordinateField.this.srs!=null){						
+						srsId = CoordinateField.this.srs.getId();
+					}
 			    	if (CoordinateField.this.nodeDefinition.isMultiple()){
-			    		CoordinateField.this.setValue(CoordinateField.form.currInstanceNo, CoordinateField.this.txtLongitude.getText().toString(), CoordinateField.this.txtLatitude.getText().toString(),CoordinateField.form.getFormScreenId(),false);	
+			    		CoordinateField.this.setValue(CoordinateField.form.currInstanceNo, CoordinateField.this.txtLongitude.getText().toString(), CoordinateField.this.txtLatitude.getText().toString(), srsId, CoordinateField.form.getFormScreenId(),false);	
 			    	} else {
-			    		CoordinateField.this.setValue(0, CoordinateField.this.txtLongitude.getText().toString(), CoordinateField.this.txtLatitude.getText().toString(),CoordinateField.form.getFormScreenId(),false);
+			    		CoordinateField.this.setValue(0, CoordinateField.this.txtLongitude.getText().toString(), CoordinateField.this.txtLatitude.getText().toString(), srsId, CoordinateField.form.getFormScreenId(),false);
 			    	}
 			    }
 
@@ -226,7 +231,7 @@ public class CoordinateField extends InputField implements OnClickListener {
 		this.addView(this.btnGetCoordinates);
 	}
 	
-	public void setValue(Integer position, String lon, String lat, String path, boolean isTextChanged)
+	public void setValue(Integer position, String lon, String lat, String srsId, String path, boolean isTextChanged)
 	{
 		if (!isTextChanged){
 			this.txtLongitude.setText(lon);
@@ -236,13 +241,7 @@ public class CoordinateField extends InputField implements OnClickListener {
 		Node<? extends NodeDefinition> node = this.findParentEntity(path).get(this.nodeDefinition.getName(), position);
 		NodeChangeSet nodeChangeSet = null;
 		Entity parentEntity = this.findParentEntity(path);
-		String srsLabel = null;
-		String srsId = null;
-		if (this.srs!=null){
-			srsLabel = this.srs.getLabel(ApplicationManager.selectedLanguage);
-			srsId = this.srs.getId();
-		}
-		Log.e("srsId","=="+srsId);
+
 		if (node!=null){
 //			CoordinateAttribute coordAtr = (CoordinateAttribute)node;
 			Log.e("Coordinate field with Id: ",node.getDefinition().getId() + " is updating. Node name is: " + node.getName() + " Node ID is: " + node.getInternalId());
@@ -293,7 +292,11 @@ public class CoordinateField extends InputField implements OnClickListener {
 	
 	@Override
 	public void afterTextChanged(Editable s) {
-		this.setValue(0, CoordinateField.this.txtLongitude.getText().toString(), CoordinateField.this.txtLatitude.getText().toString(), CoordinateField.form.getFormScreenId(),true);
+		String srsId = null;
+		if (CoordinateField.this.srs!=null){						
+			srsId = CoordinateField.this.srs.getId();
+		}
+		this.setValue(0, CoordinateField.this.txtLongitude.getText().toString(), CoordinateField.this.txtLatitude.getText().toString(), srsId, CoordinateField.form.getFormScreenId(),true);
 	}
 	
 	@Override

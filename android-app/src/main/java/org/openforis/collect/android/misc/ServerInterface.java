@@ -24,8 +24,8 @@ import org.apache.http.util.EntityUtils;
 
 public class ServerInterface {
 
-        //public static final String SERVER_URL = "http://ar5.arbonaut.com/demo/fao-mobile/save-received-data-file";
-        public static final String SERVER_URL = "http://ar5.arbonaut.com/webforest/fao-mobile/save-received-data-file";
+        public static final String SERVER_URL = "http://ar5.arbonaut.com/demo/fao-mobile/save-received-data-file";
+        //public static final String SERVER_URL = "http://ar5.arbonaut.com/webforest/fao-mobile/save-received-data-file";
 
         public static String sendDataFiles(String xml, String survey_id, String username, boolean overwrite) {
             return postSyncXML(xml, survey_id, username, overwrite);
@@ -101,8 +101,8 @@ public class ServerInterface {
         }*/
         
         private static String postSyncXML(String xml, String survey_id, String username, boolean overwrite) {
-            String url = "http://ar5.arbonaut.com/webforest/fao-mobile/save-received-data-file";
-            //String url = "http://ar5.arbonaut.com/demo/fao-mobile/save-received-data-file";
+            //String url = "http://ar5.arbonaut.com/webforest/fao-mobile/save-received-data-file";
+            String url = "http://ar5.arbonaut.com/demo/fao-mobile/save-received-data-file";
             HttpClient httpclient = new DefaultHttpClient();  
             /* String encode_url=URLEncoder.encode(url,"UTF-8");
          	String decode_url=URLDecoder.decode(encode_url,"UTF-8");*/
