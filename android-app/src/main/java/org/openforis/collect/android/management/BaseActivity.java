@@ -11,6 +11,7 @@ import org.openforis.collect.android.lists.DownloadActivity;
 import org.openforis.collect.android.lists.FileImportActivity;
 import org.openforis.collect.android.lists.UploadActivity;
 import org.openforis.collect.android.messages.AlertMessage;
+import org.openforis.collect.android.misc.ImportSpeciesFromCsvActivity;
 import org.openforis.collect.android.misc.RunnableHandler;
 import org.openforis.collect.android.screens.SettingsScreen;
 import org.openforis.collect.android.service.ServiceFactory;
@@ -199,6 +200,10 @@ public class BaseActivity extends Activity {
 					e.printStackTrace();
 				}
 			    return true;*/
+			case R.id.menu_import_species_from_file:
+				//TODO: Create separate activity to uploading and processing csv file with species
+				startActivity(new Intent(BaseActivity.this, ImportSpeciesFromCsvActivity.class));
+				return true;
 			case R.id.menu_settings:
 				startActivity(new Intent(BaseActivity.this,SettingsScreen.class));
 			    return true;	    

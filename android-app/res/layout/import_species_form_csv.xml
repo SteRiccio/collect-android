@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"     
+    android:orientation="vertical" >
+    
+	<TextView
+	    android:id="@+id/lblPathToSpeciesCsv"
+	    android:layout_width="match_parent"
+	    android:layout_height="wrap_content"
+	    android:text="Path to file with species" >
+	</TextView>
+	
+    <EditText 
+        android:id="@+id/txtPathToSpeciesCsv"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" 
+        android:layout_below="@+id/lblPathToSpeciesCsv" >
+    </EditText>
+ 
+    <Button 
+	    android:id="@+id/btnImportSpeciesFromCsv"
+	    android:layout_width="match_parent"
+        android:layout_height="wrap_content" 
+        android:layout_below="@+id/txtPathToSpeciesCsv"
+        android:text= "Upload">
+    </Button>
+
+</RelativeLayout>

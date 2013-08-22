@@ -78,6 +78,7 @@
     <string name="export_all_to_zip">Export all</string>
     <string name="import_from_xml_file">Import from XML</string>
     <string name="import_codelist_from_csv_file">Import code list from CSV</string>
+    <string name="import_species_from_csv_file">Import species from CSV</string>
     <string name="download_from_server">Download XML</string>    
     <string name="upload_to_server">Upload XML</string>
     <string name="settings">Settings</string>
