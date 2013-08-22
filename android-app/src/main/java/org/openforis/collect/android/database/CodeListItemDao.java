@@ -92,7 +92,7 @@ public class CodeListItemDao extends org.openforis.collect.persistence.CodeListI
 	
 	protected ModelVersion extractModelVersion(SurveyObject surveyObject, Integer versionId) {
 		Survey survey = surveyObject.getSurvey();
-		ModelVersion version = versionId == null ? null: survey.getVersionById(versionId);
+		ModelVersion version = ((versionId == null)||(versionId == 0)) ? null: survey.getVersionById(versionId);
 		return version;
 	}
 	

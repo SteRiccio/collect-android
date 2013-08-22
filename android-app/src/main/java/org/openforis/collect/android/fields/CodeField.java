@@ -167,38 +167,18 @@ public class CodeField extends InputField {
 
 				});
 			} else {//hierarchical list
+				Log.e("HIERARCHICAL","LIST");
 				if (this.codeAttrDef.getParentCodeAttributeDefinition()!=null){
+					//children code lists
+					Log.e("HIERARCHICAL1",this.codeAttrDef.getName()+"==");
 					this.spinner = new Spinner(context);
 					this.spinner.setPrompt(this.label.getText());
-					
-					/*this.codes = new ArrayList<String>();
-					this.codes.add("null");
-					this.options = new ArrayList<String>();
-					this.options.add("");*/
-					
-					/*CodeListManager codeListManager = ServiceFactory.getCodeListManager();
-					Log.e("constructor","LOADVALIDITEMS2");
-					List<CodeListItem> parentItems = codeListManager.loadValidItems(this.parentEntity, this.codeAttrDef.getParentCodeAttributeDefinition());
-					Log.e("parentItemsize"+parentItems.size(),this.codeAttrDef.getParentCodeAttributeDefinition().getId()+"==");
-					for (int i=0;i<parentItems.size();i++){
-						CodeListItem item = parentItems.get(i);
-						this.codes.add(item.getCode());
-						this.options.add(item.getLabel(ApplicationManager.selectedLanguage));
-					}*/
 					
 					CodeField parentCodeField = (CodeField)ApplicationManager.getUIElement(this.codeAttrDef.getParentCodeAttributeDefinition().getId());
 					if (parentCodeField!=null){
 						int selectedPositionInParent = parentCodeField.spinner.getSelectedItemPosition();
 						if (selectedPositionInParent>0){
 							selectedPositionInParent--;
-							/*CodeListManager codeListManager = ServiceFactory.getCodeListManager();
-							Log.e("constructor","LOADVALIDITEMS2");
-							List<CodeListItem> parentItems = codeListManager.loadValidItems(this.parentEntity, this.codeAttrDef);
-							for (int i=0;i<parentItems.size();i++){
-								CodeListItem item = parentItems.get(i);
-								this.codes.add(item.getCode());
-								this.options.add(item.getLabel(ApplicationManager.selectedLanguage)item.getLabels().get(0).getText());
-							}*/
 							ItemsStorage foundItemsStorage = ApplicationManager.getStoredItems(this.codeAttrDef.getId(),selectedPositionInParent);			
 							List<CodeListItem> parentItems = null;
 							if (foundItemsStorage!=null){
@@ -239,6 +219,52 @@ public class CodeField extends InputField {
 					    	} else {
 					    		CodeField.this.setValue(0, CodeField.this.codes.get(CodeField.this.spinner.getSelectedItemPosition()),CodeField.form.getFormScreenId(),true);
 					    	}
+					    	if (!CodeField.this.childrenIds.isEmpty()){
+					    		Log.e("HIERARCHICAL1iloscdzieci",codeAttrDef.getName()+"=="+CodeField.this.childrenIds.size());
+					    		for (int i=0;i<CodeField.this.childrenIds.size();i++){
+					    			
+					    			CodeField currentChild = (CodeField)ApplicationManager.getUIElement(CodeField.this.childrenIds.get(i));
+					    			currentChild.codes = new ArrayList<String>();
+					    			currentChild.codes.add("null");
+					    			currentChild.options = new ArrayList<String>();
+					    			currentChild.options.add("");
+					    			
+									currentChild.aa.clear();
+					    			currentChild.aa.add("");
+					    			int selectedPositionInParent = spinner.getSelectedItemPosition();
+									if (selectedPositionInParent>0){
+										selectedPositionInParent--;
+										ItemsStorage foundItemsStorage = ApplicationManager.getStoredItems(currentChild.nodeDefinition.getId(),selectedPositionInParent);			
+										List<CodeListItem> parentItems = null;
+										if (foundItemsStorage!=null){
+											parentItems = foundItemsStorage.items;
+										}
+										if (parentItems!=null){
+											//parentItems = ApplicationManager.storedItemsList.getItems(currentChild.getId(),positionToLoadItemsFrom).items;							
+										} else {
+											CodeListManager codeListManager = ServiceFactory.getCodeListManager();
+											parentItems = codeListManager.loadValidItems(currentChild.parentEntity, currentChild.codeAttrDef);
+											ItemsStorage storage = new ItemsStorage();
+											storage.setDefinitionId(currentChild.codeAttrDef.getId());
+											storage.setItems(parentItems);
+											storage.addSelectedPositionInParent(selectedPositionInParent);
+											ApplicationManager.storedItemsList.add(storage);
+										}
+										for (int j=0;j<parentItems.size();j++){
+											CodeListItem item = parentItems.get(j);
+											currentChild.codes.add(item.getCode().toString());
+											currentChild.options.add(item.getLabel(ApplicationManager.selectedLanguage)/*item.getLabels().get(0).getText()*/);
+											currentChild.aa.add(item.getLabel(ApplicationManager.selectedLanguage)/*item.getLabels().get(0).getText()*/);
+										}
+									}
+									if (currentChild.aa.getCount()==1){
+						    			currentChild.spinner.setEnabled(false);
+									} else {
+										currentChild.spinner.setEnabled(true);
+									}
+									currentChild.spinner.setSelection(0);
+					    		}					    		
+					    	}
 					    }
 
 					    @Override
@@ -255,11 +281,11 @@ public class CodeField extends InputField {
 					}
 				}			
 				else {
+					Log.e("HIERARCHICAL2",this.codeAttrDef.getName()+"==");
+					//parent code list
 					this.spinner = new Spinner(context);
 					this.spinner.setPrompt(this.label.getText());
 					
-					/*this.codes = codes;
-					this.options = options;*/
 					ItemsStorage foundItemsStorage = ApplicationManager.getStoredItems(this.codeAttrDef.getId(),0);			
 					List<CodeListItem> parentItems = null;
 					if (foundItemsStorage!=null){
@@ -298,7 +324,9 @@ public class CodeField extends InputField {
 					    		CodeField.this.setValue(0, CodeField.this.codes.get(CodeField.this.spinner.getSelectedItemPosition()),CodeField.form.getFormScreenId(),true);
 					    	}
 					    	if (!CodeField.this.childrenIds.isEmpty()){
+					    		Log.e("HIERARCHICAL2iloscdzieci",codeAttrDef.getName()+"=="+CodeField.this.childrenIds.size());
 					    		for (int i=0;i<CodeField.this.childrenIds.size();i++){
+					    			
 					    			CodeField currentChild = (CodeField)ApplicationManager.getUIElement(CodeField.this.childrenIds.get(i));
 					    			currentChild.codes = new ArrayList<String>();
 					    			currentChild.codes.add("null");
@@ -319,9 +347,7 @@ public class CodeField extends InputField {
 											//parentItems = ApplicationManager.storedItemsList.getItems(currentChild.getId(),positionToLoadItemsFrom).items;							
 										} else {
 											CodeListManager codeListManager = ServiceFactory.getCodeListManager();
-											//Debug.startMethodTracing("codeListLoadingHierarchical");
 											parentItems = codeListManager.loadValidItems(currentChild.parentEntity, currentChild.codeAttrDef);
-											//Debug.stopMethodTracing();
 											ItemsStorage storage = new ItemsStorage();
 											storage.setDefinitionId(currentChild.codeAttrDef.getId());
 											storage.setItems(parentItems);

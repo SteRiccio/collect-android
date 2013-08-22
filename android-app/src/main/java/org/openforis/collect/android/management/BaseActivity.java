@@ -187,7 +187,7 @@ public class BaseActivity extends Activity {
 			    return true;
 			case R.id.menu_import_from_file:
 				startActivity(new Intent(BaseActivity.this, FileImportActivity.class));
-			    return true; 
+			    return true;
 			/*case R.id.menu_import_codelist_from_file:				
 				try {
 					String sdcardPath = Environment.getExternalStorageDirectory().toString();
