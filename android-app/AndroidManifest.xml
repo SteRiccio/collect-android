@@ -114,6 +114,12 @@
           android:configChanges="orientation|keyboardHidden">
 		</activity>
 		
+		<activity android:name=".misc.ImportSpeciesFromCsvActivity"
+          android:label="@string/app_name"
+          android:theme="@android:style/Theme.NoTitleBar"
+          android:configChanges="orientation|keyboardHidden">
+		</activity>	
+			
 		<activity android:name="org.openforis.collect.android.screens.CameraScreen"
 		  android:configChanges="orientation|keyboardHidden" 
 		  android:label="@string/app_name"
