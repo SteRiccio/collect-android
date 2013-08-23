@@ -185,8 +185,9 @@ public class CoordinateField extends InputField implements OnClickListener {
 			this.options.add("");
 			for (int i=0;i<this.srsList.size();i++){
 				SpatialReferenceSystem srs = this.srsList.get(i);
-				this.codes.add(srs.getLabel(ApplicationManager.selectedLanguage));
-				this.options.add(srs.getLabel(ApplicationManager.selectedLanguage));
+				this.codes.add(srs.getId());
+				this.options.add(extractLabel(srs));
+				Log.e("code"+this.codes.get(i),"option"+this.options.get(i));
 			}
 			this.spinner = new Spinner(context);
 			this.spinner.setPrompt(this.label.getText());
@@ -206,6 +207,7 @@ public class CoordinateField extends InputField implements OnClickListener {
 					if (CoordinateField.this.srs!=null){						
 						srsId = CoordinateField.this.srs.getId();
 					}
+					Log.e("settingValueSpinner","=="+srsId);
 			    	if (CoordinateField.this.nodeDefinition.isMultiple()){
 			    		CoordinateField.this.setValue(CoordinateField.form.currInstanceNo, CoordinateField.this.txtLongitude.getText().toString(), CoordinateField.this.txtLatitude.getText().toString(), srsId, CoordinateField.form.getFormScreenId(),false);	
 			    	} else {
@@ -237,7 +239,16 @@ public class CoordinateField extends InputField implements OnClickListener {
 			this.txtLongitude.setText(lon);
 			this.txtLatitude.setText(lat);
 		}
-
+		Log.e("setValue"+this.nodeDefinition.getName(),"srsId=="+srsId);
+		int srsIdPosition = 0;
+		for (int i=0;i<this.srsList.size();i++){
+			SpatialReferenceSystem srs = this.srsList.get(i);
+			if (srs.getId().equals(srsId)){
+				srsIdPosition = i+1;
+			}
+		}
+		Log.e("found POS","=="+srsIdPosition);
+		this.spinner.setSelection(srsIdPosition);
 		Node<? extends NodeDefinition> node = this.findParentEntity(path).get(this.nodeDefinition.getName(), position);
 		NodeChangeSet nodeChangeSet = null;
 		Entity parentEntity = this.findParentEntity(path);
@@ -325,5 +336,18 @@ public class CoordinateField extends InputField implements OnClickListener {
 	public void setCoordinateLabelTextColor(int color){
 		if (this.coordLabel!=null)
 			this.coordLabel.setTextColor(color);
+	}
+
+	private String extractLabel(SpatialReferenceSystem srs){
+		String label = srs.getLabel(ApplicationManager.selectedLanguage);
+		Log.e("selectedLanguage",ApplicationManager.selectedLanguage+"=="+label);
+		if (label==null){
+			label = srs.getLabel(null);
+			Log.e("noLanguage","null=="+label);
+			if (label==null){
+				label = "";
+			}
+		}
+		return label;
 	}
 }

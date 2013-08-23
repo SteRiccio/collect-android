@@ -52,7 +52,7 @@ public class CodeField extends InputField {
 	
 	private ArrayList<Integer> childrenIds;
 	
-	private Entity parentEntity;	
+	private Entity parentEntity;
 	
 	public CodeField(Context context, NodeDefinition nodeDef, 
 			ArrayList<String> codes, ArrayList<String> options, 
@@ -73,14 +73,6 @@ public class CodeField extends InputField {
 		this.codes.add("null");
 		this.options = new ArrayList<String>();
 		this.options.add("");
-		/*CodeListManager codeListManager = ServiceFactory.getCodeListManager();
-		Log.e("constructor","LOADVALIDITEMS1");
-		List<CodeListItem> parentItems = codeListManager.loadValidItems(this.parentEntity, this.codeAttrDef);
-		for (int i=0;i<parentItems.size();i++){
-			CodeListItem item = parentItems.get(i);
-			this.codes.add(item.getCode());
-			this.options.add(item.getLabel(ApplicationManager.selectedLanguage));
-		}*/
 		
 		this.label.setLayoutParams(new LayoutParams(0, ViewGroup.LayoutParams.WRAP_CONTENT, (float) 1));
 		this.label.setOnLongClickListener(new OnLongClickListener() {
@@ -123,11 +115,11 @@ public class CodeField extends InputField {
 //					org.openforis.collect.android.management.CodeListManager codeListManager = new org.openforis.collect.android.management.CodeListManager();
 //					codeListManager.setCodeListItemDao(codeListItemDao);
 					parentItems = codeListManager.loadValidItems(this.parentEntity, this.codeAttrDef);
-					/*ItemsStorage storage = new ItemsStorage();
+					ItemsStorage storage = new ItemsStorage();
 					storage.setDefinitionId(this.codeAttrDef.getId());
 					storage.setItems(parentItems);
 					storage.addSelectedPositionInParent(0);
-					ApplicationManager.storedItemsList.add(storage);*/					
+					ApplicationManager.storedItemsList.add(storage);				
 				}
 				for (int j=0;j<parentItems.size();j++){
 					CodeListItem item = parentItems.get(j);
@@ -209,11 +201,11 @@ public class CodeField extends InputField {
 							} else {
 								CodeListManager codeListManager = ServiceFactory.getCodeListManager();
 								parentItems = codeListManager.loadValidItems(this.parentEntity, this.codeAttrDef);
-								/*ItemsStorage storage = new ItemsStorage();
+								ItemsStorage storage = new ItemsStorage();
 								storage.setDefinitionId(this.codeAttrDef.getId());
 								storage.setItems(parentItems);
 								storage.addSelectedPositionInParent(selectedPositionInParent);
-								ApplicationManager.storedItemsList.add(storage);*/
+								ApplicationManager.storedItemsList.add(storage);
 							}
 							for (int j=0;j<parentItems.size();j++){
 								CodeListItem item = parentItems.get(j);
@@ -239,7 +231,10 @@ public class CodeField extends InputField {
 					    	} else {
 					    		CodeField.this.setValue(0, CodeField.this.codes.get(CodeField.this.spinner.getSelectedItemPosition()),CodeField.form.getFormScreenId(),true);
 					    	}
-					    	if (!CodeField.this.childrenIds.isEmpty()){
+					    	Log.e("CodeField2",CodeField.this.nodeDefinition.getName()+"=="+CodeField.this.codes.get(CodeField.this.spinner.getSelectedItemPosition()));
+					    	Log.e("CodeField2","iloscDzieci"+CodeField.this.childrenIds.size());
+					    	updateChildren(CodeField.this);
+					    	/*if (!CodeField.this.childrenIds.isEmpty()){
 					    		for (int i=0;i<CodeField.this.childrenIds.size();i++){
 					    			CodeField currentChild = (CodeField)ApplicationManager.getUIElement(CodeField.this.childrenIds.get(i));
 					    			currentChild.codes = new ArrayList<String>();
@@ -262,27 +257,26 @@ public class CodeField extends InputField {
 										} else {
 											CodeListManager codeListManager = ServiceFactory.getCodeListManager();
 											parentItems = codeListManager.loadValidItems(currentChild.parentEntity, currentChild.codeAttrDef);
-											/*ItemsStorage storage = new ItemsStorage();
+											ItemsStorage storage = new ItemsStorage();
 											storage.setDefinitionId(currentChild.codeAttrDef.getId());
 											storage.setItems(parentItems);
 											storage.addSelectedPositionInParent(selectedPositionInParent);
-											ApplicationManager.storedItemsList.add(storage);*/
+											ApplicationManager.storedItemsList.add(storage);
 										}
 										for (int j=0;j<parentItems.size();j++){
 											CodeListItem item = parentItems.get(j);
 											currentChild.codes.add(item.getCode().toString());
-											currentChild.options.add(item.getLabel(ApplicationManager.selectedLanguage)/*item.getLabels().get(0).getText()*/);
-											currentChild.aa.add(item.getLabel(ApplicationManager.selectedLanguage)/*item.getLabels().get(0).getText()*/);
+											currentChild.options.add(item.getLabel(ApplicationManager.selectedLanguage));
+											currentChild.aa.add(item.getLabel(ApplicationManager.selectedLanguage));
 										}
 									}
 									if (currentChild.aa.getCount()==1){
 						    			currentChild.spinner.setEnabled(false);
 									} else {
 										currentChild.spinner.setEnabled(true);
-									}
-									currentChild.spinner.setSelection(0);
+									}	
 					    		}					    		
-					    	}
+					    	}*/
 					    }
 
 					    @Override
@@ -341,7 +335,10 @@ public class CodeField extends InputField {
 					    	} else {
 					    		CodeField.this.setValue(0, CodeField.this.codes.get(CodeField.this.spinner.getSelectedItemPosition()),CodeField.form.getFormScreenId(),true);
 					    	}
-					    	if (!CodeField.this.childrenIds.isEmpty()){
+					    	Log.e("CodeField1",CodeField.this.nodeDefinition.getName()+"=="+CodeField.this.codes.get(CodeField.this.spinner.getSelectedItemPosition()));
+					    	Log.e("CodeField1","iloscDzieci"+CodeField.this.childrenIds.size());
+					    	updateChildren(CodeField.this);
+					    	/*if (!CodeField.this.childrenIds.isEmpty()){
 					    		for (int i=0;i<CodeField.this.childrenIds.size();i++){
 					    			CodeField currentChild = (CodeField)ApplicationManager.getUIElement(CodeField.this.childrenIds.get(i));
 					    			currentChild.codes = new ArrayList<String>();
@@ -375,18 +372,17 @@ public class CodeField extends InputField {
 										for (int j=0;j<parentItems.size();j++){
 											CodeListItem item = parentItems.get(j);
 											currentChild.codes.add(item.getCode().toString());
-											currentChild.options.add(item.getLabel(ApplicationManager.selectedLanguage)/*item.getLabels().get(0).getText()*/);
-											currentChild.aa.add(item.getLabel(ApplicationManager.selectedLanguage)/*item.getLabels().get(0).getText()*/);
+											currentChild.options.add(item.getLabel(ApplicationManager.selectedLanguage));
+											currentChild.aa.add(item.getLabel(ApplicationManager.selectedLanguage));
 										}
 									}
 									if (currentChild.aa.getCount()==1){
 						    			currentChild.spinner.setEnabled(false);
 									} else {
 										currentChild.spinner.setEnabled(true);
-									}
-									currentChild.spinner.setSelection(0);
+									}																
 					    		}					    		
-					    	}
+					    	}*/
 					    }
 
 					    @Override
@@ -475,6 +471,56 @@ public class CodeField extends InputField {
 		else
 			this.spinner.setSelection(0);
 	}
-	
+
+	private void updateChildren(CodeField codeField){
+		Log.e("codeField","=="+codeField.getLabelText());
+		if (!codeField.childrenIds.isEmpty()){
+    		for (int i=0;i<codeField.childrenIds.size();i++){
+    			Log.e("childID","=="+codeField.childrenIds.get(i));
+    			CodeField currentChild = (CodeField)ApplicationManager.getUIElement(codeField.childrenIds.get(i));
+    			currentChild.codes = new ArrayList<String>();
+    			currentChild.codes.add("null");
+    			currentChild.options = new ArrayList<String>();
+    			currentChild.options.add("");
+    			
+				currentChild.aa.clear();
+    			currentChild.aa.add("");
+    			int selectedPositionInParent = spinner.getSelectedItemPosition();
+				if (selectedPositionInParent>0){
+					selectedPositionInParent--;
+					ItemsStorage foundItemsStorage = ApplicationManager.getStoredItems(currentChild.nodeDefinition.getId(),selectedPositionInParent);			
+					List<CodeListItem> parentItems = null;
+					if (foundItemsStorage!=null){
+						parentItems = foundItemsStorage.items;
+					}
+					if (parentItems!=null){
+						//parentItems = ApplicationManager.storedItemsList.getItems(currentChild.getId(),positionToLoadItemsFrom).items;							
+					} else {
+						CodeListManager codeListManager = ServiceFactory.getCodeListManager();
+						parentItems = codeListManager.loadValidItems(currentChild.parentEntity, currentChild.codeAttrDef);
+						ItemsStorage storage = new ItemsStorage();
+						storage.setDefinitionId(currentChild.codeAttrDef.getId());
+						storage.setItems(parentItems);
+						storage.addSelectedPositionInParent(selectedPositionInParent);
+						ApplicationManager.storedItemsList.add(storage);
+					}
+					for (int j=0;j<parentItems.size();j++){
+						CodeListItem item = parentItems.get(j);
+						currentChild.codes.add(item.getCode().toString());
+						currentChild.options.add(item.getLabel(ApplicationManager.selectedLanguage)/*item.getLabels().get(0).getText()*/);
+						currentChild.aa.add(item.getLabel(ApplicationManager.selectedLanguage)/*item.getLabels().get(0).getText()*/);
+					}
+				}
+				if (currentChild.aa.getCount()==1){
+	    			currentChild.spinner.setEnabled(false);
+				} else {
+					currentChild.spinner.setEnabled(true);
+				}
+				Log.e("currentChild.childrenSize",currentChild.getLabelText()+"=="+currentChild.childrenIds.size());
+				updateChildren(currentChild);
+    		}					    		
+    	}
+	}
 
 }
+

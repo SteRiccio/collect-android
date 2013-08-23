@@ -407,7 +407,7 @@ public class FormScreen extends BaseActivity implements OnClickListener {
 	    				}
 	    			} else if (nodeDef instanceof CodeAttributeDefinition){	    				
 	    				loadedValue = "";
-	    				CodeAttributeDefinition codeAttrDef = (CodeAttributeDefinition)nodeDef;
+	    				//CodeAttributeDefinition codeAttrDef = (CodeAttributeDefinition)nodeDef;
 	    				ArrayList<String> options = new ArrayList<String>();
 	    				ArrayList<String> codes = new ArrayList<String>();
 	    				options.add("");
@@ -432,6 +432,7 @@ public class FormScreen extends BaseActivity implements OnClickListener {
 	        				CodeField codeField = new CodeField(FormScreen.this, nodeDef, codes, options, null, FormScreen.this.getFormScreenId());
 	        				codeField.setOnClickListener(FormScreen.this);
 	        				codeField.setId(nodeDef.getId());
+	        				Log.e("FormScreen",nodeDef.getName()+"=="+loadedValue);
 	        				codeField.setValue(0, loadedValue, FormScreen.this.getFormScreenId(),false);
 	        				ApplicationManager.putUIElement(codeField.getId(), codeField);
 	        				FormScreen.this.ll.addView(codeField);
@@ -471,6 +472,7 @@ public class FormScreen extends BaseActivity implements OnClickListener {
 	        					if (FormScreen.this.currentCoordinateField.srs!=null){						
 	        						srsId = FormScreen.this.currentCoordinateField.srs.getId();
 	        					}
+			    				Log.e("FormScreen1","=="+srsId);
 	        					coordField.setValue(0, FormScreen.this.longitude, FormScreen.this.latitude, srsId, FormScreen.this.getFormScreenId(), false);
 	    		    			FormScreen.this.currentCoordinateField = null;
 	    		    			FormScreen.this.longitude = null;
@@ -488,6 +490,7 @@ public class FormScreen extends BaseActivity implements OnClickListener {
 		    							loadedSrsId = coordValue.getSrsId().toString();
 		    					}	    				
 		    				}
+		    				Log.e("FormScreen2","=="+loadedSrsId);
 		    				//coordField = new CoordinateField(FormScreen.this, nodeDef);
 	        				coordField.setOnClickListener(FormScreen.this);
 	        				coordField.setId(nodeDef.getId());
