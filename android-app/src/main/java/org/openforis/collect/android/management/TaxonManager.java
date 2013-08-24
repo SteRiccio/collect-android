@@ -8,7 +8,6 @@ package org.openforis.collect.android.management;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.openforis.collect.android.service.ServiceFactory;
 import org.openforis.collect.persistence.TaxonDao;
 import org.openforis.collect.persistence.TaxonVernacularNameDao;
 import org.openforis.collect.persistence.TaxonomyDao;
@@ -62,10 +61,9 @@ public class TaxonManager {
 	@Transactional
 	public List<TaxonOccurrence> findByCode(String taxonomyName, String searchString, int maxResults) {
 		List<TaxonOccurrence> result = new ArrayList<TaxonOccurrence>();
-		Taxonomy taxonomy = taxonomyDao.load(this.getSurveyId(), taxonomyName);
+		Taxonomy taxonomy = taxonomyDao.load(ApplicationManager.getSurvey().getId()/*this.getSurveyId()*/, taxonomyName);
 		if (taxonomy!=null){
-			List<Taxon> list = taxonDao.findByCode(taxonomy.getId(), searchString, maxResults);
-			
+			List<Taxon> list = taxonDao.findByCode(taxonomy.getId(), searchString, maxResults);			
 			Log.e("findByCode","==");
 			for (Taxon taxon : list) {
 				TaxonOccurrence o = new TaxonOccurrence(taxon.getCode(), taxon.getScientificName());
@@ -79,8 +77,7 @@ public class TaxonManager {
 	public List<TaxonOccurrence> findByScientificName(String taxonomyName, String searchString, int maxResults) {
 		List<TaxonOccurrence> result = new ArrayList<TaxonOccurrence>();
 		
-		Taxonomy taxonomy = taxonomyDao.load(this.getSurveyId(), taxonomyName);	
-		Log.e("surveyId=="+this.getSurveyId(),"taxonomy=="+taxonomyName);
+		Taxonomy taxonomy = taxonomyDao.load(ApplicationManager.getSurvey().getId()/*this.getSurveyId()*/, taxonomyName);	
 		if (taxonomy!=null){
 			List<Taxon> list = taxonDao.findByScientificName(taxonomy.getId(), searchString, maxResults);			
 			Log.e("findBySCIName","==");
@@ -98,13 +95,12 @@ public class TaxonManager {
 	@Transactional
 	public List<TaxonOccurrence> findByVernacularName(String taxonomyName, String searchString, int maxResults) {
 		List<TaxonOccurrence> result = new ArrayList<TaxonOccurrence>();
-		Taxonomy taxonomy = taxonomyDao.load(this.getSurveyId(), taxonomyName);
+		Taxonomy taxonomy = taxonomyDao.load(ApplicationManager.getSurvey().getId()/*this.getSurveyId()*/, taxonomyName);
 		if (taxonomy!=null){
-			List<TaxonVernacularName> list = taxonVernacularNameDao.findByVernacularName(taxonomy.getId(), searchString, maxResults);
+			List<TaxonVernacularName> list = this.taxonVernacularNameDao.findByVernacularName(taxonomy.getId(), searchString, maxResults);
 			for (TaxonVernacularName taxonVernacularName : list) {
 				Integer taxonId = taxonVernacularName.getTaxonSystemId();
 				Taxon taxon = taxonDao.loadById(taxonId);
-				Log.e("findByVernacularName","==");
 				TaxonOccurrence o = new TaxonOccurrence(taxon.getCode(), taxon.getScientificName(), taxonVernacularName.getVernacularName(), taxonVernacularName.getLanguageCode(),
 						taxonVernacularName.getLanguageVariety());
 				result.add(o);

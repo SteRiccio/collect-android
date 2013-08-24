@@ -48,7 +48,6 @@ public class BaseListActivity extends ListActivity {
 		try {
 			this.backgroundColor = ApplicationManager.appPreferences.getInt(getResources().getString(R.string.backgroundColor), Color.WHITE);
 			if (ApplicationManager.getSurvey()==null){
-				Log.e("channging menu","====================");
 				if (Build.VERSION.SDK_INT >= 11) {
 					//invalidateOptionsMenu();
 					ActivityCompat.invalidateOptionsMenu(BaseListActivity.this);

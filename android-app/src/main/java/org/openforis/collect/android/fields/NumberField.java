@@ -173,20 +173,11 @@ public class NumberField extends InputField {
 				}			
 			}
 //			ApplicationManager.updateUIElementsWithValidationResults(nodeChangeSet);
-			List<String> rootEntityKeyValuesList = ApplicationManager.currentRecord.getRootEntityKeyValues();
-			Log.e("rootEntityKeyValuesList!=null","=="+(rootEntityKeyValuesList!=null));
-			if (rootEntityKeyValuesList!=null){
-				Log.e("rootEntityKeyValuesList.size","=="+rootEntityKeyValuesList.size());
-				for (String rootEntityKeyValue : rootEntityKeyValuesList){
-					Log.e("rootEntityKeyValue","=="+rootEntityKeyValue);
-				}
-			}
 			validateField(nodeChangeSet);
 
 		} catch (Exception e){
-			Log.e("Number value got exception", "Value is: " + value 
-					+ " Exception is:" + e.getMessage() + " : " + e.getStackTrace());
-			e.printStackTrace();
+			Log.e("Number value got exception", "Value is: " + value);
+			//e.printStackTrace();
 		}		
 	}
 	

@@ -539,17 +539,29 @@ public class TaxonField extends InputField {
 			//this.txtVernacularLang.setText(vernLang);
 			this.txtLangVariant.setText(langVariant);
 		}
+		if (vernName!=null)
+			if (vernName.trim().equals("")){
+				vernName = null;
+			}
+		if (vernLang!=null)
+			if (vernLang.trim().equals("")){
+				vernLang = null;
+			}
+		if (langVariant!=null)
+			if (langVariant.trim().equals("")){
+				langVariant = null;
+			}
 		Node<? extends NodeDefinition> node = this.findParentEntity(path).get(this.nodeDefinition.getName(), position);
 		if (node!=null){
 			TaxonAttribute taxonAttr= (TaxonAttribute)node;
-			if (vernLang.equals("")){
+			/*if (vernLang.equals("")){
 				vernLang = null;
-			}
+			}*/
 			taxonAttr.setValue(new TaxonOccurrence(code, sciName, vernName, vernLang, langVariant));
 		} else {
-			if (vernLang.equals("")){
+			/*if (vernLang.equals("")){
 				vernLang = null;
-			}
+			}*/
 			EntityBuilder.addValue(this.findParentEntity(path), this.nodeDefinition.getName(), new TaxonOccurrence(code, sciName, vernName, vernLang, langVariant), position);	
 		}
 	}

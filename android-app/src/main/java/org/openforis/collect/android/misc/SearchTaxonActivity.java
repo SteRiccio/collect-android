@@ -2,17 +2,13 @@ package org.openforis.collect.android.misc;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 import org.openforis.collect.android.R;
 import org.openforis.collect.android.database.DatabaseHelper;
 import org.openforis.collect.android.fields.TaxonField;
 import org.openforis.collect.android.management.ApplicationManager;
-import org.openforis.collect.android.management.TaxonManager;
 import org.openforis.collect.android.service.ServiceFactory;
-import org.openforis.collect.persistence.TaxonDao;
-import org.openforis.collect.persistence.TaxonVernacularNameDao;
-import org.openforis.collect.persistence.TaxonomyDao;
+import org.openforis.idm.model.TaxonAttribute.LanguageCodeNotSupportedException;
 import org.openforis.idm.model.TaxonOccurrence;
 
 import android.app.Activity;
@@ -45,7 +41,7 @@ public class SearchTaxonActivity extends Activity {
 	private String criteria;
 	private String path;
 	private int taxonFieldId;
-	private TaxonManager taxonManager;
+	//private TaxonManager taxonManager;
 	private String taxonomy;
 	private int backgroundColor;
 	//UI elements
@@ -76,12 +72,12 @@ public class SearchTaxonActivity extends Activity {
 	    	this.taxonFieldId = extras.getInt("taxonId");
 	    	this.path = extras.getString("path");
 	    	//Set up species manager
-			this.taxonManager = new TaxonManager();
+			/*this.taxonManager = new TaxonManager();
 			this.taxonManager.setTaxonomyDao(new TaxonomyDao());
 			this.taxonManager.setTaxonDao(new TaxonDao());
 			this.taxonManager.setTaxonVernacularNameDao(new TaxonVernacularNameDao());
-			this.taxonManager.setSurveyId(ApplicationManager.getSurvey().getId());
-			this.taxonomy = "trees";	  
+			this.taxonManager.setSurveyId(ApplicationManager.getSurvey().getId());*/
+			this.taxonomy = "trees";
 	    }
 	    else{
 	    	Log.i(getResources().getString(R.string.app_name), "Cannot get extras in SearchTaxon activity");
@@ -248,9 +244,9 @@ public class SearchTaxonActivity extends Activity {
         	String[] arrResults = new String[lstTaxonOccurence.size()];
         	int idx = 0;
     		for (TaxonOccurrence taxonOcc : lstTaxonOccurence) {
-    			arrResults[idx] = taxonOcc.getCode() + "\n" + taxonOcc.getScientificName() + " ;\n" 
-    				+ taxonOcc.getVernacularName()/* + " ;\n" + taxonOcc.getLanguageCode() + " ;\n" 
-    				+ taxonOcc.getLanguageVariety()+ " ;\n"*/;
+    			arrResults[idx] = taxonOcc.getCode() + "\n" + taxonOcc.getScientificName() + ";" 
+    				+ taxonOcc.getVernacularName() + ";" + taxonOcc.getLanguageCode() + ";" 
+    				+ taxonOcc.getLanguageVariety()+";";
     			arrResults[idx] = arrResults[idx].replaceAll("null", "");
     			idx++;
     		}   
@@ -269,18 +265,24 @@ public class SearchTaxonActivity extends Activity {
     			public void onItemClick(AdapterView<?> adapterView, View view, int position, long id) {
     				// Back to previous screen and pass chosen results there
     				String strItem = lstResult.getAdapter().getItem(position).toString();
-    				String[] arrItemValues = strItem.replaceAll(";\n", " ;").split(";");
+    				strItem = strItem.replaceAll("\n", ";");
+    				strItem = strItem.replaceAll(";", " ;");
+    				String[] arrItemValues = strItem.split(";");
     				for(int i=0; i<arrItemValues.length;i++){
     					Log.i(getResources().getString(R.string.app_name), "i = " + i + "; Value is: " + arrItemValues[i]);
     				}
     				// Set textboxes in TaxonField by given values
     				TaxonField parentTaxonField = (TaxonField)ApplicationManager.getUIElement(parentTaxonFieldId);
-    				if(parentTaxonField != null){
-    					parentTaxonField.setValue(0, arrItemValues[0], arrItemValues[1], arrItemValues[2], arrItemValues[4], arrItemValues[3], SearchTaxonActivity.this.path,false);
-    				}
-    				else{
-    					Log.i(getResources().getString(R.string.app_name), "Parent taxon field is: NULL");
-    				}
+    				try{
+    					if(parentTaxonField != null){
+        					parentTaxonField.setValue(0, arrItemValues[0].trim(), arrItemValues[1].trim(), arrItemValues[2].trim(), arrItemValues[3].trim(), arrItemValues[4].trim(), SearchTaxonActivity.this.path,false);
+        				}
+        				else{
+        					Log.i(getResources().getString(R.string.app_name), "Parent taxon field is: NULL");
+        				}
+    				} catch (LanguageCodeNotSupportedException e){
+    					e.printStackTrace();
+    				}    				
     			    // Finish activity
     			    finish();				
     			}

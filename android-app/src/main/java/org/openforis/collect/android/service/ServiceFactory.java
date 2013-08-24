@@ -4,23 +4,20 @@ import org.openforis.collect.android.config.Configuration;
 import org.openforis.collect.android.database.DatabaseHelper;
 import org.openforis.collect.android.database.SQLDroidDataSource;
 import org.openforis.collect.android.management.TaxonManager;
-import org.openforis.collect.manager.CodeListManager;
 import org.openforis.collect.manager.RecordManager;
 import org.openforis.collect.manager.SurveyManager;
 import org.openforis.collect.manager.UserManager;
 import org.openforis.collect.model.CollectSurveyContext;
-import org.openforis.collect.persistence.CodeListItemDao;
 import org.openforis.collect.persistence.RecordDao;
 import org.openforis.collect.persistence.SurveyDao;
 import org.openforis.collect.persistence.SurveyWorkDao;
 import org.openforis.collect.persistence.TaxonDao;
+import org.openforis.collect.persistence.TaxonVernacularNameDao;
 import org.openforis.collect.persistence.TaxonomyDao;
 import org.openforis.collect.persistence.UserDao;
 import org.openforis.collect.service.CollectCodeListService;
 import org.openforis.idm.metamodel.validation.Validator;
 import org.openforis.idm.model.expression.ExpressionFactory;
-
-import android.util.Log;
 
 /**
  * 
@@ -29,7 +26,7 @@ import android.util.Log;
  */
 public class ServiceFactory {
 
-	private static org.openforis.collect.android.management.RecordManager recordManager;
+	private static RecordManager recordManager;
 	private static SurveyManager surveyManager;
 	private static UserManager userManager;
 	private static TaxonManager taxonManager;
@@ -71,8 +68,8 @@ public class ServiceFactory {
 	    	surveyManager.setSurveyDao(surveyDao);
 	    	surveyManager.setCodeListManager(codeListManager);
 	    	
-	    	org.openforis.collect.android.database.RecordDao recordDao = new org.openforis.collect.android.database.RecordDao();
-	    	recordManager = new org.openforis.collect.android.management.RecordManager(false, recordDao);	    	
+	    	RecordDao recordDao = new RecordDao();
+	    	recordManager = new RecordManager(false);	    	
 	    	recordDao.setDataSource(dataSource);
 	    	recordManager.setRecordDao(recordDao);
 	    	
@@ -89,6 +86,9 @@ public class ServiceFactory {
 	    	TaxonomyDao taxonomyDao = new TaxonomyDao();
 	    	taxonomyDao.setDataSource(dataSource);
 	    	taxonManager.setTaxonomyDao(taxonomyDao);
+	    	TaxonVernacularNameDao taxonVernNameDao = new TaxonVernacularNameDao();
+	    	taxonVernNameDao.setDataSource(dataSource);
+	    	taxonManager.setTaxonVernacularNameDao(taxonVernNameDao);
 	    	
 			surveyManager.init();
 		} finally {
@@ -100,7 +100,7 @@ public class ServiceFactory {
 		return dataSource;
 	}
 	
-	public static org.openforis.collect.android.management.RecordManager getRecordManager() {
+	public static RecordManager getRecordManager() {
 		return recordManager;
 	}
 	

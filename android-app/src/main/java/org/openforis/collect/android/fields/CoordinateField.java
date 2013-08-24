@@ -187,7 +187,6 @@ public class CoordinateField extends InputField implements OnClickListener {
 				SpatialReferenceSystem srs = this.srsList.get(i);
 				this.codes.add(srs.getId());
 				this.options.add(extractLabel(srs));
-				Log.e("code"+this.codes.get(i),"option"+this.options.get(i));
 			}
 			this.spinner = new Spinner(context);
 			this.spinner.setPrompt(this.label.getText());
@@ -207,7 +206,6 @@ public class CoordinateField extends InputField implements OnClickListener {
 					if (CoordinateField.this.srs!=null){						
 						srsId = CoordinateField.this.srs.getId();
 					}
-					Log.e("settingValueSpinner","=="+srsId);
 			    	if (CoordinateField.this.nodeDefinition.isMultiple()){
 			    		CoordinateField.this.setValue(CoordinateField.form.currInstanceNo, CoordinateField.this.txtLongitude.getText().toString(), CoordinateField.this.txtLatitude.getText().toString(), srsId, CoordinateField.form.getFormScreenId(),false);	
 			    	} else {
@@ -239,7 +237,7 @@ public class CoordinateField extends InputField implements OnClickListener {
 			this.txtLongitude.setText(lon);
 			this.txtLatitude.setText(lat);
 		}
-		Log.e("setValue"+this.nodeDefinition.getName(),"srsId=="+srsId);
+		
 		int srsIdPosition = 0;
 		for (int i=0;i<this.srsList.size();i++){
 			SpatialReferenceSystem srs = this.srsList.get(i);
@@ -247,8 +245,8 @@ public class CoordinateField extends InputField implements OnClickListener {
 				srsIdPosition = i+1;
 			}
 		}
-		Log.e("found POS","=="+srsIdPosition);
 		this.spinner.setSelection(srsIdPosition);
+		
 		Node<? extends NodeDefinition> node = this.findParentEntity(path).get(this.nodeDefinition.getName(), position);
 		NodeChangeSet nodeChangeSet = null;
 		Entity parentEntity = this.findParentEntity(path);

@@ -472,7 +472,6 @@ public class FormScreen extends BaseActivity implements OnClickListener {
 	        					if (FormScreen.this.currentCoordinateField.srs!=null){						
 	        						srsId = FormScreen.this.currentCoordinateField.srs.getId();
 	        					}
-			    				Log.e("FormScreen1","=="+srsId);
 	        					coordField.setValue(0, FormScreen.this.longitude, FormScreen.this.latitude, srsId, FormScreen.this.getFormScreenId(), false);
 	    		    			FormScreen.this.currentCoordinateField = null;
 	    		    			FormScreen.this.longitude = null;
@@ -490,7 +489,6 @@ public class FormScreen extends BaseActivity implements OnClickListener {
 		    							loadedSrsId = coordValue.getSrsId().toString();
 		    					}	    				
 		    				}
-		    				Log.e("FormScreen2","=="+loadedSrsId);
 		    				//coordField = new CoordinateField(FormScreen.this, nodeDef);
 	        				coordField.setOnClickListener(FormScreen.this);
 	        				coordField.setId(nodeDef.getId());
