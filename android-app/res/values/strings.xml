@@ -104,6 +104,9 @@
     <string name="saving">Saving&#8230;</string>
     <string name="loading">Loading&#8230;</string>   
     <string name="launchAppMessage">Launching application&#8230;</string>
+    <string name="loadingNewFormDefinitionMessage">Loading new form definition&#8230;</string>
+    <string name="unmarshallingSurveyMessage">Unmarshalling form definition from file&#8230;</string>
+    <string name="importingSurveyToDatabaseMessage">Saving form definition&#8230;</string>
     <string name="uploadingDataToServerMessage">Uploading data to server&#8230;</string>
     <string name="downloadingDataToServerMessage">Downloading data to device&#8230;</string>
     <string name="searchingForTaxon">Searching for species matching criteria&#8230;</string>

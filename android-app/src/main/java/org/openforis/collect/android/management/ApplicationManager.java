@@ -259,7 +259,6 @@ public class ApplicationManager extends BaseActivity {
 	 	    	if (resultCode==getResources().getInteger(R.integer.clusterChoiceSuccessful)){//record was selected	 	    		
 	 	    		
 	 	    		int recordId = data.getIntExtra(getResources().getString(R.string.recordId), -1);
-	 	    		Log.e("SELECTEDrecordID","=="+recordId);
 	 	    		if (recordId==-1){//new record
 	 	    			String versionName = survey.getVersions().isEmpty() ? null: survey.getVersions().get(survey.getVersions().size()-1).getName();
 						ApplicationManager.currentRecord = new CollectRecord(ApplicationManager.survey, versionName);//null;	 	    			
@@ -275,9 +274,6 @@ public class ApplicationManager extends BaseActivity {
 	 	    		}
 	 	    		showFormRootScreen();
     	            DataManager dataManager = new DataManager((CollectSurvey) ApplicationManager.getSurvey(),ApplicationManager.getSurvey().getSchema().getRootEntityDefinition(ApplicationManager.currRootEntityId).getName(),ApplicationManager.getLoggedInUser());
-
-    	            /*Log.e("fileNAMEtoLoad","==2_3_0_4_113_9_24_collect.xml");
-    	            dataManager.loadRecordFromXml("2_3_0_4_113_9_24_collect.xml");*/
 	 	    	} else if (resultCode==getResources().getInteger(R.integer.backButtonPressed)){
 	 	    		if (ApplicationManager.getSurvey().getSchema().getRootEntityDefinitions().size()==1){
 	 	    			showFormsListScreen();
@@ -297,57 +293,8 @@ public class ApplicationManager extends BaseActivity {
 	 	    	if (resultCode==getResources().getInteger(R.integer.formDefinitionChoiceSuccessful)){//form was selected
 	 	    		int formId = data.getIntExtra(getResources().getString(R.string.formId), -1);
 	 	    		if (formId==-1){//new form to be added from file
-	 	    			try{
-		 	    			long startTimeParsing = System.currentTimeMillis();
-		 	    			//opening database connection
-//			 	           	JdbcDaoSupport jdbcDao = new JdbcDaoSupport();
-//			 	           	jdbcDao.getConnection();
-			 	           	
-		 	    			String sdcardPath = Environment.getExternalStorageDirectory().toString();
-
-		 		        	String selectedFormDefinitionFile = ApplicationManager.appPreferences.getString(getResources().getString(R.string.formDefinitionPath), getResources().getString(R.string.defaultFormDefinitionPath));
-		 		        	Log.e("loadingForm","=FROM=="+selectedFormDefinitionFile);
-			            	//FileInputStream fis = new FileInputStream(sdcardPath+getResources().getString(R.string.formDefinitionFile));  	
-		 		        	//FileInputStream fis = new FileInputStream(sdcardPath+selectedFormDefinitionFile);
-
-		 		        	SurveyManager surveyManager = ServiceFactory.getSurveyManager();
-		 		        	File idmlFile = new File(sdcardPath, selectedFormDefinitionFile);
-			        		survey = surveyManager.unmarshalSurvey(idmlFile, false, false);
-			        		List<LanguageSpecificText> projectNamesList = survey.getProjectNames();
-			        		if (projectNamesList.size()>0){
-			        			survey.setName(projectNamesList.get(0).getText());
-			        		} else {
-			        			survey.setName("defaultSurveyName");
-			        		}
-			        		CollectSurvey loadedSurvey = surveyManager.get(survey.getName());
-			        		if (loadedSurvey==null){
-								survey = surveyManager.importModel(idmlFile, survey.getName(), false);
-			        		} else {
-			        			survey = loadedSurvey;
-			        		}
-			        		Log.e("survey","=="+(survey.getName()));
-			            	Log.e("parsingTIME","=="+(System.currentTimeMillis()-startTimeParsing));			           
-	 	    			} catch (Exception e){
-	 	    				e.printStackTrace();
-	 	    				survey = null;
-	 	    			}
-		            	if (survey!=null){
-		            		showRootEntitiesListScreen();		    	            
-		            	}
-		            		
-		            	else {
-		            		AlertMessage.createPositiveDialog(ApplicationManager.this, false, getResources().getDrawable(R.drawable.warningsign),
-				 					getResources().getString(R.string.loadFormDefinitionTitle), getResources().getString(R.string.loadFormDefinitionMessage),
-				 					getResources().getString(R.string.okay),
-				 		    		new DialogInterface.OnClickListener() {
-				 						@Override
-				 						public void onClick(DialogInterface dialog, int which) {
-				 							//ApplicationManager.this.finish();
-				 							showFormsListScreen();
-				 						}
-				 					},
-				 					null).show();	
-		            	}
+	 	    			ApplicationManager.pd = ProgressDialog.show(this, getResources().getString(R.string.workInProgress), getResources().getString(R.string.loadingNewFormDefinitionMessage));
+	 	    			loadingFormDefinitionThread.start();
 	 	    		} else {
 	 	    			survey = ServiceFactory.getSurveyManager().getById(formId);
 	 	    			showRootEntitiesListScreen();
@@ -424,6 +371,100 @@ public class ApplicationManager extends BaseActivity {
     				+getResources().getString(R.string.log_file_extension));
     	}	   
     }
+    
+	private Thread loadingFormDefinitionThread = new Thread() {
+		@Override
+		public void run() {
+			try {
+				super.run();
+
+    			try{
+    				Log.i(getResources().getString(R.string.app_name),TAG+":loadingForm");
+    	        	
+        			long startTimeParsing = System.currentTimeMillis();
+     	           	
+        			String sdcardPath = Environment.getExternalStorageDirectory().toString();
+
+    	        	String selectedFormDefinitionFile = ApplicationManager.appPreferences.getString(getResources().getString(R.string.formDefinitionPath), getResources().getString(R.string.defaultFormDefinitionPath));
+    	        	Log.e("loadingForm","=FROM=="+selectedFormDefinitionFile);
+    	        	
+    	        	SurveyManager surveyManager = ServiceFactory.getSurveyManager();
+    	        	File idmlFile = new File(sdcardPath, selectedFormDefinitionFile);
+    	        	
+    	        	//ApplicationManager.pd.setMessage(getResources().getString(R.string.unmarshallingSurveyMessage));
+    	        	changeMessage(getResources().getString(R.string.unmarshallingSurveyMessage));
+
+            		survey = surveyManager.unmarshalSurvey(idmlFile, false, false);
+    	        	
+            		//ApplicationManager.pd.setMessage(getResources().getString(R.string.importingSurveyToDatabaseMessage));
+            		changeMessage(getResources().getString(R.string.importingSurveyToDatabaseMessage));
+            		
+            		
+            		List<LanguageSpecificText> projectNamesList = survey.getProjectNames();
+            		if (projectNamesList.size()>0){
+            			survey.setName(projectNamesList.get(0).getText());
+            		} else {
+            			survey.setName("defaultSurveyName");
+            		}
+            		CollectSurvey loadedSurvey = surveyManager.get(survey.getName());
+            		if (loadedSurvey==null){
+    					survey = surveyManager.importModel(idmlFile, survey.getName(), false);
+            		} else {
+            			survey = loadedSurvey;
+            		}
+                	Log.e("parsingTIME","=="+(System.currentTimeMillis()-startTimeParsing));
+    				
+    			} catch (Exception e){
+    				e.printStackTrace();
+    				survey = null;
+    			}
+            	if (survey!=null){
+            		ApplicationManager.pd.dismiss();
+            		showRootEntitiesListScreen();		    	            
+            	} else {
+            		ApplicationManager.pd.dismiss();
+            		AlertMessage.createPositiveDialog(ApplicationManager.this, false, getResources().getDrawable(R.drawable.warningsign),
+		 					getResources().getString(R.string.loadFormDefinitionTitle), getResources().getString(R.string.loadFormDefinitionMessage),
+		 					getResources().getString(R.string.okay),
+		 		    		new DialogInterface.OnClickListener() {
+		 						@Override
+		 						public void onClick(DialogInterface dialog, int which) {
+		 							//ApplicationManager.this.finish();
+		 							showFormsListScreen();
+		 						}
+		 					},
+		 					null).show();	
+            	}
+	            
+			} catch (Exception e) {
+				RunnableHandler.reportException(e,getResources().getString(R.string.app_name),TAG+":run",
+	    				Environment.getExternalStorageDirectory().toString()
+	    				+getResources().getString(R.string.logs_folder)
+	    				+getResources().getString(R.string.logs_file_name)
+	    				+System.currentTimeMillis()
+	    				+getResources().getString(R.string.log_file_extension));
+			} finally {
+				
+			}
+		}
+	};
+	
+	private Runnable changeMessage = new Runnable() {
+	    @Override
+	    public void run() {
+	        //Log.v(TAG, strCharacters);
+	        ApplicationManager.pd.setMessage(getResources().getString(R.string.unmarshallingSurveyMessage));
+	    }
+	};
+	
+	public void changeMessage(final String message) {
+	    runOnUiThread(new Runnable() {
+	        public void run() {
+	            // use data here
+	        	 ApplicationManager.pd.setMessage(message/*getResources().getString(R.string.unmarshallingSurveyMessage)*/);
+	        }
+	    });
+	}
     
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event)  {
