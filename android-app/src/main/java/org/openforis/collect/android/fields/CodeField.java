@@ -275,7 +275,7 @@ public class CodeField extends InputField {
 	
 	public void setValue(int position, String code, String path, boolean isSelectionChanged)
 	{
-		Log.e("setValueINSIDE",this.codeAttrDef.getName()+"=="+code);
+		Log.e("setValueINSIDE",this.codeAttrDef.getName()+"=="+code+isSelectionChanged);
 		if (!this.codeAttrDef.isAllowUnlisted()){
 			boolean isFound = false;
 			int counter = 0;

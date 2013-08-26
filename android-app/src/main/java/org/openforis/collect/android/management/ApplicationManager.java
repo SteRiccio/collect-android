@@ -298,7 +298,7 @@ public class ApplicationManager extends BaseActivity {
 	 	    		} else {
 	 	    			survey = ServiceFactory.getSurveyManager().getById(formId);
 	 	    			showRootEntitiesListScreen();
-	 	    		}	 	    		
+	 	    		}	    		
 	 	    	} else if (resultCode==getResources().getInteger(R.integer.backButtonPressed)){
 	 	    		ApplicationManager.this.finish();
 	 	    	}
@@ -369,7 +369,7 @@ public class ApplicationManager extends BaseActivity {
     				+getResources().getString(R.string.logs_file_name)
     				+System.currentTimeMillis()
     				+getResources().getString(R.string.log_file_extension));
-    	}	   
+	    }
     }
     
 	private Thread loadingFormDefinitionThread = new Thread() {
@@ -412,6 +412,7 @@ public class ApplicationManager extends BaseActivity {
             		} else {
             			survey = loadedSurvey;
             		}
+					
                 	Log.e("parsingTIME","=="+(System.currentTimeMillis()-startTimeParsing));
     				
     			} catch (Exception e){
@@ -420,6 +421,28 @@ public class ApplicationManager extends BaseActivity {
     			}
             	if (survey!=null){
             		ApplicationManager.pd.dismiss();
+            		SharedPreferences.Editor editor = ApplicationManager.appPreferences.edit();
+					String language = ApplicationManager.appPreferences.getString(getResources().getString(R.string.selectedLanguage), getResources().getString(R.string.defaultLanguage));			
+					boolean languageFound = false;
+					List<String> languageList = ApplicationManager.getSurvey().getLanguages();
+					if (ApplicationManager.getSurvey()!=null){	        		        
+			    		for (int i=0;i<languageList.size();i++){
+			    			if (languageList.get(i).equals(language)){
+			    				languageFound = true;
+			    			}
+			    		}
+			        }
+					if (!languageFound){
+						if (languageList.size()>0){
+							language = languageList.get(0);
+						} else {
+							language = "null";
+						}
+					}
+					editor = ApplicationManager.appPreferences.edit();
+					editor.putString(getResources().getString(R.string.selectedLanguage), language);
+					editor.commit();
+					ApplicationManager.selectedLanguage = language;
             		showRootEntitiesListScreen();		    	            
             	} else {
             		ApplicationManager.pd.dismiss();
