@@ -138,16 +138,9 @@ public class FormScreen extends BaseActivity implements OnClickListener {
 		super.onResume();
 		Log.i(getResources().getString(R.string.app_name),TAG+":onResume");
 		long startTime = System.currentTimeMillis();
-		//Log.e("onresume","FormScreen.this.getFormScreenId()=="+FormScreen.this.getFormScreenId());
-		//Log.e("onresume","FormScreen.this.parentFormScreenId=="+FormScreen.this.parentFormScreenId);
 		try{
 			FormScreen.this.parentEntitySingleAttribute = FormScreen.this.findParentEntity(FormScreen.this.getFormScreenId());
 			FormScreen.this.parentEntityMultipleAttribute = FormScreen.this.findParentEntity(FormScreen.this.parentFormScreenId);
-			/*if (parentEntitySingleAttribute!=null)
-				Log.e("onresume","parentEntitySingleAttribute=="+parentEntitySingleAttribute.getName()+"=="+parentEntitySingleAttribute.getIndex());
-			if (parentEntityMultipleAttribute!=null)
-				Log.e("onresume","parentEntityMultipleAttribute=="+parentEntityMultipleAttribute.getName()+"=="+parentEntityMultipleAttribute.getIndex());
-			*/
 			String loadedValue = "";
 	
 			ArrayList<String> tableColHeaders = new ArrayList<String>();

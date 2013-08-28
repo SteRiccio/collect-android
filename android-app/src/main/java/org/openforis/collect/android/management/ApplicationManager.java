@@ -408,14 +408,36 @@ public class ApplicationManager extends BaseActivity {
             		}
             		CollectSurvey loadedSurvey = surveyManager.get(survey.getName());
             		if (loadedSurvey==null){
-    					//survey = surveyManager.importModel(idmlFile, survey.getName(), false);
-            			Debug.startMethodTracing("loadingSURVEY");
-            			surveyManager.importModel(survey);
-            			ServiceFactory.getCodeListManager().importCodeLists(survey, idmlFile);
-            			Debug.stopMethodTracing();
+    					survey = surveyManager.importModel(idmlFile, survey.getName(), false);
+            			//Debug.startMethodTracing("loadingSURVEY");
+            			//surveyManager.importModel(survey);
+            			//ServiceFactory.getCodeListManager().importCodeLists(survey, idmlFile);
+            			//Debug.stopMethodTracing();
             		} else {
             			survey = loadedSurvey;
             		}
+            		/*            		if (loadedSurvey==null){
+    					//survey = surveyManager.importModel(idmlFile, survey.getName(), false);
+            			//Debug.startMethodTracing("loadingSURVEY");
+            			changeMessage("reading file");
+            			//String marshalledIdmlFromFile = new Scanner( idmlFile, "UTF-8" ).useDelimiter("\\A").next();
+            	        BufferedReader reader = null;
+            	        String marshalledIdmlFromFile = "";
+            	        InputStream input = getAssets().open(sdcardPath + selectedFormDefinitionFile);
+            	        InputStream input = new FileInputStream(sdcardPath + selectedFormDefinitionFile);
+                        int size = input.available();
+                        Log.e("available","=="+size);
+                        byte[] buffer = new byte[size];
+                        input.read(buffer);
+                        input.close();
+             
+                        // byte buffer into a string
+                        marshalledIdmlFromFile = new String(buffer);
+            			changeMessage("importing model");
+            			surveyManager.importModel(survey, idmlFile, ServiceFactory.getDataSource());
+            			changeMessage("inserting code lists");
+            			ServiceFactory.getCodeListManager().importCodeLists(survey, idmlFile);
+            			//Debug.stopMethodTracing();*/
 					
                 	Log.e("parsingTIME","=="+(System.currentTimeMillis()-startTimeParsing));
     				
