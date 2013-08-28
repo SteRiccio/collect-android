@@ -42,14 +42,10 @@ public class MemoField extends InputField {
 	        public void onFocusChange(View v, boolean hasFocus) {
 	            if (hasFocus) {
 	            	
-			    	//Map<String, ?> settings = ApplicationManager.appPreferences.getAll();
-			    	//Boolean valueForText = (Boolean)settings.get(getResources().getString(R.string.showSoftKeyboardOnTextField));
-	            	
 	            	//Create dialog for Memo
 	            	final EditText input = new EditText(MemoField.this.getContext());
 	            	input.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.FILL_PARENT,ViewGroup.LayoutParams.WRAP_CONTENT));
-	            	input.setText(txtBox.getText());
-	            	
+	            	input.setText(txtBox.getText());	            	
             	
 	            	AlertDialog dialog = new AlertDialog.Builder(MemoField.this.getContext())	            	
 	                .setTitle(getResources().getString(R.string.editingMemoField)+" "+MemoField.this.getLabelText())
@@ -61,7 +57,7 @@ public class MemoField extends InputField {
 	                    }
 	                }).setNegativeButton(getResources().getString(R.string.cancel), new DialogInterface.OnClickListener() {
 	                    public void onClick(DialogInterface dialog, int whichButton) {
-	                        //do nothing.
+	                        
 	                    }
 	                }).show();
 	            	input.setKeyListener(new QwertyKeyListener(TextKeyListener.Capitalize.NONE, false));

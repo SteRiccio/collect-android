@@ -40,6 +40,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.os.Bundle;
+import android.os.Debug;
 import android.os.Environment;
 import android.util.Log;
 import android.view.KeyEvent;
@@ -398,8 +399,7 @@ public class ApplicationManager extends BaseActivity {
     	        	
             		//ApplicationManager.pd.setMessage(getResources().getString(R.string.importingSurveyToDatabaseMessage));
             		changeMessage(getResources().getString(R.string.importingSurveyToDatabaseMessage));
-            		
-            		
+            		            		
             		List<LanguageSpecificText> projectNamesList = survey.getProjectNames();
             		if (projectNamesList.size()>0){
             			survey.setName(projectNamesList.get(0).getText());
@@ -408,7 +408,11 @@ public class ApplicationManager extends BaseActivity {
             		}
             		CollectSurvey loadedSurvey = surveyManager.get(survey.getName());
             		if (loadedSurvey==null){
-    					survey = surveyManager.importModel(idmlFile, survey.getName(), false);
+    					//survey = surveyManager.importModel(idmlFile, survey.getName(), false);
+            			Debug.startMethodTracing("loadingSURVEY");
+            			surveyManager.importModel(survey);
+            			ServiceFactory.getCodeListManager().importCodeLists(survey, idmlFile);
+            			Debug.stopMethodTracing();
             		} else {
             			survey = loadedSurvey;
             		}
