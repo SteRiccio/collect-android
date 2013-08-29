@@ -196,9 +196,9 @@ public class CodeField extends InputField {
 					    	} else {
 					    		CodeField.this.setValue(0, CodeField.this.codes.get(CodeField.this.spinner.getSelectedItemPosition()),CodeField.form.getFormScreenId(),true);
 					    	}
-					    	Log.e("SPINNER",CodeField.this.nodeDefinition.getName()+"=="+CodeField.this.codes.get(CodeField.this.spinner.getSelectedItemPosition())+CodeField.this.spinner.getSelectedItemPosition());
-					    	Log.e("CodeField2",CodeField.this.nodeDefinition.getName()+"=="+CodeField.this.codes.get(CodeField.this.spinner.getSelectedItemPosition()));
-					    	Log.e("CodeField2","iloscDzieci"+CodeField.this.childrenIds.size());
+//					    	Log.e("SPINNER",CodeField.this.nodeDefinition.getName()+"=="+CodeField.this.codes.get(CodeField.this.spinner.getSelectedItemPosition())+CodeField.this.spinner.getSelectedItemPosition());
+//					    	Log.e("CodeField2",CodeField.this.nodeDefinition.getName()+"=="+CodeField.this.codes.get(CodeField.this.spinner.getSelectedItemPosition()));
+//					    	Log.e("CodeField2","iloscDzieci"+CodeField.this.childrenIds.size());
 					    	updateChildren(CodeField.this);
 					    }
 
@@ -254,9 +254,9 @@ public class CodeField extends InputField {
 					    	} else {
 					    		CodeField.this.setValue(0, CodeField.this.codes.get(CodeField.this.spinner.getSelectedItemPosition()),CodeField.form.getFormScreenId(),true);
 					    	}
-					    	Log.e("SPINNER",CodeField.this.nodeDefinition.getName()+"=="+CodeField.this.codes.get(CodeField.this.spinner.getSelectedItemPosition())+CodeField.this.spinner.getSelectedItemPosition());
-					    	Log.e("CodeField1",CodeField.this.nodeDefinition.getName()+"=="+CodeField.this.codes.get(CodeField.this.spinner.getSelectedItemPosition()));
-					    	Log.e("CodeField1","iloscDzieci"+CodeField.this.childrenIds.size());
+//					    	Log.e("SPINNER",CodeField.this.nodeDefinition.getName()+"=="+CodeField.this.codes.get(CodeField.this.spinner.getSelectedItemPosition())+CodeField.this.spinner.getSelectedItemPosition());
+//					    	Log.e("CodeField1",CodeField.this.nodeDefinition.getName()+"=="+CodeField.this.codes.get(CodeField.this.spinner.getSelectedItemPosition()));
+//					    	Log.e("CodeField1","iloscDzieci"+CodeField.this.childrenIds.size());
 					    	updateChildren(CodeField.this);
 					    }
 
@@ -275,7 +275,7 @@ public class CodeField extends InputField {
 	
 	public void setValue(int position, String code, String path, boolean isSelectionChanged)
 	{
-		Log.e("setValueINSIDE",this.codeAttrDef.getName()+"=="+code+isSelectionChanged);
+		//Log.e("setValueINSIDE",this.codeAttrDef.getName()+"=="+code+isSelectionChanged);
 		if (!this.codeAttrDef.isAllowUnlisted()){
 			boolean isFound = false;
 			int counter = 0;
@@ -287,12 +287,12 @@ public class CodeField extends InputField {
 			}
 			if (isFound){
 				if (!isSelectionChanged){
-					Log.e("found",(counter-1)+"=="+this.nodeDefinition.getName());
+					//Log.e("found",(counter-1)+"=="+this.nodeDefinition.getName());
 					this.spinner.setSelection(counter-1);	
 				}					
 			} else {
 				if (!isSelectionChanged){
-					Log.e("NOTfound","ZERO"+this.nodeDefinition.getName());
+				//	Log.e("NOTfound","ZERO"+this.nodeDefinition.getName());
 					this.spinner.setSelection(0);
 				}
 					

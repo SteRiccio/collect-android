@@ -100,6 +100,10 @@ public class TimeField extends InputField implements TextWatcher {
 		timePickerIntent.putExtra("timefield_id", id);
 		timePickerIntent.putExtra("timeFieldPath", TimeField.this.form.getFormScreenId());
 		timePickerIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+		
+    	ApplicationManager.selectedView = this;
+    	ApplicationManager.isToBeScrolled = true;
+		
     	super.getContext().startActivity(timePickerIntent);	
 	}	
 	

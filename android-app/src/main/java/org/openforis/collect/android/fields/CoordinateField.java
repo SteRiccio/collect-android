@@ -338,10 +338,8 @@ public class CoordinateField extends InputField implements OnClickListener {
 
 	private String extractLabel(SpatialReferenceSystem srs){
 		String label = srs.getLabel(ApplicationManager.selectedLanguage);
-		Log.e("selectedLanguage",ApplicationManager.selectedLanguage+"=="+label);
 		if (label==null){
 			label = srs.getLabel(null);
-			Log.e("noLanguage","null=="+label);
 			if (label==null){
 				label = "";
 			}

@@ -113,6 +113,10 @@ public class DateField extends InputField {
     	datePickerIntent.putExtra("datefield_id", id);
     	datePickerIntent.putExtra("dateFieldPath", DateField.this.form.getFormScreenId());
     	datePickerIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+    	
+    	ApplicationManager.selectedView = this;
+    	ApplicationManager.isToBeScrolled = true;
+    	
     	super.getContext().startActivity(datePickerIntent);	
 	}
 	

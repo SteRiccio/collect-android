@@ -163,17 +163,12 @@ public class FormScreen extends BaseActivity implements OnClickListener {
 						breadcrumb.setText(FormScreen.this.breadcrumb.substring(0, FormScreen.this.breadcrumb.lastIndexOf(" "))+" "+(FormScreen.this.currInstanceNo+1));	
 					} else{
 						breadcrumb.setText(FormScreen.this.breadcrumb+" "+(FormScreen.this.currInstanceNo+1));	
-					}    				
-				}    				
+					}
+				}
 				else
 					breadcrumb.setText(FormScreen.this.breadcrumb);
 	    		breadcrumb.setTextSize(getResources().getInteger(R.integer.breadcrumbFontSize));
-	    		//breadcrumb.setMaxLines(1);
-	    		//breadcrumb.setLines(1);
-	    		//breadcrumb.setHorizontallyScrolling(true);
 	    		breadcrumb.setSingleLine();
-	    		//breadcrumb.setFocusable(true);
-	    		//breadcrumb.setMovementMethod(new ScrollingMovementMethod());
 	    		HorizontalScrollView scroller = new HorizontalScrollView(FormScreen.this);
 	    		scroller.addView(breadcrumb);
 	    		FormScreen.this.ll.addView(scroller);
@@ -196,21 +191,13 @@ public class FormScreen extends BaseActivity implements OnClickListener {
 					}
 					
 					EntityDefinition entityDef = (EntityDefinition)nodeDef;
-					//if (entityDef.isMultiple()){
-						for (int e=0;e<FormScreen.this.parentEntitySingleAttribute.getCount(entityDef.getName());e++){
-	    					SummaryList summaryListView = new SummaryList(FormScreen.this, entityDef, calcNoOfCharsFitInOneLine(),
-	        						FormScreen.this,e);
-	        				summaryListView.setOnClickListener(FormScreen.this);
-	        				summaryListView.setId(nodeDef.getId());
-	        				FormScreen.this.ll.addView(summaryListView);	
-	    				}	
-					/*} else {
-						SummaryList summaryListView = new SummaryList(FormScreen.this, entityDef, calcNoOfCharsFitInOneLine(),
-	    						FormScreen.this,0);
-	    				summaryListView.setOnClickListener(FormScreen.this);
-	    				summaryListView.setId(nodeDef.getId());
-	    				FormScreen.this.ll.addView(summaryListView);
-					}*/
+					for (int e=0;e<FormScreen.this.parentEntitySingleAttribute.getCount(entityDef.getName());e++){
+    					SummaryList summaryListView = new SummaryList(FormScreen.this, entityDef, calcNoOfCharsFitInOneLine(),
+        						FormScreen.this,e);
+        				summaryListView.setOnClickListener(FormScreen.this);
+        				summaryListView.setId(nodeDef.getId());
+        				FormScreen.this.ll.addView(summaryListView);	
+    				}
 				}else {					
 					if (nodeDef instanceof TextAttributeDefinition){
 	    				loadedValue = "";	    				
@@ -246,7 +233,6 @@ public class FormScreen extends BaseActivity implements OnClickListener {
 		        				final TextField textField= new TextField(FormScreen.this, nodeDef);
 		        				textField.setOnClickListener(FormScreen.this);
 		        				textField.setId(nodeDef.getId());
-		        				//Log.e("FormScreen.this.parentFormScreenId",nodeDef.getName()+"=="+FormScreen.this.parentFormScreenId);
 		        				textField.setValue(FormScreen.this.currInstanceNo, loadedValue, FormScreen.this.parentFormScreenId,false);
 		        				textField.addTextChangedListener(new TextWatcher(){
 		        			        public void afterTextChanged(Editable s) {        			            
@@ -444,7 +430,6 @@ public class FormScreen extends BaseActivity implements OnClickListener {
 	        				CodeField codeField = new CodeField(FormScreen.this, nodeDef, codes, options, null, FormScreen.this.getFormScreenId());
 	        				codeField.setOnClickListener(FormScreen.this);
 	        				codeField.setId(nodeDef.getId());
-	        				Log.e("FormScreen",nodeDef.getName()+"=="+loadedValue);
 	        				codeField.setValue(0, loadedValue, FormScreen.this.getFormScreenId(),false);
 	        				ApplicationManager.putUIElement(codeField.getId(), codeField);
 	        				FormScreen.this.ll.addView(codeField);
@@ -923,7 +908,7 @@ public class FormScreen extends BaseActivity implements OnClickListener {
 	    	    	if (ApplicationManager.selectedView!=null){
 	    	    		if (ApplicationManager.isToBeScrolled){
 	    	    			sv.scrollTo(0, ApplicationManager.selectedView.getTop());
-	    	            	ApplicationManager.isToBeScrolled = false;	
+	    	            	ApplicationManager.isToBeScrolled = false;
 	    	    		}
 	    	    } 
 	    	    } 	
