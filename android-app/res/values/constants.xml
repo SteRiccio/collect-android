@@ -87,6 +87,7 @@
     <string name="attributeId">attributeId</string>
     <string name="breadcrumbSeparator">-></string>
     <string name="breadcrumb">breadcrumb</string>
+    <string name="screenTitle">entityTitle</string>
     <string name="intentType">intentType</string>
     <string name="idmlId">idmlId</string>
     <string name="parentFormScreenId">parentFormScreenId</string>
@@ -96,7 +97,8 @@
     <integer name="multipleAttributeIntent">1</integer>
     <integer name="multipleEntityIntent">2</integer>
     <integer name="singleEntityIntent">3</integer>
-    <integer name="breadcrumbFontSize">24</integer>
+    <integer name="breadcrumbFontSize">12</integer>
+    <integer name="screenTitleFontSize">24</integer>
     <string name="photoPath">photoPath</string>
     <string name="latitude">latitude</string>
     <string name="longitude">longitude</string>

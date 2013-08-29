@@ -61,7 +61,6 @@ import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
-import android.os.Debug;
 import android.os.Environment;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -69,7 +68,9 @@ import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.HorizontalScrollView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.ScrollView;
@@ -85,6 +86,7 @@ public class FormScreen extends BaseActivity implements OnClickListener {
 	private Intent startingIntent;
 	private String parentFormScreenId;
 	private String breadcrumb;
+	private String screenTitle;
 	private int intentType;
 	private int fieldsNo;
 	private int idmlId;
@@ -108,6 +110,7 @@ public class FormScreen extends BaseActivity implements OnClickListener {
         	
     		this.startingIntent = getIntent();
     		this.breadcrumb = this.startingIntent.getStringExtra(getResources().getString(R.string.breadcrumb));
+    		this.screenTitle = this.startingIntent.getStringExtra(getResources().getString(R.string.screenTitle));
     		this.intentType = this.startingIntent.getIntExtra(getResources().getString(R.string.intentType),-1);
     		this.idmlId = this.startingIntent.getIntExtra(getResources().getString(R.string.idmlId),-1);
     		this.currInstanceNo = this.startingIntent.getIntExtra(getResources().getString(R.string.instanceNo),-1);
@@ -151,7 +154,9 @@ public class FormScreen extends BaseActivity implements OnClickListener {
 			FormScreen.this.ll.setOrientation(android.widget.LinearLayout.VERTICAL);
 			FormScreen.this.sv.addView(ll);
 	
-			if (!FormScreen.this.breadcrumb.equals("")){
+			Log.e("breadcrumb","=="+FormScreen.this.breadcrumb);
+			Log.e("entityTitle","=="+FormScreen.this.screenTitle);
+			if (!FormScreen.this.breadcrumb.equals("")){				
 				TextView breadcrumb = new TextView(FormScreen.this);
 				if (FormScreen.this.intentType != getResources().getInteger(R.integer.singleEntityIntent)){
 					if (FormScreen.this.intentType == getResources().getInteger(R.integer.multipleEntityIntent)){
@@ -163,7 +168,21 @@ public class FormScreen extends BaseActivity implements OnClickListener {
 				else
 					breadcrumb.setText(FormScreen.this.breadcrumb);
 	    		breadcrumb.setTextSize(getResources().getInteger(R.integer.breadcrumbFontSize));
-	    		FormScreen.this.ll.addView(breadcrumb);
+	    		//breadcrumb.setMaxLines(1);
+	    		//breadcrumb.setLines(1);
+	    		//breadcrumb.setHorizontallyScrolling(true);
+	    		breadcrumb.setSingleLine();
+	    		//breadcrumb.setFocusable(true);
+	    		//breadcrumb.setMovementMethod(new ScrollingMovementMethod());
+	    		HorizontalScrollView scroller = new HorizontalScrollView(FormScreen.this);
+	    		scroller.addView(breadcrumb);
+	    		FormScreen.this.ll.addView(scroller);
+	    		//FormScreen.this.ll.addView(breadcrumb);
+	    		
+	    		TextView screenTitle = new TextView(FormScreen.this);
+	    		screenTitle.setText(FormScreen.this.screenTitle);
+	    		screenTitle.setTextSize(getResources().getInteger(R.integer.screenTitleFontSize));
+	    		FormScreen.this.ll.addView(screenTitle);
 			}
 			
 			for (int i=0;i<FormScreen.this.fieldsNo;i++){
@@ -980,14 +999,19 @@ public class FormScreen extends BaseActivity implements OnClickListener {
 		Intent intent = new Intent(this,FormScreen.class);
 		if (!this.breadcrumb.equals("")){
 			String title = "";
+			String entityTitle = "";
 			if (summaryList.getEntityDefinition().isMultiple()){
-				title = this.breadcrumb+getResources().getString(R.string.breadcrumbSeparator)+summaryList.getTitle()+" "+(this.currInstanceNo+1);		
+				title = this.breadcrumb+getResources().getString(R.string.breadcrumbSeparator)+summaryList.getTitle()+" "+(this.currInstanceNo+1);
+				entityTitle = summaryList.getTitle()+" "+(this.currInstanceNo+1);
 			} else {
 				title = this.breadcrumb+getResources().getString(R.string.breadcrumbSeparator)+summaryList.getTitle();
+				entityTitle = summaryList.getTitle();
 			}
 			intent.putExtra(getResources().getString(R.string.breadcrumb), title);
+			intent.putExtra(getResources().getString(R.string.screenTitle), entityTitle);
 		} else {
 			intent.putExtra(getResources().getString(R.string.breadcrumb), summaryList.getTitle());
+			intent.putExtra(getResources().getString(R.string.screenTitle), summaryList.getTitle());
 		}
 		
 		if (summaryList.getEntityDefinition().isMultiple()){
@@ -1010,6 +1034,7 @@ public class FormScreen extends BaseActivity implements OnClickListener {
 	private Intent prepareIntentForMultipleField(SummaryTable summaryTable, int clickedInstanceNo, List<List<String>> data){
 		Intent intent = new Intent(this,FormScreen.class);
 		intent.putExtra(getResources().getString(R.string.breadcrumb), this.breadcrumb+getResources().getString(R.string.breadcrumbSeparator)+summaryTable.getTitle());
+		intent.putExtra(getResources().getString(R.string.screenTitle), summaryTable.getTitle());
 		intent.putExtra(getResources().getString(R.string.intentType), getResources().getInteger(R.integer.multipleAttributeIntent));
         intent.putExtra(getResources().getString(R.string.attributeId)+"0", summaryTable.getId());
         intent.putExtra(getResources().getString(R.string.idmlId), summaryTable.getId());
@@ -1027,11 +1052,20 @@ public class FormScreen extends BaseActivity implements OnClickListener {
 	
     private void changeBackgroundColor(int backgroundColor){
 		getWindow().setBackgroundDrawable(new ColorDrawable(backgroundColor));
+
 		boolean hasBreadcrumb = !this.breadcrumb.equals("");
 		if (hasBreadcrumb){
-			TextView breadcrumb = (TextView)this.ll.getChildAt(0);
+			ViewGroup scrollbarViews = ((ViewGroup)this.ll.getChildAt(0));
+			TextView breadcrumb = (TextView)scrollbarViews.getChildAt(0);
 			breadcrumb.setTextColor((backgroundColor!=Color.WHITE)?Color.WHITE:Color.BLACK);	
 		}
+		
+		boolean hasTitle = !this.screenTitle.equals("");
+		if (hasTitle){
+			TextView screenTitle = (TextView)this.ll.getChildAt(1);
+			screenTitle.setTextColor((backgroundColor!=Color.WHITE)?Color.WHITE:Color.BLACK);	
+		}
+		
 		int viewsNo = this.ll.getChildCount();
 		int start = (hasBreadcrumb)?1:0;
 		for (int i=start;i<viewsNo;i++){
