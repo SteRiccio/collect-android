@@ -18,17 +18,13 @@ import org.openforis.collect.android.misc.ItemsStorage;
 import org.openforis.collect.android.misc.RunnableHandler;
 import org.openforis.collect.android.screens.FormScreen;
 import org.openforis.collect.android.service.ServiceFactory;
-import org.openforis.collect.manager.CodeListManager;
 import org.openforis.collect.manager.SurveyManager;
-//import org.openforis.collect.manager.codelistimport.CodeListImportProcess;
 import org.openforis.collect.model.CollectRecord;
 import org.openforis.collect.model.CollectSurvey;
 import org.openforis.collect.model.User;
-import org.openforis.idm.metamodel.CodeList;
 import org.openforis.idm.metamodel.EntityDefinition;
 import org.openforis.idm.metamodel.LanguageSpecificText;
 import org.openforis.idm.metamodel.NodeDefinition;
-import org.openforis.idm.metamodel.CodeList.CodeScope;
 import org.openforis.idm.metamodel.NodeLabel.Type;
 import org.openforis.idm.metamodel.Survey;
 import org.openforis.idm.model.Entity;
@@ -40,11 +36,11 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.os.Bundle;
-import android.os.Debug;
 import android.os.Environment;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
+//import org.openforis.collect.manager.codelistimport.CodeListImportProcess;
 
 public class ApplicationManager extends BaseActivity {
 	

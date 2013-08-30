@@ -29,8 +29,10 @@
     <string name="startGpsMessage">GPS on your device is disabled. Do you want to enable it in operating system Settings?</string>
     <string name="savingDataTitle">Saving&#8230;</string>    
     <string name="savingDataQuestionMessage">Do you want to save data from form?</string>
-    <string name="savingDataSuccessMessage">Record successfully saved in database.</string>
-    <string name="savingDataFailureMessage">Record could not be saved in database.</string>
+    <string name="savingDataSuccessMessage">Record successfully saved.</string>
+    <string name="savingDataFailureMessage">Record could not be saved.</string>
+    <string name="backingupDataSuccessMessage">Data successfully saved.</string>
+    <string name="backingupDataFailureMessage">Data could not be saved.</string>    
     <string name="savingToDatabase">Save</string>
     <string name="savingToFile">XML</string>
     <string name="openingPlotListTitle">Back to list&#8230;</string>    
@@ -111,6 +113,7 @@
     <string name="downloadingDataToServerMessage">Downloading data to device&#8230;</string>
     <string name="searchingForTaxon">Searching for species matching criteria&#8230;</string>
     <string name="backupingData">Preparing backup of data&#8230;</string>
+    <string name="savingRecordToXml">Saving record to xml file&#8230;</string>
     <string name="refreshingScreen">Preparing requested screen&#8230;</string>
     
     <!-- lists -->

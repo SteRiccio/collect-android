@@ -1,12 +1,6 @@
 package org.openforis.collect.android.management;
 
-import java.io.File;
-import java.util.HashMap;
-
 import org.openforis.collect.android.R;
-import org.openforis.collect.android.config.Configuration;
-import org.openforis.collect.android.database.DatabaseHelper;
-import org.openforis.collect.android.fields.UIElement;
 import org.openforis.collect.android.lists.DownloadActivity;
 import org.openforis.collect.android.lists.FileImportActivity;
 import org.openforis.collect.android.lists.UploadActivity;
@@ -14,11 +8,7 @@ import org.openforis.collect.android.messages.AlertMessage;
 import org.openforis.collect.android.misc.ImportSpeciesFromCsvActivity;
 import org.openforis.collect.android.misc.RunnableHandler;
 import org.openforis.collect.android.screens.SettingsScreen;
-import org.openforis.collect.android.service.ServiceFactory;
-//import org.openforis.collect.manager.codelistimport.CodeListImportProcess;
 import org.openforis.collect.model.CollectSurvey;
-import org.openforis.collect.model.User;
-import org.openforis.idm.metamodel.CodeList.CodeScope;
 
 import android.app.Activity;
 import android.app.ProgressDialog;
@@ -29,12 +19,15 @@ import android.content.pm.PackageManager.NameNotFoundException;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Environment;
+import android.os.Handler;
+import android.os.Message;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.Window;
 import android.view.WindowManager;
+//import org.openforis.collect.manager.codelistimport.CodeListImportProcess;
 
 
 public class BaseActivity extends Activity {
@@ -149,13 +142,94 @@ public class BaseActivity extends Activity {
 								null).show();
 	        	}
 	        	return true;
-	        case R.id.menu_export:
-	        	CollectSurvey collectSurveyExport = (CollectSurvey)ApplicationManager.getSurvey();	        	
-	        	DataManager dataManagerExport = new DataManager(collectSurveyExport,collectSurveyExport.getSchema().getRootEntityDefinitions().get(0).getName(),ApplicationManager.getLoggedInUser());
-	        	dataManagerExport.saveRecordToXml(ApplicationManager.currentRecord, Environment.getExternalStorageDirectory().toString()+getResources().getString(R.string.exported_data_folder));
+	        case R.id.menu_export:	        	
+	        	final ProgressDialog pdSavingRecordToXml = ProgressDialog.show(this, getResources().getString(R.string.workInProgress), getResources().getString(R.string.backupingData));
+				final Handler savingRecordToXmlHandler = new Handler() {
+					@Override
+					public void handleMessage(Message msg) {
+						if (msg.what==0){//success
+			        		AlertMessage.createPositiveDialog(BaseActivity.this, true, null,
+									getResources().getString(R.string.savingDataTitle), 
+									getResources().getString(R.string.savingDataSuccessMessage),
+										getResources().getString(R.string.okay),
+							    		new DialogInterface.OnClickListener() {
+											@Override
+											public void onClick(DialogInterface dialog, int which) {
+												
+											}
+										},
+										null).show();
+						} else {
+			        		AlertMessage.createPositiveDialog(BaseActivity.this, true, null,
+									getResources().getString(R.string.savingDataTitle), 
+									getResources().getString(R.string.savingDataFailureMessage),
+										getResources().getString(R.string.okay),
+							    		new DialogInterface.OnClickListener() {
+											@Override
+											public void onClick(DialogInterface dialog, int which) {
+												
+											}
+										},
+										null).show();
+						}
+					}
+				};
+	        	Thread savingRecordToXmlThread = new Thread() {
+	        		@Override
+	        		public void run() {
+	        			try {
+	        				super.run();
+	        				CollectSurvey collectSurveyExport = (CollectSurvey)ApplicationManager.getSurvey();	        	
+	        	        	DataManager dataManagerExport = new DataManager(collectSurveyExport,collectSurveyExport.getSchema().getRootEntityDefinitions().get(0).getName(),ApplicationManager.getLoggedInUser());
+	        	        	dataManagerExport.saveRecordToXml(ApplicationManager.currentRecord, Environment.getExternalStorageDirectory().toString()+getResources().getString(R.string.exported_data_folder));
+	        	        	savingRecordToXmlHandler.sendEmptyMessage(0);
+	        			} catch (Exception e) {
+	        				savingRecordToXmlHandler.sendEmptyMessage(1);
+	        				RunnableHandler.reportException(e,getResources().getString(R.string.app_name),TAG+":run",
+	        	    				Environment.getExternalStorageDirectory().toString()
+	        	    				+getResources().getString(R.string.logs_folder)
+	        	    				+getResources().getString(R.string.logs_file_name)
+	        	    				+System.currentTimeMillis()
+	        	    				+getResources().getString(R.string.log_file_extension));
+	        			} finally {
+	        				pdSavingRecordToXml.dismiss();	        				
+	        			}
+	        		}
+	        	};
+	        	savingRecordToXmlThread.start();  
 	        	return true;
 	        case R.id.menu_export_all:
 	        	final ProgressDialog pd = ProgressDialog.show(this, getResources().getString(R.string.workInProgress), getResources().getString(R.string.backupingData));
+				final Handler dataBackupHandler = new Handler() {
+					@Override
+					public void handleMessage(Message msg) {
+						if (msg.what==0){//success
+			        		AlertMessage.createPositiveDialog(BaseActivity.this, true, null,
+									getResources().getString(R.string.savingDataTitle), 
+									getResources().getString(R.string.backingupDataSuccessMessage),
+										getResources().getString(R.string.okay),
+							    		new DialogInterface.OnClickListener() {
+											@Override
+											public void onClick(DialogInterface dialog, int which) {
+												
+											}
+										},
+										null).show();
+						} else {
+			        		AlertMessage.createPositiveDialog(BaseActivity.this, true, null,
+									getResources().getString(R.string.savingDataTitle), 
+									getResources().getString(R.string.backingupDataFailureMessage),
+										getResources().getString(R.string.okay),
+							    		new DialogInterface.OnClickListener() {
+											@Override
+											public void onClick(DialogInterface dialog, int which) {
+												
+											}
+										},
+										null).show();
+						}
+					}
+				};
 	        	Thread backupThread = new Thread() {
 	        		@Override
 	        		public void run() {
@@ -165,7 +239,9 @@ public class BaseActivity extends Activity {
 	        				CollectSurvey collectSurveyExportAll = (CollectSurvey)ApplicationManager.getSurvey();	        	
 	        	        	DataManager dataManagerExportAll = new DataManager(collectSurveyExportAll,collectSurveyExportAll.getSchema().getRootEntityDefinitions().get(0).getName(),ApplicationManager.getLoggedInUser());
 	        	        	dataManagerExportAll.saveAllRecordsToFile(Environment.getExternalStorageDirectory().toString()+getResources().getString(R.string.exported_data_folder));
+	        	        	dataBackupHandler.sendEmptyMessage(0);
 	        			} catch (Exception e) {
+	        				dataBackupHandler.sendEmptyMessage(1);
 	        				RunnableHandler.reportException(e,getResources().getString(R.string.app_name),TAG+":run",
 	        	    				Environment.getExternalStorageDirectory().toString()
 	        	    				+getResources().getString(R.string.logs_folder)

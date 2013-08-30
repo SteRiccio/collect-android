@@ -154,8 +154,6 @@ public class FormScreen extends BaseActivity implements OnClickListener {
 			FormScreen.this.ll.setOrientation(android.widget.LinearLayout.VERTICAL);
 			FormScreen.this.sv.addView(ll);
 	
-			Log.e("breadcrumb","=="+FormScreen.this.breadcrumb);
-			Log.e("entityTitle","=="+FormScreen.this.screenTitle);
 			if (!FormScreen.this.breadcrumb.equals("")){				
 				TextView breadcrumb = new TextView(FormScreen.this);
 				if (FormScreen.this.intentType != getResources().getInteger(R.integer.singleEntityIntent)){
@@ -987,7 +985,7 @@ public class FormScreen extends BaseActivity implements OnClickListener {
 			String entityTitle = "";
 			if (summaryList.getEntityDefinition().isMultiple()){
 				title = this.breadcrumb+getResources().getString(R.string.breadcrumbSeparator)+summaryList.getTitle()+" "+(this.currInstanceNo+1);
-				entityTitle = summaryList.getTitle()+" "+(this.currInstanceNo+1);
+				entityTitle = summaryList.getTitle()/*+" "+(this.currInstanceNo+1)*/;
 			} else {
 				title = this.breadcrumb+getResources().getString(R.string.breadcrumbSeparator)+summaryList.getTitle();
 				entityTitle = summaryList.getTitle();
@@ -1172,14 +1170,25 @@ public class FormScreen extends BaseActivity implements OnClickListener {
 		}
 		
 		View firstView = this.ll.getChildAt(0);
-		if (firstView instanceof TextView){
-			TextView screenTitle = (TextView)firstView;
-			screenTitle.setText(this.breadcrumb.substring(0, this.breadcrumb.lastIndexOf(" "))+" "+(this.currInstanceNo+1));
+		if (firstView instanceof HorizontalScrollView){
+			ViewGroup scrollbarView = ((ViewGroup)this.ll.getChildAt(0));
+			TextView breadcrumb = (TextView)scrollbarView.getChildAt(0);
+			breadcrumb.setText(this.breadcrumb.substring(0, this.breadcrumb.lastIndexOf(" "))+" "+(this.currInstanceNo+1));
+			breadcrumb.setTextSize(getResources().getInteger(R.integer.breadcrumbFontSize));
+			breadcrumb.setSingleLine();
+			/*HorizontalScrollView scroller = new HorizontalScrollView(FormScreen.this);
+			scroller.addView(breadcrumb);*/
 		}
 		this.breadcrumb = this.breadcrumb.substring(0, this.breadcrumb.lastIndexOf(" "))+" "+(this.currInstanceNo+1);
+
+		TextView screenTitle = new TextView(FormScreen.this);
+		screenTitle.setText(FormScreen.this.screenTitle);
+		screenTitle.setTextSize(getResources().getInteger(R.integer.screenTitleFontSize));
+		FormScreen.this.ll.addView(screenTitle);
 		
 		this.ll.removeAllViews();
 		this.ll.addView(firstView,0);
+		this.ll.addView(screenTitle,1);
 		
 		//refreshing values of fields in the entity 
 		Entity parentEntity = this.findParentEntity(this.getFormScreenId());
@@ -2133,7 +2142,7 @@ public class FormScreen extends BaseActivity implements OnClickListener {
 		View firstView = this.ll.getChildAt(0);
 		if (firstView instanceof TextView){
 			TextView screenTitle = (TextView)firstView;
-			screenTitle.setText(this.breadcrumb+" "+(this.currInstanceNo+1));
+			screenTitle.setText(this.breadcrumb/*+" "+(this.currInstanceNo+1)*/);
 		}
 		//Log.e("REFRESHINGentity","=="+this.parentFormScreenId);
 		///Entity parentEntity = this.findParentEntity(this.parentFormScreenId);

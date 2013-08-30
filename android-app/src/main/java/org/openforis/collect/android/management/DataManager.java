@@ -7,14 +7,8 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 
-import org.openforis.collect.android.R;
-import org.openforis.collect.android.config.Configuration;
 import org.openforis.collect.android.database.DatabaseHelper;
-import org.openforis.collect.android.fields.UIElement;
-import org.openforis.collect.android.misc.RunnableHandler;
 import org.openforis.collect.android.service.ServiceFactory;
-import org.openforis.collect.manager.RecordManager;
-import org.openforis.collect.manager.SurveyManager;
 import org.openforis.collect.manager.dataexport.BackupProcess;
 import org.openforis.collect.model.CollectRecord;
 import org.openforis.collect.model.CollectRecord.Step;
@@ -30,7 +24,6 @@ import org.openforis.collect.persistence.xml.DataUnmarshallerException;
 import org.xmlpull.v1.XmlPullParserException;
 
 import android.content.Context;
-import android.os.Environment;
 import android.util.Log;
 
 public class DataManager {
@@ -106,8 +99,6 @@ public class DataManager {
 			e.printStackTrace();
 		} catch (NullPointerException e){
 			e.printStackTrace();
-		} finally {
-
 		}
 		return 0;
 	}
@@ -139,12 +130,9 @@ public class DataManager {
 			List<String> rootEntityKeyValuesList = ApplicationManager.currentRecord.getRootEntityKeyValues();
 			FileWriter fwr;
 			String fileName = folderToSave+"/";
-			Log.e("rootEntityKeyValuesList!=null","=="+(rootEntityKeyValuesList!=null));
 			if (rootEntityKeyValuesList!=null){
-				Log.e("rootEntityKeyValuesList.size","=="+rootEntityKeyValuesList.size());
 				for (String rootEntityKeyValue : rootEntityKeyValuesList){
 					fileName += rootEntityKeyValue + "_";
-					Log.e("rootEntityKeyValue","=="+rootEntityKeyValue);
 				}
 			}
 			fileName += ApplicationManager.currentRecord.getId()+"_"+ApplicationManager.currRootEntityId+"_"+ApplicationManager.currentRecord.getCreationDate().getDay()+"_"+ApplicationManager.currentRecord.getCreationDate().getMonth()+"_"+ApplicationManager.currentRecord.getCreationDate().getYear()+"_"+ApplicationManager.currentRecord.getCreationDate().getHours()+"_"+ApplicationManager.currentRecord.getCreationDate().getMinutes()+"_"+ApplicationManager.currentRecord.getCreatedBy().getName();
@@ -168,9 +156,6 @@ public class DataManager {
 		try {
 			ParseRecordResult result = this.dataUnmarshaller.parse(filename);
 			loadedRecord = result.getRecord();
-			Log.e("isSuccess","=="+result.isSuccess());
-			Log.e("message","=="+result.getMessage());
-			//Log.e("warningsNo","=="+result.getWarnings().size());
 			if (result.getFailures()!=null){
 				Log.e("failuresNo","=="+result.getFailures().size());
 				for (int i=0;i<result.getFailures().size();i++){
@@ -181,9 +166,7 @@ public class DataManager {
 				Log.e("failures==null","==true");
 			}
 			Log.e("loadedResult"+(result==null),"LOADED FROM XML IN "+(System.currentTimeMillis()-startTime)/1000+"s");
-			Log.e("loadedRecord","=="+(loadedRecord==null));
 			this.saveRecord(loadedRecord);
-			Log.e("record","SAVED");
 		} catch (NullPointerException e){
 			e.printStackTrace();
 		} catch (DataUnmarshallerException e) {
@@ -236,11 +219,4 @@ public class DataManager {
 		Log.e("record"+recordId,"LOADED IN "+(System.currentTimeMillis()-startTime)+"ms");
 		return loadedRecord;
 	}
-	
-	private Thread creationThread = new Thread() {
-		@Override
-		public void run() {
-			
-		}
-	};
 }
