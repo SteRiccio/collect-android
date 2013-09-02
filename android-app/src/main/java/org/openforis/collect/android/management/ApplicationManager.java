@@ -35,6 +35,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Color;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Environment;
 import android.util.Log;
@@ -82,7 +83,7 @@ public class ApplicationManager extends BaseActivity {
 		public void run() {
 			try {
 				super.run();
-				Log.i(getResources().getString(R.string.app_name),TAG+":run");
+				Log.i(getResources().getString(R.string.app_name), TAG+":run");
 	        	
 	            initSession();
 	            
@@ -114,7 +115,7 @@ public class ApplicationManager extends BaseActivity {
 			    folder = new File(sdcardPath+getResources().getString(R.string.logs_folder));
 			    folder.mkdirs();
 			    folder = new File(sdcardPath+getResources().getString(R.string.codelists_folder));
-			    folder.mkdirs();			  
+			    folder.mkdirs();  
 			    
 	        	ApplicationManager.uiElementsMap = new HashMap<Integer,UIElement>();        	
 	        	
@@ -246,6 +247,13 @@ public class ApplicationManager extends BaseActivity {
     				+getResources().getString(R.string.log_file_extension));
 		}
 	}
+    
+    @Override
+    public void onPause() {
+        super.onPause();
+        Log.i(getResources().getString(R.string.app_name),TAG+":onPause");
+        loadingFormDefinitionThread.interrupt();
+    }
 	
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {    	
@@ -291,7 +299,8 @@ public class ApplicationManager extends BaseActivity {
 	 	    		int formId = data.getIntExtra(getResources().getString(R.string.formId), -1);
 	 	    		if (formId==-1){//new form to be added from file
 	 	    			ApplicationManager.pd = ProgressDialog.show(this, getResources().getString(R.string.workInProgress), getResources().getString(R.string.loadingNewFormDefinitionMessage));
-	 	    			loadingFormDefinitionThread.start();
+	 	    			//loadingFormDefinitionThread.start();
+	 	    			new loadingFormDefinition().execute("");
 	 	    		} else {
 	 	    			survey = ServiceFactory.getSurveyManager().getById(formId);
 	 	    			showRootEntitiesListScreen();
@@ -368,6 +377,143 @@ public class ApplicationManager extends BaseActivity {
     				+getResources().getString(R.string.log_file_extension));
 	    }
     }
+    
+    private class loadingFormDefinition extends AsyncTask<String, Void, String> {
+
+        @Override
+        protected String doInBackground(String... params) {
+			try {
+				Log.e("doInBackground","=============================");
+    			try{
+    				Log.i(getResources().getString(R.string.app_name),TAG+":loadingForm");
+    	        	
+        			long startTimeParsing = System.currentTimeMillis();
+     	           	
+        			String sdcardPath = Environment.getExternalStorageDirectory().toString();
+
+    	        	String selectedFormDefinitionFile = ApplicationManager.appPreferences.getString(getResources().getString(R.string.formDefinitionPath), getResources().getString(R.string.defaultFormDefinitionPath));
+    	        	Log.e("loadingForm","=FROM=="+selectedFormDefinitionFile);
+    	        	
+    	        	SurveyManager surveyManager = ServiceFactory.getSurveyManager();
+    	        	File idmlFile = new File(sdcardPath, selectedFormDefinitionFile);
+    	        	
+    	        	//ApplicationManager.pd.setMessage(getResources().getString(R.string.unmarshallingSurveyMessage));
+    	        	changeMessage(getResources().getString(R.string.unmarshallingSurveyMessage));
+
+            		survey = surveyManager.unmarshalSurvey(idmlFile, false, false);
+    	        	
+            		//ApplicationManager.pd.setMessage(getResources().getString(R.string.importingSurveyToDatabaseMessage));
+            		changeMessage(getResources().getString(R.string.importingSurveyToDatabaseMessage));
+            		            		
+            		List<LanguageSpecificText> projectNamesList = survey.getProjectNames();
+            		if (projectNamesList.size()>0){
+            			survey.setName(projectNamesList.get(0).getText());
+            		} else {
+            			survey.setName("defaultSurveyName");
+            		}
+            		CollectSurvey loadedSurvey = surveyManager.get(survey.getName());
+            		if (loadedSurvey==null){
+    					survey = surveyManager.importModel(idmlFile, survey.getName(), false);
+            			//Debug.startMethodTracing("loadingSURVEY");
+            			//surveyManager.importModel(survey);
+            			//ServiceFactory.getCodeListManager().importCodeLists(survey, idmlFile);
+            			//Debug.stopMethodTracing();
+            		} else {
+            			survey = loadedSurvey;
+            		}
+            		/*            		if (loadedSurvey==null){
+    					//survey = surveyManager.importModel(idmlFile, survey.getName(), false);
+            			//Debug.startMethodTracing("loadingSURVEY");
+            			changeMessage("reading file");
+            			//String marshalledIdmlFromFile = new Scanner( idmlFile, "UTF-8" ).useDelimiter("\\A").next();
+            	        BufferedReader reader = null;
+            	        String marshalledIdmlFromFile = "";
+            	        InputStream input = getAssets().open(sdcardPath + selectedFormDefinitionFile);
+            	        InputStream input = new FileInputStream(sdcardPath + selectedFormDefinitionFile);
+                        int size = input.available();
+                        Log.e("available","=="+size);
+                        byte[] buffer = new byte[size];
+                        input.read(buffer);
+                        input.close();
+             
+                        // byte buffer into a string
+                        marshalledIdmlFromFile = new String(buffer);
+            			changeMessage("importing model");
+            			surveyManager.importModel(survey, idmlFile, ServiceFactory.getDataSource());
+            			changeMessage("inserting code lists");
+            			ServiceFactory.getCodeListManager().importCodeLists(survey, idmlFile);
+            			//Debug.stopMethodTracing();*/
+					
+                	Log.e("parsingTIME","=="+(System.currentTimeMillis()-startTimeParsing));
+    				
+    			} catch (Exception e){
+    				e.printStackTrace();
+    				survey = null;
+    			}
+            	if (survey!=null){
+            		ApplicationManager.pd.dismiss();
+            		SharedPreferences.Editor editor = ApplicationManager.appPreferences.edit();
+					String language = ApplicationManager.appPreferences.getString(getResources().getString(R.string.selectedLanguage), getResources().getString(R.string.defaultLanguage));			
+					boolean languageFound = false;
+					List<String> languageList = ApplicationManager.getSurvey().getLanguages();
+					if (ApplicationManager.getSurvey()!=null){	        		        
+			    		for (int i=0;i<languageList.size();i++){
+			    			if (languageList.get(i).equals(language)){
+			    				languageFound = true;
+			    			}
+			    		}
+			        }
+					if (!languageFound){
+						if (languageList.size()>0){
+							language = languageList.get(0);
+						} else {
+							language = "null";
+						}
+					}
+					editor = ApplicationManager.appPreferences.edit();
+					editor.putString(getResources().getString(R.string.selectedLanguage), language);
+					editor.commit();
+					ApplicationManager.selectedLanguage = language;
+            		showRootEntitiesListScreen();		    	            
+            	} else {
+            		ApplicationManager.pd.dismiss();
+            		AlertMessage.createPositiveDialog(ApplicationManager.this, false, getResources().getDrawable(R.drawable.warningsign),
+		 					getResources().getString(R.string.loadFormDefinitionTitle), getResources().getString(R.string.loadFormDefinitionMessage),
+		 					getResources().getString(R.string.okay),
+		 		    		new DialogInterface.OnClickListener() {
+		 						@Override
+		 						public void onClick(DialogInterface dialog, int which) {
+		 							//ApplicationManager.this.finish();
+		 							showFormsListScreen();
+		 						}
+		 					},
+		 					null).show();	
+            	}
+	            
+			} catch (Exception e) {
+				RunnableHandler.reportException(e,getResources().getString(R.string.app_name),TAG+":run",
+	    				Environment.getExternalStorageDirectory().toString()
+	    				+getResources().getString(R.string.logs_folder)
+	    				+getResources().getString(R.string.logs_file_name)
+	    				+System.currentTimeMillis()
+	    				+getResources().getString(R.string.log_file_extension));
+			}
+			return "Executed";
+        }      
+
+        @Override
+        protected void onPostExecute(String result) {
+              
+        }
+
+        @Override
+        protected void onPreExecute() {
+        }
+
+        @Override
+        protected void onProgressUpdate(Void... values) {
+        }
+  }
     
 	private Thread loadingFormDefinitionThread = new Thread() {
 		@Override
@@ -488,8 +634,6 @@ public class ApplicationManager extends BaseActivity {
 	    				+getResources().getString(R.string.logs_file_name)
 	    				+System.currentTimeMillis()
 	    				+getResources().getString(R.string.log_file_extension));
-			} finally {
-				
 			}
 		}
 	};

@@ -2,19 +2,16 @@ package org.openforis.collect.android.fields;
 
 import org.openforis.collect.android.R;
 import org.openforis.collect.android.management.ApplicationManager;
-import org.openforis.collect.android.management.ValidationManager;
 import org.openforis.collect.android.messages.ToastMessage;
 import org.openforis.collect.android.service.ServiceFactory;
 import org.openforis.collect.model.NodeChangeSet;
 import org.openforis.idm.metamodel.NodeDefinition;
-import org.openforis.idm.metamodel.validation.ValidationResults;
 import org.openforis.idm.model.Entity;
 import org.openforis.idm.model.Node;
 import org.openforis.idm.model.TextAttribute;
 import org.openforis.idm.model.TextValue;
 
 import android.content.Context;
-import android.graphics.Color;
 import android.text.InputFilter;
 import android.text.InputType;
 import android.text.method.QwertyKeyListener;
@@ -73,6 +70,8 @@ public class TextField extends InputField {
 				    		txtBox.setInputType(InputType.TYPE_NULL);
 				    	}				    	
 			    	}
+		    	} else {
+		    		Log.e("FOCUS","LOST TEXT");
 		    	}
 		    }
 	    });

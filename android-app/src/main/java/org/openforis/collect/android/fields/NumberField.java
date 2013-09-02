@@ -1,30 +1,21 @@
 package org.openforis.collect.android.fields;
 
-import java.io.FileWriter;
-import java.util.List;
-import java.util.Map;
-
 import org.openforis.collect.android.R;
 import org.openforis.collect.android.management.ApplicationManager;
-import org.openforis.collect.android.management.ValidationManager;
 import org.openforis.collect.android.messages.ToastMessage;
+import org.openforis.collect.android.screens.FormScreen;
 import org.openforis.collect.android.service.ServiceFactory;
 import org.openforis.collect.model.NodeChangeSet;
 import org.openforis.idm.metamodel.NodeDefinition;
 import org.openforis.idm.metamodel.NumberAttributeDefinition;
-import org.openforis.idm.metamodel.validation.ValidationResults;
 import org.openforis.idm.model.Entity;
-import org.openforis.idm.model.EntityBuilder;
 import org.openforis.idm.model.IntegerAttribute;
 import org.openforis.idm.model.IntegerValue;
 import org.openforis.idm.model.Node;
 import org.openforis.idm.model.RealAttribute;
 import org.openforis.idm.model.RealValue;
-import org.openforis.idm.model.TextAttribute;
-import org.openforis.idm.model.TextValue;
 
 import android.content.Context;
-import android.graphics.Color;
 import android.text.Editable;
 import android.text.InputType;
 import android.text.TextWatcher;
@@ -38,7 +29,7 @@ public class NumberField extends InputField {
 	
 	private NumberAttributeDefinition numberNodeDef;
 	private String type;
-	private Entity parentEntity;
+	//private Entity parentEntity;
 	
 	public NumberField(Context context, NodeDefinition nodeDef) {
 		super(context, nodeDef);
@@ -56,12 +47,12 @@ public class NumberField extends InputField {
 		this.txtBox.setLayoutParams(new LayoutParams(0,ViewGroup.LayoutParams.WRAP_CONTENT,(float) 2));
 		this.numberNodeDef = (NumberAttributeDefinition)nodeDef;
 		this.type = numberNodeDef.getType().toString();
-		if (!this.numberNodeDef.isMultiple()){
+		/*if (!this.numberNodeDef.isMultiple()){
 			this.parentEntity =  NumberField.this.form.parentEntitySingleAttribute;
 		}
 		else{
 			this.parentEntity =  NumberField.this.form.parentEntityMultipleAttribute;
-		}
+		}*/
 		
 		
 		this.addView(this.txtBox);	
@@ -91,8 +82,8 @@ public class NumberField extends InputField {
 				    		NumberField.this.txtBox.setInputType(InputType.TYPE_NULL);
 				    	}
 			    	}
-		    	}else{
-		    		//NumberField.this.validateResult();
+		    	} else{
+		    		Log.e("FOCUS","LOST NUMBER");
 		    	}
 		    }
 	    });
