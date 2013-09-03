@@ -1,5 +1,7 @@
 package org.openforis.collect.android.service;
 
+import java.io.IOException;
+
 import org.openforis.collect.android.config.Configuration;
 import org.openforis.collect.android.database.DatabaseHelper;
 import org.openforis.collect.android.database.SQLDroidDataSource;
@@ -44,6 +46,7 @@ public class ServiceFactory {
 	    	if ( updateDBSchema ) {
 	    		DatabaseHelper.updateDBSchema();
 	    	}
+	    	DatabaseHelper.copyDataBase();
 //	    	codeListManager = new CodeListManager();
 //	    	CodeListItemDao codeListItemDao = new CodeListItemDao();
 	    	org.openforis.collect.android.database.CodeListItemDao codeListItemDao = new org.openforis.collect.android.database.CodeListItemDao();
@@ -91,6 +94,8 @@ public class ServiceFactory {
 	    	taxonManager.setTaxonVernacularNameDao(taxonVernNameDao);
 	    	
 			surveyManager.init();
+		} catch (IOException e) {
+			e.printStackTrace();
 		} finally {
 			DatabaseHelper.closeConnection();
 		}
