@@ -43,10 +43,9 @@ public class ServiceFactory {
 		try {
 			dataSource = new SQLDroidDataSource();
 	    	dataSource.setUrl(config.getDbConnectionUrl());
-	    	if ( updateDBSchema ) {
+	    	/*if ( updateDBSchema ) {
 	    		DatabaseHelper.updateDBSchema();
-	    	}
-	    	DatabaseHelper.copyDataBase();
+	    	}*/	    		    	
 //	    	codeListManager = new CodeListManager();
 //	    	CodeListItemDao codeListItemDao = new CodeListItemDao();
 	    	org.openforis.collect.android.database.CodeListItemDao codeListItemDao = new org.openforis.collect.android.database.CodeListItemDao();
@@ -94,9 +93,9 @@ public class ServiceFactory {
 	    	taxonManager.setTaxonVernacularNameDao(taxonVernNameDao);
 	    	
 			surveyManager.init();
-		} catch (IOException e) {
+		}/* catch (IOException e) {
 			e.printStackTrace();
-		} finally {
+		}*/ finally {
 			DatabaseHelper.closeConnection();
 		}
 	}
