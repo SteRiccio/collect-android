@@ -2325,11 +2325,34 @@ public class FormScreen extends BaseActivity implements OnClickListener {
 	 	    		this.photoPath = data.getStringExtra(getResources().getString(R.string.photoPath));
 	 	    	}
 	 	    } else if (requestCode==getResources().getInteger(R.integer.internalGpsStarted)){
-	 	    	Log.e("internalGPS","STARTED");
 	 	    	if (resultCode==getResources().getInteger(R.integer.internalGpsLocationReceived)){
 	 	    		Log.e("internalGPS","LOCATION RECEIVED");
 	 	    		this.latitude = data.getStringExtra(getResources().getString(R.string.latitude));
 	 	    		this.longitude = data.getStringExtra(getResources().getString(R.string.longitude));
+	 	    		AlertMessage.createPositiveDialog(FormScreen.this, true, null,
+							getResources().getString(R.string.gettingCoordsFinishedTitle), 
+							getResources().getString(R.string.gettingCoordsSuccessMessage),
+								getResources().getString(R.string.okay),
+					    		new DialogInterface.OnClickListener() {
+									@Override
+									public void onClick(DialogInterface dialog, int which) {
+										
+									}
+								},
+								null).show();
+	 	    	} else {
+	 	    		Log.e("internalGPS","COORDINATES NOT OBTAINED");
+	 	    		AlertMessage.createPositiveDialog(FormScreen.this, true, null,
+							getResources().getString(R.string.gettingCoordsFinishedTitle), 
+							getResources().getString(R.string.gettingCoordsFailureMessage),
+								getResources().getString(R.string.okay),
+					    		new DialogInterface.OnClickListener() {
+									@Override
+									public void onClick(DialogInterface dialog, int which) {
+										
+									}
+								},
+								null).show();
 	 	    	}
 	 	    }
 	    } catch (Exception e){
