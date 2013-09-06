@@ -89,9 +89,9 @@ public class ApplicationManager extends BaseActivity {
 	            
 	            Configuration config = Configuration.getDefault(ApplicationManager.this);
 	            
-	            DatabaseHelper.init(ApplicationManager.this, config);
-
-			    ServiceFactory.init(config);   
+	            DatabaseHelper.init(ApplicationManager.this, config);	            
+	            
+			    ServiceFactory.init(config);
 			    
 	            ApplicationManager.currentRecord = null;
 	            ApplicationManager.currRootEntityId = -1;
@@ -155,7 +155,7 @@ public class ApplicationManager extends BaseActivity {
         try{
         	ApplicationManager.pd = ProgressDialog.show(this, getResources().getString(R.string.workInProgress), getResources().getString(R.string.launchAppMessage));
         	Log.i(getResources().getString(R.string.app_name),TAG+":onCreate");
-        	setContentView(R.layout.welcomescreen);        	
+        	setContentView(R.layout.welcomescreen);        	        	
         	
         	ApplicationManager.appPreferences = getPreferences(MODE_PRIVATE);
 

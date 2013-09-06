@@ -1,5 +1,6 @@
 package org.openforis.collect.android.database;
 
+import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -46,9 +47,14 @@ public abstract class DatabaseHelper {
 	
 	public static void init(Context ctx, Configuration config){
 		Log.e("FROM DB CREATING", "Try to init db");
-		createDatabase(ctx, config);
 		contex = ctx;
 		DatabaseHelper.config = config;
+		try {
+			DatabaseHelper.copyDataBase();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		createDatabase(ctx, config);
 		Log.e("FROM DB CREATING", "Finish init db");
 	}
 
@@ -142,20 +148,32 @@ public abstract class DatabaseHelper {
 		 
 		// Path to the just created empty db
 		String outFileName = DB_PATH + DB_NAME;
-		 
-		//Open the empty db as the output stream
-		OutputStream myOutput = new FileOutputStream(outFileName);
 		
-		//transfer bytes from the inputfile to the outputfile
-		byte[] buffer = new byte[1024];
-		int length;
-		while ((length = myInput.read(buffer))>0){
-			myOutput.write(buffer, 0, length);
+		File file = new File(outFileName);
+		if(!file.exists()){
+			String dirPath = DB_PATH;
+			File projDir = new File(dirPath);
+			if (!projDir.exists()){
+				projDir.mkdirs();
+			}
+			    
+			//Open the empty db as the output stream
+			file.createNewFile();
+			OutputStream myOutput = new FileOutputStream(outFileName);
+			
+			//transfer bytes from the inputfile to the outputfile
+			byte[] buffer = new byte[1024];
+			int length;
+			while ((length = myInput.read(buffer))>0){
+				myOutput.write(buffer, 0, length);
+			}
+			
+			//Close the streams
+			myOutput.flush();
+			myOutput.close();
 		}
 		 
-		//Close the streams
-		myOutput.flush();
-		myOutput.close();
+
 		myInput.close();
 		 
 		}
