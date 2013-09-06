@@ -33,7 +33,7 @@
     <string name="savingDataFailureMessage">Record could not be saved.</string>
     <string name="gettingCoordsFinishedTitle">Getting coordinates&#8230;</string>    
     <string name="gettingCoordsSuccessMessage">Coordinates retrieved from GPS.</string>
-    <string name="gettingCoordsFailureMessage">Coordinates could not be retrieved from GPS.</string>    
+    <string name="gettingCoordsFailureMessage">Coordinates could not be retrieved from GPS, because of timeout.</string>    
     <string name="backingupDataSuccessMessage">Data successfully saved.</string>
     <string name="backingupDataFailureMessage">Data could not be saved.</string>    
     <string name="savingToDatabase">Save</string>
