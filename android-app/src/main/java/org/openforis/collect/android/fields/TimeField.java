@@ -7,6 +7,7 @@ import org.openforis.collect.android.dialogs.TimeSetDialog;
 import org.openforis.collect.android.management.ApplicationManager;
 import org.openforis.collect.android.management.ValidationManager;
 import org.openforis.collect.android.messages.ToastMessage;
+import org.openforis.collect.android.misc.ViewBacktrack;
 import org.openforis.collect.android.service.ServiceFactory;
 import org.openforis.collect.model.NodeChangeSet;
 import org.openforis.idm.metamodel.NodeDefinition;
@@ -101,8 +102,9 @@ public class TimeField extends InputField implements TextWatcher {
 		timePickerIntent.putExtra("timeFieldPath", TimeField.this.form.getFormScreenId());
 		timePickerIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
 		
-    	ApplicationManager.selectedView = this;
-    	ApplicationManager.isToBeScrolled = true;
+		ViewBacktrack viewBacktrack = new ViewBacktrack(this,null);
+    	ApplicationManager.selectedViewsBacktrackList.add(viewBacktrack);
+    	//ApplicationManager.isToBeScrolled = true;
 		
     	super.getContext().startActivity(timePickerIntent);	
 	}	

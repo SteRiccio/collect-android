@@ -7,6 +7,7 @@ import org.openforis.collect.android.R;
 import org.openforis.collect.android.management.ApplicationManager;
 import org.openforis.collect.android.management.DataManager;
 import org.openforis.collect.android.messages.AlertMessage;
+import org.openforis.collect.android.misc.ViewBacktrack;
 import org.openforis.collect.android.screens.FormScreen;
 import org.openforis.collect.android.service.ServiceFactory;
 import org.openforis.idm.metamodel.AttributeDefinition;
@@ -200,8 +201,9 @@ public class SummaryList extends UIElement {
 		 						public void onClick(DialogInterface dialog, int which) {
 		 							Log.i("SummaryList", "Yes-button has been pressed from " + entityToRemove.getName());
 		 							ServiceFactory.getRecordManager().deleteNode(entityToRemove);
-		 							ApplicationManager.isToBeScrolled = true;
-		 							ApplicationManager.selectedView = SummaryList.this;
+		 							//ApplicationManager.isToBeScrolled = true;
+		 							ViewBacktrack viewBacktrack = new ViewBacktrack(SummaryList.this,SummaryList.this.form.getFormScreenId());
+		 							ApplicationManager.selectedViewsBacktrackList.add(viewBacktrack);
 		 							((FormScreen)SummaryList.this.context).onResume();
 		 							//TODO: Validation. What exactly to validate if entityToRemove was deleted?
 		 						}
