@@ -24,6 +24,7 @@ import org.openforis.collect.android.management.BaseActivity;
 import org.openforis.collect.android.messages.AlertMessage;
 import org.openforis.collect.android.misc.GpsActivity;
 import org.openforis.collect.android.misc.RunnableHandler;
+import org.openforis.collect.android.misc.ViewBacktrack;
 import org.openforis.collect.android.service.ServiceFactory;
 import org.openforis.collect.manager.CodeListManager;
 import org.openforis.idm.metamodel.BooleanAttributeDefinition;
@@ -56,8 +57,6 @@ import org.openforis.idm.model.TaxonOccurrence;
 import org.openforis.idm.model.TextValue;
 import org.openforis.idm.model.Time;
 
-import android.app.Activity;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
@@ -71,7 +70,6 @@ import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
-import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.HorizontalScrollView;
 import android.widget.LinearLayout;
@@ -906,11 +904,16 @@ public class FormScreen extends BaseActivity implements OnClickListener {
 	    	sv.post(new Runnable() {
 	    	    @Override
 	    	    public void run() {
-	    	    	if (ApplicationManager.selectedView!=null){
-	    	    		if (ApplicationManager.isToBeScrolled){
-	    	    			sv.scrollTo(0, ApplicationManager.selectedView.getTop());
-	    	            	ApplicationManager.isToBeScrolled = false;
-	    	    		}
+	    	    	if (ApplicationManager.selectedViewsBacktrackList.size()>0){
+	    	    		//if (ApplicationManager.isToBeScrolled){
+	    	    		if (FormScreen.this.getFormScreenId().equals(ApplicationManager.selectedViewsBacktrackList.get(ApplicationManager.selectedViewsBacktrackList.size()-1).getFormScreenId())
+	    	    				||
+	    	    				ApplicationManager.selectedViewsBacktrackList.get(ApplicationManager.selectedViewsBacktrackList.size()-1).getFormScreenId()==null){
+	    	    			//Log.e("SCROLLTO",ApplicationManager.selectedViewsBacktrackList.size()+"=="+ApplicationManager.selectedViewsBacktrackList.get(ApplicationManager.selectedViewsBacktrackList.size()-1).getClass());
+	    	    			sv.scrollTo(0, ApplicationManager.selectedViewsBacktrackList.remove(ApplicationManager.selectedViewsBacktrackList.size()-1).getView().getTop());
+	    	            	//ApplicationManager.isToBeScrolled = false;	
+	    	    		}	    	    			
+	    	    		//}
 	    	    } 
 	    	    } 	
 	    	});
@@ -930,17 +933,19 @@ public class FormScreen extends BaseActivity implements OnClickListener {
     @Override
     public void onPause(){    
 		Log.i(getResources().getString(R.string.app_name),TAG+":onPause");
-		if (ApplicationManager.selectedView instanceof SummaryTable){
-			SummaryTable temp = (SummaryTable)ApplicationManager.selectedView;
-			if (this.idmlId==temp.nodeDefinition.getId()){
-				ApplicationManager.isToBeScrolled = true;	
-			}
-		} else if (ApplicationManager.selectedView instanceof SummaryList){
-			SummaryList temp = (SummaryList)ApplicationManager.selectedView;
-			if (this.idmlId==temp.nodeDefinition.getId()){
-				ApplicationManager.isToBeScrolled = true;	
-			}
-		}
+		/*if (ApplicationManager.selectedViewsBacktrackList.size()>0){
+			if (ApplicationManager.selectedViewsBacktrackList.get(ApplicationManager.selectedViewsBacktrackList.size()-1) instanceof SummaryTable){
+				SummaryTable temp = (SummaryTable)ApplicationManager.selectedViewsBacktrackList.get(ApplicationManager.selectedViewsBacktrackList.size()-1);
+				if (this.idmlId==temp.nodeDefinition.getId()){
+					ApplicationManager.isToBeScrolled = true;	
+				}
+			} else if (ApplicationManager.selectedViewsBacktrackList.get(ApplicationManager.selectedViewsBacktrackList.size()-1) instanceof SummaryList){
+				SummaryList temp = (SummaryList)ApplicationManager.selectedViewsBacktrackList.get(ApplicationManager.selectedViewsBacktrackList.size()-1);
+				if (this.idmlId==temp.nodeDefinition.getId()){
+					ApplicationManager.isToBeScrolled = true;	
+				}
+			}	
+		}	*/	
 		super.onPause();
     }
 	
@@ -968,13 +973,15 @@ public class FormScreen extends BaseActivity implements OnClickListener {
 			Object parentView = arg0.getParent().getParent().getParent().getParent();
 			if (parentView instanceof SummaryList){
 				SummaryList temp = (SummaryList)arg0.getParent().getParent().getParent().getParent();
-				ApplicationManager.selectedView = temp;
-				ApplicationManager.isToBeScrolled = false;
+				ViewBacktrack viewBacktrack = new ViewBacktrack(temp,FormScreen.this.getFormScreenId());
+				ApplicationManager.selectedViewsBacktrackList.add(viewBacktrack);
+				//ApplicationManager.isToBeScrolled = false;
 				this.startActivity(this.prepareIntentForNewScreen(temp));				
 			} else if (parentView instanceof SummaryTable){
 				SummaryTable temp = (SummaryTable)parentView;
-				ApplicationManager.selectedView = temp;
-				ApplicationManager.isToBeScrolled = false;
+				ViewBacktrack viewBacktrack = new ViewBacktrack(temp,FormScreen.this.getFormScreenId());
+				ApplicationManager.selectedViewsBacktrackList.add(viewBacktrack);
+				//ApplicationManager.isToBeScrolled = false;
 				this.startActivity(this.prepareIntentForMultipleField(temp, tv.getId(), temp.getValues()));
 			}
 			
@@ -2325,11 +2332,32 @@ public class FormScreen extends BaseActivity implements OnClickListener {
 	 	    		this.photoPath = data.getStringExtra(getResources().getString(R.string.photoPath));
 	 	    	}
 	 	    } else if (requestCode==getResources().getInteger(R.integer.internalGpsStarted)){
-	 	    	Log.e("internalGPS","STARTED");
 	 	    	if (resultCode==getResources().getInteger(R.integer.internalGpsLocationReceived)){
-	 	    		Log.e("internalGPS","LOCATION RECEIVED");
 	 	    		this.latitude = data.getStringExtra(getResources().getString(R.string.latitude));
 	 	    		this.longitude = data.getStringExtra(getResources().getString(R.string.longitude));
+	 	    		AlertMessage.createPositiveDialog(FormScreen.this, true, null,
+							getResources().getString(R.string.gettingCoordsFinishedTitle), 
+							getResources().getString(R.string.gettingCoordsSuccessMessage),
+								getResources().getString(R.string.okay),
+					    		new DialogInterface.OnClickListener() {
+									@Override
+									public void onClick(DialogInterface dialog, int which) {
+										
+									}
+								},
+								null).show();
+	 	    	} else {
+	 	    		AlertMessage.createPositiveDialog(FormScreen.this, true, null,
+							getResources().getString(R.string.gettingCoordsFinishedTitle), 
+							getResources().getString(R.string.gettingCoordsFailureMessage),
+								getResources().getString(R.string.okay),
+					    		new DialogInterface.OnClickListener() {
+									@Override
+									public void onClick(DialogInterface dialog, int which) {
+										
+									}
+								},
+								null).show();
 	 	    	}
 	 	    }
 	    } catch (Exception e){

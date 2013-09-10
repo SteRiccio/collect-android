@@ -16,6 +16,7 @@ import org.openforis.collect.android.lists.RootEntityChoiceActivity;
 import org.openforis.collect.android.messages.AlertMessage;
 import org.openforis.collect.android.misc.ItemsStorage;
 import org.openforis.collect.android.misc.RunnableHandler;
+import org.openforis.collect.android.misc.ViewBacktrack;
 import org.openforis.collect.android.screens.FormScreen;
 import org.openforis.collect.android.service.ServiceFactory;
 import org.openforis.collect.manager.SurveyManager;
@@ -40,7 +41,6 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.util.Log;
 import android.view.KeyEvent;
-import android.view.View;
 //import org.openforis.collect.manager.codelistimport.CodeListImportProcess;
 
 public class ApplicationManager extends BaseActivity {
@@ -61,8 +61,8 @@ public class ApplicationManager extends BaseActivity {
 	
 	public static CollectRecord currentRecord;
 	public static int currRootEntityId;
-	public static View selectedView;
-	public static boolean isToBeScrolled;
+	public static List<ViewBacktrack> selectedViewsBacktrackList;
+	//public static boolean isToBeScrolled;
 	
 	public static DataManager dataManager;
 	
@@ -95,8 +95,8 @@ public class ApplicationManager extends BaseActivity {
 			    
 	            ApplicationManager.currentRecord = null;
 	            ApplicationManager.currRootEntityId = -1;
-	            ApplicationManager.selectedView = null;
-	            ApplicationManager.isToBeScrolled = false;
+	            ApplicationManager.selectedViewsBacktrackList = new ArrayList<ViewBacktrack>();
+	            //ApplicationManager.isToBeScrolled = false;
 	            
 	            ApplicationManager.storedItemsList = new ArrayList<ItemsStorage>();	            	
 				

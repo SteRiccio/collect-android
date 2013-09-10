@@ -6,6 +6,7 @@ import java.util.List;
 import org.openforis.collect.android.R;
 import org.openforis.collect.android.management.ApplicationManager;
 import org.openforis.collect.android.messages.AlertMessage;
+import org.openforis.collect.android.misc.ViewBacktrack;
 import org.openforis.collect.android.screens.FormScreen;
 import org.openforis.collect.android.service.ServiceFactory;
 import org.openforis.idm.metamodel.BooleanAttributeDefinition;
@@ -250,8 +251,9 @@ public class SummaryTable extends UIElement {
 			 						@Override
 			 						public void onClick(DialogInterface dialog, int which) {
 			 							ServiceFactory.getRecordManager().deleteNode(nodeToDelete);
-			 							ApplicationManager.isToBeScrolled = true;
-			 							ApplicationManager.selectedView = SummaryTable.this;
+			 							//ApplicationManager.isToBeScrolled = true;
+			 							ViewBacktrack viewBacktrack = new ViewBacktrack(SummaryTable.this,SummaryTable.this.form.getFormScreenId());
+			 							ApplicationManager.selectedViewsBacktrackList.add(viewBacktrack);
 			 							((FormScreen)SummaryTable.this.getContext()).onResume();
 			 						}
 			 					},

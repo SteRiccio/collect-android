@@ -5,24 +5,18 @@ import java.util.Random;
 import org.openforis.collect.android.R;
 import org.openforis.collect.android.dialogs.DateSetDialog;
 import org.openforis.collect.android.management.ApplicationManager;
-import org.openforis.collect.android.management.ValidationManager;
 import org.openforis.collect.android.messages.ToastMessage;
+import org.openforis.collect.android.misc.ViewBacktrack;
 import org.openforis.collect.android.service.ServiceFactory;
 import org.openforis.collect.model.NodeChangeSet;
 import org.openforis.idm.metamodel.NodeDefinition;
-import org.openforis.idm.metamodel.validation.ValidationResults;
-import org.openforis.idm.model.Coordinate;
-import org.openforis.idm.model.CoordinateAttribute;
 import org.openforis.idm.model.Date;
 import org.openforis.idm.model.DateAttribute;
 import org.openforis.idm.model.Entity;
-import org.openforis.idm.model.EntityBuilder;
 import org.openforis.idm.model.Node;
 
 import android.content.Context;
 import android.content.Intent;
-import android.graphics.Color;
-import android.text.Editable;
 import android.text.InputType;
 import android.util.Log;
 import android.view.View;
@@ -114,8 +108,9 @@ public class DateField extends InputField {
     	datePickerIntent.putExtra("dateFieldPath", DateField.this.form.getFormScreenId());
     	datePickerIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
     	
-    	ApplicationManager.selectedView = this;
-    	ApplicationManager.isToBeScrolled = true;
+    	ViewBacktrack viewBacktrack = new ViewBacktrack(this,null);
+    	ApplicationManager.selectedViewsBacktrackList.add(viewBacktrack);
+    	//ApplicationManager.isToBeScrolled = true;
     	
     	super.getContext().startActivity(datePickerIntent);	
 	}

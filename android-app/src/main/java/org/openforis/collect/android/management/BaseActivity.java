@@ -74,10 +74,11 @@ public class BaseActivity extends Activity {
         menuInflater.inflate(R.layout.menu, menu);
         return true;
     }
- 
+//  public boolean onMenuItemSelected(int featureId, MenuItem item)
     @Override
-    public boolean onOptionsItemSelected(MenuItem item)
-    { 
+    public boolean onMenuItemSelected(int featureId, MenuItem item)
+    //public boolean onOptionsItemSelected(MenuItem item)
+    {
         switch (item.getItemId())
         {
 			case R.id.menu_exit:
@@ -142,7 +143,7 @@ public class BaseActivity extends Activity {
 								null).show();
 	        	}
 	        	return true;
-	        case R.id.menu_export:	        	
+	        case R.id.menu_export:        	
 	        	final ProgressDialog pdSavingRecordToXml = ProgressDialog.show(this, getResources().getString(R.string.workInProgress), getResources().getString(R.string.backupingData));
 				final Handler savingRecordToXmlHandler = new Handler() {
 					@Override
