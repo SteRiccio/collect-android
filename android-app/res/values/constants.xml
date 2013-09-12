@@ -65,6 +65,8 @@
     <string name="defaultUserRole">ROLE_ADMIN</string>
     
     <!-- REQUEST CODES FOR ACTIVITIES -->
+    <integer name="chooseDatabaseFile">69</integer>
+    <integer name="databaseFileChosen">44</integer>
     <integer name="clusterSelection">789</integer>
     <integer name="rootEntitySelection">111</integer>
     <integer name="formDefinitionSelection">101</integer>
@@ -102,6 +104,7 @@
     <string name="photoPath">photoPath</string>
     <string name="latitude">latitude</string>
     <string name="longitude">longitude</string>
+    <string name="databaseFileName">databaseFileName</string>
     
     <!-- BUTTONS IDs -->
     <integer name="leftButtonMultipleAttribute">11</integer>

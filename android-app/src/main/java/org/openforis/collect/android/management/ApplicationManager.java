@@ -259,7 +259,7 @@ public class ApplicationManager extends BaseActivity {
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {    	
 	    super.onActivityResult(requestCode, resultCode, data);
 	    try{
-	    	Log.e("request="+requestCode,"result="+resultCode);
+	    	Log.e("request="+requestCode,"result="+resultCode+"===========================");
 	 	    if (requestCode==getResources().getInteger(R.integer.clusterSelection)){
 	 	    	if (resultCode==getResources().getInteger(R.integer.clusterChoiceSuccessful)){//record was selected	 	    		
 	 	    		

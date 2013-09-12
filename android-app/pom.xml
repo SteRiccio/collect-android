@@ -1,5 +1,4 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<parent>
 		<groupId>org.openforis.collect.android</groupId>
@@ -162,6 +161,26 @@
 			<scope>test</scope>
 		</dependency>
 	</dependencies>
+	
+ 	<scm>
+        <connection>scm:git:git@github.com:Arbonaut/collect-android.git</connection>
+        <developerConnection>scm:git:git@github.com:Arbonaut/collect-android.git</developerConnection>
+        <url>https://github.com/Arbonaut/collect-android</url>
+      <tag>3.0</tag>
+  </scm>	
+
+	<distributionManagement>
+        <repository>
+            <id>arbonaut-releases</id>
+            <name>Arbonaut Repository</name>
+            <url>http://www.openforis.org/nexus/content/repositories/arbonaut-releases/</url>
+        </repository>
+        <snapshotRepository>
+            <id>arbonaut-snapshots</id>
+            <name>Arbonaut Snapshots Repository</name>
+            <url>http://www.openforis.org/nexus/content/repositories/arbonaut-snapshots/</url>
+        </snapshotRepository>
+    </distributionManagement>
 
 	<build>
 		<plugins>
@@ -192,6 +211,11 @@
 					<target>${maven.compiler.target}</target>
 				</configuration>
 			</plugin>
+			<plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-release-plugin</artifactId>
+                <version>2.3</version>
+            </plugin>
 		</plugins>
 	</build>
 

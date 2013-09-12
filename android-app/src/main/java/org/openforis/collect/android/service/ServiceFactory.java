@@ -33,7 +33,7 @@ public class ServiceFactory {
 	private static UserManager userManager;
 	private static TaxonManager taxonManager;
 	private static SQLDroidDataSource dataSource;
-	private static org.openforis.collect.android.management.CodeListManager codeListManager;
+	private static org.openforis.collect.android.management.MobileCodeListManager codeListManager;
 
 	public static void init(Configuration config) {
 		init(config, true);
@@ -48,9 +48,9 @@ public class ServiceFactory {
 	    	}*/	    		    	
 //	    	codeListManager = new CodeListManager();
 //	    	CodeListItemDao codeListItemDao = new CodeListItemDao();
-	    	org.openforis.collect.android.database.CodeListItemDao codeListItemDao = new org.openforis.collect.android.database.CodeListItemDao();
+	    	org.openforis.collect.android.database.MobileCodeListItemDao codeListItemDao = new org.openforis.collect.android.database.MobileCodeListItemDao();
 			codeListItemDao.setDataSource(dataSource);
-	    	codeListManager = new org.openforis.collect.android.management.CodeListManager(codeListItemDao);	    	
+	    	codeListManager = new org.openforis.collect.android.management.MobileCodeListManager(codeListItemDao);	    	
 	    	
 //			codeListManager.setCodeListItemDao(codeListItemDao);
 			CollectCodeListService codeListService = new CollectCodeListService();
@@ -108,7 +108,7 @@ public class ServiceFactory {
 		return recordManager;
 	}
 	
-	public static org.openforis.collect.android.management.CodeListManager getCodeListManager() {
+	public static org.openforis.collect.android.management.MobileCodeListManager getCodeListManager() {
 		return codeListManager;
 	}
 	

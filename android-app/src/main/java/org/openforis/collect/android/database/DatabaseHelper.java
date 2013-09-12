@@ -1,6 +1,7 @@
 package org.openforis.collect.android.database;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -50,7 +51,7 @@ public abstract class DatabaseHelper {
 		contex = ctx;
 		DatabaseHelper.config = config;
 		try {
-			DatabaseHelper.copyDataBase();
+			DatabaseHelper.copyDataBase(null);
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -139,12 +140,17 @@ public abstract class DatabaseHelper {
 	}
 
 	
-	public static void copyDataBase() throws IOException{
+	public static void copyDataBase(String pathToFileOnSdcard) throws IOException{
 		Log.e("copying","database file");
 		 String DB_NAME = "collect.db";
 		 String DB_PATH = "/data/data/org.openforis.collect.android/databases/";
 		//Open your local db as the input stream
-		InputStream myInput = contex.getAssets().open(DB_NAME);
+		InputStream myInput;
+		if (pathToFileOnSdcard!=null){
+			myInput = new FileInputStream(pathToFileOnSdcard);
+		} else {
+			myInput = contex.getAssets().open(DB_NAME);
+		}
 		 
 		// Path to the just created empty db
 		String outFileName = DB_PATH + DB_NAME;
