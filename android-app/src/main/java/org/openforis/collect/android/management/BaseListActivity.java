@@ -1,5 +1,8 @@
 package org.openforis.collect.android.management;
 
+import java.io.File;
+import java.io.IOException;
+
 import org.openforis.collect.android.R;
 import org.openforis.collect.android.database.DatabaseHelper;
 import org.openforis.collect.android.filechooser.FileChooser;
@@ -13,6 +16,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.content.pm.PackageManager.NameNotFoundException;
+import android.content.res.Resources.NotFoundException;
 import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
@@ -154,7 +158,30 @@ public class BaseListActivity extends ListActivity {
 			case R.id.menu_import_database_from_file:
 				//startActivity(new Intent(BaseListActivity.this, FileChooser.class));
 				startActivityForResult(new Intent(BaseListActivity.this, FileChooser.class), getResources().getInteger(R.integer.chooseDatabaseFile));
-			    return true; 			
+			    return true;
+			case R.id.menu_backup_database: 
+				try {
+					DatabaseHelper.backupDatabase(Environment.getExternalStorageDirectory().toString()+getResources().getString(R.string.application_folder), getResources().getString(R.string.database_file_name)+System.currentTimeMillis()+getResources().getString(R.string.database_file_extension));
+					AlertMessage.createPositiveDialog(BaseListActivity.this, false, getResources().getDrawable(R.drawable.warningsign),
+		 					getResources().getString(R.string.backupingDatabaseTitle), getResources().getString(R.string.backupingDatabaseMessageSuccess),
+		 					getResources().getString(R.string.okay), 
+		 		    		null,
+		 					null).show();
+				} catch (NotFoundException e) {
+					AlertMessage.createPositiveDialog(BaseListActivity.this, false, getResources().getDrawable(R.drawable.warningsign),
+		 					getResources().getString(R.string.backupingDatabaseTitle), getResources().getString(R.string.backupingDatabaseMessageFileNotFound),
+		 					getResources().getString(R.string.okay), 
+		 		    		null,
+		 					null).show();
+				} catch (IOException e) {
+					AlertMessage.createPositiveDialog(BaseListActivity.this, false, getResources().getDrawable(R.drawable.warningsign),
+		 					getResources().getString(R.string.backupingDatabaseTitle), getResources().getString(R.string.backupingDatabaseMessageIOException),
+		 					getResources().getString(R.string.okay), 
+		 		    		null,
+		 					null).show();
+				}
+				
+			    return true; 				    
 			case R.id.menu_settings:
 				startActivity(new Intent(BaseListActivity.this, SettingsScreen.class));
 			    return true;			    

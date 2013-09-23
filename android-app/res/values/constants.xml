@@ -21,6 +21,8 @@
     <string name="backup_folder">/ofcm/backups</string>
     <!--<string name="formDefinitionFile">/test.idm.xml</string>-->
     <string name="formDefinitionFile">/pe2013infbiomse.xml</string>
+    <string name="database_file_name">/collect</string>
+    <string name="database_file_extension">.db</string>
     <!--<string name="formDefinitionFile">/test.idmARCHENLAND.xml</string>-->
     
     <string name="formDefinitionFileTest">/test.idm.grdemo.new.xml</string>

@@ -45,7 +45,7 @@ public class ServiceFactory {
 	    	dataSource.setUrl(config.getDbConnectionUrl());
 	    	/*if ( updateDBSchema ) {
 	    		DatabaseHelper.updateDBSchema();
-	    	}*/	    		    	
+	    	}*/ 		    	
 //	    	codeListManager = new CodeListManager();
 //	    	CodeListItemDao codeListItemDao = new CodeListItemDao();
 	    	org.openforis.collect.android.database.MobileCodeListItemDao codeListItemDao = new org.openforis.collect.android.database.MobileCodeListItemDao();

@@ -136,12 +136,12 @@
 			<!--<version>1.0-SNAPSHOT</version>-->
 			<version>1.0-Alpha1</version>
 		</dependency>
-		<dependency>
+		<!--<dependency>
 			<groupId>org.openforis.android</groupId>
-			<artifactId>android-sqldroid</artifactId>
+			<artifactId>android-sqldroid</artifactId>-->
 			<!--<version>1.0-SNAPSHOT</version>-->
-			<version>1.0-Alpha1</version>
-		</dependency>
+			<!--<version>1.0-Alpha1</version>
+		</dependency>-->
 		<dependency>
 			<groupId>org.openforis.android</groupId>
 			<artifactId>android-liquibase-core</artifactId>
@@ -171,7 +171,7 @@
 	
  		
 
-	<distributionManagement>
+	<!--<distributionManagement>
         <repository>
             <id>arbonaut-releases</id>
             <name>Arbonaut Repository</name>
@@ -182,7 +182,7 @@
             <name>Arbonaut Snapshots Repository</name>
             <url>http://www.openforis.org/nexus/content/repositories/arbonaut-snapshots/</url>
         </snapshotRepository>
-    </distributionManagement>
+    </distributionManagement>-->
 
 	<build>
 		<plugins>
@@ -232,6 +232,22 @@
 			<name>Open Foris Snapshots Repository</name>
 			<url>http://www.openforis.org/nexus/content/repositories/snapshots/</url>
 		</repository>
+		<!--<repository>
+			<id>arbonaut-releases</id>
+			<name>Arbonaut Repository</name>
+			<url>http://www.openforis.org/nexus/content/repositories/arbonaut-releases/</url>
+			<releases>
+				<enabled>true</enabled>
+			</releases>
+		</repository>
+		<repository>
+			<id>arbonaut-snapshots</id>
+			<name>Arbonaut Snapshots Repository</name>
+			<url>http://www.openforis.org/nexus/content/repositories/arbonaut-snapshots/</url>
+			<snapshots>
+				<enabled>true</enabled>
+			</snapshots>
+		</repository>-->
 	</repositories>
 
 </project>

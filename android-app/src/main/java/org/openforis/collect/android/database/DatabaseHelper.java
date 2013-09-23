@@ -151,7 +151,7 @@ public abstract class DatabaseHelper {
 		} else {
 			myInput = contex.getAssets().open(DB_NAME);
 		}
-		 
+		
 		// Path to the just created empty db
 		String outFileName = DB_PATH + DB_NAME;
 		
@@ -183,4 +183,31 @@ public abstract class DatabaseHelper {
 		myInput.close();
 		 
 		}
+	
+	public static void backupDatabase(String pathToDestinationFolderOnSdcard, String destFileName) throws IOException{
+		Log.e("backuping","database file");
+		String DB_NAME = "collect.db";
+		String DB_PATH = "/data/data/org.openforis.collect.android/databases/";				
+		String dbFileName = DB_PATH + DB_NAME;		
+		File file = new File(dbFileName);
+		if(file.exists()){
+			InputStream databaseFileStream = new FileInputStream(dbFileName);
+			
+			OutputStream destinationFileStream = new FileOutputStream(pathToDestinationFolderOnSdcard+destFileName);
+			
+			//transfer bytes from the inputfile to the outputfile
+			byte[] buffer = new byte[1024];
+			int length;
+			while ((length = databaseFileStream.read(buffer))>0){
+				destinationFileStream.write(buffer, 0, length);
+			}
+			
+			//Close the streams
+			destinationFileStream.flush();
+			destinationFileStream.close();
+			databaseFileStream.close();
+		}
+		
+		
+	}
 }

@@ -15,6 +15,19 @@
     	<tag>3.0</tag>
  	</scm>
  	
+	<distributionManagement>
+        <repository>
+            <id>arbonaut-releases</id>
+            <name>Arbonaut Repository</name>
+            <url>http://www.openforis.org/nexus/content/repositories/arbonaut-releases/</url>
+        </repository>
+        <snapshotRepository>
+            <id>arbonaut-snapshots</id>
+            <name>Arbonaut Snapshots Repository</name>
+            <url>http://www.openforis.org/nexus/content/repositories/arbonaut-snapshots/</url>
+        </snapshotRepository>
+    </distributionManagement>
+	
  	<build>
 		<plugins>
 			<plugin>
@@ -24,4 +37,23 @@
             </plugin>          
 		</plugins>
 	</build>
+	
+	<repositories>
+		<repository>
+			<id>arbonaut-releases</id>
+			<name>Arbonaut Repository</name>
+			<url>http://www.openforis.org/nexus/content/repositories/arbonaut-releases/</url>
+			<releases>
+				<enabled>true</enabled>
+			</releases>
+		</repository>
+		<repository>
+			<id>arbonaut-snapshots</id>
+			<name>Arbonaut Snapshots Repository</name>
+			<url>http://www.openforis.org/nexus/content/repositories/arbonaut-snapshots/</url>
+			<snapshots>
+				<enabled>true</enabled>
+			</snapshots>
+		</repository>
+	</repositories>
 </project>

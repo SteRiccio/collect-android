@@ -208,9 +208,6 @@ public class ApplicationManager extends BaseActivity {
 
 	    	editor.commit();
 	    	
-	    	
-	    	
-	    	
         	creationThread.start();
         	
     		Thread thread = new Thread(new RunnableHandler(0, Environment.getExternalStorageDirectory().toString()
