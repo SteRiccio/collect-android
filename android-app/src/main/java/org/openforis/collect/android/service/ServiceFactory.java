@@ -19,8 +19,6 @@ import org.openforis.collect.service.CollectCodeListService;
 import org.openforis.idm.metamodel.validation.Validator;
 import org.openforis.idm.model.expression.ExpressionFactory;
 
-import android.util.Log;
-
 /**
  * 
  * @author S. Ricci
@@ -43,7 +41,6 @@ public class ServiceFactory {
 		try {
 			dataSource = new SQLDroidDataSource();
 	    	dataSource.setUrl(config.getDbConnectionUrl());
-	    	Log.e("updateDBSchema","=="+updateDBSchema);
 	    	if ( updateDBSchema ) {
 	    		DatabaseHelper.updateDBSchema();
 	    	}

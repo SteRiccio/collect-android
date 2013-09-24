@@ -4,12 +4,15 @@ import java.io.File;
 import java.io.IOException;
 
 import org.openforis.collect.android.R;
+import org.openforis.collect.android.config.Configuration;
 import org.openforis.collect.android.database.DatabaseHelper;
 import org.openforis.collect.android.filechooser.FileChooser;
 import org.openforis.collect.android.lists.FileImportActivity;
+import org.openforis.collect.android.lists.FormChoiceActivity;
 import org.openforis.collect.android.messages.AlertMessage;
 import org.openforis.collect.android.misc.RunnableHandler;
 import org.openforis.collect.android.screens.SettingsScreen;
+import org.openforis.collect.android.service.ServiceFactory;
 
 import android.app.ListActivity;
 import android.content.DialogInterface;
@@ -229,7 +232,9 @@ public class BaseListActivity extends ListActivity {
 				Log.e("CHOSEN FILE","=="+data.getStringExtra(getResources().getString(R.string.databaseFileName)));
 				String selectedFileName = data.getStringExtra(getResources().getString(R.string.databaseFileName));
 				if (selectedFileName.endsWith(".db")){
-					DatabaseHelper.copyDataBase(selectedFileName);	
+					DatabaseHelper.copyDataBase(selectedFileName);
+					Configuration config = Configuration.getDefault(BaseListActivity.this);
+					ServiceFactory.init(config, false);
 				} else {
 					AlertMessage.createPositiveDialog(BaseListActivity.this, true, null,
 							getResources().getString(R.string.copyingDatabaseTitle), 
