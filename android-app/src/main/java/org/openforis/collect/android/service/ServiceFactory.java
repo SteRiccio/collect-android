@@ -1,7 +1,5 @@
 package org.openforis.collect.android.service;
 
-import java.io.IOException;
-
 import org.openforis.collect.android.config.Configuration;
 import org.openforis.collect.android.database.DatabaseHelper;
 import org.openforis.collect.android.database.SQLDroidDataSource;
@@ -20,6 +18,8 @@ import org.openforis.collect.persistence.UserDao;
 import org.openforis.collect.service.CollectCodeListService;
 import org.openforis.idm.metamodel.validation.Validator;
 import org.openforis.idm.model.expression.ExpressionFactory;
+
+import android.util.Log;
 
 /**
  * 
@@ -43,9 +43,10 @@ public class ServiceFactory {
 		try {
 			dataSource = new SQLDroidDataSource();
 	    	dataSource.setUrl(config.getDbConnectionUrl());
-	    	/*if ( updateDBSchema ) {
+	    	Log.e("updateDBSchema","=="+updateDBSchema);
+	    	if ( updateDBSchema ) {
 	    		DatabaseHelper.updateDBSchema();
-	    	}*/ 		    	
+	    	}
 //	    	codeListManager = new CodeListManager();
 //	    	CodeListItemDao codeListItemDao = new CodeListItemDao();
 	    	org.openforis.collect.android.database.MobileCodeListItemDao codeListItemDao = new org.openforis.collect.android.database.MobileCodeListItemDao();

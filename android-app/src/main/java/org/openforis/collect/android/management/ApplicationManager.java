@@ -91,6 +91,8 @@ public class ApplicationManager extends BaseActivity {
 	            
 	            DatabaseHelper.init(ApplicationManager.this, config);	            
 	            
+	            /*String dbFileName = DatabaseHelper.DB_PATH + DatabaseHelper.DB_NAME;		
+	    		File file = new File(dbFileName);*/
 			    ServiceFactory.init(config);
 			    
 	            ApplicationManager.currentRecord = null;
