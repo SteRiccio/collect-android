@@ -1,7 +1,7 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>org.openforis.collect.android</groupId>
-	<version>3.1-SNAPSHOT</version>
+	<version>3.1</version>
 	<artifactId>collect-android</artifactId>
 	<packaging>pom</packaging>
 	<modules>
@@ -12,7 +12,7 @@
         <connection>scm:git:git@github.com:Arbonaut/collect-android.git</connection>
         <developerConnection>scm:git:git@github.com:Arbonaut/collect-android.git</developerConnection>
         <url>https://github.com/Arbonaut/collect-android</url>
-    	<tag>3.0</tag>
+    	<tag>collect-android-3.1</tag>
  	</scm>
  	
 	<distributionManagement>
