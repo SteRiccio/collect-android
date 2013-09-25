@@ -43,13 +43,13 @@
 			<artifactId>support-v4</artifactId>
 			<version>r7</version>
 		</dependency>
-		<!--<dependency>
+		<dependency>
 			<groupId>com.googlecode</groupId>
 			<artifactId>openbeans</artifactId>
 			<version>1.0</version>
 			<scope>system</scope>
 			<systemPath>${project.basedir}/lib/openbeans-1.0.jar</systemPath>
-		</dependency>-->
+		</dependency>
 		<dependency>
 			<groupId>org.openforis.collect</groupId>
 			<artifactId>collect-core</artifactId>
@@ -136,12 +136,12 @@
 			<!--<version>1.0-SNAPSHOT</version>-->
 			<version>1.0-Alpha1</version>
 		</dependency>
-		<!--<dependency>
+		<dependency>
 			<groupId>org.openforis.android</groupId>
-			<artifactId>android-sqldroid</artifactId>-->
+			<artifactId>android-sqldroid</artifactId>
 			<!--<version>1.0-SNAPSHOT</version>-->
-			<!--<version>1.0-Alpha1</version>
-		</dependency>-->
+			<version>1.0-Alpha1</version>
+		</dependency>
 		<dependency>
 			<groupId>org.openforis.android</groupId>
 			<artifactId>android-liquibase-core</artifactId>
