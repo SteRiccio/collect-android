@@ -18,6 +18,7 @@ import org.openforis.collect.persistence.UserDao;
 import org.openforis.collect.service.CollectCodeListService;
 import org.openforis.idm.metamodel.validation.Validator;
 import org.openforis.idm.model.expression.ExpressionFactory;
+import org.sqldroid.SQLDroidDriver;
 
 /**
  * 
@@ -39,6 +40,8 @@ public class ServiceFactory {
 	
 	public static void init(Configuration config, boolean updateDBSchema) {
 		try {
+			//SQLDroidDriver driver = new SQLDroidDriver();
+			
 			dataSource = new SQLDroidDataSource();
 	    	dataSource.setUrl(config.getDbConnectionUrl());
 	    	if ( updateDBSchema ) {

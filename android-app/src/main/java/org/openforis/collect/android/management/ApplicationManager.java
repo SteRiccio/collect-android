@@ -155,7 +155,6 @@ public class ApplicationManager extends BaseActivity {
 	public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         try{
-        	Log.e("RELEASE1","===");
         	ApplicationManager.pd = ProgressDialog.show(this, getResources().getString(R.string.workInProgress), getResources().getString(R.string.launchAppMessage));
         	Log.i(getResources().getString(R.string.app_name),TAG+":onCreate");
         	setContentView(R.layout.welcomescreen);        	        	
