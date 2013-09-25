@@ -3,7 +3,7 @@
 	<parent>
 		<groupId>org.openforis.collect.android</groupId>
 		<artifactId>collect-android</artifactId>
-		<version>collect-android-3.2.2</version>
+		<version>3.2-SNAPSHOT</version>
 	</parent>
 	<artifactId>collect-android-app</artifactId>
 	<packaging>apk</packaging>
