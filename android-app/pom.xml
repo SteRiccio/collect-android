@@ -3,7 +3,7 @@
 	<parent>
 		<groupId>org.openforis.collect.android</groupId>
 		<artifactId>collect-android</artifactId>
-		<version>3.3-SNAPSHOT</version>
+		<version>3.2-SNAPSHOT</version>
 	</parent>
 	<artifactId>collect-android-app</artifactId>
 	<packaging>apk</packaging>
@@ -43,12 +43,19 @@
 			<artifactId>support-v4</artifactId>
 			<version>r7</version>
 		</dependency>
-		<dependency>
+		<!--<dependency>
 			<groupId>com.googlecode</groupId>
 			<artifactId>openbeans</artifactId>
 			<version>1.0</version>
 			<scope>system</scope>
 			<systemPath>${project.basedir}/lib/openbeans-1.0.jar</systemPath>
+		</dependency>-->
+		<dependency>
+			<groupId>com.googlecode.openbeans</groupId>
+			<artifactId>openbeans</artifactId>
+			<version>1.0</version>
+			<!--<scope>system</scope>
+			<systemPath>${project.basedir}/lib/openbeans-1.0.jar</systemPath>-->
 		</dependency>
 		<dependency>
 			<groupId>org.openforis.collect</groupId>
