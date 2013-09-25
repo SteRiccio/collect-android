@@ -3,9 +3,10 @@
 	<parent>
 		<groupId>org.openforis.collect.android</groupId>
 		<artifactId>collect-android</artifactId>
-		<version>3.2</version>
+		<version>3.2.1</version>
 	</parent>
 	<artifactId>collect-android-app</artifactId>
+  <version>3.2</version>
 	<packaging>apk</packaging>
 
 	<properties>
@@ -257,4 +258,8 @@
 		</repository>-->
 	</repositories>
 
+
+  <scm>
+    <tag>collect-android-3.2.1</tag>
+  </scm>
 </project>
