@@ -2,13 +2,13 @@ package org.openforis.collect.android.management;
 
 import org.openforis.collect.persistence.RecordDao;
 
-public class RecordManager extends org.openforis.collect.manager.RecordManager {
+public class MobileRecordManager extends org.openforis.collect.manager.RecordManager {
 	
 	private RecordDao recordDao;
 	
-	private CodeListManager codeListManager;
+	private MobileCodeListManager codeListManager;
 	
-	public RecordManager(boolean lockingEnabled, RecordDao recordDao) {
+	public MobileRecordManager(boolean lockingEnabled, RecordDao recordDao) {
 		super(lockingEnabled);
 		super.setRecordDao(recordDao);
 		this.setRecordDao(recordDao);
@@ -28,11 +28,11 @@ public class RecordManager extends org.openforis.collect.manager.RecordManager {
 		this.recordDao = recordDao;
 	}
 
-	public CodeListManager getCodeListManager() {
+	public MobileCodeListManager getCodeListManager() {
 		return codeListManager;
 	}
 
-	public void setCodeListManager(CodeListManager codeListManager) {
+	public void setCodeListManager(MobileCodeListManager codeListManager) {
 		this.codeListManager = codeListManager;
 	}
 }

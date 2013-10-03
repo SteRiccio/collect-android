@@ -1,16 +1,25 @@
 package org.openforis.collect.android.management;
 
+import java.io.File;
+import java.io.IOException;
+
 import org.openforis.collect.android.R;
+import org.openforis.collect.android.config.Configuration;
+import org.openforis.collect.android.database.DatabaseHelper;
+import org.openforis.collect.android.filechooser.FileChooser;
 import org.openforis.collect.android.lists.FileImportActivity;
+import org.openforis.collect.android.lists.FormChoiceActivity;
 import org.openforis.collect.android.messages.AlertMessage;
 import org.openforis.collect.android.misc.RunnableHandler;
 import org.openforis.collect.android.screens.SettingsScreen;
+import org.openforis.collect.android.service.ServiceFactory;
 
 import android.app.ListActivity;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.content.pm.PackageManager.NameNotFoundException;
+import android.content.res.Resources.NotFoundException;
 import android.graphics.Color;
 import android.os.Build;
 import android.os.Bundle;
@@ -148,7 +157,34 @@ public class BaseListActivity extends ListActivity {
 			    return true;*/
 			case R.id.menu_import_from_file:
 				startActivity(new Intent(BaseListActivity.this, FileImportActivity.class));
-			    return true; 
+			    return true;
+			case R.id.menu_import_database_from_file:
+				//startActivity(new Intent(BaseListActivity.this, FileChooser.class));
+				startActivityForResult(new Intent(BaseListActivity.this, FileChooser.class), getResources().getInteger(R.integer.chooseDatabaseFile));
+			    return true;
+			case R.id.menu_backup_database: 
+				try {
+					DatabaseHelper.backupDatabase(Environment.getExternalStorageDirectory().toString()+getResources().getString(R.string.application_folder), getResources().getString(R.string.database_file_name)+System.currentTimeMillis()+getResources().getString(R.string.database_file_extension));
+					AlertMessage.createPositiveDialog(BaseListActivity.this, false, getResources().getDrawable(R.drawable.warningsign),
+		 					getResources().getString(R.string.backupingDatabaseTitle), getResources().getString(R.string.backupingDatabaseMessageSuccess),
+		 					getResources().getString(R.string.okay), 
+		 		    		null,
+		 					null).show();
+				} catch (NotFoundException e) {
+					AlertMessage.createPositiveDialog(BaseListActivity.this, false, getResources().getDrawable(R.drawable.warningsign),
+		 					getResources().getString(R.string.backupingDatabaseTitle), getResources().getString(R.string.backupingDatabaseMessageFileNotFound),
+		 					getResources().getString(R.string.okay), 
+		 		    		null,
+		 					null).show();
+				} catch (IOException e) {
+					AlertMessage.createPositiveDialog(BaseListActivity.this, false, getResources().getDrawable(R.drawable.warningsign),
+		 					getResources().getString(R.string.backupingDatabaseTitle), getResources().getString(R.string.backupingDatabaseMessageIOException),
+		 					getResources().getString(R.string.okay), 
+		 		    		null,
+		 					null).show();
+				}
+				
+			    return true; 				    
 			case R.id.menu_settings:
 				startActivity(new Intent(BaseListActivity.this, SettingsScreen.class));
 			    return true;			    
@@ -186,4 +222,41 @@ public class BaseListActivity extends ListActivity {
 		        return super.onOptionsItemSelected(item);
 	    }
 	}
+    
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {    	
+	    super.onActivityResult(requestCode, resultCode, data);
+	    try{
+	    	if (requestCode==getResources().getInteger(R.integer.chooseDatabaseFile)){
+				Log.e("choosing database","=========================");
+				Log.e("CHOSEN FILE","=="+data.getStringExtra(getResources().getString(R.string.databaseFileName)));
+				String selectedFileName = data.getStringExtra(getResources().getString(R.string.databaseFileName));
+				if (selectedFileName.endsWith(".db")){
+					DatabaseHelper.copyDataBase(selectedFileName);
+					Configuration config = Configuration.getDefault(BaseListActivity.this);
+					ServiceFactory.init(config, false);
+				} else {
+					AlertMessage.createPositiveDialog(BaseListActivity.this, true, null,
+							getResources().getString(R.string.copyingDatabaseTitle), 
+							getResources().getString(R.string.copyingDatabaseWrongFileExtensionMessage),
+								getResources().getString(R.string.okay),
+					    		new DialogInterface.OnClickListener() {
+									@Override
+									public void onClick(DialogInterface dialog, int which) {
+										
+									}
+								},
+								null).show();	
+				}
+			}
+	    } catch (Exception e){
+    		RunnableHandler.reportException(e,getResources().getString(R.string.app_name),TAG+":onActivityResult",
+    				Environment.getExternalStorageDirectory().toString()
+    				+getResources().getString(R.string.logs_folder)
+    				+getResources().getString(R.string.logs_file_name)
+    				+System.currentTimeMillis()
+    				+getResources().getString(R.string.log_file_extension));
+	    }
+    }
+
 }

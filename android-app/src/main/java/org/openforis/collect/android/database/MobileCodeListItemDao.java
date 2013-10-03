@@ -5,8 +5,6 @@ import static org.openforis.collect.persistence.jooq.tables.OfcCodeList.OFC_CODE
 import java.util.ArrayList;
 import java.util.List;
 
-import org.jooq.BatchBindStep;
-import org.jooq.Insert;
 import org.jooq.TableField;
 import org.openforis.collect.model.CollectSurvey;
 import org.openforis.collect.persistence.jooq.tables.records.OfcCodeListRecord;
@@ -26,9 +24,9 @@ import android.util.Log;
 //import org.openforis.collect.persistence.CodeListItemDao.JooqFactory;
 
 
-public class CodeListItemDao extends org.openforis.collect.persistence.CodeListItemDao {
+public class MobileCodeListItemDao extends org.openforis.collect.persistence.CodeListItemDao {
 
-	public CodeListItemDao() {
+	public MobileCodeListItemDao() {
 		super();
 	}
 	

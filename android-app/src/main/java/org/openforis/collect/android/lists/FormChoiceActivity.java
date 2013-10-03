@@ -3,6 +3,7 @@ package org.openforis.collect.android.lists;
 import java.util.List;
 
 import org.openforis.collect.android.R;
+import org.openforis.collect.android.config.Configuration;
 import org.openforis.collect.android.management.ApplicationManager;
 import org.openforis.collect.android.management.BaseListActivity;
 import org.openforis.collect.android.messages.AlertMessage;

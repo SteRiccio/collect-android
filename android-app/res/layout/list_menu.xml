@@ -10,8 +10,14 @@
           android:title="@string/export_all_to_zip" />-->
     
     <item android:id="@+id/menu_import_from_file"
-    	  android:title="@string/import_from_xml_file" />     	  
-        
+    	  android:title="@string/import_from_xml_file" /> 
+    	  
+    <item android:id="@+id/menu_import_database_from_file"
+    	  android:title="@string/import_database_from_file" />   
+    
+    <item android:id="@+id/menu_backup_database"
+    	  android:title="@string/backup_database" />   
+    
     <item android:id="@+id/menu_settings"
           android:title="@string/settings" />
     

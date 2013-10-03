@@ -1,6 +1,7 @@
 package org.openforis.collect.android.database;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -33,6 +34,8 @@ import android.util.Log;
 public abstract class DatabaseHelper {
 	
 	private static final String LIQUIBASE_CHANGELOG = "org/openforis/collect/db/changelog/db.changelog-master.xml";
+	public static final String DB_NAME = "collect.db";
+	public static final String DB_PATH = "/data/data/org.openforis.collect.android/databases/";
 	
 	private static Context contex;
 	private static Configuration config;
@@ -49,11 +52,11 @@ public abstract class DatabaseHelper {
 		Log.e("FROM DB CREATING", "Try to init db");
 		contex = ctx;
 		DatabaseHelper.config = config;
-		try {
-			DatabaseHelper.copyDataBase();
+		/*try {
+			DatabaseHelper.copyDataBase(null);
 		} catch (IOException e) {
 			e.printStackTrace();
-		}
+		}*/
 		createDatabase(ctx, config);
 		Log.e("FROM DB CREATING", "Finish init db");
 	}
@@ -139,18 +142,21 @@ public abstract class DatabaseHelper {
 	}
 
 	
-	public static void copyDataBase() throws IOException{
+	public static void copyDataBase(String pathToFileOnSdcard) throws IOException{
 		Log.e("copying","database file");
-		 String DB_NAME = "collect.db";
-		 String DB_PATH = "/data/data/org.openforis.collect.android/databases/";
 		//Open your local db as the input stream
-		InputStream myInput = contex.getAssets().open(DB_NAME);
-		 
+		InputStream myInput;
+		if (pathToFileOnSdcard!=null){
+			myInput = new FileInputStream(pathToFileOnSdcard);
+		} else {
+			myInput = contex.getAssets().open(DB_NAME);
+		}
+		
 		// Path to the just created empty db
 		String outFileName = DB_PATH + DB_NAME;
 		
 		File file = new File(outFileName);
-		if(!file.exists()){
+		//if(!file.exists()){
 			String dirPath = DB_PATH;
 			File projDir = new File(dirPath);
 			if (!projDir.exists()){
@@ -158,7 +164,8 @@ public abstract class DatabaseHelper {
 			}
 			    
 			//Open the empty db as the output stream
-			file.createNewFile();
+			if (!file.exists())
+				file.createNewFile();
 			OutputStream myOutput = new FileOutputStream(outFileName);
 			
 			//transfer bytes from the inputfile to the outputfile
@@ -171,10 +178,35 @@ public abstract class DatabaseHelper {
 			//Close the streams
 			myOutput.flush();
 			myOutput.close();
-		}
+		//}
 		 
 
 		myInput.close();
 		 
 		}
+	
+	public static void backupDatabase(String pathToDestinationFolderOnSdcard, String destFileName) throws IOException{
+		Log.e("backuping","database file");			
+		String dbFileName = DB_PATH + DB_NAME;		
+		File file = new File(dbFileName);
+		if(file.exists()){
+			InputStream databaseFileStream = new FileInputStream(dbFileName);
+			
+			OutputStream destinationFileStream = new FileOutputStream(pathToDestinationFolderOnSdcard+destFileName);
+			
+			//transfer bytes from the inputfile to the outputfile
+			byte[] buffer = new byte[1024];
+			int length;
+			while ((length = databaseFileStream.read(buffer))>0){
+				destinationFileStream.write(buffer, 0, length);
+			}
+			
+			//Close the streams
+			destinationFileStream.flush();
+			destinationFileStream.close();
+			databaseFileStream.close();
+		}
+		
+		
+	}
 }

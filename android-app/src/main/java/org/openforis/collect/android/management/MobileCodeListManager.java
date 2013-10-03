@@ -9,7 +9,7 @@ import org.openforis.idm.metamodel.CodeListItem;
 import org.openforis.idm.metamodel.ExternalCodeListItem;
 import org.openforis.idm.metamodel.PersistedCodeListItem;
 
-public class CodeListManager extends org.openforis.collect.manager.CodeListManager{
+public class MobileCodeListManager extends org.openforis.collect.manager.CodeListManager{
 	
 	
 	private DatabaseExternalCodeListProvider provider;
@@ -31,7 +31,7 @@ public class CodeListManager extends org.openforis.collect.manager.CodeListManag
 		this.provider = provider;
 	}		
 	
-	public CodeListManager(CodeListItemDao codeListItemDao){
+	public MobileCodeListManager(CodeListItemDao codeListItemDao){
 		super();
 		super.setCodeListItemDao(codeListItemDao);
 		this.setCodeListItemDao(codeListItemDao);

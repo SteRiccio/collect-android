@@ -5,9 +5,9 @@ import org.openforis.collect.persistence.UserDao;
 import android.test.AndroidTestCase;
 import android.util.Log;
 
-public class Testing extends AndroidTestCase{
+public class Testing /*extends AndroidTestCase*/{
 
-	@Override
+	/*@Override
 	public void setUp() throws Exception {
 		Log.e("setUp","=====");
 	}
@@ -44,5 +44,5 @@ public class Testing extends AndroidTestCase{
 		Assert.assertNull(reloaded);
 		
 		JdbcDaoSupport.close();*/
-	}
+	/*}*/
 }

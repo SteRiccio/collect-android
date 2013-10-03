@@ -10,8 +10,6 @@ import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
-import org.apache.commons.lang3.StringUtils;
-import org.jooq.Field;
 import org.openforis.collect.android.management.ApplicationManager;
 import org.openforis.collect.model.CollectRecord;
 import org.openforis.collect.model.CollectRecord.Step;
@@ -33,9 +31,9 @@ import android.util.Log;
 //import org.openforis.collect.persistence.CodeListItemDao.JooqFactory;
 
 
-public class RecordDao extends org.openforis.collect.persistence.RecordDao {
+public class MobileRecordDao extends org.openforis.collect.persistence.RecordDao {
 
-	public RecordDao() {
+	public MobileRecordDao() {
 		super();
 	}
 	

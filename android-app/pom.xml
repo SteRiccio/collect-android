@@ -1,10 +1,9 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<parent>
 		<groupId>org.openforis.collect.android</groupId>
 		<artifactId>collect-android</artifactId>
-		<version>3.0-SNAPSHOT</version>
+		<version>3.3.1-SNAPSHOT</version>
 	</parent>
 	<artifactId>collect-android-app</artifactId>
 	<packaging>apk</packaging>
@@ -44,18 +43,26 @@
 			<artifactId>support-v4</artifactId>
 			<version>r7</version>
 		</dependency>
-		<dependency>
+		<!--<dependency>
 			<groupId>com.googlecode</groupId>
 			<artifactId>openbeans</artifactId>
 			<version>1.0</version>
 			<scope>system</scope>
 			<systemPath>${project.basedir}/lib/openbeans-1.0.jar</systemPath>
+		</dependency>-->
+		<dependency>
+			<groupId>com.googlecode.openbeans</groupId>
+			<artifactId>openbeans</artifactId>
+			<version>1.0</version>
+			<!--<scope>system</scope>
+			<systemPath>${project.basedir}/lib/openbeans-1.0.jar</systemPath>-->
 		</dependency>
 		<dependency>
 			<groupId>org.openforis.collect</groupId>
 			<artifactId>collect-core</artifactId>
 			<!--<version>3.0-Alpha5-SNAPSHOT</version> -->
-			<version>3.0-CR1-SNAPSHOT</version>
+			<!--<version>3.0-CR1-SNAPSHOT</version>-->
+			<version>3.0-Alpha7</version>
 			<exclusions>
 				<exclusion>
 					<artifactId>jooq</artifactId>
@@ -107,7 +114,8 @@
 		<dependency>
 			<groupId>org.openforis.android</groupId>
 			<artifactId>android-jxpath</artifactId>
-			<version>1.0-SNAPSHOT</version>
+			<!--<version>1.0-SNAPSHOT</version>-->
+			<version>1.0-Alpha1</version>
 			<exclusions>
 				<exclusion>
 					<artifactId>commons-beanutils</artifactId>
@@ -126,22 +134,26 @@
 		<dependency>
 			<groupId>org.openforis.android</groupId>
 			<artifactId>android-spring</artifactId>
-			<version>1.0-SNAPSHOT</version>
+			<!--<version>1.0-SNAPSHOT</version>-->
+			<version>1.0-Alpha1</version>
 		</dependency>
 		<dependency>
 			<groupId>org.openforis.android</groupId>
 			<artifactId>android-jooq</artifactId>
-			<version>1.0-SNAPSHOT</version>
+			<!--<version>1.0-SNAPSHOT</version>-->
+			<version>1.0-Alpha1</version>
 		</dependency>
 		<dependency>
 			<groupId>org.openforis.android</groupId>
 			<artifactId>android-sqldroid</artifactId>
-			<version>1.0-SNAPSHOT</version>
+			<!--<version>1.0-SNAPSHOT</version>-->
+			<version>1.0-Alpha1</version>
 		</dependency>
 		<dependency>
 			<groupId>org.openforis.android</groupId>
 			<artifactId>android-liquibase-core</artifactId>
-			<version>2.0.6-SNAPSHOT</version>
+			<!--<version>2.0.6-SNAPSHOT</version>-->
+			<version>2.0.6-Alpha1</version>
 		</dependency>
 		<dependency>
 			<groupId>org.slf4j</groupId>
@@ -151,7 +163,8 @@
 		<dependency>
 			<groupId>org.openforis.idm</groupId>
 			<artifactId>idm-test</artifactId>
-			<version>3.0-CR1-SNAPSHOT</version>
+			<!--<version>3.0-CR1-SNAPSHOT</version>-->
+			<version>3.0-Alpha7</version>
 			<scope>test</scope>
 		</dependency>
 		<dependency>
@@ -162,6 +175,21 @@
 			<scope>test</scope>
 		</dependency>
 	</dependencies>
+	
+ 		
+
+	<!--<distributionManagement>
+        <repository>
+            <id>arbonaut-releases</id>
+            <name>Arbonaut Repository</name>
+            <url>http://www.openforis.org/nexus/content/repositories/arbonaut-releases/</url>
+        </repository>
+        <snapshotRepository>
+            <id>arbonaut-snapshots</id>
+            <name>Arbonaut Snapshots Repository</name>
+            <url>http://www.openforis.org/nexus/content/repositories/arbonaut-snapshots/</url>
+        </snapshotRepository>
+    </distributionManagement>-->
 
 	<build>
 		<plugins>
@@ -192,6 +220,11 @@
 					<target>${maven.compiler.target}</target>
 				</configuration>
 			</plugin>
+			<!--<plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-release-plugin</artifactId>
+                <version>2.1</version>
+            </plugin>-->
 		</plugins>
 	</build>
 
@@ -206,6 +239,22 @@
 			<name>Open Foris Snapshots Repository</name>
 			<url>http://www.openforis.org/nexus/content/repositories/snapshots/</url>
 		</repository>
+		<!--<repository>
+			<id>arbonaut-releases</id>
+			<name>Arbonaut Repository</name>
+			<url>http://www.openforis.org/nexus/content/repositories/arbonaut-releases/</url>
+			<releases>
+				<enabled>true</enabled>
+			</releases>
+		</repository>
+		<repository>
+			<id>arbonaut-snapshots</id>
+			<name>Arbonaut Snapshots Repository</name>
+			<url>http://www.openforis.org/nexus/content/repositories/arbonaut-snapshots/</url>
+			<snapshots>
+				<enabled>true</enabled>
+			</snapshots>
+		</repository>-->
 	</repositories>
 
 </project>

@@ -91,6 +91,8 @@ public class ApplicationManager extends BaseActivity {
 	            
 	            DatabaseHelper.init(ApplicationManager.this, config);	            
 	            
+	            /*String dbFileName = DatabaseHelper.DB_PATH + DatabaseHelper.DB_NAME;		
+	    		File file = new File(dbFileName);*/
 			    ServiceFactory.init(config);
 			    
 	            ApplicationManager.currentRecord = null;
@@ -208,9 +210,6 @@ public class ApplicationManager extends BaseActivity {
 
 	    	editor.commit();
 	    	
-	    	
-	    	
-	    	
         	creationThread.start();
         	
     		Thread thread = new Thread(new RunnableHandler(0, Environment.getExternalStorageDirectory().toString()
@@ -259,7 +258,7 @@ public class ApplicationManager extends BaseActivity {
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {    	
 	    super.onActivityResult(requestCode, resultCode, data);
 	    try{
-	    	Log.e("request="+requestCode,"result="+resultCode);
+	    	Log.e("request="+requestCode,"result="+resultCode+"===========================");
 	 	    if (requestCode==getResources().getInteger(R.integer.clusterSelection)){
 	 	    	if (resultCode==getResources().getInteger(R.integer.clusterChoiceSuccessful)){//record was selected	 	    		
 	 	    		
