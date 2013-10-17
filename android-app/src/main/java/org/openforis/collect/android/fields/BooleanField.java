@@ -187,8 +187,8 @@ public class BooleanField extends Field {
 				else if (results.getWarnings().size() > 0){
 					setBackgroundColor(Color.YELLOW);
 					for (int i=0;i<results.getWarnings().size();i++){
-						ValidationResult warning = results.getErrors().get(i);
-						if (i<results.getErrors().size()-1)
+						ValidationResult warning = results.getWarnings().get(i);
+						if (i<results.getWarnings().size()-1)
 							validationMsg += ValidationMessageBuilder.createInstance().getValidationMessage((Attribute<?, ?>)nodeChange.getNode(), warning) + "\r\n";
 						else
 							validationMsg += ValidationMessageBuilder.createInstance().getValidationMessage((Attribute<?, ?>)nodeChange.getNode(), warning);
@@ -197,7 +197,7 @@ public class BooleanField extends Field {
 					Log.d("Validation message is: ", validationMsg);  
 					//Show dialog 
 					this.extendedLabel.setVisibility(View.VISIBLE);
-					this.extendedLabel.setText("Warning"+validationMsg);     						       					
+					this.extendedLabel.setText("Warning: "+validationMsg);     						       					
 				}
 				else {
 					setBackgroundColor(Color.TRANSPARENT);
