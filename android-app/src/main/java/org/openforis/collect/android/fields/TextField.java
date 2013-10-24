@@ -71,7 +71,7 @@ public class TextField extends InputField {
 				    	}				    	
 			    	}
 		    	} else {
-		    		Log.e("FOCUS","LOST TEXT");
+		    		//Log.e("FOCUS","LOST TEXT");
 		    	}
 		    }
 	    });
@@ -94,11 +94,11 @@ public class TextField extends InputField {
 		Node<? extends NodeDefinition> node = this.findParentEntity(path).get(this.nodeDefinition.getName(), position);
 		NodeChangeSet nodeChangeSet = null;
 		if (node!=null){
-			Log.e("Text field with Id: ",node.getDefinition().getId() + " is updating. Node name is: " + node.getName() + " Node ID is: " + node.getInternalId());
+			//Log.e("Text field with Id: ",node.getDefinition().getId() + " is updating. Node name is: " + node.getName() + " Node ID is: " + node.getInternalId());
 			nodeChangeSet = ServiceFactory.getRecordManager().updateAttribute((TextAttribute)node, new TextValue(value));
 //			ApplicationManager.updateUIElementsWithValidationResults(nodeChangeSet);
 		} else {
-			Log.e("Text field","is adding attribute. Node is NULL ");
+			//Log.e("Text field","is adding attribute. Node is NULL ");
 			nodeChangeSet = ServiceFactory.getRecordManager().addAttribute(parentEntity, this.nodeDefinition.getName(), new TextValue(value), null, null);
 		}
 //		ApplicationManager.updateUIElementsWithValidationResults(nodeChangeSet);

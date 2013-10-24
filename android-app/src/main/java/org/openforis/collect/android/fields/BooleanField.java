@@ -134,11 +134,11 @@ public class BooleanField extends Field {
 //			BooleanAttribute boolAtr = (BooleanAttribute)node;
 //			boolAtr.setValue(new BooleanValue(boolValue));
 			//Validate results 
-			Log.e("Boolean field with Id: ",node.getDefinition().getId() + " is updating. Node name is: " + node.getName() + " Node ID is: " + node.getInternalId());
+			//Log.e("Boolean field with Id: ",node.getDefinition().getId() + " is updating. Node name is: " + node.getName() + " Node ID is: " + node.getInternalId());
 			nodeChangeSet = ServiceFactory.getRecordManager().updateAttribute((BooleanAttribute)node, new BooleanValue(boolValue));
 		} else {
 //			EntityBuilder.addValue(this.findParentEntity(path), this.nodeDefinition.getName(), boolValue, position);	
-			Log.e("Buulean field","is adding attribute.");
+			//Log.e("Buulean field","is adding attribute.");
 			nodeChangeSet = ServiceFactory.getRecordManager().addAttribute(this.findParentEntity(path), this.nodeDefinition.getName(), new BooleanValue(boolValue), null, null);
 		}
 		//Validation
@@ -161,13 +161,13 @@ public class BooleanField extends Field {
 	 */
 	private void validateField(NodeChangeSet nodeChangeSet){
     	List<NodeChange<?>> nodeChangesList = nodeChangeSet.getChanges();
-    	Log.d("Validation for BooleanField starts. Size of NodeChangeList","== " + nodeChangesList.size());
+    	//Log.d("Validation for BooleanField starts. Size of NodeChangeList","== " + nodeChangesList.size());
     	for (NodeChange<?> nodeChange : nodeChangesList){
 			//HERE WE CHECK DOES IT HAVE ANY ERRORS or WARNINGS
 			if (nodeChange instanceof AttributeChange) {
 				ValidationResults results = ((AttributeChange)nodeChange).getValidationResults();
-				Log.e("VALIDATION FOR BOOLEAN FIELD", "Errors: " + results.getErrors().size() + " : " + results.getErrors().toString());
-				Log.d("VALIDATION FOR BOOLEAN FIELD", "Warnings: "  + results.getWarnings().size() + " : " + results.getWarnings().toString()); 			
+				//Log.e("VALIDATION FOR BOOLEAN FIELD", "Errors: " + results.getErrors().size() + " : " + results.getErrors().toString());
+				//Log.d("VALIDATION FOR BOOLEAN FIELD", "Warnings: "  + results.getWarnings().size() + " : " + results.getWarnings().toString()); 			
 				//Make background color red or yellow if there is any errors/warnings 				
 				String validationMsg = "";
 				if (results.getErrors().size() > 0){
@@ -179,7 +179,7 @@ public class BooleanField extends Field {
 						else
 							validationMsg += ValidationMessageBuilder.createInstance().getValidationMessage((Attribute<?, ?>)nodeChange.getNode(), error);
 					}    				
-					Log.d("Validation message is: ", validationMsg);
+					//Log.d("Validation message is: ", validationMsg);
 					//Show dialog 
 					this.extendedLabel.setVisibility(View.VISIBLE);
 					this.extendedLabel.setText("Error: "+validationMsg); 						
@@ -194,7 +194,7 @@ public class BooleanField extends Field {
 							validationMsg += ValidationMessageBuilder.createInstance().getValidationMessage((Attribute<?, ?>)nodeChange.getNode(), warning);
 					}
 					
-					Log.d("Validation message is: ", validationMsg);  
+					//Log.d("Validation message is: ", validationMsg);  
 					//Show dialog 
 					this.extendedLabel.setVisibility(View.VISIBLE);
 					this.extendedLabel.setText("Warning"+validationMsg);     						       					

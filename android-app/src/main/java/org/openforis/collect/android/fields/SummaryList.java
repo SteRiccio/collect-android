@@ -5,9 +5,9 @@ import java.util.List;
 
 import org.openforis.collect.android.R;
 import org.openforis.collect.android.management.ApplicationManager;
-import org.openforis.collect.android.management.DataManager;
 import org.openforis.collect.android.messages.AlertMessage;
 import org.openforis.collect.android.misc.ViewBacktrack;
+import org.openforis.collect.android.screens.EntityInstancesScreen;
 import org.openforis.collect.android.screens.FormScreen;
 import org.openforis.collect.android.service.ServiceFactory;
 import org.openforis.idm.metamodel.AttributeDefinition;
@@ -45,7 +45,8 @@ public class SummaryList extends UIElement {
 	
 	private EntityDefinition entityDefinition;
 	
-	private FormScreen context;
+	//private FormScreen context;
+	private EntityInstancesScreen context;
 
 	private int instanceNo;
 	
@@ -53,7 +54,8 @@ public class SummaryList extends UIElement {
 			OnClickListener listener, int entityInstanceNo) {
 		super(context, entityDef);
 		
-		this.context = (FormScreen)context;
+		//this.context = (FormScreen)context;
+		this.context = (EntityInstancesScreen)context;
 		
 		this.instanceNo = entityInstanceNo;
 		
@@ -72,7 +74,7 @@ public class SummaryList extends UIElement {
 		this.tableLayout.addView(titleView);
 		
 		//adding the entity and its nodes if do not exist yet
-		for (int i=0;i<entityDef.getChildDefinitions().size();i++){
+		/*for (int i=0;i<entityDef.getChildDefinitions().size();i++){
 			try{
 				Entity parentEntity1 = ApplicationManager.currentRecord.getRootEntity();
 				String screenPath = this.context.getFormScreenId();
@@ -89,12 +91,15 @@ public class SummaryList extends UIElement {
 			} catch (Exception e){
 			
 			}
-		}
+		}*/
 		
 		ArrayList<List<String>> keysList = new ArrayList<List<String>>();
 		ArrayList<List<String>> detailsList = new ArrayList<List<String>>();
 		
-		Entity parentEntity = this.findParentEntity(this.context.getFormScreenId());
+
+		
+		Entity parentEntity = this.findParentEntity(this.context.getFormScreenId()).getParent();		
+		Log.e("parentEntity","=="+parentEntity.getName());
 		Entity currentEntity = null;
 		if (parentEntity.getName().equals(ApplicationManager.currentRecord.getRootEntity().getName())
 				&&
@@ -104,8 +109,8 @@ public class SummaryList extends UIElement {
 		} else {
 			currentEntity = (Entity)parentEntity.get(entityDef.getName(), entityInstanceNo);
 		}
-
-		if (this.context.getFormScreenId()!=null){			
+		Log.e("currentEntity","=="+currentEntity.getName());
+		//if (this.context.getFormScreenId()!=null){			
 			//fetching keys and their values
 			List<AttributeDefinition> keyAttrDefsList = entityDef.getKeyAttributeDefinitions();
 			for (AttributeDefinition attrDef : keyAttrDefsList){
@@ -199,36 +204,43 @@ public class SummaryList extends UIElement {
 		 		    		new DialogInterface.OnClickListener() {
 		 						@Override
 		 						public void onClick(DialogInterface dialog, int which) {
-		 							Log.i("SummaryList", "Yes-button has been pressed from " + entityToRemove.getName());
+		 							//Log.i("SummaryList", "Yes-button has been pressed from " + entityToRemove.getName());
 		 							ServiceFactory.getRecordManager().deleteNode(entityToRemove);
 		 							//ApplicationManager.isToBeScrolled = true;
-		 							ViewBacktrack viewBacktrack = new ViewBacktrack(SummaryList.this,SummaryList.this.form.getFormScreenId());
+		 							ViewBacktrack viewBacktrack = null;
+		 							if (SummaryList.this.form!=null){
+		 								viewBacktrack = new ViewBacktrack(SummaryList.this,SummaryList.this.form.getFormScreenId());	
+		 							} else {
+		 								//Log.e("SummaryList.currentInstance",SummaryList.this.entityInstances.getFormScreenId(SummaryList.this.currentInstanceNo)+"=="+SummaryList.this.currentInstanceNo);
+		 								viewBacktrack = new ViewBacktrack(SummaryList.this,SummaryList.this.entityInstances.getFormScreenId());
+		 							}		 							
 		 							ApplicationManager.selectedViewsBacktrackList.add(viewBacktrack);
-		 							((FormScreen)SummaryList.this.context).onResume();
+		 							((EntityInstancesScreen)SummaryList.this.context).onResume();
 		 							//TODO: Validation. What exactly to validate if entityToRemove was deleted?
 		 						}
 		 					},
 		 		    		new DialogInterface.OnClickListener() {
 		 						@Override
 		 						public void onClick(DialogInterface dialog, int which) {
-		 							Log.i("SummaryList", "No-button has been pressed from " + entityToRemove.getName());
-		 							Log.i("SummaryList", "No-button has been pressed. Parent entity is:  " + parent.getName());
+		 							//Log.i("SummaryList", "No-button has been pressed from " + entityToRemove.getName());
+		 							//Log.i("SummaryList", "No-button has been pressed. Parent entity is:  " + parent.getName());
 		 						}
 		 					},
 		 					null).show();
 		            return true;
 		        }
 		    });
+			tv.setOnClickListener(this.context);
 
 			TableRow tr = new TableRow(context);
 			tr.addView(tv);
 			this.tableLayout.addView(tr);
-		}
+		//}
 		
 		this.container.setLayoutParams(new LayoutParams(ViewGroup.LayoutParams.FILL_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
 		this.container.addView(this.tableLayout);
 		this.addView(this.container);
-	}
+	}	
 	
 	public void changeBackgroundColor(int backgroundColor){
 		TextView titleView = (TextView)this.tableLayout.getChildAt(0);

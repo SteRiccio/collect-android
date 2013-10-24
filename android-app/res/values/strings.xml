@@ -51,6 +51,10 @@
     <string name="noInternetMessage">There is no connection to Internet available. Make sure you are connected to network and then try to upload data again.</string>
     <string name="maxCountTitle">Too many&#8230;</string>
     <string name="maxCountMessage">Number of instances of this element has reached maximum.</string>
+    <string name="addNewEntityTitle">Adding new instance of the entity&#8230;</string>
+    <string name="addNewEntityMessage">Do you want to add a new instance of the entity?</string>
+    <string name="addNewAttributeTitle">Adding new instance of the attribute&#8230;</string>
+    <string name="addNewAttributeMessage">Do you want to add a new instance of the attribute?</string>
     <string name="uploadToServerSuccessfulTitle">Upload completed</string>
     <string name="uploadToServerSuccessfulMessage">Uploading data to server successfully finished.</string>
     <string name="downloadToDeviceSuccessfulTitle">Download completed</string>       
@@ -62,6 +66,10 @@
     <string name="backupingDatabaseMessageFileNotFound">Database file could not be exported, because no database was found.</string>
     <string name="backupingDatabaseMessageIOException">Database file could not be exported, because destination folder on sdcard was found.</string>
     
+    <!-- toasts -->
+    <string name="attributeDeletedToast">Attribute was deleted.</string>
+    <string name="entityDeletedToast">Entity was deleted.</string>
+    
     <!-- buttons -->
     <string name="footerSave">Save</string>
     <string name="footerClusterList">Back to list</string>
@@ -71,6 +79,8 @@
     <string name="okay">OK</string>
     <string name="previousInstanceButton">PREVIOUS</string>
     <string name="nextInstanceButton">NEXT</string>
+    <string name="addInstanceButton">ADD</string>
+    <string name="deleteInstanceButton">DELETE</string>
     <string name="spatialReferenceSystemLabel">Spatial reference system</string>
     <string name="internalGpsButton">Get from GPS</string>
     <string name="uploadToServerButton">Upload</string>

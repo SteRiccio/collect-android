@@ -141,7 +141,7 @@ public class DateField extends InputField {
 		Entity parentEntity = this.findParentEntity(path);
 		if (node!=null){
 //			DateAttribute dateAtr = (DateAttribute)node;
-			Log.e("Date field with Id: ",node.getDefinition().getId() + " is updating. Node name is: " + node.getName() + " Node ID is: " + node.getInternalId());
+			//Log.e("Date field with Id: ",node.getDefinition().getId() + " is updating. Node name is: " + node.getName() + " Node ID is: " + node.getInternalId());
 			if (month.equals("") && day.equals("") && year.equals("")){
 //				dateAtr.setValue(new Date(null,null,null));
 				nodeChangeSet = ServiceFactory.getRecordManager().updateAttribute((DateAttribute)node, new Date(null,null,null));
@@ -169,7 +169,7 @@ public class DateField extends InputField {
 			}
 			//this.validateResult(node);
 		} else {
-			Log.e("Date field","is adding attribute.");
+			//Log.e("Date field","is adding attribute.");
 			if (month.equals("") && day.equals("") && year.equals("")){
 //				EntityBuilder.addValue(this.findParentEntity(path), this.nodeDefinition.getName(), new Date(null,null,null), position);
 				nodeChangeSet = ServiceFactory.getRecordManager().addAttribute(parentEntity, this.nodeDefinition.getName(), new Date(null,null,null), null, null);

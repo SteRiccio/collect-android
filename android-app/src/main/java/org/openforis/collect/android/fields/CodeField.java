@@ -357,7 +357,7 @@ public class CodeField extends InputField {
     		for (int i=0;i<codeField.childrenIds.size();i++){
     			//Log.e("childID","=="+codeField.childrenIds.get(i));
     			CodeField currentChild = (CodeField)ApplicationManager.getUIElement(codeField.childrenIds.get(i));
-    			Log.e("currentChild",currentChild.nodeDefinition.getName()+"=="+currentChild.spinner.getSelectedItemPosition());
+    			//Log.e("currentChild",currentChild.nodeDefinition.getName()+"=="+currentChild.spinner.getSelectedItemPosition());
     			currentChild.codes = new ArrayList<String>();
     			currentChild.codes.add("null");
     			currentChild.options = new ArrayList<String>();

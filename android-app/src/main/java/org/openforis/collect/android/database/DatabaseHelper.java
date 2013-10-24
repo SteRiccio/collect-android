@@ -13,6 +13,7 @@ import liquibase.Liquibase;
 import liquibase.database.Database;
 import liquibase.database.core.AndroidSQLiteDatabase;
 import liquibase.database.jvm.JdbcConnection;
+import liquibase.exception.DatabaseException;
 import liquibase.logging.LogFactory;
 import liquibase.resource.ClassLoaderResourceAccessor;
 
@@ -80,12 +81,12 @@ public abstract class DatabaseHelper {
 
 	public static void updateDBSchema() {
 		Connection c = null;
+		Database database = new AndroidSQLiteDatabase();
 		try {
 			Log.e("FROM DB UPDATE SCHEMA", "Try to update db");
 			c = ServiceFactory.getDataSource().getConnection();
 			LogFactory.putLogger(new AndroidLiquibaseLogger());
-			Log.e("FROM DB UPDATE SCHEMA", "new sqlLite db");
-			Database database = new AndroidSQLiteDatabase();
+			Log.e("FROM DB UPDATE SCHEMA", "new sqlLite db");			
 			Log.e("FROM DB UPDATE SCHEMA", "Set connection");
 			database.setConnection(new JdbcConnection(c));
 			Log.e("FROM DB UPDATE SCHEMA", "Create Liqui db");
@@ -95,7 +96,7 @@ public abstract class DatabaseHelper {
 			liquibase.update(null);
 			Log.e("FROM DB UPDATE SCHEMA", "Liqui db was updated");
 			Log.e("FROM DB UPDATE SCHEMA", "Close db");
-			database.close();
+			//database.close();
 //		    c.close();
 		} catch(Exception e) {
 			Log.e("FROM DB UPDATE SCHEMA", "Exception when update db");
@@ -107,10 +108,16 @@ public abstract class DatabaseHelper {
 	        }
 			throw new RuntimeException(e);
 		} finally {
-			if (c != null) {
+			/*if (c != null) {
 				try {
 					c.close();
 				} catch (SQLException e) {}
+			}*/
+			try {
+				database.close();
+			} catch (DatabaseException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
 			}
 		}
 	}

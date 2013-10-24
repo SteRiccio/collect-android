@@ -89,13 +89,13 @@ public class InputField extends Field implements TextWatcher {
 	 */
 	public void validateField(NodeChangeSet nodeChangeSet){
     	List<NodeChange<?>> nodeChangesList = nodeChangeSet.getChanges();
-    	Log.d("Validation starts. Size of NodeChangeList","== " + nodeChangesList.size());
+    	//Log.d("Validation starts. Size of NodeChangeList","== " + nodeChangesList.size());
     	for (NodeChange<?> nodeChange : nodeChangesList){
     			//HERE WE CHECK DOES IT HAVE ANY ERRORS or WARNINGS
     			if (nodeChange instanceof AttributeChange) {
     				ValidationResults results = ((AttributeChange)nodeChange).getValidationResults();
-    				Log.e("VALIDATION FOR FIELD", "Errors: " + results.getErrors().size() + " : " + results.getErrors().toString());
-    				Log.d("VALIDATION FOR FIELD", "Warnings: "  + results.getWarnings().size() + " : " + results.getWarnings().toString()); 			
+    				//Log.e("VALIDATION FOR FIELD", "Errors: " + results.getErrors().size() + " : " + results.getErrors().toString());
+    				//Log.d("VALIDATION FOR FIELD", "Warnings: "  + results.getWarnings().size() + " : " + results.getWarnings().toString()); 			
     				//Make background color red or yellow if there is any errors/warnings 				
     				String validationMsg = "";
     				if (results.getErrors().size() > 0){
@@ -107,7 +107,7 @@ public class InputField extends Field implements TextWatcher {
     						else
     							validationMsg += ValidationMessageBuilder.createInstance().getValidationMessage((Attribute<?, ?>)nodeChange.getNode(), error);
     					}    				
-    					Log.d("Validation message is: ", validationMsg);
+    					//Log.d("Validation message is: ", validationMsg);
     					//Show dialog 
     					if (this instanceof TimeField || this instanceof DateField){
     						//Just change background for first time
@@ -128,7 +128,7 @@ public class InputField extends Field implements TextWatcher {
     							validationMsg += ValidationMessageBuilder.createInstance().getValidationMessage((Attribute<?, ?>)nodeChange.getNode(), warning);
     					}
     					
-    					Log.d("Validation message is: ", validationMsg);  
+    					//Log.d("Validation message is: ", validationMsg);  
     					//Show dialog 
     					if (this instanceof TimeField || this instanceof DateField){
     						//Just change background for first time

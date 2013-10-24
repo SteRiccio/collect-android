@@ -253,7 +253,7 @@ public class CoordinateField extends InputField implements OnClickListener {
 
 		if (node!=null){
 //			CoordinateAttribute coordAtr = (CoordinateAttribute)node;
-			Log.e("Coordinate field with Id: ",node.getDefinition().getId() + " is updating. Node name is: " + node.getName() + " Node ID is: " + node.getInternalId());
+			//Log.e("Coordinate field with Id: ",node.getDefinition().getId() + " is updating. Node name is: " + node.getName() + " Node ID is: " + node.getInternalId());
 			if ((lat.equals("")&&lon.equals(""))){
 //				coordAtr.setValue(new Coordinate(null, null, null));	
 				nodeChangeSet = ServiceFactory.getRecordManager().updateAttribute((CoordinateAttribute)node, new Coordinate(null, null, srsId));
@@ -268,7 +268,7 @@ public class CoordinateField extends InputField implements OnClickListener {
 				nodeChangeSet = ServiceFactory.getRecordManager().updateAttribute((CoordinateAttribute)node, new Coordinate(Double.valueOf(lon),  Double.valueOf(lat), srsId));
 			}
 		} else {
-			Log.e("Coordinate field","is adding attribute.");
+			//Log.e("Coordinate field","is adding attribute.");
 			if ((lat.equals("")&&lon.equals(""))){
 //				EntityBuilder.addValue(this.findParentEntity(path), this.nodeDefinition.getName(), new Coordinate(null, null, null), position);
 				nodeChangeSet = ServiceFactory.getRecordManager().addAttribute(parentEntity, this.nodeDefinition.getName(), new Coordinate(null, null, srsId), null, null);

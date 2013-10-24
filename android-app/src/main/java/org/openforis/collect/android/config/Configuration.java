@@ -37,7 +37,7 @@ public class Configuration {
 		String filesDir = ctx.getFilesDir().getAbsolutePath();
 		String rootPath = filesDir.substring(0, filesDir.length() - FILES_FOLDER_NAME.length());
 		String path = rootPath + DATABASES_FOLDER_NAME;
-		Log.e("database path","=="+path);
+		//Log.e("database path","=="+path);
 		return path;
 	}
 	

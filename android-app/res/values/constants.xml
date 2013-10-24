@@ -111,8 +111,12 @@
     <!-- BUTTONS IDs -->
     <integer name="leftButtonMultipleAttribute">11</integer>
     <integer name="rightButtonMultipleAttribute">22</integer>
+    <integer name="deleteButtonMultipleAttribute">66</integer>
+    <integer name="addButtonMultipleAttribute">77</integer>
     <integer name="leftButtonMultipleEntity">33</integer>
     <integer name="rightButtonMultipleEntity">44</integer>    
+    <integer name="deleteButtonMultipleEntity">55</integer>
+    <integer name="addButtonMultipleEntity">88</integer>
     
     <!-- SEPARATORS -->
     <string name="valuesSeparator1">,</string>

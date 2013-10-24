@@ -260,7 +260,7 @@ public class SummaryTable extends UIElement {
 			 		    		new DialogInterface.OnClickListener() {
 			 						@Override
 			 						public void onClick(DialogInterface dialog, int which) {
-			 							Log.i("From SummaryTable", "No-button has been pressed from " + nodeToDelete.getName());
+			 							//Log.i("From SummaryTable", "No-button has been pressed from " + nodeToDelete.getName());
 			 						}
 			 					},
 			 					null).show();

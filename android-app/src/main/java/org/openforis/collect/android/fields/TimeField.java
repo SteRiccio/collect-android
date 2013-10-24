@@ -171,14 +171,14 @@ public class TimeField extends InputField implements TextWatcher {
 			if (separatorIndex+1<value.length())
 				minute = value.substring(separatorIndex+1);
 		}
-		Log.e("TIMEsetValue","value=="+value);
+		//Log.e("TIMEsetValue","value=="+value);
 //		Log.e("TIMEsetValue","hour=="+hour+"minute"+minute);
 		Node<? extends NodeDefinition> node = this.findParentEntity(path).get(this.nodeDefinition.getName(), position);
 		NodeChangeSet nodeChangeSet = null;
 		Entity parentEntity = this.findParentEntity(path);		
 		if (node!=null){
 //			TimeAttribute timeAttr = (TimeAttribute)node;
-			Log.e("Time field with Id: ",node.getDefinition().getId() + " is updating. Node name is: " + node.getName() + " Node ID is: " + node.getInternalId());
+			//Log.e("Time field with Id: ",node.getDefinition().getId() + " is updating. Node name is: " + node.getName() + " Node ID is: " + node.getInternalId());
 			if (hour.equals("") && minute.equals("")){
 //				timeAttr.setValue(new Time(null,null));
 				nodeChangeSet = ServiceFactory.getRecordManager().updateAttribute((TimeAttribute)node, new Time(null,null));
@@ -193,7 +193,7 @@ public class TimeField extends InputField implements TextWatcher {
 				nodeChangeSet = ServiceFactory.getRecordManager().updateAttribute((TimeAttribute)node, new Time(Integer.valueOf(hour),Integer.valueOf(minute)));
 			}
 		} else {
-			Log.e("Time field","is adding attribute.");
+			//Log.e("Time field","is adding attribute.");
 			if (hour.equals("") && minute.equals("")){
 //				EntityBuilder.addValue(this.findParentEntity(path), this.nodeDefinition.getName(), new Time(null,null), position);
 				nodeChangeSet = ServiceFactory.getRecordManager().addAttribute(parentEntity, this.nodeDefinition.getName(), new Time(null,null), null, null);

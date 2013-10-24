@@ -83,7 +83,7 @@ public class NumberField extends InputField {
 				    	}
 			    	}
 		    	} else{
-		    		Log.e("FOCUS","LOST NUMBER");
+		    		//Log.e("FOCUS","LOST NUMBER");
 		    	}
 		    }
 	    });
@@ -141,12 +141,12 @@ public class NumberField extends InputField {
 					if (((NumberAttributeDefinition) this.nodeDefinition).isInteger()){
 //						IntegerAttribute intAttr = (IntegerAttribute)node;
 //						intAttr.setValue(new IntegerValue(Integer.valueOf(value), null));
-						Log.d("Number(int) field with Id: ",node.getDefinition().getId() + " is updating. Node name is: " + node.getName() + " Node ID is: " + node.getInternalId());
+						//Log.d("Number(int) field with Id: ",node.getDefinition().getId() + " is updating. Node name is: " + node.getName() + " Node ID is: " + node.getInternalId());
 						nodeChangeSet = ServiceFactory.getRecordManager().updateAttribute((IntegerAttribute)node, new IntegerValue(Integer.valueOf(value), null));					
 					} else {
 //						RealAttribute intAttr = (RealAttribute)node;
 //						intAttr.setValue(new RealValue(Double.valueOf(value), null));
-						Log.d("Number(real) field with Id: ",node.getDefinition().getId() + " is updating. Node name is: " + node.getName() + " Node ID is: " + node.getInternalId());
+						//Log.d("Number(real) field with Id: ",node.getDefinition().getId() + " is updating. Node name is: " + node.getName() + " Node ID is: " + node.getInternalId());
 						nodeChangeSet = ServiceFactory.getRecordManager().updateAttribute((RealAttribute)node, new RealValue(Double.valueOf(value), null));						
 					}
 				}
@@ -154,11 +154,11 @@ public class NumberField extends InputField {
 				if ((value!=null) && (!value.equals("")) && (!value.equals("null"))){
 					if (((NumberAttributeDefinition) this.nodeDefinition).isInteger()){
 //						EntityBuilder.addValue(this.findParentEntity(path), this.nodeDefinition.getName(), Integer.valueOf(value), position);	
-						Log.d("Number(int) field","is adding attribute.");
+						//Log.d("Number(int) field","is adding attribute.");
 						nodeChangeSet = ServiceFactory.getRecordManager().addAttribute(parentEntity, this.nodeDefinition.getName(), new IntegerValue(Integer.valueOf(value), null), null, null);			
 					} else {
 //						EntityBuilder.addValue(this.findParentEntity(path), this.nodeDefinition.getName(), Double.valueOf(value), position);
-						Log.d("Number(real) field","is adding attribute.");
+						//Log.d("Number(real) field","is adding attribute.");
 						nodeChangeSet = ServiceFactory.getRecordManager().addAttribute(parentEntity, this.nodeDefinition.getName(), new RealValue(Double.valueOf(value), null), null, null);
 					}
 				}			

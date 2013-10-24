@@ -33,9 +33,9 @@ public class ValidationManager {
 			attribute = (TextAttribute)node;
 			validator = new Validator();
 			results = validator.validate(attribute); 
-			Log.e("VALIDATION FOR TEXT FIELD", "Errors: " + results.getErrors().size() + " : " + results.getErrors().toString());
+			/*Log.e("VALIDATION FOR TEXT FIELD", "Errors: " + results.getErrors().size() + " : " + results.getErrors().toString());
 			Log.d("VALIDATION FOR TEXT FIELD", "Warnings: "  + results.getWarnings().size() + " : " + results.getWarnings().toString());
-			Log.e("VALIDATION FOR TEXT FIELD", "Fails: "  + results.getFailed().size() + " : " +  results.getFailed().toString());	    						
+			Log.e("VALIDATION FOR TEXT FIELD", "Fails: "  + results.getFailed().size() + " : " +  results.getFailed().toString());*/	    						
 		}else if (nodeDef instanceof NumberAttributeDefinition){
 			if(((NumberAttributeDefinition) nodeDef).isInteger()){
 				attribute = (IntegerAttribute)node;
@@ -44,9 +44,9 @@ public class ValidationManager {
 			}
 			validator = new Validator();
 			results = validator.validate(attribute); 
-			Log.e("VALIDATION FOR NUMBER FIELD", "Errors: " + results.getErrors().size() + " : " + results.getErrors().toString());
+			/*Log.e("VALIDATION FOR NUMBER FIELD", "Errors: " + results.getErrors().size() + " : " + results.getErrors().toString());
 			Log.d("VALIDATION FOR NUMBER FIELD", "Warnings: "  + results.getWarnings().size() + " : " + results.getWarnings().toString());
-			Log.e("VALIDATION FOR NUMBER FIELD", "Fails: "  + results.getFailed().size() + " : " +  results.getFailed().toString());		
+			Log.e("VALIDATION FOR NUMBER FIELD", "Fails: "  + results.getFailed().size() + " : " +  results.getFailed().toString());*/		
 		}else if (nodeDef instanceof CoordinateAttributeDefinition){
 			attribute = (CoordinateAttribute)node;
 			validator = new Validator();

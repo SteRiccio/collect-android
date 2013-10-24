@@ -135,8 +135,8 @@ public class TaxonField extends InputField {
 				//TODO: in future validator should check it
 				if (!strValue.isEmpty())
 					TaxonField.this.startSearchScreen(strValue, "Code");
-				else
-					Log.i(getResources().getString(R.string.app_name), "Value of Code field is EMPTY!!!! ");
+				//else
+					//Log.i(getResources().getString(R.string.app_name), "Value of Code field is EMPTY!!!! ");
 			}
 		});
 		this.btnSearchByCode.setEnabled(false);

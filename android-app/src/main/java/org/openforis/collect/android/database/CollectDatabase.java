@@ -6195,7 +6195,7 @@ public class CollectDatabase{
 		db.execSQL("INSERT OR IGNORE INTO ofc_taxon_vernacular_name(id, vernacular_name, language_code, language_variety, taxon_id, step) VALUES(3931, 'Mwanzi', 'swh', 'Swahili', 2119, 9);");
 		db.execSQL("INSERT OR IGNORE INTO ofc_taxon_vernacular_name(id, vernacular_name, language_code, language_variety, taxon_id, step) VALUES(3932, 'syn. Oxytenanthera abyssinica', '', '', 2119, 9);");		
 	
-		Log.i("COLLECT DATABASE", "FINISH INSERTING DATA TO VERNACULAR NAMES");
+		//Log.i("COLLECT DATABASE", "FINISH INSERTING DATA TO VERNACULAR NAMES");
 	}
 /*
 	public void createPreferencesTables(){
