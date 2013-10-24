@@ -1031,29 +1031,10 @@ public class FormScreen extends BaseActivity implements OnClickListener {
 	 					null).show();				
 			} else if (btn.getId()==getResources().getInteger(R.integer.addButtonMultipleAttribute)){
 				Log.e("ADDING","ATTRIBUTE");
-				NodeDefinition nodeDef = ApplicationManager.getNodeDefinition(FormScreen.this.startingIntent.getIntExtra(getResources().getString(R.string.attributeId)+"0", -1));
-				Log.e("nodeDef","=="+nodeDef.getName());
-				Node<?> foundNode = FormScreen.this.parentEntityMultipleAttribute.get(nodeDef.getName(), FormScreen.this.currInstanceNo);
-				Log.e("foundNode!=null","=="+(foundNode!=null));
-				if (foundNode!=null){
-					Log.e("not null",FormScreen.this.parentEntityMultipleAttribute.getName()+"=="+nodeDef.getName());
-					ServiceFactory.getRecordManager().addAttribute(parentEntity, nodeDef.getName(), null, null, null);
-					refreshMultipleAttributeScreen(3);
-				}
+				refreshMultipleAttributeScreen(3);
 			} else if (btn.getId()==getResources().getInteger(R.integer.addButtonMultipleEntity)){
 				Log.e("ADDING","ENTITY");
-				NodeDefinition nodeDef = ApplicationManager.getNodeDefinition(FormScreen.this.startingIntent.getIntExtra(getResources().getString(R.string.attributeId)+"0", -1));
-				Log.e("nodeDef","=="+nodeDef.getName());
-				NodeDefinition parentNodeDefinition = nodeDef.getParentDefinition();
-				Log.e("parentNodeDefinition","=="+parentNodeDefinition.getName());
-				Node<?> foundNode = FormScreen.this.parentEntityMultipleAttribute.get(parentNodeDefinition.getName(), FormScreen.this.currInstanceNo);
-				Log.e("foundNode!=null","=="+(foundNode!=null));
-				if (foundNode!=null){
-					//Log.e("not null",parentNodeDefinition.getName()+"=="+FormScreen.this.currInstanceNo);
-					Log.e("not null",FormScreen.this.parentEntityMultipleAttribute.getName()+"=="+parentNodeDefinition.getName());
-					//ServiceFactory.getRecordManager().addEntity(FormScreen.this.parentEntityMultipleAttribute, parentNodeDefinition.getName());
-					//refreshEntityScreen(3);
-				}
+				refreshEntityScreen(3);
 			}
 		} else if (arg0 instanceof TextView){
 			TextView tv = (TextView)arg0;
@@ -1402,8 +1383,8 @@ public class FormScreen extends BaseActivity implements OnClickListener {
 			//Log.e("SCROLLING","RIGHT");
 			NodeDefinition nodeDef = ApplicationManager.getNodeDefinition(this.startingIntent.getIntExtra(getResources().getString(R.string.attributeId)+0, -1));
 			if (!nodeDef.isMultiple()){
-				Log.e("parentSINGLE","=="+this.parentEntitySingleAttribute.getName());
-				Log.e("this.currentInstanceNO","=="+this.currInstanceNo);
+				//Log.e("parentSINGLE","=="+this.parentEntitySingleAttribute.getName());
+				//Log.e("this.currentInstanceNO","=="+this.currInstanceNo);
 				//Log.e("-1","=="+(this.parentEntitySingleAttribute.getParent().get(this.parentEntitySingleAttribute.getName(), this.currInstanceNo-11)==null));
 				//Log.e("obecny","=="+(this.parentEntitySingleAttribute.getParent().get(this.parentEntitySingleAttribute.getName(), this.currInstanceNo)==null));
 				//Log.e("+1","=="+(this.parentEntitySingleAttribute.getParent().get(this.parentEntitySingleAttribute.getName(), this.currInstanceNo+1)==null));
@@ -1468,7 +1449,59 @@ public class FormScreen extends BaseActivity implements OnClickListener {
 		} else if (actionCode==2){
 			
 		} else if (actionCode==3){
-			
+			NodeDefinition nodeDef = ApplicationManager.getNodeDefinition(this.startingIntent.getIntExtra(getResources().getString(R.string.attributeId)+0, -1));
+			if (!nodeDef.isMultiple()){
+
+				AlertMessage.createPositiveNegativeDialog(FormScreen.this, true, null,
+						getResources().getString(R.string.addNewEntityTitle), 
+						getResources().getString(R.string.addNewEntityMessage),
+							getResources().getString(R.string.yes),
+							getResources().getString(R.string.no),
+				    		new DialogInterface.OnClickListener() {
+								@Override
+								public void onClick(DialogInterface dialog, int which) {
+									Node<?> foundNode = FormScreen.this.parentEntitySingleAttribute.getParent().get(FormScreen.this.parentEntitySingleAttribute.getName(), FormScreen.this.currInstanceNo+1);
+									while (foundNode!=null){
+										FormScreen.this.currInstanceNo++;
+										foundNode = FormScreen.this.parentEntitySingleAttribute.getParent().get(FormScreen.this.parentEntitySingleAttribute.getName(), FormScreen.this.currInstanceNo+1);
+									}
+									FormScreen.this.currInstanceNo++;	
+									refreshEntityScreenFields();
+								}
+							},
+							new DialogInterface.OnClickListener() {
+								@Override
+								public void onClick(DialogInterface dialog, int which) {
+									
+								}
+							},
+							null).show();				
+			} else {
+				AlertMessage.createPositiveNegativeDialog(FormScreen.this, true, null,
+						getResources().getString(R.string.addNewEntityTitle), 
+						getResources().getString(R.string.addNewEntityMessage),
+							getResources().getString(R.string.yes),
+							getResources().getString(R.string.no),
+				    		new DialogInterface.OnClickListener() {
+								@Override
+								public void onClick(DialogInterface dialog, int which) {
+									Node<?> foundNode = FormScreen.this.parentEntityMultipleAttribute.getParent().get(FormScreen.this.parentEntitySingleAttribute.getName(), FormScreen.this.currInstanceNo+1);
+									while (foundNode!=null){
+										FormScreen.this.currInstanceNo++;
+										foundNode = FormScreen.this.parentEntityMultipleAttribute.getParent().get(FormScreen.this.parentEntitySingleAttribute.getName(), FormScreen.this.currInstanceNo+1);
+									}
+									FormScreen.this.currInstanceNo++;	
+									refreshEntityScreenFields();
+								}
+							},
+							new DialogInterface.OnClickListener() {
+								@Override
+								public void onClick(DialogInterface dialog, int which) {
+									
+								}
+							},
+							null).show();
+			}
 		}		
 		
 	}
@@ -2473,8 +2506,8 @@ public class FormScreen extends BaseActivity implements OnClickListener {
 					refreshMultipleAttributeScreenField();
 				} else {
 					AlertMessage.createPositiveNegativeDialog(FormScreen.this, true, null,
-							getResources().getString(R.string.addNewEntityTitle), 
-							getResources().getString(R.string.addNewEntityMessage),
+							getResources().getString(R.string.addNewAttributeTitle), 
+							getResources().getString(R.string.addNewAttributeMessage),
 								getResources().getString(R.string.yes),
 								getResources().getString(R.string.no),
 					    		new DialogInterface.OnClickListener() {
@@ -2523,17 +2556,67 @@ public class FormScreen extends BaseActivity implements OnClickListener {
 								null).show();
 				}
 			}
-		} else if (actionCode==3){
+		} else if (actionCode==2){
 			
-		}			
-		/* else if (actionCode==2) {
-		}
-			if (this.currInstanceNo>0){
-				//this.currInstanceNo--;
+		} else if (actionCode==3) {
+			NodeDefinition nodeDef = ApplicationManager.getNodeDefinition(this.startingIntent.getIntExtra(getResources().getString(R.string.attributeId)+0, -1));
+			if (!nodeDef.isMultiple()){
+				//Log.e("parentSINGLE","=="+this.parentEntitySingleAttribute.getName());
+				AlertMessage.createPositiveNegativeDialog(FormScreen.this, true, null,
+						getResources().getString(R.string.addNewAttributeTitle), 
+						getResources().getString(R.string.addNewAttributeMessage),
+							getResources().getString(R.string.yes),
+							getResources().getString(R.string.no),
+				    		new DialogInterface.OnClickListener() {
+								@Override
+								public void onClick(DialogInterface dialog, int which) {
+									NodeDefinition nodeDef = ApplicationManager.getNodeDefinition(FormScreen.this.startingIntent.getIntExtra(getResources().getString(R.string.attributeId)+0, -1));
+									Node<?> foundNode = FormScreen.this.parentEntitySingleAttribute.get(nodeDef.getName(), FormScreen.this.currInstanceNo+1);
+									while (foundNode!=null){
+										FormScreen.this.currInstanceNo++;
+										foundNode = FormScreen.this.parentEntitySingleAttribute.get(nodeDef.getName(), FormScreen.this.currInstanceNo+1);
+									}
+									FormScreen.this.currInstanceNo++;										
+									refreshMultipleAttributeScreenField();
+								}
+							},
+							new DialogInterface.OnClickListener() {
+								@Override
+								public void onClick(DialogInterface dialog, int which) {
+									
+								}
+							},
+							null).show();
 			} else {
-				//this.currInstanceNo++;
-			}
-		}*/				
+				//Log.e("parentMULTIPLE","=="+this.parentEntityMultipleAttribute.getName());				
+				//Log.e("foudnNODE1","==NULL");
+				AlertMessage.createPositiveNegativeDialog(FormScreen.this, true, null,
+						getResources().getString(R.string.addNewAttributeTitle), 
+						getResources().getString(R.string.addNewAttributeMessage),
+							getResources().getString(R.string.yes),
+							getResources().getString(R.string.no),
+				    		new DialogInterface.OnClickListener() {
+								@Override
+								public void onClick(DialogInterface dialog, int which) {
+									NodeDefinition nodeDef = ApplicationManager.getNodeDefinition(FormScreen.this.startingIntent.getIntExtra(getResources().getString(R.string.attributeId)+0, -1));
+									Node<?> foundNode = FormScreen.this.parentEntityMultipleAttribute.get(nodeDef.getName(), FormScreen.this.currInstanceNo+1);
+									while (foundNode!=null){
+										FormScreen.this.currInstanceNo++;
+										foundNode = FormScreen.this.parentEntityMultipleAttribute.get(nodeDef.getName(), FormScreen.this.currInstanceNo+1);
+									}
+									FormScreen.this.currInstanceNo++;										
+									refreshMultipleAttributeScreenField();
+								}
+							},
+							new DialogInterface.OnClickListener() {
+								@Override
+								public void onClick(DialogInterface dialog, int which) {
+									
+								}
+							},
+							null).show();
+			}		
+		}				
 	}
 	
 	private void refreshMultipleAttributeScreenField(){
