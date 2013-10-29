@@ -277,7 +277,7 @@ public class UploadActivity extends Activity{
             try {            
             	String survey_id = ApplicationManager.appPreferences.getString(getResources().getString(R.string.surveyId), "99");
             	String username = ApplicationManager.appPreferences.getString(getResources().getString(R.string.username), "collect");
-				return ServerInterface.sendDataFiles(UploadActivity.getStringFromFile(Environment.getExternalStorageDirectory().toString()+String.valueOf(getResources().getString(R.string.exported_data_folder)+"/"+args[0])), survey_id, username, (Boolean)args[1]);
+				return ServerInterface.sendDataFiles(ApplicationManager.appPreferences.getString(getResources().getString(R.string.recordsDownloadPath), getResources().getString(R.string.defaultRecordsUploadPath)),UploadActivity.getStringFromFile(Environment.getExternalStorageDirectory().toString()+String.valueOf(getResources().getString(R.string.exported_data_folder)+"/"+args[0])), survey_id, username, (Boolean)args[1]);
 			} catch (Exception e) {
 				e.printStackTrace();
 				return "";

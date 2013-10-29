@@ -5,7 +5,6 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
 import java.net.URI;
-import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -22,22 +21,25 @@ import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.protocol.HTTP;
 import org.apache.http.util.EntityUtils;
 
+import android.util.Log;
+
 public class ServerInterface {
 
         //public static final String SERVER_URL = "http://ar5.arbonaut.com/demo/fao-mobile/save-received-data-file";
-        public static final String SERVER_URL = "http://ar5.arbonaut.com/webforest/fao-mobile/save-received-data-file";
+        //lately used: public static final String SERVER_URL = "http://ar5.arbonaut.com/webforest/fao-mobile/save-received-data-file";
 
-        public static String sendDataFiles(String xml, String survey_id, String username, boolean overwrite) {
-            return postSyncXML(xml, survey_id, username, overwrite);
+        public static String sendDataFiles(String url, String xml, String survey_id, String username, boolean overwrite) {
+            return postSyncXML(url, xml, survey_id, username, overwrite);
         }
 
-        public static List<String> getFilesList(){        	
+        public static List<String> getFilesList(String serverPath){        	
         	ArrayList<String> filesList = new ArrayList<String>();
         	try {
         			HttpResponse response = null;
         	        HttpClient client = new DefaultHttpClient();
         	        HttpGet request = new HttpGet();
-        	        URI downloadFolder = new URI("http://ar5.arbonaut.com/awfdatademo/planned/");
+        	        Log.e("serverPath","=="+serverPath);
+        	        URI downloadFolder = new URI(serverPath);//new URI("http://ar5.arbonaut.com/awfdatademo/planned/");
         	        //URI downloadFolder = new URI("http://cs.uef.fi/paikka/karol/doktorat/");
         	        //new URI("http://cs.uef.fi/paikka/karol/listfiles.php?request_type='get_files_list'")
         	        request.setURI(downloadFolder);
@@ -53,10 +55,9 @@ public class ServerInterface {
         	    	   if (line.contains("<a href")&&!line.contains("Parent Directory</a></li>")){
         	    		   line = line.substring(line.lastIndexOf("\"> ")+3,line.indexOf("</a></li>"));
         	    		   filesList.add(line);
-        	    	   }
-        	    	   
+        	    	   }        	    	   
         	       }
-        	    } catch (URISyntaxException e) {
+        	    } /*catch (URISyntaxException e) {
         	        e.printStackTrace();
         	    } catch (ClientProtocolException e) {
         	        // TODO Auto-generated catch block
@@ -64,7 +65,13 @@ public class ServerInterface {
         	    } catch (IOException e) {
         	        // TODO Auto-generated catch block
         	        e.printStackTrace();
-        	    }   
+        	    } catch (IllegalStateException e){
+        	    	e.printStackTrace();
+        	    	filesList = null;
+        	    } */catch (Exception e){
+        	    	e.printStackTrace();
+        	    	filesList = null;
+        	    }
         	    return filesList;        	        	
         }
         /*private static String executeHttpRequest(String data) {
@@ -100,8 +107,8 @@ public class ServerInterface {
                 return result;
         }*/
         
-        private static String postSyncXML(String xml, String survey_id, String username, boolean overwrite) {
-            String url = "http://ar5.arbonaut.com/webforest/fao-mobile/save-received-data-file";
+        private static String postSyncXML(String url, String xml, String survey_id, String username, boolean overwrite) {
+            //String url = "http://ar5.arbonaut.com/webforest/fao-mobile/save-received-data-file";        	
             //String url = "http://ar5.arbonaut.com/demo/fao-mobile/save-received-data-file";
             HttpClient httpclient = new DefaultHttpClient();  
             /* String encode_url=URLEncoder.encode(url,"UTF-8");

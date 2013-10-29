@@ -13,6 +13,7 @@ import org.openforis.collect.android.fields.TaxonField;
 import org.openforis.collect.android.fields.UIElement;
 import org.openforis.collect.android.management.ApplicationManager;
 import org.openforis.collect.android.management.BaseActivity;
+import org.openforis.collect.android.messages.AlertMessage;
 import org.openforis.collect.android.misc.RunnableHandler;
 import org.openforis.collect.android.misc.ViewBacktrack;
 import org.openforis.idm.metamodel.EntityDefinition;
@@ -21,6 +22,7 @@ import org.openforis.idm.model.Entity;
 import org.openforis.idm.model.EntityBuilder;
 import org.openforis.idm.model.Node;
 
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
@@ -39,7 +41,7 @@ import android.widget.TextView;
 
 public class EntityInstancesScreen extends BaseActivity implements OnClickListener {
 	
-	private static final String TAG = "FormScreen";
+	private static final String TAG = "EntityInstancesScreen";
 
 	private ScrollView sv;			
     private LinearLayout ll;
@@ -155,7 +157,12 @@ public class EntityInstancesScreen extends BaseActivity implements OnClickListen
 				EntityInstancesScreen.this.ll.addView(summaryListView);	
 			}
 			
-	
+			//if (this.intentType==getResources().getInteger(R.integer.multipleEntityIntent)){ 				
+			//if (ApplicationManager.currentRecord.getRootEntity().getId()!=this.idmlId){
+			this.ll.addView(arrangeButtonsInLine(new Button(this), getResources().getString(R.string.addInstanceButton), this, true));
+			//}	
+			//}
+			
 			setContentView(EntityInstancesScreen.this.sv);
 				
 			int backgroundColor = ApplicationManager.appPreferences.getInt(getResources().getString(R.string.backgroundColor), Color.WHITE);		
@@ -236,20 +243,156 @@ public class EntityInstancesScreen extends BaseActivity implements OnClickListen
 			}
 			
 		}*/
-		Log.e("arg0","=="+arg0.getClass());
-		if (arg0 instanceof TextView){
+		//Log.e("arg0","=="+arg0.getClass());
+		if (arg0 instanceof Button){
+			Button btn = (Button)arg0;
+			//Log.e("ADDING",btn.getId()+"ENTITY"+getResources().getInteger(R.integer.addButtonMultipleEntity));
+			if (btn.getId()==getResources().getInteger(R.integer.addButtonMultipleEntity)){
+				//Log.e("ADDING","ENTITY");
+				addNewEntity();
+			}
+		} else if (arg0 instanceof TextView){
 			Object parentView = arg0.getParent().getParent().getParent().getParent();
 			//Log.e("parentView","=="+parentView.getClass());
 			if (parentView instanceof SummaryList){
 				SummaryList temp = (SummaryList)arg0.getParent().getParent().getParent().getParent();
 				ViewBacktrack viewBacktrack = new ViewBacktrack(temp,EntityInstancesScreen.this.getFormScreenId(temp.getInstanceNo()));
 				ApplicationManager.selectedViewsBacktrackList.add(viewBacktrack);
-				Log.e("clickedON",temp.getInstanceNo()+"=="+EntityInstancesScreen.this.getFormScreenId(temp.getInstanceNo()));
-				//ApplicationManager.isToBeScrolled = false;
-				this.startActivity(this.prepareIntentForNewScreen(temp));				
+				//Log.e("clickedON",temp.getInstanceNo()+"=="+EntityInstancesScreen.this.getFormScreenId(temp.getInstanceNo()));
+				//ApplicationManager.isToBeScrolled = false;				
+				this.startActivity(this.prepareIntentForNewScreen(temp));
+			}	
 		}
-	}		
-}
+	}
+	
+	private void addNewEntity(){
+		NodeDefinition nodeDef = ApplicationManager.getNodeDefinition(this.startingIntent.getIntExtra(getResources().getString(R.string.attributeId)+0, -1)).getParentDefinition();
+		//Log.e("nodeDefEntityInstancesScreen",nodeDef.isMultiple()+"=="+nodeDef.getName());
+		if (!nodeDef.isMultiple()){	
+			AlertMessage.createPositiveNegativeDialog(EntityInstancesScreen.this, true, null,
+					getResources().getString(R.string.addNewEntityTitle), 
+					getResources().getString(R.string.addNewEntityMessage),
+						getResources().getString(R.string.yes),
+						getResources().getString(R.string.no),
+			    		new DialogInterface.OnClickListener() {
+							@Override
+							public void onClick(DialogInterface dialog, int which) {
+								/*Node<?> foundNode = EntityInstancesScreen.this.parentEntitySingleAttribute.getParent().get(FormScreen.this.parentEntitySingleAttribute.getName(), FormScreen.this.currInstanceNo+1);
+								while (foundNode!=null){
+									EntityInstancesScreen.this.currInstanceNo++;
+									foundNode = EntityInstancesScreen.this.parentEntitySingleAttribute.getParent().get(FormScreen.this.parentEntitySingleAttribute.getName(), FormScreen.this.currInstanceNo+1);
+								}
+								EntityInstancesScreen.this.currInstanceNo++;	
+								refreshEntityScreenFields();*/
+								
+							}
+						},
+						new DialogInterface.OnClickListener() {
+							@Override
+							public void onClick(DialogInterface dialog, int which) {
+								
+							}
+						},
+						null).show();				
+		} else {
+			AlertMessage.createPositiveNegativeDialog(EntityInstancesScreen.this, true, null,
+					getResources().getString(R.string.addNewEntityTitle), 
+					getResources().getString(R.string.addNewEntityMessage),
+						getResources().getString(R.string.yes),
+						getResources().getString(R.string.no),
+			    		new DialogInterface.OnClickListener() {
+							@Override
+							public void onClick(DialogInterface dialog, int which) {
+								/*Node<?> foundNode = EntityInstancesScreen.this.parentEntityMultipleAttribute.getParent().get(FormScreen.this.parentEntitySingleAttribute.getName(), FormScreen.this.currInstanceNo+1);
+								while (foundNode!=null){
+									EntityInstancesScreen.this.currInstanceNo++;
+									foundNode = EntityInstancesScreen.this.parentEntityMultipleAttribute.getParent().get(FormScreen.this.parentEntitySingleAttribute.getName(), FormScreen.this.currInstanceNo+1);
+								}
+								EntityInstancesScreen.this.currInstanceNo++;	
+								refreshEntityScreenFields();*/
+								/*NodeDefinition currentScreenNodeDef = ApplicationManager.getSurvey().getSchema().getDefinitionById(this.idmlId);
+								if (currentScreenNodeDef.getMaxCount()!=null){
+									if (currentScreenNodeDef.getMaxCount()<=this.currInstanceNo){			
+										EntityInstancesScreen.this.currInstanceNo--;
+										AlertMessage.createPositiveDialog(FormScreen.this, true, null,
+												getResources().getString(R.string.maxCountTitle), 
+												getResources().getString(R.string.maxCountMessage),
+													getResources().getString(R.string.okay),
+										    		new DialogInterface.OnClickListener() {
+														@Override
+														public void onClick(DialogInterface dialog, int which) {
+															
+														}
+													},
+													null).show();
+										return;
+									}	
+								}*/
+								
+								/*View firstView = this.ll.getChildAt(0);
+								if (firstView instanceof HorizontalScrollView){
+									ViewGroup scrollbarView = ((ViewGroup)this.ll.getChildAt(0));
+									TextView breadcrumb = (TextView)scrollbarView.getChildAt(0);
+									breadcrumb.setText(this.breadcrumb.substring(0, this.breadcrumb.lastIndexOf(" "))+" "+(this.currInstanceNo+1));
+									breadcrumb.setTextSize(getResources().getInteger(R.integer.breadcrumbFontSize));
+									breadcrumb.setSingleLine();
+								}
+								this.breadcrumb = this.breadcrumb.substring(0, this.breadcrumb.lastIndexOf(" "))+" "+(this.currInstanceNo+1);
+
+								TextView screenTitle = new TextView(FormScreen.this);
+								screenTitle.setText(FormScreen.this.screenTitle);
+								screenTitle.setTextSize(getResources().getInteger(R.integer.screenTitleFontSize));
+								FormScreen.this.ll.addView(screenTitle);
+								
+								this.ll.removeAllViews();
+								this.ll.addView(firstView,0);
+								this.ll.addView(screenTitle,1);*/
+								
+								//refreshing values of fields in the entity
+								
+								Entity parentEntity = EntityInstancesScreen.this.findParentEntity(EntityInstancesScreen.this.getFormScreenId());
+								//Log.e("parentEntity0",parentEntity.getName()+"=="+EntityInstancesScreen.this.getFormScreenId());
+								int currentInstanceNo = 0;
+								while (parentEntity!=null){
+									currentInstanceNo++;
+									//Log.e("parentEntity"+currentInstanceNo,parentEntity.getName()+"=="+EntityInstancesScreen.this.getFormScreenId());
+									parentEntity = EntityInstancesScreen.this.findParentEntity(EntityInstancesScreen.this.getFormScreenId(currentInstanceNo));
+								}
+								if (parentEntity==null){
+									//Log.e("orginalpathTOSearchForParent","=="+EntityInstancesScreen.this.getFormScreenId());
+									String path = EntityInstancesScreen.this.getFormScreenId().substring(0,EntityInstancesScreen.this.getFormScreenId().lastIndexOf(getResources().getString(R.string.valuesSeparator2)));
+									//Log.e("pathTOSearchForParent","=="+path);
+									parentEntity = EntityInstancesScreen.this.findParentEntity(path);
+									try{
+										EntityBuilder.addEntity(parentEntity, ApplicationManager.getSurvey().getSchema().getDefinitionById(EntityInstancesScreen.this.idmlId).getName());
+										//Log.e("entity","added without exception");
+									} catch (IllegalArgumentException e){
+										//Log.e("entity","added in exception");
+										parentEntity = parentEntity.getParent();
+										EntityBuilder.addEntity(parentEntity, ApplicationManager.getSurvey().getSchema().getDefinitionById(EntityInstancesScreen.this.idmlId).getName());
+									}
+									//Log.e("foundParentEntity","=="+parentEntity.getName());
+									parentEntity = EntityInstancesScreen.this.findParentEntity(EntityInstancesScreen.this.getFormScreenId());
+									//Log.e("newParentEntity","=="+parentEntity.getName());
+								}
+								
+//								Log.e("refreshEntityScreen","this.getFormScreenId()=="+this.getFormScreenId());
+//								Log.e("refreshEntityScreen","this.parentFormScreenId=="+this.parentFormScreenId);
+								EntityInstancesScreen.this.parentEntitySingleAttribute = EntityInstancesScreen.this.findParentEntity(EntityInstancesScreen.this.getFormScreenId());
+								EntityInstancesScreen.this.parentEntityMultipleAttribute = EntityInstancesScreen.this.findParentEntity(EntityInstancesScreen.this.parentFormScreenId);
+								EntityInstancesScreen.this.onResume();
+							}
+						},
+						new DialogInterface.OnClickListener() {
+							@Override
+							public void onClick(DialogInterface dialog, int which) {
+								
+							}
+						},
+						null).show();
+		}
+	}
+	
 	private Intent prepareIntentForNewScreen(SummaryList summaryList){
 		Intent intent = new Intent(this,FormScreen.class);
 		if (!this.breadcrumb.equals("")){
@@ -408,7 +551,7 @@ public class EntityInstancesScreen extends BaseActivity implements OnClickListen
 		}
     }
     
-    private RelativeLayout arrangeButtonsInLine(Button btnLeft, String btnLeftLabel, Button btnRight, String btnRightLabel, OnClickListener listener, boolean isForEntity){
+    /*private RelativeLayout arrangeButtonsInLine(Button btnLeft, String btnLeftLabel, Button btnRight, String btnRightLabel, OnClickListener listener, boolean isForEntity){
 		RelativeLayout relativeButtonsLayout = new RelativeLayout(this);
 	    RelativeLayout.LayoutParams lp = new RelativeLayout.LayoutParams(
 	            RelativeLayout.LayoutParams.FILL_PARENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
@@ -441,7 +584,7 @@ public class EntityInstancesScreen extends BaseActivity implements OnClickListen
 		}
 		
 		return relativeButtonsLayout;
-    }
+    }*/
     
     /*public String getFormScreenId(){
     	if (this.parentFormScreenId.equals("")){
@@ -1491,5 +1634,32 @@ public class EntityInstancesScreen extends BaseActivity implements OnClickListen
         }
         //Log.e(text,"without duplicate: " + newText);
         return newText;
+    }
+    
+    private RelativeLayout arrangeButtonsInLine(Button btnAdd, String btnAddLabel, OnClickListener listener, boolean isForEntity){
+    	Log.e("ADDING","THE ADD BUTTON");
+		RelativeLayout relativeButtonsLayout = new RelativeLayout(this);
+	    RelativeLayout.LayoutParams lp = new RelativeLayout.LayoutParams(
+	            RelativeLayout.LayoutParams.FILL_PARENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
+	    relativeButtonsLayout.setLayoutParams(lp);
+		btnAdd.setText(btnAddLabel);
+		
+		btnAdd.setOnClickListener(listener);
+		
+		LinearLayout ll = new LinearLayout(this);
+		ll.addView(btnAdd);
+		RelativeLayout.LayoutParams lpBtnAddDelete = new RelativeLayout.LayoutParams(
+	            RelativeLayout.LayoutParams.WRAP_CONTENT, RelativeLayout.LayoutParams.WRAP_CONTENT);		
+		lpBtnAddDelete.addRule(RelativeLayout.CENTER_IN_PARENT);
+		ll.setLayoutParams(lpBtnAddDelete);
+		relativeButtonsLayout.addView(ll);
+		
+		if (!isForEntity){
+			btnAdd.setId(getResources().getInteger(R.integer.addButtonMultipleAttribute));
+		} else {
+			btnAdd.setId(getResources().getInteger(R.integer.addButtonMultipleEntity));
+		}
+		
+		return relativeButtonsLayout;
     }
 }

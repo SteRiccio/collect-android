@@ -13,6 +13,7 @@
     <string name="lblFormDefinitionFile">Path to form\r\ndefinition\r\nfile on sdcard:\u0020</string>
     <string name="lblUsername">Username:\u0020</string>
     <string name="lblSurveyId">Project ID:\u0020</string>
+    <string name="lblRecordDownloadPath">Record download path:\u0020</string>
     
     <!-- dialogs -->
     <string name="exitAppTitle">Exiting&#8230;</string>    
@@ -64,7 +65,7 @@
     <string name="backupingDatabaseTitle">Exporting database&#8230;</string>
     <string name="backupingDatabaseMessageSuccess">Database file exported.</string>
     <string name="backupingDatabaseMessageFileNotFound">Database file could not be exported, because no database was found.</string>
-    <string name="backupingDatabaseMessageIOException">Database file could not be exported, because destination folder on sdcard was found.</string>
+    <string name="backupingDatabaseMessageIOException">Database file could not be exported, because destination folder on sdcard was not found.</string>
     
     <!-- toasts -->
     <string name="attributeDeletedToast">Attribute was deleted.</string>
@@ -144,6 +145,7 @@
     <string name="formChoiceListLabel">Select form definition</string>
     <string name="dataToUpload">Select files to upload</string>
     <string name="noDataToUpload">No XML files exist in the application folder: </string>
+    <string name="dataToDownloadNotExisting">There is no files on the server in the specified location.</string>
     <string name="dataToDownload">Select files to download</string>
     <string name="dataToImport">Select files to import</string>
     <string name="noDataToDownload">No XML files exist on the server. </string>

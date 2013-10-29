@@ -8,7 +8,6 @@ import org.openforis.collect.android.management.ApplicationManager;
 import org.openforis.collect.android.messages.AlertMessage;
 import org.openforis.collect.android.misc.ViewBacktrack;
 import org.openforis.collect.android.screens.EntityInstancesScreen;
-import org.openforis.collect.android.screens.FormScreen;
 import org.openforis.collect.android.service.ServiceFactory;
 import org.openforis.idm.metamodel.AttributeDefinition;
 import org.openforis.idm.metamodel.CodeAttributeDefinition;
@@ -99,7 +98,7 @@ public class SummaryList extends UIElement {
 
 		
 		Entity parentEntity = this.findParentEntity(this.context.getFormScreenId()).getParent();		
-		Log.e("parentEntity","=="+parentEntity.getName());
+		//Log.e("parentEntity","=="+parentEntity.getName());
 		Entity currentEntity = null;
 		if (parentEntity.getName().equals(ApplicationManager.currentRecord.getRootEntity().getName())
 				&&
@@ -109,7 +108,7 @@ public class SummaryList extends UIElement {
 		} else {
 			currentEntity = (Entity)parentEntity.get(entityDef.getName(), entityInstanceNo);
 		}
-		Log.e("currentEntity","=="+currentEntity.getName());
+		//Log.e("currentEntity","=="+currentEntity.getName());
 		//if (this.context.getFormScreenId()!=null){			
 			//fetching keys and their values
 			List<AttributeDefinition> keyAttrDefsList = entityDef.getKeyAttributeDefinitions();

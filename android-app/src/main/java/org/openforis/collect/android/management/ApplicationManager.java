@@ -78,6 +78,8 @@ public class ApplicationManager extends BaseActivity {
 	
 	public static List<ItemsStorage> storedItemsList;
 	
+	public static boolean addNewEntity;
+	
 	private Thread creationThread = new Thread() {
 		@Override
 		public void run() {
@@ -208,6 +210,12 @@ public class ApplicationManager extends BaseActivity {
 			String username = ApplicationManager.appPreferences.getString(getResources().getString(R.string.username), getResources().getString(R.string.defaultUsername));
 			editor.putString(getResources().getString(R.string.username), username);
 
+			String recordsDownloadPath = ApplicationManager.appPreferences.getString(getResources().getString(R.string.recordsDownloadPath), getResources().getString(R.string.defaultRecordsDownloadPath));
+			editor.putString(getResources().getString(R.string.recordsDownloadPath), recordsDownloadPath);
+			
+			String recordsUploadPath = ApplicationManager.appPreferences.getString(getResources().getString(R.string.recordsUploadPath), getResources().getString(R.string.defaultRecordsUploadPath));
+			editor.putString(getResources().getString(R.string.recordsUploadPath), recordsUploadPath);			
+			
 	    	editor.commit();
 	    	
         	creationThread.start();
@@ -701,6 +709,7 @@ public class ApplicationManager extends BaseActivity {
     	ApplicationManager.recordSelectionActivity = null;
     	ApplicationManager.formScreenActivityList = new ArrayList<Activity>();
     	ApplicationManager.formSelectionActivity = null;
+    	ApplicationManager.addNewEntity = false;
 	}
     
 	private boolean userExists(User user){

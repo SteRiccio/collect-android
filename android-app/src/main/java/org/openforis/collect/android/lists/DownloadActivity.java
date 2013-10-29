@@ -44,6 +44,7 @@ import android.widget.Button;
 import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 public class DownloadActivity extends Activity{
 	
@@ -73,7 +74,7 @@ public class DownloadActivity extends Activity{
     int downloadedSize = 0;
     int totalSize = 0;
     TextView cur_val;
-    String dwnload_file_path = "http://ar5.arbonaut.com/awfdatademo/planned/";
+    //String dwnload_file_path = "http://ar5.arbonaut.com/awfdatademo/planned/";
 	
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -207,8 +208,14 @@ public class DownloadActivity extends Activity{
 		//int layout = (backgroundColor!=Color.WHITE)?R.layout.download_list_item_white:R.layout.download_list_item_black;
 		//this.adapter = new ArrayAdapter<String>(this,layout,filesList);
 		dataFilesList = new ArrayList<DataFile>();
-		List<String> serverFiles = ServerInterface.getFilesList();
-		int filesNo = serverFiles.size();
+		List<String> serverFiles = ServerInterface.getFilesList(ApplicationManager.appPreferences.getString(getResources().getString(R.string.recordsDownloadPath), getResources().getString(R.string.defaultRecordsDownloadPath)));
+		int filesNo;
+		if (serverFiles==null){
+	    	Toast.makeText(this, getResources().getString(R.string.dataToDownloadNotExisting), Toast.LENGTH_LONG).show();
+	    	filesNo = 0;
+		} else {
+			filesNo = serverFiles.size();
+		}
 		for (int i=0;i<filesNo;i++) {
 	        //filesList[i] = serverFiles.get(i);
 	        dataFilesList.add(new DataFile(serverFiles.get(i),"xml_icon"));
@@ -333,7 +340,7 @@ public class DownloadActivity extends Activity{
             try {            
             	String survey_id = ApplicationManager.appPreferences.getString(getResources().getString(R.string.surveyId), "99");
             	String username = ApplicationManager.appPreferences.getString(getResources().getString(R.string.username), "collect");
-				return ServerInterface.sendDataFiles(DownloadActivity.getStringFromFile(Environment.getExternalStorageDirectory().toString()+String.valueOf(getResources().getString(R.string.exported_data_folder)+"/"+args[0])), survey_id, username,(Boolean)args[1]);
+				return ServerInterface.sendDataFiles(ApplicationManager.appPreferences.getString(getResources().getString(R.string.recordsDownloadPath), getResources().getString(R.string.defaultRecordsUploadPath)),DownloadActivity.getStringFromFile(Environment.getExternalStorageDirectory().toString()+String.valueOf(getResources().getString(R.string.exported_data_folder)+"/"+args[0])), survey_id, username,(Boolean)args[1]);
 			} catch (Exception e) {
 				e.printStackTrace();
 				return "";
@@ -382,7 +389,9 @@ public class DownloadActivity extends Activity{
     
     void downloadFile(String fileName){
         
-        try {        	
+        try {
+        	String dwnload_file_path = ApplicationManager.appPreferences.getString(getResources().getString(R.string.recordsDownloadPath), getResources().getString(R.string.defaultRecordsDownloadPath));
+        	Log.e("dwnload_file_path","=="+dwnload_file_path);
             URL url = new URL(dwnload_file_path+fileName);
             Log.e("file","=="+dwnload_file_path+fileName);
             HttpURLConnection urlConnection = (HttpURLConnection) url.openConnection();

@@ -135,4 +135,46 @@
    		 >
    	</EditText>
    	
+    <TextView 
+   		android:id="@+id/lblRecordsDownloadPath"
+   		android:layout_width="wrap_content"
+   		android:layout_height="wrap_content"
+   		android:layout_below="@id/txtSurveyId"
+   		android:text="@string/lblRecordDownloadPath" 
+   		android:layout_alignBottom="@+id/txtRecordDownloadPath"
+        android:layout_alignTop="@id/txtRecordDownloadPath"
+        android:gravity="center_vertical"
+   		 >
+   	</TextView>
+   	
+    <!--<EditText 
+   		android:id="@+id/txtRecordsDownloadPath"
+   		android:layout_width="fill_parent"
+   		android:layout_height="wrap_content"
+   		android:layout_toRightOf="@id/lblRecordsDownloadPath"
+   		android:layout_below="@id/txtSurveyId"
+   		 >
+   	</EditText>
+   	
+    <TextView 
+   		android:id="@+id/lblRecordsUploadPath"
+   		android:layout_width="wrap_content"
+   		android:layout_height="wrap_content"
+   		android:layout_below="@id/txtRecordsDownloadPath"
+   		android:text="@string/lblRecordUploadPath" 
+   		android:layout_alignBottom="@+id/txtRecordDownloadPath"
+        android:layout_alignTop="@id/txtRecordDownloadPath"
+        android:gravity="center_vertical"
+   		 >
+   	</TextView>-->
+   	
+    <EditText 
+   		android:id="@+id/txtRecordsDownloadPath"
+   		android:layout_width="fill_parent"
+   		android:layout_height="wrap_content"
+   		android:layout_toRightOf="@id/lblRecordsDownloadPath"
+   		android:layout_below="@id/txtSurveyId"
+   		 >
+   	</EditText>    
+   	
 </RelativeLayout>

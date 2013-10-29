@@ -51,6 +51,12 @@ public class SettingsScreen extends Activity{
 	private TextView tvSurveyId;
 	private EditText txtSurveyId;
 	
+	private TextView tvRecordsDownloadPath;
+	private EditText txtRecordsDownloadPath;
+
+	private TextView tvRecordsUploadPath;
+	private EditText txtRecordsUploadPath;
+	
 	public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);       
         setContentView(R.layout.settingstab);
@@ -186,6 +192,24 @@ public class SettingsScreen extends Activity{
 		        public void beforeTextChanged(CharSequence s, int start, int count, int after){}
 		        public void onTextChanged(CharSequence s, int start, int before, int count){}
 		    });
+            
+         	this.tvRecordsDownloadPath = (TextView)findViewById(R.id.lblRecordsDownloadPath);
+			this.txtRecordsDownloadPath = (EditText)findViewById(R.id.txtRecordsDownloadPath);
+			this.txtRecordsDownloadPath.setText(ApplicationManager.appPreferences.getString(getResources().getString(R.string.recordsDownloadPath),getResources().getString(R.string.defaultRecordsDownloadPath)));
+            this.txtRecordsDownloadPath.addTextChangedListener(new TextWatcher(){
+		        public void afterTextChanged(Editable s) {            
+					SharedPreferences.Editor editor = ApplicationManager.appPreferences.edit();
+					editor = ApplicationManager.appPreferences.edit();
+					try{
+						editor.putString(getResources().getString(R.string.recordsDownloadPath), s.toString());
+					} catch (Exception e){
+	
+					}
+					editor.commit();
+		        }
+		        public void beforeTextChanged(CharSequence s, int start, int count, int after){}
+		        public void onTextChanged(CharSequence s, int start, int before, int count){}
+		    });
         } catch (Exception e){
     		RunnableHandler.reportException(e,getResources().getString(R.string.app_name),TAG+":onCreate",
     				Environment.getExternalStorageDirectory().toString()
@@ -235,6 +259,8 @@ public class SettingsScreen extends Activity{
 		this.tvFormDefinitionFilePath.setTextColor((backgroundColor!=Color.WHITE)?Color.WHITE:Color.BLACK);
 		this.tvUsername.setTextColor((backgroundColor!=Color.WHITE)?Color.WHITE:Color.BLACK);
 		this.tvSurveyId.setTextColor((backgroundColor!=Color.WHITE)?Color.WHITE:Color.BLACK);
+		this.tvRecordsDownloadPath.setTextColor((backgroundColor!=Color.WHITE)?Color.WHITE:Color.BLACK);
+		this.tvRecordsDownloadPath.setTextColor((backgroundColor!=Color.WHITE)?Color.WHITE:Color.BLACK);
 		//this.txtGpsMaxWaitingTime.setBackgroundColor((backgroundColor!=Color.WHITE)?Color.WHITE:Color.BLACK);
     }
 }
