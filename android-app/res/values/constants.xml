@@ -51,8 +51,8 @@
     <string name="username">username</string>
     <string name="recordsDownloadPath">recordsDownloadPath</string>
     <string name="defaultRecordsDownloadPath">http://ar5.arbonaut.com/awfdatademo/planned/</string>
-    <string name="recordsUploadPath">recordsDownloadPath</string>
-    <string name="defaultRecordsUploadPath">http://ar5.arbonaut.com/awfdatademo/planned/</string>
+    <string name="recordsUploadPath">recordsUploadPath</string>
+    <string name="defaultRecordsUploadPath">http://ar5.arbonaut.com/webforest/fao-mobile/save-received-data-file</string>
     
     <string name="left_swipe">left_swipe</string>
     <string name="right_swipe">right_swipe</string>

@@ -172,7 +172,7 @@ public class UploadActivity extends Activity{
 		        dataFilesList.add(new DataFile(dataFiles[i].getName(),"xml_icon"));
 			}
 			if (filesNo==0){
-				this.activityLabel.setText(getResources().getString(R.string.noDataToDownload));
+				this.activityLabel.setText(getResources().getString(R.string.noDataToUpload));
 			}
 			//int layout = (backgroundColor!=Color.WHITE)?R.layout.selectableitem_white:R.layout.selectableitem_black;
 			int layout = (backgroundColor!=Color.WHITE)?R.layout.upload_list_item_white:R.layout.upload_list_item_black;

@@ -13,7 +13,8 @@
     <string name="lblFormDefinitionFile">Path to form\r\ndefinition\r\nfile on sdcard:\u0020</string>
     <string name="lblUsername">Username:\u0020</string>
     <string name="lblSurveyId">Project ID:\u0020</string>
-    <string name="lblRecordDownloadPath">Record download path:\u0020</string>
+    <string name="lblRecordDownloadPath">Records download path:\u0020</string>
+    <string name="lblRecordUploadPath">Records upload path:\u0020</string>
     
     <!-- dialogs -->
     <string name="exitAppTitle">Exiting&#8230;</string>    
@@ -144,7 +145,7 @@
     <string name="rootEntityChoiceListLabel">Select root entity</string>
     <string name="formChoiceListLabel">Select form definition</string>
     <string name="dataToUpload">Select files to upload</string>
-    <string name="noDataToUpload">No XML files exist in the application folder: </string>
+    <string name="noDataToUpload">No XML files exist in the application folder. </string>
     <string name="dataToDownloadNotExisting">There is no files on the server in the specified location.</string>
     <string name="dataToDownload">Select files to download</string>
     <string name="dataToImport">Select files to import</string>

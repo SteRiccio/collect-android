@@ -1637,7 +1637,6 @@ public class EntityInstancesScreen extends BaseActivity implements OnClickListen
     }
     
     private RelativeLayout arrangeButtonsInLine(Button btnAdd, String btnAddLabel, OnClickListener listener, boolean isForEntity){
-    	Log.e("ADDING","THE ADD BUTTON");
 		RelativeLayout relativeButtonsLayout = new RelativeLayout(this);
 	    RelativeLayout.LayoutParams lp = new RelativeLayout.LayoutParams(
 	            RelativeLayout.LayoutParams.FILL_PARENT, RelativeLayout.LayoutParams.WRAP_CONTENT);
@@ -1648,10 +1647,6 @@ public class EntityInstancesScreen extends BaseActivity implements OnClickListen
 		
 		LinearLayout ll = new LinearLayout(this);
 		ll.addView(btnAdd);
-		RelativeLayout.LayoutParams lpBtnAddDelete = new RelativeLayout.LayoutParams(
-	            RelativeLayout.LayoutParams.WRAP_CONTENT, RelativeLayout.LayoutParams.WRAP_CONTENT);		
-		lpBtnAddDelete.addRule(RelativeLayout.CENTER_IN_PARENT);
-		ll.setLayoutParams(lpBtnAddDelete);
 		relativeButtonsLayout.addView(ll);
 		
 		if (!isForEntity){

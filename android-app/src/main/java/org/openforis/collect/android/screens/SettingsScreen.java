@@ -22,6 +22,7 @@ import android.widget.AdapterView.OnItemSelectedListener;
 import android.widget.ArrayAdapter;
 import android.widget.CheckBox;
 import android.widget.EditText;
+import android.widget.ScrollView;
 import android.widget.Spinner;
 import android.widget.TextView;
 
@@ -62,7 +63,7 @@ public class SettingsScreen extends Activity{
         setContentView(R.layout.settingstab);
         try{
         	Log.i(getResources().getString(R.string.app_name),TAG+":onCreate");
-        	
+        	        	
         	this.tvScreenTitle = (TextView)findViewById(R.id.lblTitle);
     		this.tvScreenTitle.setTextSize(getResources().getInteger(R.integer.breadcrumbFontSize));
         	
@@ -210,6 +211,24 @@ public class SettingsScreen extends Activity{
 		        public void beforeTextChanged(CharSequence s, int start, int count, int after){}
 		        public void onTextChanged(CharSequence s, int start, int before, int count){}
 		    });
+            
+            this.tvRecordsUploadPath = (TextView)findViewById(R.id.lblRecordsUploadPath);
+			this.txtRecordsUploadPath = (EditText)findViewById(R.id.txtRecordsUploadPath);
+			this.txtRecordsUploadPath.setText(ApplicationManager.appPreferences.getString(getResources().getString(R.string.recordsUploadPath),getResources().getString(R.string.defaultRecordsUploadPath)));
+            this.txtRecordsUploadPath.addTextChangedListener(new TextWatcher(){
+		        public void afterTextChanged(Editable s) {            
+					SharedPreferences.Editor editor = ApplicationManager.appPreferences.edit();
+					editor = ApplicationManager.appPreferences.edit();
+					try{
+						editor.putString(getResources().getString(R.string.recordsUploadPath), s.toString());
+					} catch (Exception e){
+						
+					}
+					editor.commit();
+		        }
+		        public void beforeTextChanged(CharSequence s, int start, int count, int after){}
+		        public void onTextChanged(CharSequence s, int start, int before, int count){}
+		    });
         } catch (Exception e){
     		RunnableHandler.reportException(e,getResources().getString(R.string.app_name),TAG+":onCreate",
     				Environment.getExternalStorageDirectory().toString()
@@ -260,7 +279,7 @@ public class SettingsScreen extends Activity{
 		this.tvUsername.setTextColor((backgroundColor!=Color.WHITE)?Color.WHITE:Color.BLACK);
 		this.tvSurveyId.setTextColor((backgroundColor!=Color.WHITE)?Color.WHITE:Color.BLACK);
 		this.tvRecordsDownloadPath.setTextColor((backgroundColor!=Color.WHITE)?Color.WHITE:Color.BLACK);
-		this.tvRecordsDownloadPath.setTextColor((backgroundColor!=Color.WHITE)?Color.WHITE:Color.BLACK);
+		this.tvRecordsUploadPath.setTextColor((backgroundColor!=Color.WHITE)?Color.WHITE:Color.BLACK);
 		//this.txtGpsMaxWaitingTime.setBackgroundColor((backgroundColor!=Color.WHITE)?Color.WHITE:Color.BLACK);
     }
 }
