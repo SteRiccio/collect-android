@@ -16,6 +16,7 @@ import org.openforis.collect.android.management.BaseActivity;
 import org.openforis.collect.android.messages.AlertMessage;
 import org.openforis.collect.android.misc.RunnableHandler;
 import org.openforis.collect.android.misc.ViewBacktrack;
+import org.openforis.collect.android.service.ServiceFactory;
 import org.openforis.idm.metamodel.EntityDefinition;
 import org.openforis.idm.metamodel.NodeDefinition;
 import org.openforis.idm.model.Entity;
@@ -131,38 +132,89 @@ public class EntityInstancesScreen extends BaseActivity implements OnClickListen
 			NodeDefinition nodeDef = ApplicationManager.getNodeDefinition(EntityInstancesScreen.this.startingIntent.getIntExtra(getResources().getString(R.string.idmlId), -1));
 			Log.e("nodeDef",EntityInstancesScreen.this.startingIntent.getIntExtra(getResources().getString(R.string.idmlId), -1)+"=="+nodeDef.getName());
 			//EntityInstancesScreen.this.parentEntitySingleAttribute = EntityInstancesScreen.this.findParentEntity(String.valueOf(EntityInstancesScreen.this.startingIntent.getIntExtra(getResources().getString(R.string.idmlId), -1)));
+			Log.e("call","=="+this.getFormScreenId());
+			Log.e("screenId","=="+this.getFormScreenId());
+			
 			EntityInstancesScreen.this.parentEntitySingleAttribute = EntityInstancesScreen.this.findParentEntity(this.getFormScreenId());
+			if (EntityInstancesScreen.this.parentEntitySingleAttribute==null){
+				EntityInstancesScreen.this.parentEntitySingleAttribute = EntityInstancesScreen.this.findParentEntity2(this.getFormScreenId());
+			}
 			if (ApplicationManager.currentRecord.getRootEntity().getId()!=nodeDef.getId()){
 				try{
 					Node<?> foundNode = EntityInstancesScreen.this.parentEntitySingleAttribute.get(nodeDef.getName(), 0);
+					
 					if (foundNode==null){
 						EntityBuilder.addEntity(EntityInstancesScreen.this.parentEntitySingleAttribute, ApplicationManager.getSurvey().getSchema().getDefinitionById(nodeDef.getId()).getName(), 0);
 					}
 				} catch (IllegalArgumentException e){
+					//Log.e("illegalargumentexception","parenEntity=="+EntityInstancesScreen.this.parentEntitySingleAttribute.getParent());
 					EntityInstancesScreen.this.parentEntitySingleAttribute = EntityInstancesScreen.this.parentEntitySingleAttribute.getParent();
 					Node<?> foundNode = EntityInstancesScreen.this.parentEntitySingleAttribute.get(nodeDef.getName(), 0);
 					if (foundNode==null){
 						EntityBuilder.addEntity(EntityInstancesScreen.this.parentEntitySingleAttribute, ApplicationManager.getSurvey().getSchema().getDefinitionById(nodeDef.getId()).getName(), 0);
 					}
-				}			
+					//e.printStackTrace();
+				} catch (NullPointerException e){
+					e.printStackTrace();
+				}
 			}
-			
+			Entity tempEntity = EntityInstancesScreen.this.parentEntitySingleAttribute;
+			boolean error = false;
+			try {
+				Log.e("parentEntitySingleAttribute11",nodeDef.getName()+"=="+EntityInstancesScreen.this.parentEntitySingleAttribute.getName()+"|"+EntityInstancesScreen.this.parentEntitySingleAttribute.get(ApplicationManager.getSurvey().getSchema().getDefinitionById(nodeDef.getId()).getName(), 0));
+				EntityInstancesScreen.this.parentEntitySingleAttribute = (Entity) EntityInstancesScreen.this.parentEntitySingleAttribute.get(ApplicationManager.getSurvey().getSchema().getDefinitionById(nodeDef.getId()).getName(), 0);
+				Log.e("parentEntitySingleAttribute12",nodeDef.getName()+"=="+EntityInstancesScreen.this.parentEntitySingleAttribute.getName());
+				error = false;
+			} catch (IllegalArgumentException e){
+				error = true;
+				Log.e("parentEntitySingleAttribute21",nodeDef.getName()+"=="+EntityInstancesScreen.this.parentEntitySingleAttribute.getName());
+				EntityInstancesScreen.this.parentEntitySingleAttribute = EntityInstancesScreen.this.parentEntitySingleAttribute.getParent();
+				Log.e("parentEntitySingleAttribute22",nodeDef.getName()+"=="+EntityInstancesScreen.this.parentEntitySingleAttribute.getName());
+			} catch (ClassCastException e){
+				error = true;
+				Log.e("parentEntitySingleAttribute31",nodeDef.getName()+"=="+EntityInstancesScreen.this.parentEntitySingleAttribute.getName());
+				EntityInstancesScreen.this.parentEntitySingleAttribute = EntityInstancesScreen.this.parentEntitySingleAttribute.getParent();
+				Log.e("parentEntitySingleAttribute32",nodeDef.getName()+"=="+EntityInstancesScreen.this.parentEntitySingleAttribute.getName());
+			} catch (NullPointerException e){
+				error = true;
+				e.printStackTrace();				
+			}
+			Log.e("eRROR==","=="+error);
+			Log.e("tempEntity==null","=="+(tempEntity==null));
+			if (tempEntity!=null){
+				Log.e("tempEntity.getname()","=="+(tempEntity.getName()));	
+			}
+			if (!error){
+				EntityInstancesScreen.this.parentEntitySingleAttribute = tempEntity;
+			}
+	/*		try{
+				Log.e("count","=="+EntityInstancesScreen.this.parentEntitySingleAttribute.getCount(entityDef.getName()));
+				Log.e("nodeDefEntityInstance",nodeDef.getId()+"=="+nodeDef.getName());
+				Log.e("parentEntitySingleAttributeEntityInstance","==´"+parentEntitySingleAttribute.getName());					
+			} catch (Exception e){
+//				e.printStackTrace();
+			}*/
 			EntityDefinition entityDef = (EntityDefinition)nodeDef;
-			//Log.e("nodeDefEntityInstance","=="+nodeDef.getName());
-			//Log.e("parentEntitySingleAttributeEntityInstance","==´"+parentEntitySingleAttribute.getName());
+
 			for (int e=0;e<EntityInstancesScreen.this.parentEntitySingleAttribute.getCount(entityDef.getName());e++){
 				SummaryList summaryListView = new SummaryList(EntityInstancesScreen.this, entityDef, 45, EntityInstancesScreen.this,e);
 				summaryListView.setOnClickListener(EntityInstancesScreen.this);
 				summaryListView.setId(nodeDef.getId());
-				EntityInstancesScreen.this.ll.addView(summaryListView);	
+				EntityInstancesScreen.this.ll.addView(summaryListView);
 			}
 			
 			//if (this.intentType==getResources().getInteger(R.integer.multipleEntityIntent)){ 				
 			//if (ApplicationManager.currentRecord.getRootEntity().getId()!=this.idmlId){
-			this.ll.addView(arrangeButtonsInLine(new Button(this), getResources().getString(R.string.addInstanceButton), this, true));
+			if (nodeDef.isMultiple()){
+				this.ll.addView(arrangeButtonsInLine(new Button(this), getResources().getString(R.string.addInstanceButton), this, true));				
+			}/* else {
+				SummaryList temp = new SummaryList(EntityInstancesScreen.this, entityDef, 45, EntityInstancesScreen.this,0);
+				ViewBacktrack viewBacktrack = new ViewBacktrack(temp,EntityInstancesScreen.this.getFormScreenId(temp.getInstanceNo()));
+				ApplicationManager.selectedViewsBacktrackList.add(viewBacktrack);			
+				this.startActivity(this.prepareIntentForNewScreen(temp));
+			}*/
 			//}	
-			//}
-			
+			//}	
 			setContentView(EntityInstancesScreen.this.sv);
 				
 			int backgroundColor = ApplicationManager.appPreferences.getInt(getResources().getString(R.string.backgroundColor), Color.WHITE);		
@@ -351,6 +403,7 @@ public class EntityInstancesScreen extends BaseActivity implements OnClickListen
 								//refreshing values of fields in the entity
 								
 								Entity parentEntity = EntityInstancesScreen.this.findParentEntity(EntityInstancesScreen.this.getFormScreenId());
+								
 								//Log.e("parentEntity0",parentEntity.getName()+"=="+EntityInstancesScreen.this.getFormScreenId());
 								int currentInstanceNo = 0;
 								while (parentEntity!=null){
@@ -599,22 +652,85 @@ public class EntityInstancesScreen extends BaseActivity implements OnClickListen
 		String screenPath = path;
 		String[] entityPath = screenPath.split(getResources().getString(R.string.valuesSeparator2));
 		try{
+			Log.e("entityPath.length","=="+entityPath.length);
+			for (int i=0;i<entityPath.length-1;i++){
+				Log.e("i"+i,"=="+entityPath[i]);
+			}
 			for (int m=1;m<entityPath.length;m++){
 				String[] instancePath = entityPath[m].split(getResources().getString(R.string.valuesSeparator1));				
 				int id = Integer.valueOf(instancePath[0]);
 				int instanceNo = Integer.valueOf(instancePath[1]);
 				Log.e("id"+id,"instanceNo"+instanceNo);
+				
 				/*try{
 					parentEntity = (Entity) parentEntity.get(ApplicationManager.getSurvey().getSchema().getDefinitionById(id).getName(), instanceNo);
 				} catch (IllegalArgumentException e){
 					parentEntity = parentEntity.getParent();
 					parentEntity = (Entity) parentEntity.get(ApplicationManager.getSurvey().getSchema().getDefinitionById(id).getName(), instanceNo);
 				}*/
+				if (parentEntity!=null)
+					Log.e("1returned parententity"+(m-1),"=="+parentEntity.getName());
+				else
+					Log.e("2returned parententity"+(m-1),"==NULL");
 				parentEntity = (Entity) parentEntity.get(ApplicationManager.getSurvey().getSchema().getDefinitionById(id).getName(), instanceNo);
+				if (parentEntity!=null)
+					Log.e("3returned parententity"+m,"=="+parentEntity.getName());
+				else
+					Log.e("4returned parententity"+m,"==NULL");
 			}			
 		} catch (ClassCastException e){
 			
+		} catch (IllegalArgumentException e){
+			
 		}
+		if (parentEntity!=null)
+			Log.e("returned parententity","=="+parentEntity.getName());
+		else
+			Log.e("returned parententity","==NULL");
+		return parentEntity;
+	}
+	
+	private Entity findParentEntity2(String path){
+		Log.e("pathENTITYINSTANCE","=="+path);
+		Entity parentEntity = ApplicationManager.currentRecord.getRootEntity();
+		String screenPath = path;
+		String[] entityPath = screenPath.split(getResources().getString(R.string.valuesSeparator2));
+		try{
+			Log.e("entityPath.length","=="+entityPath.length);
+			for (int i=0;i<entityPath.length-1;i++){
+				Log.e("i"+i,"=="+entityPath[i]);
+			}
+			for (int m=0;m<entityPath.length-1;m++){
+				String[] instancePath = entityPath[m].split(getResources().getString(R.string.valuesSeparator1));				
+				int id = Integer.valueOf(instancePath[0]);
+				int instanceNo = Integer.valueOf(instancePath[1]);
+				Log.e("id"+id,"instanceNo"+instanceNo);
+				
+				/*try{
+					parentEntity = (Entity) parentEntity.get(ApplicationManager.getSurvey().getSchema().getDefinitionById(id).getName(), instanceNo);
+				} catch (IllegalArgumentException e){
+					parentEntity = parentEntity.getParent();
+					parentEntity = (Entity) parentEntity.get(ApplicationManager.getSurvey().getSchema().getDefinitionById(id).getName(), instanceNo);
+				}*/
+				if (parentEntity!=null)
+					Log.e("5returned parententity"+(m-1),"=="+parentEntity.getName());
+				else
+					Log.e("6returned parententity"+(m-1),"==NULL");
+				parentEntity = (Entity) parentEntity.get(ApplicationManager.getSurvey().getSchema().getDefinitionById(id).getName(), instanceNo);
+				if (parentEntity!=null)
+					Log.e("7returned parententity"+m,"=="+parentEntity.getName());
+				else
+					Log.e("8returned parententity"+m,"==NULL");
+			}			
+		} catch (ClassCastException e){
+			
+		} catch (IllegalArgumentException e){
+			
+		}
+		if (parentEntity!=null)
+			Log.e("9returned parententity","=="+parentEntity.getName());
+		else
+			Log.e("10returned parententity","==NULL");
 		return parentEntity;
 	}
 	

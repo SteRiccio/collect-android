@@ -119,7 +119,7 @@ public class ApplicationManager extends BaseActivity {
 			    folder = new File(sdcardPath+getResources().getString(R.string.logs_folder));
 			    folder.mkdirs();
 			    folder = new File(sdcardPath+getResources().getString(R.string.codelists_folder));
-			    folder.mkdirs();  
+			    folder.mkdirs();
 			    
 	        	ApplicationManager.uiElementsMap = new HashMap<Integer,UIElement>();        	
 	        	

@@ -8,6 +8,7 @@ import org.openforis.collect.android.management.ApplicationManager;
 import org.openforis.collect.android.messages.AlertMessage;
 import org.openforis.collect.android.misc.ViewBacktrack;
 import org.openforis.collect.android.screens.EntityInstancesScreen;
+import org.openforis.collect.android.screens.FormScreen;
 import org.openforis.collect.android.service.ServiceFactory;
 import org.openforis.idm.metamodel.AttributeDefinition;
 import org.openforis.idm.metamodel.CodeAttributeDefinition;
@@ -21,6 +22,7 @@ import org.openforis.idm.model.Date;
 import org.openforis.idm.model.Entity;
 import org.openforis.idm.model.File;
 import org.openforis.idm.model.IntegerRange;
+import org.openforis.idm.model.Node;
 import org.openforis.idm.model.NumberValue;
 import org.openforis.idm.model.RealRange;
 import org.openforis.idm.model.TaxonOccurrence;
@@ -37,6 +39,7 @@ import android.view.ViewGroup;
 import android.widget.TableLayout;
 import android.widget.TableRow;
 import android.widget.TextView;
+import android.widget.Toast;
 
 public class SummaryList extends UIElement {
 	
@@ -93,7 +96,7 @@ public class SummaryList extends UIElement {
 		}*/
 		
 		ArrayList<List<String>> keysList = new ArrayList<List<String>>();
-		ArrayList<List<String>> detailsList = new ArrayList<List<String>>();
+		//ArrayList<List<String>> detailsList = new ArrayList<List<String>>();
 		
 
 		
@@ -108,6 +111,8 @@ public class SummaryList extends UIElement {
 		} else {
 			currentEntity = (Entity)parentEntity.get(entityDef.getName(), entityInstanceNo);
 		}
+		
+		boolean isAtLeastOneKeyValue = false;
 		//Log.e("currentEntity","=="+currentEntity.getName());
 		//if (this.context.getFormScreenId()!=null){			
 			//fetching keys and their values
@@ -116,25 +121,35 @@ public class SummaryList extends UIElement {
 				List<String> key = new ArrayList<String>();
 				Value attrValue = null;			
 				attrValue = (Value)currentEntity.getValue(attrDef.getName(),0);
-				key.add(attrDef.getName());
+				//key.add(attrDef.getName());
+				String label = ApplicationManager.getLabel(attrDef);
+				key.add(label);
 				String stringValue = convertValueToString(attrValue, (NodeDefinition)attrDef);
-				if (stringValue!=null)
-					key.add(stringValue);	
+				if (stringValue!=null){
+					key.add(stringValue);
+					isAtLeastOneKeyValue = true;
+				}
+						
 				keysList.add(key);
 			}
 			
 			String keysLine = "";
-			for (List<String> key : keysList){
-				if (key.size()==1){
-					keysLine += key.get(0) + getResources().getString(R.string.valuesSeparator1);
-				} else {
-					keysLine += key.get(0) + getResources().getString(R.string.valuesEqualsTo) + key.get(1) + getResources().getString(R.string.valuesSeparator1);	
+			if (isAtLeastOneKeyValue){				
+				for (List<String> key : keysList){
+					if (key.size()==1){
+						keysLine += key.get(0) + getResources().getString(R.string.valuesSeparator1);
+					} else {
+						keysLine += key.get(0) + getResources().getString(R.string.valuesEqualsTo) + key.get(1) + getResources().getString(R.string.valuesSeparator1);	
+					}
+					if (keysLine.length()>threshold){
+						break;
+					}
+					isAtLeastOneKeyValue = false;
 				}
-				if (keysLine.length()>threshold){
-					break;
-				}
-				
+			} else {
+				keysLine += (entityInstanceNo+1);
 			}
+			
 		
 			if (keysLine.length()>threshold){
 				keysLine = keysLine.substring(0,threshold-3)+"...";
@@ -158,10 +173,10 @@ public class SummaryList extends UIElement {
 				String stringValue = convertValueToString(attrValue, nodeDef);
 				if (stringValue!=null)
 					detail.add(stringValue);				
-				detailsList.add(detail);
+				//detailsList.add(detail);
 			}
 			
-			String detailsLine = "";
+			/*String detailsLine = "";
 			for (List<String> detail : detailsList){
 				if (detail.size()==1){
 					detailsLine += detail.get(0) + getResources().getString(R.string.valuesSeparator1);
@@ -186,10 +201,10 @@ public class SummaryList extends UIElement {
 				detailsLine += getResources().getString(R.string.valuesNotVisibleSign);
 			} else {
 				detailsLine = detailsLine.substring(0,detailsLine.length()-1);
-			}
+			}*/
 			
 			TextView tv = new TextView(context);
-			tv.setText(keysLine+"\r\n"+detailsLine);
+			tv.setText(keysLine/*+"\r\n"+detailsLine*/);
 			tv.setId(entityInstanceNo);
 			tv.setOnClickListener(listener);
 			final Entity entityToRemove = currentEntity;
@@ -204,7 +219,9 @@ public class SummaryList extends UIElement {
 		 						@Override
 		 						public void onClick(DialogInterface dialog, int which) {
 		 							//Log.i("SummaryList", "Yes-button has been pressed from " + entityToRemove.getName());
+		 							Log.e("entityToRemove",SummaryList.this.instanceNo+"=="+entityToRemove.getName());
 		 							ServiceFactory.getRecordManager().deleteNode(entityToRemove);
+		 							
 		 							//ApplicationManager.isToBeScrolled = true;
 		 							ViewBacktrack viewBacktrack = null;
 		 							if (SummaryList.this.form!=null){
@@ -214,9 +231,21 @@ public class SummaryList extends UIElement {
 		 								viewBacktrack = new ViewBacktrack(SummaryList.this,SummaryList.this.entityInstances.getFormScreenId());
 		 							}		 							
 		 							ApplicationManager.selectedViewsBacktrackList.add(viewBacktrack);
+		 							Toast.makeText(SummaryList.this.context, getResources().getString(R.string.entityDeletedToast), Toast.LENGTH_SHORT).show();
 		 							((EntityInstancesScreen)SummaryList.this.context).onResume();
 		 							//TODO: Validation. What exactly to validate if entityToRemove was deleted?
 		 						}
+		 						/*NodeDefinition nodeDef = ApplicationManager.getNodeDefinition(FormScreen.this.startingIntent.getIntExtra(getResources().getString(R.string.attributeId)+"0", -1));
+	 							NodeDefinition parentNodeDefinition = nodeDef.getParentDefinition();
+	 							Node<?> foundNode = FormScreen.this.parentEntitySingleAttribute.getParent().get(parentNodeDefinition.getName(), FormScreen.this.currInstanceNo);
+	 							if (foundNode!=null){
+	 								Log.e("not null",nodeDef.getName()+"=="+FormScreen.this.currInstanceNo);
+	 								ServiceFactory.getRecordManager().deleteNode(foundNode);
+	 								refreshEntityScreen(2);
+	 								
+	 							} else {
+	 								Log.e("null",nodeDef.getName()+"=="+FormScreen.this.currInstanceNo);
+	 							}*/
 		 					},
 		 		    		new DialogInterface.OnClickListener() {
 		 						@Override

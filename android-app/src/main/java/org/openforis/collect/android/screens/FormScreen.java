@@ -1019,6 +1019,8 @@ public class FormScreen extends BaseActivity implements OnClickListener {
 	 								ServiceFactory.getRecordManager().deleteNode(foundNode);
 	 								refreshEntityScreen(2);
 	 								Toast.makeText(FormScreen.this, getResources().getString(R.string.entityDeletedToast), Toast.LENGTH_SHORT).show();
+	 							} else {
+	 								Log.e("null",nodeDef.getName()+"=="+FormScreen.this.currInstanceNo);
 	 							}
 	 						}
 	 					},
@@ -1357,7 +1359,7 @@ public class FormScreen extends BaseActivity implements OnClickListener {
 					parentEntity = (Entity) parentEntity.get(ApplicationManager.getSurvey().getSchema().getDefinitionById(id).getName(), instanceNo);	
 				} catch (IllegalArgumentException e){
 					parentEntity = (Entity) parentEntity.getParent().get(ApplicationManager.getSurvey().getSchema().getDefinitionById(id).getName(), instanceNo);
-				}				
+				}			
 			}			
 		} catch (ClassCastException e){
 			
