@@ -135,8 +135,8 @@ public class GpsActivity extends Activity {
 	        			}
 	        		};
 
-	        		dialog = ProgressDialog.show(GpsActivity.this, "Please wait...",
-	        			"Retrieving GPS data...", true);
+	        		dialog = ProgressDialog.show(GpsActivity.this, getResources().getString(R.string.retrievingGpsTitle),
+	        				getResources().getString(R.string.retrievingGpsMessage), true);
 	        		Thread t = new Thread(showWaitDialog);
 	        		t.start();
 	        	}

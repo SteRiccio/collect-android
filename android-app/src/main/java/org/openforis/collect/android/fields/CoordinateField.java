@@ -327,6 +327,7 @@ public class CoordinateField extends InputField implements OnClickListener {
 	
 	@Override
 	public void onClick(View arg0) {
+		Log.e("1CoordinateField.form.currentCoordinateField","=="+this.getLabelText());
 		CoordinateField.form.currentCoordinateField = this;
 		CoordinateField.form.startInternalGps(this);
 	}

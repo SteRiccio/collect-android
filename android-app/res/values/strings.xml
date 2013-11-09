@@ -67,6 +67,8 @@
     <string name="backupingDatabaseMessageSuccess">Database file exported.</string>
     <string name="backupingDatabaseMessageFileNotFound">Database file could not be exported, because no database was found.</string>
     <string name="backupingDatabaseMessageIOException">Database file could not be exported, because destination folder on sdcard was not found.</string>
+    <string name="retrievingGpsTitle">Retrieving location from GPS&#8230;</string>    
+    <string name="retrievingGpsMessage">Please wait until location is being retrieved from GPS.</string>
     
     <!-- toasts -->
     <string name="attributeDeletedToast">Attribute was deleted.</string>
