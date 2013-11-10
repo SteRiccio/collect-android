@@ -32,15 +32,21 @@ import org.openforis.idm.model.Entity;
 
 import android.app.Activity;
 import android.app.ProgressDialog;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.res.TypedArray;
 import android.graphics.Color;
+import android.graphics.drawable.Drawable;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Environment;
 import android.util.Log;
 import android.view.KeyEvent;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.LinearLayout;
 //import org.openforis.collect.manager.codelistimport.CodeListImportProcess;
 
 public class ApplicationManager extends BaseActivity {
@@ -899,5 +905,21 @@ public class ApplicationManager extends BaseActivity {
 			}
 		}
 		return foundItemsStorage;
+	}
+	
+	public static View getDividerLine (Context ctx){
+		View dividerView = new View(ctx);
+	    LinearLayout.LayoutParams lp = new LinearLayout.LayoutParams(
+	            ViewGroup.LayoutParams.FILL_PARENT, 2);
+	    dividerView.setLayoutParams(lp);
+	    dividerView.setBackgroundColor(Color.BLACK);
+
+	    /*TypedArray array = ctx.getTheme().obtainStyledAttributes(new int[] {android.R.attr.listDivider});
+	    Drawable draw = array.getDrawable(0);       
+	    array.recycle();
+
+	    dividerView.setBackgroundDrawable(draw);
+	    //mParentLayout.addView(dividerView);*/
+	    return dividerView;
 	}
 }

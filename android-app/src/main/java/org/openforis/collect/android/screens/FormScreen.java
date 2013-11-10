@@ -24,7 +24,9 @@ import org.openforis.collect.android.management.ApplicationManager;
 import org.openforis.collect.android.management.BaseActivity;
 import org.openforis.collect.android.messages.AlertMessage;
 import org.openforis.collect.android.misc.GpsActivity;
+import org.openforis.collect.android.misc.LayoutTouchListener;
 import org.openforis.collect.android.misc.RunnableHandler;
+import org.openforis.collect.android.misc.ScrollViewSwipeDetector;
 import org.openforis.collect.android.misc.ViewBacktrack;
 import org.openforis.collect.android.service.ServiceFactory;
 import org.openforis.collect.manager.CodeListManager;
@@ -104,6 +106,8 @@ public class FormScreen extends BaseActivity implements OnClickListener {
 	private String latitude;
 	private String longitude;
 	
+	private ScrollViewSwipeDetector onTouchListener;
+	
 	public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         try{
@@ -129,6 +133,17 @@ public class FormScreen extends BaseActivity implements OnClickListener {
     		this.photoPath = null;
     		this.latitude = null;
     		this.longitude = null;
+    		
+    		/*final GestureDetector gestureDetector = new GestureDetector(this, new SwipeDetector());
+    		View.OnTouchListener gestureListener = new View.OnTouchListener() {
+                public boolean onTouch(View v, MotionEvent event) {
+                	Log.e("onTouch","=========");
+                    return gestureDetector.onTouchEvent(event);
+                }
+            };
+            //this.ll.setOnTouchListener(gestureListener);*/
+    		//this.onTouchListener = new ScrollViewSwipeDetector(this);
+            
         } catch (Exception e){
     		RunnableHandler.reportException(e,getResources().getString(R.string.app_name),TAG+":onCreate",
     				Environment.getExternalStorageDirectory().toString()
@@ -156,7 +171,9 @@ public class FormScreen extends BaseActivity implements OnClickListener {
 			FormScreen.this.sv = new ScrollView(FormScreen.this);
 			FormScreen.this.ll = new LinearLayout(FormScreen.this);
 			FormScreen.this.ll.setOrientation(android.widget.LinearLayout.VERTICAL);
+			//this.ll.setOnTouchListener(new ScrollViewSwipeDetector(this));
 			FormScreen.this.sv.addView(ll);
+			//this.sv.setOnTouchListener(new ScrollViewSwipeDetector(this));
 	
 			if (!FormScreen.this.breadcrumb.equals("")){				
 				TextView breadcrumb = new TextView(FormScreen.this);
@@ -175,6 +192,7 @@ public class FormScreen extends BaseActivity implements OnClickListener {
 	    		scroller.addView(breadcrumb);
 	    		FormScreen.this.ll.addView(scroller);
 	    		//FormScreen.this.ll.addView(breadcrumb);
+	    		FormScreen.this.ll.addView(ApplicationManager.getDividerLine(this));
 	    		
 	    		TextView screenTitle = new TextView(FormScreen.this);
 	    		screenTitle.setText(FormScreen.this.screenTitle);
@@ -469,10 +487,6 @@ public class FormScreen extends BaseActivity implements OnClickListener {
 	        				final CoordinateField coordField= new CoordinateField(FormScreen.this, nodeDef);
 	        				coordField.setId(nodeDef.getId());
 	        				if (FormScreen.this.currentCoordinateField!=null && FormScreen.this.currentCoordinateField.getLabelText().equals(coordField.getLabelText())){
-	        					Log.e(".getId()",coordField.getId()+"=="+FormScreen.this.currentCoordinateField.getId());
-		        				Log.e("FormScreen.this.currentCoordinateField.getLabelText().equals(coordField.getLabelText())","=="+(FormScreen.this.currentCoordinateField.getLabelText().equals(coordField.getLabelText())));
-	        					Log.e("2currentCoordinateField","=="+FormScreen.this.currentCoordinateField.getLabelText());
-	        					Log.e("2coordField","=="+coordField.getLabelText());
 	        					if (FormScreen.this.longitude==null)
 	        						FormScreen.this.longitude = "";
 	        					if (FormScreen.this.latitude==null)
@@ -481,7 +495,6 @@ public class FormScreen extends BaseActivity implements OnClickListener {
 	        					if (FormScreen.this.currentCoordinateField.srs!=null){						
 	        						srsId = FormScreen.this.currentCoordinateField.srs.getId();
 	        					}
-	        					Log.e("setValue1",FormScreen.this.latitude+"=="+FormScreen.this.longitude);
 	        					coordField.setValue(0, FormScreen.this.longitude, FormScreen.this.latitude, srsId, FormScreen.this.getFormScreenId(), false);
 	    		    			FormScreen.this.currentCoordinateField = null;
 	    		    			FormScreen.this.longitude = null;
@@ -502,7 +515,6 @@ public class FormScreen extends BaseActivity implements OnClickListener {
 		    				//coordField = new CoordinateField(FormScreen.this, nodeDef);
 	        				coordField.setOnClickListener(FormScreen.this);
 	        				coordField.setId(nodeDef.getId());
-	        				Log.e("setValue2",loadedValueLon+"=="+loadedValueLat);
 	        				coordField.setValue(0, loadedValueLon, loadedValueLat, loadedSrsId, FormScreen.this.getFormScreenId(),false);
 	        				ApplicationManager.putUIElement(coordField.getId(), coordField);
 	        				FormScreen.this.ll.addView(coordField);
@@ -904,7 +916,6 @@ public class FormScreen extends BaseActivity implements OnClickListener {
 					FormScreen.this.ll.addView(arrangeButtonsInLine(new Button(FormScreen.this),getResources().getString(R.string.previousInstanceButton),new Button(FormScreen.this),getResources().getString(R.string.nextInstanceButton), new Button(this), getResources().getString(R.string.addInstanceButton), new Button(FormScreen.this), getResources().getString(R.string.deleteInstanceButton), FormScreen.this, true));
 				}	
 			}
-	
 			setContentView(FormScreen.this.sv);
 				
 			int backgroundColor = ApplicationManager.appPreferences.getInt(getResources().getString(R.string.backgroundColor), Color.WHITE);		
@@ -1190,7 +1201,6 @@ public class FormScreen extends BaseActivity implements OnClickListener {
 	
     private void changeBackgroundColor(int backgroundColor){
 		getWindow().setBackgroundDrawable(new ColorDrawable(backgroundColor));
-
 		boolean hasBreadcrumb = !this.breadcrumb.equals("");
 		if (hasBreadcrumb){
 			ViewGroup scrollbarViews = ((ViewGroup)this.ll.getChildAt(0));
@@ -1200,7 +1210,9 @@ public class FormScreen extends BaseActivity implements OnClickListener {
 		
 		boolean hasTitle = !this.screenTitle.equals("");
 		if (hasTitle){
-			TextView screenTitle = (TextView)this.ll.getChildAt(1);
+			View dividerLine = (View)this.ll.getChildAt(1);
+			dividerLine.setBackgroundColor((backgroundColor!=Color.WHITE)?Color.WHITE:Color.BLACK);
+			TextView screenTitle = (TextView)this.ll.getChildAt(2);
 			screenTitle.setTextColor((backgroundColor!=Color.WHITE)?Color.WHITE:Color.BLACK);	
 		}
 		

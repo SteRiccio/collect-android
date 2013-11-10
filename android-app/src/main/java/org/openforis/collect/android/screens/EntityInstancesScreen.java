@@ -16,7 +16,6 @@ import org.openforis.collect.android.management.BaseActivity;
 import org.openforis.collect.android.messages.AlertMessage;
 import org.openforis.collect.android.misc.RunnableHandler;
 import org.openforis.collect.android.misc.ViewBacktrack;
-import org.openforis.collect.android.service.ServiceFactory;
 import org.openforis.idm.metamodel.EntityDefinition;
 import org.openforis.idm.metamodel.NodeDefinition;
 import org.openforis.idm.model.Entity;
@@ -122,6 +121,7 @@ public class EntityInstancesScreen extends BaseActivity implements OnClickListen
 	    		scroller.addView(breadcrumb);
 	    		EntityInstancesScreen.this.ll.addView(scroller);
 	    		//FormScreen.this.ll.addView(breadcrumb);
+	    		EntityInstancesScreen.this.ll.addView(ApplicationManager.getDividerLine(this));
 	    		
 	    		TextView screenTitle = new TextView(EntityInstancesScreen.this);
 	    		screenTitle.setText(EntityInstancesScreen.this.screenTitle);
@@ -570,7 +570,9 @@ public class EntityInstancesScreen extends BaseActivity implements OnClickListen
 		
 		boolean hasTitle = !this.screenTitle.equals("");
 		if (hasTitle){
-			TextView screenTitle = (TextView)this.ll.getChildAt(1);
+			View dividerLine = (View)this.ll.getChildAt(1);
+			dividerLine.setBackgroundColor((backgroundColor!=Color.WHITE)?Color.WHITE:Color.BLACK);
+			TextView screenTitle = (TextView)this.ll.getChildAt(2);
 			screenTitle.setTextColor((backgroundColor!=Color.WHITE)?Color.WHITE:Color.BLACK);	
 		}
 		
