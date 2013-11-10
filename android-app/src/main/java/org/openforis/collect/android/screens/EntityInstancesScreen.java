@@ -127,6 +127,7 @@ public class EntityInstancesScreen extends BaseActivity implements OnClickListen
 	    		screenTitle.setText(EntityInstancesScreen.this.screenTitle);
 	    		screenTitle.setTextSize(getResources().getInteger(R.integer.screenTitleFontSize));
 	    		EntityInstancesScreen.this.ll.addView(screenTitle);
+	    		EntityInstancesScreen.this.ll.addView(ApplicationManager.getDividerLine(this));
 			}
 			
 			NodeDefinition nodeDef = ApplicationManager.getNodeDefinition(EntityInstancesScreen.this.startingIntent.getIntExtra(getResources().getString(R.string.idmlId), -1));
@@ -573,7 +574,9 @@ public class EntityInstancesScreen extends BaseActivity implements OnClickListen
 			View dividerLine = (View)this.ll.getChildAt(1);
 			dividerLine.setBackgroundColor((backgroundColor!=Color.WHITE)?Color.WHITE:Color.BLACK);
 			TextView screenTitle = (TextView)this.ll.getChildAt(2);
-			screenTitle.setTextColor((backgroundColor!=Color.WHITE)?Color.WHITE:Color.BLACK);	
+			screenTitle.setTextColor((backgroundColor!=Color.WHITE)?Color.WHITE:Color.BLACK);
+			dividerLine = (View)this.ll.getChildAt(3);
+			dividerLine.setBackgroundColor((backgroundColor!=Color.WHITE)?Color.WHITE:Color.BLACK);			
 		}
 		
 		int viewsNo = this.ll.getChildCount();

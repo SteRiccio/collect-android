@@ -198,6 +198,7 @@ public class FormScreen extends BaseActivity implements OnClickListener {
 	    		screenTitle.setText(FormScreen.this.screenTitle);
 	    		screenTitle.setTextSize(getResources().getInteger(R.integer.screenTitleFontSize));
 	    		FormScreen.this.ll.addView(screenTitle);
+	    		FormScreen.this.ll.addView(ApplicationManager.getDividerLine(this));
 			}
 			
 			for (int i=0;i<FormScreen.this.fieldsNo;i++){
@@ -1213,7 +1214,9 @@ public class FormScreen extends BaseActivity implements OnClickListener {
 			View dividerLine = (View)this.ll.getChildAt(1);
 			dividerLine.setBackgroundColor((backgroundColor!=Color.WHITE)?Color.WHITE:Color.BLACK);
 			TextView screenTitle = (TextView)this.ll.getChildAt(2);
-			screenTitle.setTextColor((backgroundColor!=Color.WHITE)?Color.WHITE:Color.BLACK);	
+			screenTitle.setTextColor((backgroundColor!=Color.WHITE)?Color.WHITE:Color.BLACK);
+			dividerLine = (View)this.ll.getChildAt(3);
+			dividerLine.setBackgroundColor((backgroundColor!=Color.WHITE)?Color.WHITE:Color.BLACK);
 		}
 		
 		int viewsNo = this.ll.getChildCount();
