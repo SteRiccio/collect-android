@@ -1,32 +1,57 @@
 package org.openforis.collect.android.fields;
 
-import org.openforis.collect.android.screens.FormScreen;
+import org.openforis.collect.android.R;
 import org.openforis.idm.metamodel.EntityDefinition;
 
 import android.content.Context;
 import android.graphics.Color;
 import android.view.ViewGroup;
+import android.widget.ImageView;
+import android.widget.RelativeLayout;
 import android.widget.TableLayout;
-import android.widget.TableRow;
 import android.widget.TextView;
 
 public class EntityLink extends UIElement {
 	
 	private TableLayout tableLayout;
+	private RelativeLayout relativeLayout;
 	
 	private EntityDefinition entityDefinition;
 	
-	private FormScreen context;
+	//private FormScreen context;
 
-	private int instanceNo;
+	//private int instanceNo;
 	
 	public EntityLink(Context context, EntityDefinition entityDef, int threshold,
 			OnClickListener listener) {
 		super(context, entityDef);
 		
-		this.context = (FormScreen)context;
+		this.entityDefinition = entityDef;
 		
-		this.tableLayout  = new TableLayout(context);  
+		this.relativeLayout = new RelativeLayout(context);
+		
+		
+
+
+		
+		TextView titleView = new TextView(context);		
+		titleView.setText(this.label.getText());
+		
+		ImageView linkView = new ImageView(context);
+		linkView.setBackgroundResource(R.drawable.multiple_entity_arrow_black);
+//		RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+		RelativeLayout.LayoutParams params = new RelativeLayout.LayoutParams(32,32);
+		params.addRule(RelativeLayout.ALIGN_PARENT_RIGHT);
+		linkView.setLayoutParams(params);
+		
+		this.relativeLayout.addView(titleView);
+		this.relativeLayout.addView(linkView);
+		
+		this.container.addView(this.relativeLayout);
+		this.addView(this.container);
+		//this.context = (FormScreen)context;
+		
+		/*this.tableLayout  = new TableLayout(context);  
 		this.tableLayout.setStretchAllColumns(true); 
 	    this.tableLayout.setShrinkAllColumns(true);
 		this.tableLayout.setPadding(5, 10, 5, 10);
@@ -34,14 +59,16 @@ public class EntityLink extends UIElement {
 		this.entityDefinition = entityDef;
 		//Log.e("entityDef",this.entityDefinition.getName()+"=="+this.instanceNo);
 		TextView titleView = new TextView(context);
-		/*if (this.entityDefinition.isMultiple())
-			titleView.setText(this.label.getText()+" "+(this.instanceNo+1));
-		else*/
+		//if (this.entityDefinition.isMultiple())
+		//	titleView.setText(this.label.getText()+" "+(this.instanceNo+1));
+		//else
 		titleView.setText(this.label.getText());
 		//this.tableLayout.addView(titleView);
 		
-		TextView linkView = new TextView(context);
-		linkView.setText(">>>");
+		//TextView linkView = new TextView(context);
+		//linkView.setText(">>>");
+		ImageView linkView = new ImageView(context);
+		linkView.setBackgroundResource(R.drawable.multiple_entity_arrow);
 		
 		TableRow tr = new TableRow(context);
 		tr.addView(titleView);
@@ -53,7 +80,7 @@ public class EntityLink extends UIElement {
 		
 		this.container.setLayoutParams(new LayoutParams(ViewGroup.LayoutParams.FILL_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
 		this.container.addView(this.tableLayout);
-		this.addView(this.container);
+		this.addView(this.container);*/
 		//adding the entity and its nodes if do not exist yet
 		/*for (int i=0;i<entityDef.getChildDefinitions().size();i++){
 			try{
@@ -213,11 +240,14 @@ public class EntityLink extends UIElement {
 	}
 	
 	public void changeBackgroundColor(int backgroundColor){
-		ViewGroup row = (ViewGroup)this.tableLayout.getChildAt(0);	
-		TextView titleView = (TextView)row.getChildAt(0);
+		TextView titleView = (TextView)this.relativeLayout.getChildAt(0);
+		/*ViewGroup row = (ViewGroup)this.tableLayout.getChildAt(0);	
+		TextView titleView = (TextView)row.getChildAt(0);*/
 		titleView.setTextColor((backgroundColor!=Color.WHITE)?Color.WHITE:Color.BLACK);
-		TextView linkView = (TextView)row.getChildAt(1);
-		linkView.setTextColor((backgroundColor!=Color.WHITE)?Color.WHITE:Color.BLACK);
+		ImageView linkView = (ImageView)this.relativeLayout.getChildAt(1);
+		linkView.setBackgroundResource((backgroundColor!=Color.WHITE)?R.drawable.multiple_entity_arrow_white:R.drawable.multiple_entity_arrow_black);
+		/*TextView linkView = (TextView)row.getChildAt(1);
+		linkView.setTextColor((backgroundColor!=Color.WHITE)?Color.WHITE:Color.BLACK);*/
 		/*int childrenNo = this.tableLayout.getChildCount();
 		for (int i=1;i<childrenNo;i++){		
 			TableRow tableRowView = (TableRow)this.tableLayout.getChildAt(i);
@@ -343,7 +373,7 @@ public class EntityLink extends UIElement {
 		return valueToReturn;
 	}*/
 	
-	public int getInstanceNo(){
+	/*public int getInstanceNo(){
 		return this.instanceNo;
-	}
+	}*/
 }
