@@ -54,15 +54,15 @@
 			<groupId>com.googlecode.openbeans</groupId>
 			<artifactId>openbeans</artifactId>
 			<version>1.0</version>
-			<!--<scope>system</scope>
-			<systemPath>${project.basedir}/lib/openbeans-1.0.jar</systemPath>-->
+			<scope>system</scope>
+			<systemPath>${project.basedir}/lib/openbeans-1.0.jar</systemPath>
 		</dependency>
 		<dependency>
 			<groupId>org.openforis.collect</groupId>
 			<artifactId>collect-core</artifactId>
 			<!--<version>3.0-Alpha5-SNAPSHOT</version> -->
 			<!--<version>3.0-CR1-SNAPSHOT</version>-->
-			<version>3.0-Alpha7</version>
+			<version>3.0-Alpha8-SNAPSHOT</version>
 			<exclusions>
 				<exclusion>
 					<artifactId>jooq</artifactId>
@@ -92,6 +92,11 @@
 					<artifactId>xmlpull</artifactId>
 					<groupId>xmlpull</groupId>
 				</exclusion>
+				<exclusion>
+					<artifactId>kxml2</artifactId>
+					<groupId>net.sf.kxml</groupId>
+				</exclusion>
+				
 				<!-- unnecessary dependencies -->
 				<exclusion>
 					<artifactId>cglib</artifactId>

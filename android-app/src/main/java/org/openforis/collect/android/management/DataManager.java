@@ -105,9 +105,11 @@ public class DataManager {
 	
 	public void saveAllRecordsToFile(String folderToSave){
 		try{
+			String rootEntityName = this.survey.getSchema().getDefinitionById(ApplicationManager.currRootEntityId).getName();
 			BackupProcess backup = new BackupProcess(ServiceFactory.getSurveyManager(), ServiceFactory.getRecordManager(), 
-					this.dataMarshaller, new File(folderToSave),
-					this.survey, this.survey.getSchema().getDefinitionById(ApplicationManager.currRootEntityId).getName(), new int[]{1,2,3});
+					ServiceFactory.getRecordFileManager(), this.dataMarshaller, new File(folderToSave),
+					this.survey, rootEntityName);
+			backup.setIncludeIdm(false); //avoid marshalling of idm for performance reason
 			backup.init();
 			backup.call();
 		} catch (Exception e){
